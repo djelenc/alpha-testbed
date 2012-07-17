@@ -1,0 +1,12 @@
+testbed.trustmodel.qad.QTM
+testbed.trustmodel.qad.QAD
+testbed.trustmodel.EigenTrust
+testbed.trustmodel.AbdulRahmanHailes
+testbed.trustmodel.BetaReputation
+testbed.trustmodel.BRSWithFiltering
+testbed.trustmodel.Travos
+testbed.trustmodel.YuSinghSycara
+testbed.trustmodel.Simple
+testbed.trustmodel.OnlyExperiences
+testbed.trustmodel.OnlyOpinions
+testbed.trustmodel.EigenTrustContinuous

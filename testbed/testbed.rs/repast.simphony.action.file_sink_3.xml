@@ -1,0 +1,15 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>CSV</name>
+  <dataSet>TestbedMetrics</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>tick</string>
+    <string>Metric</string>
+    <string>Name</string>
+    <string>TrustModel</string>
+    <string>Scenario</string>
+  </sourceIds>
+  <fileName>out.csv</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

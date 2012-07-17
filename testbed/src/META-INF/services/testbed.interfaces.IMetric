@@ -1,0 +1,6 @@
+testbed.metric.Accuracy
+testbed.metric.AccuracyWithSensitivity
+testbed.metric.SpearmansFootRule
+testbed.metric.KendallsTau
+testbed.metric.WeightedKendallsTau
+testbed.metric.Coverage
