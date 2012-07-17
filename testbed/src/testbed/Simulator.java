@@ -62,13 +62,13 @@ public class Simulator {
 
 	// get experiences and opinions from scenario
 
-	// if (scenario instance of DecisionScenario &&
-	// model instance of DecisionModel) {
+	// if (scenario implements IPartnerSelection &&
+	// model implements IDecisionMaking) {
 	// Set<Integer> services;
 	// Map<Integer, Integer> partners;
 	// services = scenario.getServices();
-	// partners = model.getInteractionPartners(services)
-	// scenario.setInteractionPartners(partners);
+	// partners = model.getNextInteractionPartners(services)
+	// scenario.setNextInteractionPartners(partners);
 	// XXX: ensure that the iteration through partners is deterministic!
 	// }
 

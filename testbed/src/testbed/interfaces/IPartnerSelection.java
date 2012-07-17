@@ -3,11 +3,10 @@ package testbed.interfaces;
 import java.util.Map;
 
 /**
- * 
- * Scenario interface that allows agent Alpha to select interaction partners.
+ * Interface for implementing selection of partners in scenarios.
  * 
  */
-public interface IUtilityScenario extends IScenario {
+public interface IPartnerSelection {
 
     /**
      * Sets the next interaction partners for the given services.
