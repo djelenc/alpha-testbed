@@ -33,7 +33,7 @@ public class Simulator {
     private final ITrustModel model;
     private final IScenario scenario;
     private final Set<IMetric> metrics;
-    private final double[][] results;
+    private final double[][] score;
 
     public Simulator(ITrustModel model, IScenario scenario, Set<IMetric> metrics) {
 	this.model = model;
@@ -41,7 +41,7 @@ public class Simulator {
 	this.metrics = new TreeSet<IMetric>(new LexiographicComparator());
 	this.metrics.addAll(metrics);
 
-	results = new double[scenario.getServices().size()][metrics.size()];
+	score = new double[scenario.getServices().size()][metrics.size()];
     }
 
     /**
@@ -61,6 +61,17 @@ public class Simulator {
 	scenario.setCurrentTime(time);
 
 	// get experiences and opinions from scenario
+
+	// if (scenario instance of DecisionScenario &&
+	// model instance of DecisionModel) {
+	// Set<Integer> services;
+	// Map<Integer, Integer> partners;
+	// services = scenario.getServices();
+	// partners = model.getInteractionPartners(services)
+	// scenario.setInteractionPartners(partners);
+	// XXX: ensure that the iteration through partners is deterministic!
+	// }
+
 	Set<Experience> experiences = scenario.generateExperiences();
 	Set<Opinion> opinions = scenario.generateOpinions();
 
@@ -71,14 +82,20 @@ public class Simulator {
 	Map<Integer, Integer> rankings;
 	Map<Integer, Double> capabilities;
 
-	int mIdx = 0;
+	int metric = 0;
 	for (int service : scenario.getServices()) {
-	    mIdx = 0;
+	    metric = 0;
 	    rankings = model.getRankings(service);
 	    capabilities = scenario.getCapabilities(service);
 
-	    for (IMetric m : metrics)
-		results[service][mIdx++] = m.evaluate(rankings, capabilities);
+	    for (IMetric m : metrics) {
+		score[service][metric] = m.evaluate(rankings, capabilities);
+		metric += 1;
+	    }
+
+	    // for (UtilityMetri um : metricsUtility) {
+	    // utilityResults[service][m
+	    // }
 	}
     }
 
@@ -102,8 +119,8 @@ public class Simulator {
 	    idx++;
 	}
 
-	if (service < results.length && service >= 0 && idx < results[0].length) {
-	    return results[service][idx];
+	if (service < score.length && service >= 0 && idx < score[0].length) {
+	    return score[service][idx];
 	} else {
 	    throw new IllegalArgumentException(String.format(
 		    "Invalid query to getMetric(%d, %s)", service, metric));
