@@ -4,7 +4,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Interface for implementing the decision making component of trust models.
+ * Interface for implementing the decision making component of trust models. A
+ * trust model that wants to select interaction partners, must implement the
+ * methods of this interface.
  * 
  * @author David
  * 
@@ -12,8 +14,8 @@ import java.util.Set;
 public interface IDecisionMaking {
 
     /**
-     * This method should return a map that defines agents, with which Alpha
-     * wants to interact in the current time slot.
+     * This method should return a map that defines partner agents, with which
+     * Alpha wants to interact in the current time slot.
      * 
      * <p>
      * Keys in the resulting map must represent agents, while values must
