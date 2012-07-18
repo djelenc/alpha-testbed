@@ -6,6 +6,8 @@ import java.util.TreeSet;
 
 import testbed.common.LexiographicComparator;
 import testbed.interfaces.Experience;
+import testbed.interfaces.IDecisionMaking;
+import testbed.interfaces.IPartnerSelection;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
@@ -35,6 +37,8 @@ public class AlphaTestbed {
     private final Set<IRankingMetric> metrics;
     private final double[][] score;
 
+    private final Mode mode;
+
     public AlphaTestbed(ITrustModel model, IScenario scenario,
 	    Set<IRankingMetric> metrics) {
 	this.model = model;
@@ -43,6 +47,22 @@ public class AlphaTestbed {
 	this.metrics.addAll(metrics);
 
 	score = new double[scenario.getServices().size()][metrics.size()];
+
+	if (model instanceof ITrustModel && model instanceof IDecisionMaking
+		&& scenario instanceof IScenario
+		&& scenario instanceof IPartnerSelection) {
+	    mode = Mode.Utility;
+	} else if (model instanceof ITrustModel
+		&& !(model instanceof IDecisionMaking)
+		&& scenario instanceof IScenario
+		&& !(scenario instanceof IPartnerSelection)) {
+	    mode = Mode.Ranking;
+	} else {
+	    throw new IllegalArgumentException(String.format(
+		    "Selected trust model (%s) "
+			    + "cannot be tested with selected scenario (%s)",
+		    model.getName(), scenario.getName()));
+	}
     }
 
     /**
@@ -61,8 +81,6 @@ public class AlphaTestbed {
 	model.setCurrentTime(time);
 	scenario.setCurrentTime(time);
 
-	// get experiences and opinions from scenario
-
 	// if (scenario implements IPartnerSelection &&
 	// model implements IDecisionMaking) {
 	// Set<Integer> services;
@@ -73,12 +91,26 @@ public class AlphaTestbed {
 	// XXX: ensure that the iteration through partners is deterministic!
 	// }
 
-	Set<Experience> experiences = scenario.generateExperiences();
+	// get opinions
 	Set<Opinion> opinions = scenario.generateOpinions();
 
-	// convey new experiences and opinions to trust model
+	// convey opinions
 	model.processOpinions(opinions);
+
+	// get experiences
+
+	if (mode == Mode.Utility) {
+	    Map<Integer, Integer> partners = ((IDecisionMaking) model)
+		    .getNextInteractionPartners(scenario.getServices());
+
+	    ((IPartnerSelection) scenario).setNextInteractionPartners(partners);
+	}
+
+	Set<Experience> experiences = scenario.generateExperiences();
+
+	// convey experiences
 	model.processExperiences(experiences);
+
 	model.calculateTrust();
 
 	// calculate metrics for all services
