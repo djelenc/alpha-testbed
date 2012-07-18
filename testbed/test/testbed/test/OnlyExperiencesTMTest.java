@@ -24,20 +24,28 @@ public class OnlyExperiencesTMTest {
 	Set<Experience> experiences = new LinkedHashSet<Experience>();
 
 	experiences.add(new Experience(0, 0, 0, 0.9));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 
 	experiences.add(new Experience(1, 1, 0, 0.8));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 
 	experiences.add(new Experience(2, 1, 0, 0.7));
 	experiences.add(new Experience(3, 1, 0, 0.6));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 
 	experiences.add(new Experience(10, 1, 0, 0.1));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 
 	Map<Integer, Integer> ranks = tm.getRankings(0);

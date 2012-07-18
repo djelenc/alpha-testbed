@@ -9,9 +9,10 @@ import org.junit.runners.Suite.SuiteClasses;
 	ClassLoadersTest.class, SimulatorTest.class, MetricsTest.class,
 	RandomScenarioTest.class, EigenTrustContinuousTMTest.class,
 	ARHTMTest.class, OnlyExperiencesTMTest.class, SimpleTMTest.class,
-	OnlyOpinionsTMTest.class, BRSWithFilteringTMTest.class,
-	TravosTMTest.class, YuSinghSycaraTMTest.class, QADTMTest.class,
-	QTMTest.class, OscillationScenarioTest.class })
+	OnlyOpinionsTMTest.class, BetaReputationTMTest.class,
+	BRSWithFilteringTMTest.class, TravosTMTest.class,
+	YuSinghSycaraTMTest.class, QADTMTest.class, QTMTest.class,
+	OscillationScenarioTest.class })
 public class AllTests {
 
 }

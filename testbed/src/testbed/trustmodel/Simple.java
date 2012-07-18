@@ -24,23 +24,40 @@ public class Simple extends AbstractTrustModel implements ITrustModel {
     // computed reputation
     private double[] rep;
 
+    // temporary storage for experiences and opinions
+    private Set<Experience> experiences;
+    private Set<Opinion> opinions;
+
     @Override
     public void initialize(Object... params) {
 	trust = new LinkedHashMap<Integer, Double>();
 	exSum = new double[0];
 	exCnt = new int[0];
 	op = new double[0][0];
+
+	experiences = null;
+	opinions = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> experience, Set<Opinion> opinions) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.experiences = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.opinions = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	trust.clear();
 
 	// expand supporting arrays
-	expandArray(experience, opinions);
+	expandArray(experiences, opinions);
 
 	// process new experiences
-	for (Experience e : experience) {
+	for (Experience e : experiences) {
 	    exSum[e.agent] += e.outcome;
 	    exCnt[e.agent] += 1;
 	}

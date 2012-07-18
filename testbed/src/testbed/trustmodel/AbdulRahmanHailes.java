@@ -56,6 +56,10 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
     private Map<Integer, Double> trust;
     private ArrayList<Integer> union;
 
+    // temporary storage for experiences and opinions
+    private Set<Experience> experiences;
+    private Set<Opinion> opinions;
+
     @SuppressWarnings("unchecked")
     @Override
     public void initialize(Object... params) {
@@ -71,12 +75,24 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
 
 	trust = new LinkedHashMap<Integer, Double>();
 	union = new ArrayList<Integer>();
+	experiences = null;
+	opinions = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> experience, Set<Opinion> opinions) {
+    public void processOpinions(Set<Opinion> opinions) {
+	this.opinions = opinions;
+    }
+
+    @Override
+    public void processExperiences(Set<Experience> experiences) {
+	this.experiences = experiences;
+    }
+
+    @Override
+    public void calculateTrust() {
 	// expand arrays if necessary
-	expandArray(experience, opinions);
+	expandArray(experiences, opinions);
 
 	// store opinions as recommendations
 	for (Opinion o : opinions)
@@ -87,7 +103,7 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
 	TD actual, recommended;
 	int diff;
 
-	for (Experience e : experience) {
+	for (Experience e : experiences) {
 	    // record experience as direct trust
 	    actual = fromDouble(e.outcome);
 	    Q[e.agent][e.service][actual.ordinal()] += 1;

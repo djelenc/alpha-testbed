@@ -30,14 +30,20 @@ public class YuSinghSycaraTMTest {
 	opinions.add(new Opinion(0, 1, 0, 0, 0.7));
 	opinions.add(new Opinion(2, 1, 0, 0, 0.7));
 	opinions.add(new Opinion(3, 1, 0, 0, 0.7));
-	tm.calculateTrust(experiences, opinions);
+
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
+
 	experiences.clear();
 	opinions.clear();
 	Assert.assertEquals(4, tm.credibility.length);
 
 	experiences.add(new Experience(1, 0, 0, 0.1));
 	opinions.add(new Opinion(5, 1, 0, 0, 1));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 	opinions.clear();
 
@@ -54,7 +60,9 @@ public class YuSinghSycaraTMTest {
 	experiences.add(new Experience(1, 0, 0, 0.7));
 	experiences.add(new Experience(1, 0, 0, 0.8));
 	experiences.add(new Experience(1, 0, 0, 0.9));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 	opinions.clear();
 
@@ -70,27 +78,37 @@ public class YuSinghSycaraTMTest {
 	Set<Experience> experiences = new LinkedHashSet<Experience>();
 
 	experiences.add(new Experience(1, 0, 0, 0.5));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 	opinions.clear();
 
 	experiences.add(new Experience(1, 0, 0, 0.6));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 	opinions.clear();
 
 	experiences.add(new Experience(1, 0, 0, 0.7));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 	opinions.clear();
 
 	experiences.add(new Experience(1, 0, 0, 0.8));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 	opinions.clear();
 
 	experiences.add(new Experience(1, 0, 0, 0.9));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 	opinions.clear();
 
@@ -100,7 +118,9 @@ public class YuSinghSycaraTMTest {
 	    Assert.assertEquals(expected[i], tm.local.get(1)[i], 0.0001);
 
 	experiences.add(new Experience(1, 0, 0, 1.0));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 	opinions.clear();
 

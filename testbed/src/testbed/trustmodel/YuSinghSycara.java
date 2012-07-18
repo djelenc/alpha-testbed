@@ -19,15 +19,32 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
     public Opinion[][] opinions = null;
     public double[] credibility = null;
 
+    // temporary storage for experiences and opinions
+    private Set<Experience> exps;
+    private Set<Opinion> ops;
+
     @Override
     public void initialize(Object... params) {
 	local = new LinkedHashMap<Integer, double[]>();
 	opinions = new Opinion[0][0];
 	credibility = new double[0];
+
+	exps = null;
+	ops = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.exps = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.ops = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	expandArrays(exps, ops);
 
 	// store opinions

@@ -76,7 +76,9 @@ public class Simulator {
 	Set<Opinion> opinions = scenario.generateOpinions();
 
 	// convey new experiences and opinions to trust model
-	model.calculateTrust(experiences, opinions);
+	model.processOpinions(opinions);
+	model.processExperiences(experiences);
+	model.calculateTrust();
 
 	// calculate metrics for all services
 	Map<Integer, Integer> rankings;

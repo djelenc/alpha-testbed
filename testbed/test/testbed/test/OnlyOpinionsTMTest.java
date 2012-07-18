@@ -48,7 +48,9 @@ public class OnlyOpinionsTMTest {
 	opinions.add(new Opinion(6, 1, 1, 0, 0.2));
 	opinions.add(new Opinion(6, 5, 1, 0, 1.0));
 
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 
 	Map<Integer, Integer> ranks = tm.getRankings(0);
 
@@ -59,8 +61,11 @@ public class OnlyOpinionsTMTest {
 	opinions.clear();
 	opinions.add(new Opinion(6, 4, 1, 0, 0.0));
 	opinions.add(new Opinion(6, 5, 1, 0, 0.0));
-	
-	tm.calculateTrust(experiences, opinions);
+
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
+
 	ranks = tm.getRankings(0);
 
 	Assert.assertEquals(1, (int) ranks.get(0));

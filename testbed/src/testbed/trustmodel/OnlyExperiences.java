@@ -17,11 +17,15 @@ public class OnlyExperiences extends AbstractTrustModel implements ITrustModel {
     // interaction count
     private int[] exCnt;
 
+    // temporary storage for experiences
+    private Set<Experience> experiences;
+
     @Override
     public void initialize(Object... params) {
 	trust = new LinkedHashMap<Integer, Double>();
 	exSum = new double[0];
 	exCnt = new int[0];
+	experiences = null;
     }
 
     private void expandArray(Set<Experience> experience) {
@@ -45,10 +49,20 @@ public class OnlyExperiences extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public void calculateTrust(Set<Experience> experience, Set<Opinion> opinions) {
-	expandArray(experience);
+    public void processExperiences(Set<Experience> experiences) {
+	this.experiences = experiences;
+    }
 
-	for (Experience e : experience) {
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+
+    }
+
+    @Override
+    public void calculateTrust() {
+	expandArray(experiences);
+
+	for (Experience e : experiences) {
 	    exSum[e.agent] += e.outcome;
 	    exCnt[e.agent] += 1;
 	}

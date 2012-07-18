@@ -46,7 +46,8 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class EigenTrustContinuous extends AbstractTrustModel implements ITrustModel {
+public class EigenTrustContinuous extends AbstractTrustModel implements
+	ITrustModel {
 
     private Map<Integer, Double> trust;
     private double[][] C;
@@ -56,6 +57,10 @@ public class EigenTrustContinuous extends AbstractTrustModel implements ITrustMo
     private int[] pCnt;
 
     private double weight = 0.5;
+
+    // temporary storage for opinions and experiences
+    private Set<Opinion> opinions;
+    private Set<Experience> experiences;
 
     @Override
     public void initialize(Object... params) {
@@ -75,6 +80,9 @@ public class EigenTrustContinuous extends AbstractTrustModel implements ITrustMo
 
 	// Alpha is the only pre-trusted peer
 	p[p.length - 1] = 1d;
+
+	opinions = null;
+	experiences = null;
     }
 
     /**
@@ -131,12 +139,22 @@ public class EigenTrustContinuous extends AbstractTrustModel implements ITrustMo
     }
 
     @Override
-    public void calculateTrust(Set<Experience> experience, Set<Opinion> opinions) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.experiences = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.opinions = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	// expand arrays
-	expandArray(experience, opinions);
+	expandArray(experiences, opinions);
 
 	// process experiences
-	for (Experience e : experience) {
+	for (Experience e : experiences) {
 	    pSum[e.agent] += e.outcome;
 	    pCnt[e.agent] += 1;
 	}

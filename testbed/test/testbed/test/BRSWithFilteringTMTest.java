@@ -46,7 +46,9 @@ public class BRSWithFilteringTMTest {
 	opinions.add(new Opinion(8, 3, 0, time, 1.0));
 
 	tm.setCurrentTime(time);
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	Map<Integer, Double> score = tm.compute();
 
 	Assert.assertEquals(0.9861111111111112, score.get(0), 0.00001);

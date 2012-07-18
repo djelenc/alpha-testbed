@@ -22,14 +22,27 @@ public class OnlyOpinions extends AbstractTrustModel implements ITrustModel {
     // opinions
     private double[][] op;
 
+    private Set<Opinion> opinions;
+
     @Override
     public void initialize(Object... params) {
 	op = new double[0][0];
 	trust = new LinkedHashMap<Integer, Double>();
+	opinions = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> experience, Set<Opinion> opinions) {
+    public void processExperiences(Set<Experience> experiences) {
+
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.opinions = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	trust.clear();
 
 	expandArray(opinions);

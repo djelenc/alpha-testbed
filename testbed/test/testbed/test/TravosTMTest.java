@@ -45,7 +45,9 @@ public class TravosTMTest {
 	opinions.add(new Opinion(2, 1, 0, 0, 1.0));
 	opinions.add(new Opinion(3, 1, 0, 0, 0.5));
 
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	tm.compute();
     }
 
@@ -76,7 +78,9 @@ public class TravosTMTest {
 	for (int i = 0; i < 29; i++)
 	    experiences.add(new Experience(7, 0, 0, (i < 18 ? 1 : 0)));
 
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	Map<Integer, Double> trust = tm.compute();
 
 	Assert.assertEquals(0.7500, trust.get(2), 0.001);
@@ -93,7 +97,9 @@ public class TravosTMTest {
 	opinions.add(new Opinion(9, 6, 0, 0, 4 / 5d));
 	opinions.add(new Opinion(10, 6, 0, 0, 1d));
 
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 
 	tm.observations.get(8)[1].R = 11;
 	tm.observations.get(8)[1].S = 4;

@@ -48,6 +48,10 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 
     public Opinion[][] opinions = null;
 
+    // temporary storage for experiences and opinions
+    private Set<Experience> exps;
+    private Set<Opinion> ops;
+
     @Override
     public void initialize(Object... params) {
 	time = 0;
@@ -91,6 +95,9 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	lambdaOp = Utils.extractParameter(valLambda, 1, params);
 	Q = Utils.extractParameter(valQ, 2, params);
 	FACTOR = Utils.extractParameter(valFactor, 3, params);
+
+	exps = null;
+	ops = null;
     }
 
     @Override
@@ -99,7 +106,17 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.exps = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.ops = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	// make room for new values
 	expandArrays(exps, ops);
 

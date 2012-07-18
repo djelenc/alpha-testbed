@@ -55,6 +55,10 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
     public static double EXPERIENCE = 5;
     public static double OPINION = 10;
 
+    // temporary storage for opinions and experiences
+    private Set<Opinion> opinions;
+    private Set<Experience> experiences;
+
     @Override
     public void initialize(Object... params) {
 	trust = new LinkedHashMap<Integer, Double>();
@@ -97,6 +101,9 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
 
 	EXPERIENCE = Utils.extractParameter(validatorMultiplier, 1, params);
 	OPINION = Utils.extractParameter(validatorMultiplier, 2, params);
+
+	opinions = null;
+	experiences = null;
     }
 
     /**
@@ -146,12 +153,22 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public void calculateTrust(Set<Experience> experience, Set<Opinion> opinions) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.experiences = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.opinions = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	// expand arrays
-	expandArray(experience, opinions);
+	expandArray(experiences, opinions);
 
 	// process experiences
-	for (Experience e : experience) {
+	for (Experience e : experiences) {
 	    final double pos = Math.round(EXPERIENCE * e.outcome);
 	    final double neg = EXPERIENCE - pos;
 

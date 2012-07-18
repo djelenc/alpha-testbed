@@ -21,15 +21,31 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
     public QADOp[][] opinions = null;
     public double[] credibility = null;
 
+    // temporary storage for opinions and experiences
+    private Set<Opinion> ops;
+    private Set<Experience> exps;
+
     @Override
     public void initialize(Object... params) {
 	local = new LinkedHashMap<Integer, QADExp[]>();
 	opinions = new QADOp[0][0];
 	credibility = new double[0];
+	ops = null;
+	exps = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.exps = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.ops = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	expandArrays(exps, ops);
 
 	// store opinions

@@ -30,6 +30,10 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
     // operator
     public Operator operator;
 
+    // temporary storage for opinions and experiences
+    private Set<Opinion> opinions;
+    private Set<Experience> experiences;
+
     @Override
     public void initialize(Object... params) {
 	op = new Omega[0][0];
@@ -43,16 +47,29 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
 	};
 
 	operator = Utils.extractParameter(validator, 0, params);
+
+	experiences = null;
+	opinions = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> opinions) {
-	expandArray(exps, opinions);
+    public void processExperiences(Set<Experience> experiences) {
+	this.experiences = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.opinions = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
+	expandArray(experiences, opinions);
 
 	for (Opinion o : opinions)
 	    op[o.agent1][o.agent2] = normalizedNumeric(o.internalTrustDegree);
 
-	for (Experience e : exps)
+	for (Experience e : experiences)
 	    row[e.agent] = normalizedNumeric(e.outcome);
     }
 

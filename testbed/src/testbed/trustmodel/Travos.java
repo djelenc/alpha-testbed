@@ -65,6 +65,10 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
 
     private static final BetaDistribution BETA = new BetaDistributionImpl(1, 1);
 
+    // temporary storage for experiences and opinions
+    private Set<Experience> exps;
+    private Set<Opinion> ops;
+
     @Override
     public void initialize(Object... params) {
 	experiences = new LinkedHashMap<Integer, BRSPair>();
@@ -96,10 +100,23 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
 	FACTOR = Utils.extractParameter(validator1, 0, params);
 	THRESHOLD = Utils.extractParameter(validator2, 1, params);
 	ERROR = Utils.extractParameter(validator2, 2, params);
+
+	exps = null;
+	ops = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.exps = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.ops = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	// expand data structures
 	expandArrays(exps, ops);
 

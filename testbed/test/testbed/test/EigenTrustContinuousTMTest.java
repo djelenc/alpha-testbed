@@ -57,7 +57,9 @@ public class EigenTrustContinuousTMTest {
 	opinions.add(new Opinion(1, 2, 0, 0, 1 / 3d));
 	opinions.add(new Opinion(2, 2, 0, 0, 0));
 
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 
 	Assert.assertEquals(new Integer(2), tm.getRankings(0).get(0));
 	Assert.assertEquals(new Integer(1), tm.getRankings(0).get(1));

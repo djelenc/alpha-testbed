@@ -35,6 +35,10 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
 
     public Opinion[][] opinions = null;
 
+    // temporary storage for experiences and opinions
+    private Set<Experience> exps;
+    private Set<Opinion> ops;
+
     @Override
     public void initialize(Object... params) {
 	time = 0;
@@ -54,6 +58,8 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
 
 	lambdaEx = Utils.extractParameter(validator, 0, params);
 	lambdaOp = Utils.extractParameter(validator, 1, params);
+	exps = null;
+	ops = null;
     }
 
     @Override
@@ -62,7 +68,17 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.exps = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.ops = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	// make room for new values
 	expandArrays(exps, ops);
 

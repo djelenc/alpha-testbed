@@ -141,19 +141,25 @@ public class QADTMTest {
 	opinions.add(new Opinion(2, 0, 0, 0, 0.1));
 	opinions.add(new Opinion(0, 1, 0, 0, 0.1));
 	opinions.add(new Opinion(1, 0, 0, 0, 0.1));
-	tm.calculateTrust(exps, opinions);
+	tm.processExperiences(exps);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 
 	opinions.clear();
 	exps.clear();
 	exps.add(new Experience(3, 0, 0, 0.8));
-	tm.calculateTrust(exps, opinions);
+	tm.processExperiences(exps);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	assertEquals(4, tm.row.length);
 	assertEquals(4, tm.op.length);
 
 	opinions.clear();
 	exps.clear();
 	exps.add(new Experience(5, 0, 0, 0.8));
-	tm.calculateTrust(exps, opinions);
+	tm.processExperiences(exps);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	assertEquals(6, tm.row.length);
 	assertEquals(6, tm.op.length);
     }
