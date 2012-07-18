@@ -6,39 +6,40 @@ import java.util.TreeSet;
 
 import testbed.common.LexiographicComparator;
 import testbed.interfaces.Experience;
-import testbed.interfaces.IMetric;
+import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 /**
- * The simulator that performs the evaluation.
+ * The testbed that performs the evaluation.
  * 
  * <p>
- * The simulator stores a trust model, a scenario and a list of metrics. In
- * every tick, the simulator queries the scenario for experiences and opinions,
- * and then conveys them to the trust model. Afterwards the simulator calculates
+ * The testbed holds a reference to a trust model, a scenario and a list of
+ * metrics. In every tick, the testbed queries the scenario for experiences and
+ * opinions, and then conveys them to the trust model. Afterwards it calculates
  * the results with the given metrics. The results are stored in a temporary
  * variable, which is exposed via public method.
  * 
  * <p>
- * The Simulator class must be instantiated and run by a simulation platform,
- * such as Repast.
+ * The testbed must be instantiated and run by a simulation platform, such as
+ * Repast.
  * 
  * @author David
  * 
  */
-public class Simulator {
+public class AlphaTestbed {
 
     private final ITrustModel model;
     private final IScenario scenario;
-    private final Set<IMetric> metrics;
+    private final Set<IRankingMetric> metrics;
     private final double[][] score;
 
-    public Simulator(ITrustModel model, IScenario scenario, Set<IMetric> metrics) {
+    public AlphaTestbed(ITrustModel model, IScenario scenario,
+	    Set<IRankingMetric> metrics) {
 	this.model = model;
 	this.scenario = scenario;
-	this.metrics = new TreeSet<IMetric>(new LexiographicComparator());
+	this.metrics = new TreeSet<IRankingMetric>(new LexiographicComparator());
 	this.metrics.addAll(metrics);
 
 	score = new double[scenario.getServices().size()][metrics.size()];
@@ -90,7 +91,7 @@ public class Simulator {
 	    rankings = model.getRankings(service);
 	    capabilities = scenario.getCapabilities(service);
 
-	    for (IMetric m : metrics) {
+	    for (IRankingMetric m : metrics) {
 		score[service][metric] = m.evaluate(rankings, capabilities);
 		metric += 1;
 	    }
@@ -110,10 +111,10 @@ public class Simulator {
      *            The metric for the evaluation
      * @return The evaluation result
      */
-    public double getMetric(int service, IMetric metric) {
+    public double getMetric(int service, IRankingMetric metric) {
 	int idx = 0;
 
-	for (IMetric m : metrics) {
+	for (IRankingMetric m : metrics) {
 	    if (m == metric) {
 		break;
 	    }

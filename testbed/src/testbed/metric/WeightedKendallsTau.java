@@ -2,17 +2,17 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.IMetric;
-
 /**
- * Kendall's Tau metric
+ * Weighted Kendall's Tau
  * 
- * The same as Accuracy, but only if ranking contains no ties.
+ * <p>
+ * This metric weighs every inversion with the amount of difference between
+ * elements that are inverted. The weights are computed from capabilities.
  * 
- * @author david
+ * @author David
  * 
  */
-public class WeightedKendallsTau extends AbstractMetric implements IMetric {
+public class WeightedKendallsTau extends AbstractRankingMetric {
 
     @Override
     public double evaluate(Map<Integer, Integer> rankings,

@@ -4,9 +4,8 @@ import java.util.Map;
 
 import testbed.common.Utils;
 import testbed.interfaces.ICondition;
-import testbed.interfaces.IMetric;
 
-public class AccuracyWithSensitivity extends Accuracy implements IMetric {
+public class AccuracyWithSensitivity extends Accuracy {
     protected double sensitivity = 0;
 
     @Override

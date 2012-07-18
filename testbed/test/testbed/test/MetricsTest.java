@@ -8,7 +8,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import testbed.interfaces.IMetric;
+import testbed.interfaces.IRankingMetric;
 import testbed.metric.Accuracy;
 import testbed.metric.Coverage;
 
@@ -38,7 +38,7 @@ public class MetricsTest {
 
     @Test
     public void accuracyTheSameRankings() {
-	IMetric accuracy = new Accuracy();
+	IRankingMetric accuracy = new Accuracy();
 
 	rnks.put(1, 1);
 	rnks.put(2, 1);
@@ -49,8 +49,8 @@ public class MetricsTest {
 
     @Test
     public void accuracyAllcorrectIncompleteCoverage() {
-	IMetric accuracy = new Accuracy();
-	IMetric coverage = new Coverage();
+	IRankingMetric accuracy = new Accuracy();
+	IRankingMetric coverage = new Coverage();
 
 	rnks.remove(3);
 	Assert.assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
@@ -59,8 +59,8 @@ public class MetricsTest {
 
     @Test
     public void accuracy2WrongCoverageFull() {
-	IMetric accuracy = new Accuracy();
-	IMetric coverage = new Coverage();
+	IRankingMetric accuracy = new Accuracy();
+	IRankingMetric coverage = new Coverage();
 
 	cpbs.put(4, 0.8);
 	cpbs.put(3, 0.7);
@@ -70,7 +70,7 @@ public class MetricsTest {
 
     @Test
     public void accuracy1Wrong() {
-	IMetric accuracy = new Accuracy();
+	IRankingMetric accuracy = new Accuracy();
 
 	cpbs.put(4, 0.8);
 	Assert.assertEquals(11.0 / 12.0, accuracy.evaluate(rnks, cpbs), 0.0001);
@@ -78,7 +78,7 @@ public class MetricsTest {
 
     @Test
     public void accuracyAllCorrect() {
-	IMetric accuracy = new Accuracy();
+	IRankingMetric accuracy = new Accuracy();
 	Assert.assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
     }
 

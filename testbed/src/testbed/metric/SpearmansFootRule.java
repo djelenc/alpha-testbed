@@ -2,7 +2,6 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.IMetric;
 import testbed.trustmodel.OnlyExperiences;
 
 /**
@@ -20,7 +19,7 @@ import testbed.trustmodel.OnlyExperiences;
  * @author david
  * 
  */
-public class SpearmansFootRule extends AbstractMetric implements IMetric {
+public class SpearmansFootRule extends AbstractRankingMetric {
 
     private static OnlyExperiences tm;
 

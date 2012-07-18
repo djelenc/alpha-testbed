@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import testbed.common.ClassLoaderUtils;
 import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IMetric;
+import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
 
@@ -24,7 +24,7 @@ public class ClassLoadersTest {
 
 	List<IScenario> generators = ClassLoaderUtils.lookUp(IScenario.class,
 		classLoader);
-	List<IMetric> metrics = ClassLoaderUtils.lookUp(IMetric.class,
+	List<IRankingMetric> metrics = ClassLoaderUtils.lookUp(IRankingMetric.class,
 		classLoader);
 	List<ITrustModel> trustModels = ClassLoaderUtils.lookUp(
 		ITrustModel.class, classLoader);
@@ -45,7 +45,7 @@ public class ClassLoadersTest {
 	ClassLoaderUtils.addURL(
 		new File("c:/testlib/some.jar").toURI().toURL(), cl);
 
-	for (IMetric dg : ServiceLoader.load(IMetric.class)) {
+	for (IRankingMetric dg : ServiceLoader.load(IRankingMetric.class)) {
 	    System.out.println(dg.getName());
 	}
     }
@@ -57,7 +57,7 @@ public class ClassLoadersTest {
 	// ensure the folder/jar exists before running
 	ClassLoaderUtils.addDirToClasspath(new File("c:/testlib"), cl);
 
-	for (IMetric dg : ServiceLoader.load(IMetric.class)) {
+	for (IRankingMetric dg : ServiceLoader.load(IRankingMetric.class)) {
 	    System.out.println(dg.getName());
 	}
     }
@@ -72,10 +72,10 @@ public class ClassLoadersTest {
 
     @Test
     public void testServiceLoaderIMetric() {
-	ServiceLoader<IMetric> all = ServiceLoader.load(IMetric.class);
+	ServiceLoader<IRankingMetric> all = ServiceLoader.load(IRankingMetric.class);
 
 	Assert.assertTrue(all.iterator().hasNext());
-	Assert.assertTrue(all.iterator().next() instanceof IMetric);
+	Assert.assertTrue(all.iterator().next() instanceof IRankingMetric);
     }
 
     @Test
