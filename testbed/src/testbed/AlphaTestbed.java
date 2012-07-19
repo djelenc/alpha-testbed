@@ -32,12 +32,29 @@ import testbed.interfaces.Opinion;
  */
 public class AlphaTestbed {
 
+    /** Reference to the trust model */
     private final ITrustModel model;
-    private final IScenario scenario;
-    private final Set<IRankingMetric> metrics;
-    private final double[][] score;
 
-    private final Mode mode;
+    /**
+     * Reference to the decision making capabilities of a trust model -- if it
+     * does not have it, this is set to null
+     */
+    private final IDecisionMaking decision;
+
+    /** Reference to the scenario */
+    private final IScenario scenario;
+
+    /**
+     * Reference to the partner selection capability of the scenario -- if it
+     * does not have it, this is set to null
+     */
+    private final IPartnerSelection selection;
+
+    /** Set of ranking metrics */
+    private final Set<IRankingMetric> metrics;
+
+    /** Temporary variable to hold the metric results */
+    private final double[][] score;
 
     public AlphaTestbed(ITrustModel model, IScenario scenario,
 	    Set<IRankingMetric> metrics) {
@@ -48,15 +65,12 @@ public class AlphaTestbed {
 
 	score = new double[scenario.getServices().size()][metrics.size()];
 
-	if (model instanceof ITrustModel && model instanceof IDecisionMaking
-		&& scenario instanceof IScenario
-		&& scenario instanceof IPartnerSelection) {
-	    mode = Mode.Utility;
-	} else if (model instanceof ITrustModel
-		&& !(model instanceof IDecisionMaking)
-		&& scenario instanceof IScenario
-		&& !(scenario instanceof IPartnerSelection)) {
-	    mode = Mode.Ranking;
+	if (isUtilityMode(model, scenario)) {
+	    decision = (IDecisionMaking) model;
+	    selection = (IPartnerSelection) scenario;
+	} else if (isRankingsMode(model, scenario)) {
+	    decision = null;
+	    selection = null;
 	} else {
 	    throw new IllegalArgumentException(String.format(
 		    "Selected trust model (%s) "
@@ -81,36 +95,32 @@ public class AlphaTestbed {
 	model.setCurrentTime(time);
 	scenario.setCurrentTime(time);
 
-	// if (scenario implements IPartnerSelection &&
-	// model implements IDecisionMaking) {
-	// Set<Integer> services;
-	// Map<Integer, Integer> partners;
-	// services = scenario.getServices();
-	// partners = model.getNextInteractionPartners(services)
-	// scenario.setNextInteractionPartners(partners);
-	// XXX: ensure that the iteration through partners is deterministic!
-	// }
-
 	// get opinions
-	Set<Opinion> opinions = scenario.generateOpinions();
+	final Set<Opinion> opinions = scenario.generateOpinions();
 
 	// convey opinions
 	model.processOpinions(opinions);
 
 	// get experiences
+	final Set<Integer> services = scenario.getServices();
 
-	if (mode == Mode.Utility) {
-	    Map<Integer, Integer> partners = ((IDecisionMaking) model)
-		    .getNextInteractionPartners(scenario.getServices());
+	if (null != selection && null != decision) {
+	    final Map<Integer, Integer> partners;
 
-	    ((IPartnerSelection) scenario).setNextInteractionPartners(partners);
+	    // query trust model for interaction partners
+	    partners = decision.getNextInteractionPartners(services);
+
+	    // XXX: ensure that the iteration through partners is deterministic!
+
+	    selection.setNextInteractionPartners(partners);
 	}
 
-	Set<Experience> experiences = scenario.generateExperiences();
+	final Set<Experience> experiences = scenario.generateExperiences();
 
 	// convey experiences
 	model.processExperiences(experiences);
 
+	// calculate trust
 	model.calculateTrust();
 
 	// calculate metrics for all services
@@ -118,7 +128,7 @@ public class AlphaTestbed {
 	Map<Integer, Double> capabilities;
 
 	int metric = 0;
-	for (int service : scenario.getServices()) {
+	for (int service : services) {
 	    metric = 0;
 	    rankings = model.getRankings(service);
 	    capabilities = scenario.getCapabilities(service);
@@ -168,5 +178,42 @@ public class AlphaTestbed {
 
     public IScenario getScenario() {
 	return scenario;
+    }
+
+    /**
+     * Determines if the combination of the trust model and the scenario
+     * constitutes a testing model with measuring utility.
+     * 
+     * @param model
+     *            Instance of a trust model
+     * @param scenario
+     *            Instance of a scenario
+     * @return True, if and only if instance of the trust model implements the
+     *         {@link IDecisionMaking} interface and the instance of a scenario
+     *         implements the {@link IPartnerSelection} interface.
+     */
+    public boolean isUtilityMode(ITrustModel model, IScenario scenario) {
+	return IDecisionMaking.class.isAssignableFrom(model.getClass())
+		&& IPartnerSelection.class
+			.isAssignableFrom(scenario.getClass());
+    }
+
+    /**
+     * Determines if the combination of the given trust model and the given
+     * scenario constitutes a testing mode with measuring rankings.
+     * 
+     * @param model
+     *            Instance of a trust model
+     * @param scenario
+     *            Instance of a scenario
+     * @return True, if and only if instance of the trust model does not
+     *         implement the {@link IDecisionMaking} interface and the instance
+     *         of a scenario does not implement the {@link IPartnerSelection}
+     *         interface.
+     */
+    public boolean isRankingsMode(ITrustModel model, IScenario scenario) {
+	return !IDecisionMaking.class.isAssignableFrom(model.getClass())
+		&& !IPartnerSelection.class.isAssignableFrom(scenario
+			.getClass());
     }
 }

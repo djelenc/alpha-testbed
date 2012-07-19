@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ UtilsTest.class, DeceptionModelsTest.class,
-	ClassLoadersTest.class, SimulatorTest.class, MetricsTest.class,
+	ClassLoadersTest.class, AlphaTestbedTest.class, MetricsTest.class,
 	RandomScenarioTest.class, EigenTrustContinuousTMTest.class,
 	ARHTMTest.class, OnlyExperiencesTMTest.class, SimpleTMTest.class,
 	OnlyOpinionsTMTest.class, BetaReputationTMTest.class,
