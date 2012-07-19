@@ -8,15 +8,7 @@ import java.util.Map;
  * @author David
  * 
  */
-public interface IUtilityMetric {
-
-    /**
-     * Initializes the metric with optional parameters.
-     * 
-     * @param params
-     *            Optional parameters
-     */
-    public void initialize(Object... params);
+public interface IUtilityMetric extends IMetric {
 
     /**
      * Returns the normalized cumulative utility that has been obtained so far.
@@ -31,22 +23,4 @@ public interface IUtilityMetric {
      * @return An evaluation score between 0 and 1, inclusively.
      */
     public double evaluate(Map<Integer, Double> capabilities, int agent);
-
-    /**
-     * Returns a friendly name for the metric
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Returns {@link IParametersPanel} instance, which defines GUI for setting
-     * parameters for this metric.
-     * 
-     * If the metric needs no parameters, this method should return null.
-     * 
-     * @return Instance of the {@link IParametersPanel} or null if parameters
-     *         are not needed.
-     */
-    public IParametersPanel getParametersPanel();
 }

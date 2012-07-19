@@ -12,6 +12,7 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.IDecisionMaking;
 import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IPartnerSelection;
+import testbed.interfaces.IMetric;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
@@ -19,11 +20,11 @@ import testbed.interfaces.Opinion;
 
 public class AlphaTestbedTest {
 
-    Set<IRankingMetric> metrics;
+    Set<IMetric> metrics;
 
     @Before
     public void setUp() {
-	metrics = new LinkedHashSet<IRankingMetric>();
+	metrics = new LinkedHashSet<IMetric>();
 	metrics.add(new IRankingMetric() {
 	    @Override
 	    public void initialize(Object... params) {

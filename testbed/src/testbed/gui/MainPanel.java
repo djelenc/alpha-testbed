@@ -21,7 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import testbed.common.ClassLoaderUtils;
-import testbed.interfaces.IRankingMetric;
+import testbed.interfaces.IMetric;
 import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
@@ -144,7 +144,8 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	int i = 2;
 	c.anchor = GridBagConstraints.LINE_START;
 
-	for (IRankingMetric mtr : ClassLoaderUtils.lookUp(IRankingMetric.class, cl)) {
+	for (IMetric mtr : ClassLoaderUtils.lookUp(IMetric.class,
+		cl)) {
 	    cb = new JCheckBox(mtr.getName(), true);
 	    cb.addActionListener(listener);
 	    cb.putClientProperty(mtr.getName(), mtr);
@@ -157,12 +158,12 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	return panel;
     }
 
-    private Set<IRankingMetric> getMetrics() {
-	Set<IRankingMetric> metrics = new HashSet<IRankingMetric>();
+    private Set<IMetric> getMetrics() {
+	Set<IMetric> metrics = new HashSet<IMetric>();
 
 	for (JCheckBox jcb : mtrChbs) {
 	    if (jcb.isSelected()) {
-		metrics.add((IRankingMetric) jcb.getClientProperty(jcb.getText()));
+		metrics.add((IMetric) jcb.getClientProperty(jcb.getText()));
 	    }
 	}
 

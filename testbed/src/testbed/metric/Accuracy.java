@@ -2,7 +2,9 @@ package testbed.metric;
 
 import java.util.Map;
 
-public class Accuracy extends AbstractRankingMetric {
+import testbed.interfaces.IRankingMetric;
+
+public class Accuracy extends AbstractMetric implements IRankingMetric {
 
     @Override
     public double evaluate(Map<Integer, Integer> rankings,

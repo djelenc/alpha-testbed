@@ -2,7 +2,7 @@ package testbed.repast;
 
 import repast.simphony.engine.schedule.ScheduledMethod;
 import testbed.AlphaTestbed;
-import testbed.interfaces.IRankingMetric;
+import testbed.interfaces.IMetric;
 
 /**
  * An utility class to enable a simple plotting and constructing data sets in
@@ -14,7 +14,7 @@ import testbed.interfaces.IRankingMetric;
 public class MetricHolder {
 
     private final int service;
-    private final IRankingMetric metric;
+    private final IMetric metric;
     private final AlphaTestbed simulator;
     private final String name;
     private final String model;
@@ -22,7 +22,7 @@ public class MetricHolder {
 
     private double currentValue = 0;
 
-    public MetricHolder(int service, IRankingMetric metric, AlphaTestbed sim) {
+    public MetricHolder(int service, IMetric metric, AlphaTestbed sim) {
 	this.service = service;
 	this.metric = metric;
 	this.simulator = sim;

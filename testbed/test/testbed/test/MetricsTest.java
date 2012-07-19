@@ -8,6 +8,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import testbed.interfaces.IMetric;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IUtilityMetric;
 import testbed.metric.Accuracy;
@@ -39,6 +40,19 @@ public class MetricsTest {
     }
 
     @Test
+    public void metricsType() {
+	IMetric utility = new NormalizedUtility();
+	IMetric accuracy = new Accuracy();
+	utility.initialize();
+	accuracy.initialize();
+
+	Assert.assertTrue(utility instanceof IUtilityMetric);
+	Assert.assertFalse(utility instanceof IRankingMetric);
+	Assert.assertTrue(accuracy instanceof IRankingMetric);
+	Assert.assertFalse(accuracy instanceof IUtilityMetric);
+    }
+
+    @Test
     public void normalizedUtility() {
 	IUtilityMetric utility = new NormalizedUtility();
 
@@ -48,7 +62,8 @@ public class MetricsTest {
 	Assert.assertEquals(1, utility.evaluate(cpbs, 1), 0.001); // total 2
 	Assert.assertEquals(0.9, utility.evaluate(cpbs, 4), 0.001); // total 2.7
 	Assert.assertEquals(0.9, utility.evaluate(cpbs, 2), 0.001); // total 3.6
-	Assert.assertEquals(0.88, utility.evaluate(cpbs, 3), 0.001); // total 4.4
+	Assert.assertEquals(0.88, utility.evaluate(cpbs, 3), 0.001); // total
+								     // 4.4
 	Assert.assertEquals(0.9, utility.evaluate(cpbs, 1), 0.001); // total 5.4
     }
 

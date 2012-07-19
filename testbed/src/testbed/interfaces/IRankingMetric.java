@@ -8,15 +8,7 @@ import java.util.Map;
  * @author David
  * 
  */
-public interface IRankingMetric {
-
-    /**
-     * Initializes the metric with optional parameters.
-     * 
-     * @param params
-     *            Optional parameters
-     */
-    public void initialize(Object... params);
+public interface IRankingMetric extends IMetric {
 
     /**
      * Evaluates given rankings against given capabilities.
@@ -32,22 +24,4 @@ public interface IRankingMetric {
      */
     public double evaluate(Map<Integer, Integer> rankings,
 	    Map<Integer, Double> capabilities);
-
-    /**
-     * Returns a friendly name for the metric
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Returns {@link IParametersPanel} instance, which defines GUI for setting
-     * parameters for this metric.
-     * 
-     * If the metric needs no parameters, this method should return null.
-     * 
-     * @return Instance of the {@link IParametersPanel} or null if parameters
-     *         are not needed.
-     */
-    public IParametersPanel getParametersPanel();
 }

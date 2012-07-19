@@ -10,7 +10,7 @@ import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import testbed.AlphaTestbed;
 import testbed.gui.ParametersGUI;
-import testbed.interfaces.IRankingMetric;
+import testbed.interfaces.IMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
 
@@ -52,15 +52,16 @@ public class RepastPlatform extends DefaultContext<Object> implements
 
 	// Set metrics
 	@SuppressWarnings("unchecked")
-	Set<IRankingMetric> metrics = (Set<IRankingMetric>) generalSetup[2];
+	Set<IMetric> metrics = (Set<IMetric>) generalSetup[2];
 
 	// simulator
 	simulator = new AlphaTestbed(model, scenario, metrics);
 
 	MetricHolder mh = null;
 
-	for (IRankingMetric mtrc : metrics) {
-	    mtrc.initialize(0.25); // TODO: do it in a more suitable place!
+	for (IMetric mtrc : metrics) {
+	    // TODO: do it in a more suitable place!
+	    mtrc.initialize(0.25);
 
 	    for (int srvc = 0; srvc < scenario.getServices().size(); srvc++) {
 		mh = new MetricHolder(srvc, mtrc, simulator);

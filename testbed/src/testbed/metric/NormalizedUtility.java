@@ -2,10 +2,9 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IUtilityMetric;
 
-public class NormalizedUtility implements IUtilityMetric {
+public class NormalizedUtility extends AbstractMetric implements IUtilityMetric {
 
     private double total, maximal;
 
@@ -30,15 +29,5 @@ public class NormalizedUtility implements IUtilityMetric {
 	maximal += max;
 
 	return total / maximal;
-    }
-
-    @Override
-    public String getName() {
-	return "Normalized utility";
-    }
-
-    @Override
-    public IParametersPanel getParametersPanel() {
-	return null;
     }
 }

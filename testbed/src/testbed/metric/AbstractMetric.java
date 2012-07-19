@@ -1,9 +1,9 @@
 package testbed.metric;
 
-import testbed.interfaces.IRankingMetric;
+import testbed.interfaces.IMetric;
 import testbed.interfaces.IParametersPanel;
 
-public abstract class AbstractRankingMetric implements IRankingMetric {
+public abstract class AbstractMetric implements IMetric {
 
     @Override
     public void initialize(Object... params) {

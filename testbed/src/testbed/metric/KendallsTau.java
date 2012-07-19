@@ -2,6 +2,8 @@ package testbed.metric;
 
 import java.util.Map;
 
+import testbed.interfaces.IRankingMetric;
+
 /**
  * Kendall's Tau metric
  * 
@@ -10,7 +12,7 @@ import java.util.Map;
  * @author david
  * 
  */
-public class KendallsTau extends AbstractRankingMetric {
+public class KendallsTau extends AbstractMetric implements IRankingMetric {
 
     @Override
     public double evaluate(Map<Integer, Integer> rankings,

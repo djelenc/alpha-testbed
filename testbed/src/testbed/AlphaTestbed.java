@@ -8,10 +8,12 @@ import testbed.common.LexiographicComparator;
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.IDecisionMaking;
+import testbed.interfaces.IMetric;
 import testbed.interfaces.IPartnerSelection;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
+import testbed.interfaces.IUtilityMetric;
 import testbed.interfaces.Opinion;
 
 /**
@@ -52,16 +54,19 @@ public class AlphaTestbed {
     private final IPartnerSelection selection;
 
     /** Set of ranking metrics */
-    private final Set<IRankingMetric> metrics;
+    private final Set<IMetric> metrics;
 
     /** Temporary variable to hold the metric results */
     private final double[][] score;
 
+    /** Flag for utility mode */
+    private final boolean isUtilityMode;
+
     public AlphaTestbed(ITrustModel model, IScenario scenario,
-	    Set<IRankingMetric> metrics) {
+	    Set<IMetric> metrics) {
 	this.model = model;
 	this.scenario = scenario;
-	this.metrics = new TreeSet<IRankingMetric>(new LexiographicComparator());
+	this.metrics = new TreeSet<IMetric>(new LexiographicComparator());
 	this.metrics.addAll(metrics);
 
 	score = new double[scenario.getServices().size()][metrics.size()];
@@ -69,9 +74,11 @@ public class AlphaTestbed {
 	if (isUtilityMode(model, scenario)) {
 	    decision = (IDecisionMaking) model;
 	    selection = (IPartnerSelection) scenario;
+	    isUtilityMode = true;
 	} else if (isRankingsMode(model, scenario)) {
 	    decision = null;
 	    selection = null;
+	    isUtilityMode = false;
 	} else {
 	    throw new IllegalArgumentException(String.format(
 		    "Selected trust model (%s) "
@@ -105,9 +112,9 @@ public class AlphaTestbed {
 	// get experiences
 	final Set<Integer> services = scenario.getServices();
 
-	if (null != selection && null != decision) {
-	    Map<Integer, Integer> partners;
+	Map<Integer, Integer> partners = null;
 
+	if (isUtilityMode) {
 	    // query trust model for interaction partners
 	    partners = decision.getNextInteractionPartners(services);
 
@@ -129,20 +136,43 @@ public class AlphaTestbed {
 	Map<Integer, Integer> rankings;
 	Map<Integer, Double> capabilities;
 
-	int metric = 0;
 	for (int service : services) {
-	    metric = 0;
+	    int metric = 0;
 	    rankings = model.getRankings(service);
 	    capabilities = scenario.getCapabilities(service);
 
-	    for (IRankingMetric m : metrics) {
-		score[service][metric] = m.evaluate(rankings, capabilities);
+	    for (IMetric m : metrics) {
+		double value = -1d;
+
+		// FIXME: If a IUtilityMetric is selected in a rankings mode,
+		// this causes a null-pointer-exception
+
+		// utility metric
+		if (IUtilityMetric.class.isAssignableFrom(m.getClass())) {
+		    IUtilityMetric rm = (IUtilityMetric) m;
+
+		    // compute for all partners for this service
+		    for (Map.Entry<Integer, Integer> e : partners.entrySet()) {
+			if (e.getValue().equals(service)) {
+			    value = rm.evaluate(capabilities, e.getKey());
+			}
+		    }
+		} else {
+		    IRankingMetric rm = (IRankingMetric) m;
+		    value = rm.evaluate(rankings, capabilities);
+		}
+
+		if (Double.compare(value, 0) < 0) {
+		    // this should never be executed -- a sanity check
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "Unable to compute value for metric %s and service %s",
+				    metric, service));
+		}
+
+		score[service][metric] = value;
 		metric += 1;
 	    }
-
-	    // for (UtilityMetri um : metricsUtility) {
-	    // utilityResults[service][m
-	    // }
 	}
     }
 
@@ -155,10 +185,10 @@ public class AlphaTestbed {
      *            The metric for the evaluation
      * @return The evaluation result
      */
-    public double getMetric(int service, IRankingMetric metric) {
+    public double getMetric(int service, IMetric metric) {
 	int idx = 0;
 
-	for (IRankingMetric m : metrics) {
+	for (IMetric m : metrics) {
 	    if (m == metric) {
 		break;
 	    }
