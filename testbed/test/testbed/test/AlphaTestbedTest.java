@@ -62,14 +62,14 @@ public class AlphaTestbedTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testRankingModeFailIncompatible1() {
+    public void decisionMakingTrustModelOnRankingsScenario() {
 	ITrustModel tm = new DecisionMakingTrustModel();
 	IScenario scn = new RankingsScenario();
 	new AlphaTestbed(tm, scn, metrics);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testRankingModeFailIncompatible2() {
+    public void rankingsTrustModelOnPartnerSelectionScenario() {
 	ITrustModel tm = new RankingsTrustModel();
 	IScenario scn = new PartnerSelectionScenario();
 	new AlphaTestbed(tm, scn, metrics);

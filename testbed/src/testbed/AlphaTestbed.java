@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import testbed.common.LexiographicComparator;
+import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.IDecisionMaking;
 import testbed.interfaces.IPartnerSelection;
@@ -105,12 +106,13 @@ public class AlphaTestbed {
 	final Set<Integer> services = scenario.getServices();
 
 	if (null != selection && null != decision) {
-	    final Map<Integer, Integer> partners;
+	    Map<Integer, Integer> partners;
 
 	    // query trust model for interaction partners
 	    partners = decision.getNextInteractionPartners(services);
 
-	    // XXX: ensure that the iteration through partners is deterministic!
+	    // Convert Map to a TreeMap to ensure deterministic iteration
+	    partners = Utils.orderedMap(partners);
 
 	    selection.setNextInteractionPartners(partners);
 	}

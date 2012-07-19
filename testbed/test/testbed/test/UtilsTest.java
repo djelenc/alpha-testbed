@@ -2,6 +2,7 @@ package testbed.test;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,6 +15,25 @@ import testbed.interfaces.ICondition;
 import testbed.interfaces.IDeceptionModel;
 
 public class UtilsTest {
+
+    @Test
+    public void orderedMapTest() {
+	Map<Integer, Integer> map = new LinkedHashMap<Integer, Integer>();
+	map.put(3, 10);
+	map.put(4, 10);
+	map.put(1, 30);
+	map.put(2, 50);
+	map.put(5, 30);
+
+	Map<Integer, Integer> map2 = Utils.orderedMap(map);
+
+	int prev = Integer.MIN_VALUE;
+
+	for (Map.Entry<Integer, Integer> entry : map2.entrySet()) {
+	    Assert.assertTrue(prev < entry.getKey());
+	    prev = entry.getKey();
+	}
+    }
 
     @Test
     public void randomTest() {

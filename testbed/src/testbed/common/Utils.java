@@ -164,4 +164,19 @@ public class Utils {
 
 	return s.toString();
     }
+
+    /**
+     * Takes a map and converts it to a tree map, thus enforcing a deterministic
+     * iteration through it.
+     * 
+     * @param input
+     *            Input map
+     * @return Input map implemented as a tree map
+     */
+    public static Map<Integer, Integer> orderedMap(Map<Integer, Integer> input) {
+	final Map<Integer, Integer> output = new TreeMap<Integer, Integer>();
+	output.putAll(input);
+
+	return output;
+    }
 }

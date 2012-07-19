@@ -9,8 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import testbed.interfaces.IRankingMetric;
+import testbed.interfaces.IUtilityMetric;
 import testbed.metric.Accuracy;
 import testbed.metric.Coverage;
+import testbed.metric.NormalizedUtility;
 
 public class MetricsTest {
 
@@ -34,6 +36,20 @@ public class MetricsTest {
 	cpbs.put(2, 0.9);
 	cpbs.put(3, 0.8);
 	cpbs.put(4, 0.7);
+    }
+
+    @Test
+    public void normalizedUtility() {
+	IUtilityMetric utility = new NormalizedUtility();
+
+	utility.initialize();
+
+	Assert.assertEquals(1, utility.evaluate(cpbs, 1), 0.001); // total 1
+	Assert.assertEquals(1, utility.evaluate(cpbs, 1), 0.001); // total 2
+	Assert.assertEquals(0.9, utility.evaluate(cpbs, 4), 0.001); // total 2.7
+	Assert.assertEquals(0.9, utility.evaluate(cpbs, 2), 0.001); // total 3.6
+	Assert.assertEquals(0.88, utility.evaluate(cpbs, 3), 0.001); // total 4.4
+	Assert.assertEquals(0.9, utility.evaluate(cpbs, 1), 0.001); // total 5.4
     }
 
     @Test
