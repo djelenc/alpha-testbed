@@ -17,15 +17,16 @@ import testbed.interfaces.IScenario;
 import testbed.interfaces.Opinion;
 
 /**
- * This scenario implementation differs from {@link Random} in the way
- * that the assignment of capabilities and deception models is different for
- * every service. All other aspects of the scenario are the same in comparison
- * to {@link Random}.
+ * This scenario implementation differs from {@link Random} in the way that the
+ * assignment of capabilities and deception models is different for every
+ * service. All other aspects of the scenario are the same in comparison to
+ * {@link Random}.
  * 
  * @author David
  * 
  */
-public class RandomWithMultiService extends AbstractScenario implements IScenario {
+public class RandomWithMultiService extends AbstractScenario implements
+	IScenario {
     protected int time;
 
     private Map<Integer, Double> capabilities;
@@ -72,9 +73,8 @@ public class RandomWithMultiService extends AbstractScenario implements IScenari
 	sd_i = Utils.extractParameter(validator, 2, parameters);
 	sd_o = Utils.extractParameter(validator, 3, parameters);
 
-	// PMF for assigning deception models.
-	// We must use TreeMap to ensure deterministic iteration over map
-	Map<IDeceptionModel, Double> dmPMF = new TreeMap<IDeceptionModel, Double>(
+	// PMF for assigning deception models
+	TreeMap<IDeceptionModel, Double> dmPMF = new TreeMap<IDeceptionModel, Double>(
 		new LexiographicComparator());
 	dmPMF.putAll(Utils.extractParameter(
 		new ICondition<Map<IDeceptionModel, Double>>() {

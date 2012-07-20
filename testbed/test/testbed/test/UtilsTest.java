@@ -2,10 +2,12 @@ package testbed.test;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import testbed.common.LexiographicComparator;
 import testbed.common.Utils;
 import testbed.deceptionmodel.Complementary;
 import testbed.deceptionmodel.Random;
@@ -37,7 +39,8 @@ public class UtilsTest {
 
     @Test
     public void randomTest() {
-	Map<IDeceptionModel, Double> distr = new LinkedHashMap<IDeceptionModel, Double>();
+	TreeMap<IDeceptionModel, Double> distr = new TreeMap<IDeceptionModel, Double>(
+		new LexiographicComparator());
 	distr.put(new Truthful(), 0.4);
 	distr.put(new Silent(), 0.3);
 	distr.put(new Complementary(), 0.2);
@@ -45,7 +48,8 @@ public class UtilsTest {
 
 	int iterations = 30000;
 
-	Map<IDeceptionModel, Double> emp = new LinkedHashMap<IDeceptionModel, Double>();
+	TreeMap<IDeceptionModel, Double> emp = new TreeMap<IDeceptionModel, Double>(
+		new LexiographicComparator());
 
 	for (int i = 0; i < iterations; i++) {
 	    IDeceptionModel dm = Utils.randomFromWeights(distr);

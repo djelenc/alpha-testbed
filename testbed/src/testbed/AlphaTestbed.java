@@ -15,14 +15,79 @@ import testbed.interfaces.IUtilityMetric;
 import testbed.interfaces.Opinion;
 
 /**
- * The testbed that performs the evaluation.
+ * <h1>The Alpha Testbed</h1>
+ * <p>
+ * The testbed that performs the evaluation. It has two modes of operation, the
+ * ranking mode and the utility mode. The execution flow of the testbed and the
+ * data it contains depend on the mode the testbed is in.
+ * 
+ * <h2>Ranking mode</h2>
+ * <p>
+ * In ranking mode, the testbed treats the trust model as a black box. This
+ * means that the testbed generates the complete data that is given to the trust
+ * model. The testbed then evaluates trust model's output. This is achieved by
+ * evaluating rankings of agents that emerge from the computed trust degrees.
+ * The general execution flow is the following:
+ * <ol>
+ * <li>The testbed sets time in the scenario.
+ * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the scenario to generate opinions.
+ * <li>The testbed conveys generated opinions to the trust model.
+ * <li>The testbed instructs the scenario to generate experiences.
+ * <li>The testbed conveys generated experiences to the trust model.
+ * <li>The testbed instructs the trust model to evaluate trust.
+ * <li>The testbed instruct the trust model to compute rankings of agents.
+ * <li>The testbed evaluates received rankings.
+ * </ol>
+ * <p>
+ * The last two steps are repeated for every type of service.
  * 
  * <p>
- * The testbed holds a reference to a trust model, a scenario and a list of
- * metrics. In every tick, the testbed queries the scenario for experiences and
- * opinions, and then conveys them to the trust model. Afterwards it calculates
- * the results with the given metrics. The results are stored in a temporary
- * variable, which is exposed via public method.
+ * In ranking mode, the testbed holds a reference to instances of a
+ * {@link ITrustModel}, a {@link IScenario}, and a {@link IRankingMetric}. Other
+ * class members are set to null or ignored.
+ * 
+ * <h2>Utility mode</h2>
+ * <p>
+ * In utility mode the testbed treats the trust model as a cognitive entity.
+ * This means that the trust model is required to select partners for
+ * interactions, whereas in ranking mode the testbed (or the scenario) was
+ * responsible for selecting interaction partners. Besides measuring the
+ * correctness of rankings, the testbed in utility mode also measures the
+ * utility that the trust model obtains in interactions during evaluation. The
+ * general execution flow is the following:
+ * <ol>
+ * <li>The testbed sets time in the scenario.
+ * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the scenario to generate opinions.
+ * <li>The testbed conveys generated opinions to the trust model.
+ * <li>The testbed instructs the trust model to tell, whom does agent Alpha want
+ * to interact with.
+ * <li>The testbed instructs the scenario to generate experiences tuples for
+ * agents that the trust model requested.
+ * <li>The testbed conveys generated experiences to the trust model.
+ * <li>The testbed instructs the trust model to evaluate trust.
+ * <li>The testbed instructs the trust model to compute rankings of agents.
+ * <li>The testbed evaluates received rankings.
+ * <li>The testbed evaluates the utility which was obtained from interactions.
+ * </ol>
+ * <p>
+ * The last three steps are repeated for every type of service.
+ * 
+ * <p>
+ * In utility mode, the testbed reference to the same instances as in ranking
+ * mode (an instance of {@link ITrustModel}, {@link IScenario}, and
+ * {@link IRankingMetric}). Besides those, the utility mode also references an
+ * implementation of an {@link IDecisionMaking} interface (part of a trust model
+ * that selects interaction partners), an {@link IPartnerSelection} interface
+ * implementation (part of scenario that receives the partner selections and
+ * prepares corresponding {@link Experience} tuples) and an instance of a
+ * {@link IUtilityMetric} to evaluate the obtained utility. Because the
+ * {@link IUtilityMetric} is stateful (and the state is different for every
+ * service), we need to have an instance of such {@link IUtilityMetric} instance
+ * for every possible type of service. The testbed stores all those instances in
+ * the map of type {@link Map}<{@link Integer}, {@link IUtilityMetric}>, because
+ * they track state.
  * 
  * <p>
  * The testbed must be instantiated and run by a simulation platform, such as
@@ -42,8 +107,8 @@ public class AlphaTestbed {
     private final ITrustModel model;
 
     /**
-     * Reference to the decision making capabilities of a trust model -- if it
-     * does not have it, this is set to null
+     * Reference to the decision making capabilities of a trust model -- null in
+     * ranking mode
      */
     private final IDecisionMaking decision;
 
@@ -51,24 +116,24 @@ public class AlphaTestbed {
     private final IScenario scenario;
 
     /**
-     * Reference to the partner selection capability of the scenario -- if it
-     * does not have it, this is set to null
+     * Reference to the partner selection capability of the scenario -- null in
+     * ranking mode
      */
     private final IPartnerSelection selection;
 
     /** Instance of a ranking metric */
     private final IRankingMetric rankingMetric;
 
-    /** Instance of an utility metric */
+    /** Instance of an utility metric -- null in ranking mode */
     private final IUtilityMetric utilityMetric;
 
     /** Temporary variable to hold the metric results */
     private final double[][] score;
 
-    /** Flag for utility mode */
+    /** Convenience flag to denote the utility mode */
     private final boolean utilityMode;
 
-    /** Map of Service => IUtilityMetric instances */
+    /** Mapping of services to IUtilityMetric instances -- null in ranking mode */
     private final Map<Integer, IUtilityMetric> allUtilityMetrics;
 
     public AlphaTestbed(ITrustModel model, IScenario scenario,
@@ -165,12 +230,10 @@ public class AlphaTestbed {
 
 		// In a particular time tick, agent Alpha can interact with
 		// different agents, but for the same type of service.
-		// Because
-		// of this, we need to iterate through all partners. In such
-		// case, the updated utility value (for that service) will
-		// reflect the utility that was obtained after interacting
-		// with
-		// the last agent in the set of partners.
+		// Because of this, we need to iterate through all partners.
+		// Additionally, in such case, the updated utility value (for
+		// that service) will reflect the utility that was obtained
+		// after interacting with the last agent in the set of partners.
 		for (Map.Entry<Integer, Integer> e : partners.entrySet()) {
 		    final int agent = e.getKey();
 		    final int partnerService = e.getValue();
@@ -263,7 +326,7 @@ public class AlphaTestbed {
     }
 
     /**
-     * Returns true if the testbed is in the utility mode.
+     * Returns true, if the testbed is in the utility mode.
      * 
      * @return
      */

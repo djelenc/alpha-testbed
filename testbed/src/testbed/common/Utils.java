@@ -67,18 +67,18 @@ public class Utils {
     }
 
     /**
-     * Returns a random element from the provided probability mass function.
+     * Returns a random element from the provided distribution (precisely --
+     * probability mass function).
      * 
-     * <p>
-     * To warrant deterministic behavior, the given {@link Map} must be ordered,
-     * by using {@link TreeMap} implementations.
+     * To warrant a deterministic behavior, the distribution must be given as a
+     * {@link TreeMap}.
      * 
      * @param pmf
      *            Probability mass function of possible outcomes expressed as a
-     *            {@link Map}
+     *            {@link TreeMap}
      * @return A random element
      */
-    public static <T> T randomFromWeights(Map<T, Double> pmf) {
+    public static <T> T randomFromWeights(TreeMap<T, Double> pmf) {
 	if (pmf == null || pmf.isEmpty()) {
 	    return null;
 	}
