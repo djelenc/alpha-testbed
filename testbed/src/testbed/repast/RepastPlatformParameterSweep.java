@@ -1,7 +1,5 @@
 package testbed.repast;
 
-import java.util.Set;
-
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -10,15 +8,16 @@ import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import testbed.AlphaTestbed;
 import testbed.gui.ParametersGUI;
-import testbed.interfaces.IMetric;
+import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
+import testbed.interfaces.IUtilityMetric;
 
 public class RepastPlatformParameterSweep extends DefaultContext<Object>
 	implements ContextBuilder<Object> {
     private static ParametersGUI gui;
 
-    private AlphaTestbed simulator;
+    private AlphaTestbed atb;
 
     @Override
     public Context<Object> build(Context<Object> context) {
@@ -49,28 +48,32 @@ public class RepastPlatformParameterSweep extends DefaultContext<Object>
 	ITrustModel model = (ITrustModel) generalSetup[0];
 	model.initialize(trustModelSetup);
 
-	// Set metrics
-	@SuppressWarnings("unchecked")
-	Set<IMetric> metrics = (Set<IMetric>) generalSetup[2];
+	// FIXME: Once I implement GUI parameters for metric this is where I
+	// should pass in their arguments and initialize the metrics
+
+	// Set ranking metric
+	IRankingMetric rankingMetric = (IRankingMetric) generalSetup[2];
+	rankingMetric.initialize(0.25); // TODO
+
+	// set utility metric
+	IUtilityMetric utilityMetric = (IUtilityMetric) generalSetup[3];
+	utilityMetric.initialize();
 
 	// simulator
-	simulator = new AlphaTestbed(model, scenario, metrics);
+	atb = new AlphaTestbed(model, scenario, rankingMetric, utilityMetric);
 
-	MetricHolder mh = null;
+	// Create metrics for the Metric holder class
+	for (int service : scenario.getServices()) {
+	    context.add(new MetricHolder(service, rankingMetric, atb));
 
-	for (IMetric mtrc : metrics) {
-	    mtrc.initialize(0.25); // TODO: do it in a more suitable place!
-
-	    for (int srvc = 0; srvc < scenario.getServices().size(); srvc++) {
-		mh = new MetricHolder(srvc, mtrc, simulator);
-		context.add(mh);
+	    if (atb.isUtilityMode()) {
+		context.add(new MetricHolder(service, utilityMetric, atb));
 	    }
 	}
 
-	context.add(simulator);
+	context.add(atb);
 
-	// priority = 2 to ensure stepping has the highest priority,
-	// that is at the start of every tick
+	// priority = 2 to ensure stepping has the highest priority
 	ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 	ScheduleParameters params = ScheduleParameters.createRepeating(1, 1, 2);
 	schedule.schedule(params, this, "step");
@@ -79,7 +82,7 @@ public class RepastPlatformParameterSweep extends DefaultContext<Object>
     }
 
     public void step() {
-	simulator.step((int) RunEnvironment.getInstance().getCurrentSchedule()
+	atb.step((int) RunEnvironment.getInstance().getCurrentSchedule()
 		.getTickCount());
     }
 }

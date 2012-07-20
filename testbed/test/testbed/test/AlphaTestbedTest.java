@@ -12,20 +12,21 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.IDecisionMaking;
 import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IPartnerSelection;
-import testbed.interfaces.IMetric;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
+import testbed.interfaces.IUtilityMetric;
 import testbed.interfaces.Opinion;
 
 public class AlphaTestbedTest {
 
-    Set<IMetric> metrics;
+    IRankingMetric ranking;
+    IUtilityMetric utility;
 
     @Before
     public void setUp() {
-	metrics = new LinkedHashSet<IMetric>();
-	metrics.add(new IRankingMetric() {
+	ranking = new IRankingMetric() {
+
 	    @Override
 	    public void initialize(Object... params) {
 	    }
@@ -45,35 +46,58 @@ public class AlphaTestbedTest {
 		    Map<Integer, Double> capabilities) {
 		return 0;
 	    }
-	});
+	};
+
+	utility = new IUtilityMetric() {
+
+	    @Override
+	    public void initialize(Object... params) {
+	    }
+
+	    @Override
+	    public IParametersPanel getParametersPanel() {
+		return null;
+	    }
+
+	    @Override
+	    public String getName() {
+		return null;
+	    }
+
+	    @Override
+	    public double evaluate(Map<Integer, Double> capabilities, int agent) {
+		// TODO Auto-generated method stub
+		return 0;
+	    }
+	};
     }
 
     @Test
     public void testRankingMode() {
 	ITrustModel tm = new RankingsTrustModel();
 	IScenario scn = new RankingsScenario();
-	new AlphaTestbed(tm, scn, metrics);
+	new AlphaTestbed(tm, scn, ranking, utility);
     }
 
     @Test
     public void testUtilityMode() {
 	ITrustModel tm = new DecisionMakingTrustModel();
 	IScenario scn = new PartnerSelectionScenario();
-	new AlphaTestbed(tm, scn, metrics);
+	new AlphaTestbed(tm, scn, ranking, utility);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void decisionMakingTrustModelOnRankingsScenario() {
 	ITrustModel tm = new DecisionMakingTrustModel();
 	IScenario scn = new RankingsScenario();
-	new AlphaTestbed(tm, scn, metrics);
+	new AlphaTestbed(tm, scn, ranking, utility);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void rankingsTrustModelOnPartnerSelectionScenario() {
 	ITrustModel tm = new RankingsTrustModel();
 	IScenario scn = new PartnerSelectionScenario();
-	new AlphaTestbed(tm, scn, metrics);
+	new AlphaTestbed(tm, scn, ranking, utility);
     }
 
 }

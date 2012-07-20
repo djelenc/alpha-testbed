@@ -1,10 +1,8 @@
 package testbed;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-
-import testbed.common.LexiographicComparator;
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.IDecisionMaking;
@@ -35,6 +33,11 @@ import testbed.interfaces.Opinion;
  */
 public class AlphaTestbed {
 
+    // Exception messages
+    private static final String INCOMPATIBLE_EX = "Trust model %s cannot be tested with scenario %s.";
+    private static final String UTILITY_VALUE_EX = "Unable to compute value for metric %s and service %d.";
+    private static final String METRIC_QUERY_EX = "Invalid query to getMetric(%d, %s).";
+
     /** Reference to the trust model */
     private final ITrustModel model;
 
@@ -53,36 +56,43 @@ public class AlphaTestbed {
      */
     private final IPartnerSelection selection;
 
-    /** Set of ranking metrics */
-    private final Set<IMetric> metrics;
+    /** Instance of a ranking metric */
+    private final IRankingMetric rankingMetric;
+
+    /** Instance of an utility metric */
+    private final IUtilityMetric utilityMetric;
 
     /** Temporary variable to hold the metric results */
     private final double[][] score;
 
     /** Flag for utility mode */
-    private final boolean isUtilityMode;
+    private final boolean utilityMode;
+
+    /** Map of Service => IUtilityMetric instances */
+    private final Map<Integer, IUtilityMetric> allUtilityMetrics;
 
     public AlphaTestbed(ITrustModel model, IScenario scenario,
-	    Set<IMetric> metrics) {
+	    IRankingMetric rankingMetric, IUtilityMetric utilityMetric) {
 	this.model = model;
 	this.scenario = scenario;
-	this.metrics = new TreeSet<IMetric>(new LexiographicComparator());
-	this.metrics.addAll(metrics);
+	this.rankingMetric = rankingMetric;
 
-	score = new double[scenario.getServices().size()][metrics.size()];
+	score = new double[scenario.getServices().size()][2];
 
-	if (isUtilityMode(model, scenario)) {
-	    decision = (IDecisionMaking) model;
-	    selection = (IPartnerSelection) scenario;
-	    isUtilityMode = true;
-	} else if (isRankingsMode(model, scenario)) {
-	    decision = null;
-	    selection = null;
-	    isUtilityMode = false;
+	if (isValidUtilityMode(model, scenario)) {
+	    this.decision = (IDecisionMaking) model;
+	    this.selection = (IPartnerSelection) scenario;
+	    this.utilityMetric = utilityMetric;
+	    this.allUtilityMetrics = new HashMap<Integer, IUtilityMetric>();
+	    this.utilityMode = true;
+	} else if (isValidRankingsMode(model, scenario)) {
+	    this.decision = null;
+	    this.selection = null;
+	    this.utilityMetric = null;
+	    this.allUtilityMetrics = null;
+	    this.utilityMode = false;
 	} else {
-	    throw new IllegalArgumentException(String.format(
-		    "Selected trust model (%s) "
-			    + "cannot be tested with selected scenario (%s)",
+	    throw new IllegalArgumentException(String.format(INCOMPATIBLE_EX,
 		    model.getName(), scenario.getName()));
 	}
     }
@@ -109,21 +119,23 @@ public class AlphaTestbed {
 	// convey opinions
 	model.processOpinions(opinions);
 
-	// get experiences
+	// get services
 	final Set<Integer> services = scenario.getServices();
 
 	Map<Integer, Integer> partners = null;
 
-	if (isUtilityMode) {
+	if (isUtilityMode()) {
 	    // query trust model for interaction partners
 	    partners = decision.getNextInteractionPartners(services);
 
 	    // Convert Map to a TreeMap to ensure deterministic iteration
 	    partners = Utils.orderedMap(partners);
 
+	    // give partner selection to the scenario
 	    selection.setNextInteractionPartners(partners);
 	}
 
+	// generate experiences
 	final Set<Experience> experiences = scenario.generateExperiences();
 
 	// convey experiences
@@ -137,41 +149,46 @@ public class AlphaTestbed {
 	Map<Integer, Double> capabilities;
 
 	for (int service : services) {
-	    int metric = 0;
 	    rankings = model.getRankings(service);
 	    capabilities = scenario.getCapabilities(service);
 
-	    for (IMetric m : metrics) {
+	    // evaluate rankings
+	    score[service][0] = rankingMetric.evaluate(rankings, capabilities);
+
+	    // evaluate utility
+	    if (isUtilityMode()) {
 		double value = -1d;
 
-		// FIXME: If a IUtilityMetric is selected in a rankings mode,
-		// this causes a null-pointer-exception
+		if (!allUtilityMetrics.containsKey(service)) {
+		    allUtilityMetrics.put(service, utilityMetric);
+		}
 
-		// utility metric
-		if (IUtilityMetric.class.isAssignableFrom(m.getClass())) {
-		    IUtilityMetric rm = (IUtilityMetric) m;
+		// In a particular time tick, agent Alpha can interact with
+		// different agents, but for the same type of service.
+		// Because
+		// of this, we need to iterate through all partners. In such
+		// case, the updated utility value (for that service) will
+		// reflect the utility that was obtained after interacting
+		// with
+		// the last agent in the set of partners.
+		for (Map.Entry<Integer, Integer> e : partners.entrySet()) {
+		    final int agent = e.getKey();
+		    final int partnerService = e.getValue();
 
-		    // compute for all partners for this service
-		    for (Map.Entry<Integer, Integer> e : partners.entrySet()) {
-			if (e.getValue().equals(service)) {
-			    value = rm.evaluate(capabilities, e.getKey());
-			}
+		    final IUtilityMetric um = allUtilityMetrics.get(service);
+
+		    if (partnerService == service) {
+			value = um.evaluate(capabilities, agent);
 		    }
-		} else {
-		    IRankingMetric rm = (IRankingMetric) m;
-		    value = rm.evaluate(rankings, capabilities);
 		}
 
+		// this should never be executed -- a sanity check
 		if (Double.compare(value, 0) < 0) {
-		    // this should never be executed -- a sanity check
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "Unable to compute value for metric %s and service %s",
-				    metric, service));
+		    throw new IllegalArgumentException(String.format(
+			    UTILITY_VALUE_EX, utilityMetric.getName(), service));
 		}
 
-		score[service][metric] = value;
-		metric += 1;
+		score[service][1] = value;
 	    }
 	}
     }
@@ -186,22 +203,18 @@ public class AlphaTestbed {
      * @return The evaluation result
      */
     public double getMetric(int service, IMetric metric) {
-	int idx = 0;
+	final int metricIndex;
 
-	for (IMetric m : metrics) {
-	    if (m == metric) {
-		break;
-	    }
-
-	    idx++;
-	}
-
-	if (service < score.length && service >= 0 && idx < score[0].length) {
-	    return score[service][idx];
+	if (metric instanceof IRankingMetric) {
+	    metricIndex = 0;
+	} else if (metric instanceof IUtilityMetric) {
+	    metricIndex = 1;
 	} else {
-	    throw new IllegalArgumentException(String.format(
-		    "Invalid query to getMetric(%d, %s)", service, metric));
+	    throw new IllegalArgumentException(String.format(METRIC_QUERY_EX,
+		    service, metric));
 	}
+
+	return score[service][metricIndex];
     }
 
     public ITrustModel getModel() {
@@ -213,8 +226,8 @@ public class AlphaTestbed {
     }
 
     /**
-     * Determines if the combination of the trust model and the scenario
-     * constitutes a testing model with measuring utility.
+     * Determines, if the combination of the trust model and the scenario
+     * constitutes a valid mode that measures utility.
      * 
      * @param model
      *            Instance of a trust model
@@ -224,15 +237,15 @@ public class AlphaTestbed {
      *         {@link IDecisionMaking} interface and the instance of a scenario
      *         implements the {@link IPartnerSelection} interface.
      */
-    public boolean isUtilityMode(ITrustModel model, IScenario scenario) {
+    public boolean isValidUtilityMode(ITrustModel model, IScenario scenario) {
 	return IDecisionMaking.class.isAssignableFrom(model.getClass())
 		&& IPartnerSelection.class
 			.isAssignableFrom(scenario.getClass());
     }
 
     /**
-     * Determines if the combination of the given trust model and the given
-     * scenario constitutes a testing mode with measuring rankings.
+     * Determines, if the combination of the given trust model and the given
+     * scenario constitutes a valid mode that measures rankings.
      * 
      * @param model
      *            Instance of a trust model
@@ -243,9 +256,18 @@ public class AlphaTestbed {
      *         of a scenario does not implement the {@link IPartnerSelection}
      *         interface.
      */
-    public boolean isRankingsMode(ITrustModel model, IScenario scenario) {
+    public boolean isValidRankingsMode(ITrustModel model, IScenario scenario) {
 	return !IDecisionMaking.class.isAssignableFrom(model.getClass())
 		&& !IPartnerSelection.class.isAssignableFrom(scenario
 			.getClass());
+    }
+
+    /**
+     * Returns true if the testbed is in the utility mode.
+     * 
+     * @return
+     */
+    public boolean isUtilityMode() {
+	return utilityMode;
     }
 }

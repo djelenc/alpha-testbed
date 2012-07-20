@@ -9,22 +9,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Observer;
-import java.util.Set;
-
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import testbed.common.ClassLoaderUtils;
-import testbed.interfaces.IMetric;
 import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
+import testbed.interfaces.IUtilityMetric;
 
 public class MainPanel extends JPanel implements IParametersPanel {
     private static final long serialVersionUID = -1187728078314667265L;
@@ -32,13 +27,15 @@ public class MainPanel extends JPanel implements IParametersPanel {
     private ClassLoader cl;
     private Observer observer;
 
-    private JComboBox tmCmb = new JComboBox();
-    private JComboBox scnCmb = new JComboBox();
-    private List<JCheckBox> mtrChbs = new ArrayList<JCheckBox>();
+    private JComboBox trustModel = new JComboBox();
+    private JComboBox scenario = new JComboBox();
+    private JComboBox rankingMetric = new JComboBox();
+    private JComboBox utilityMetric = new JComboBox();
 
-    private JLabel tmLbl = new JLabel("Select trust model:  ");
-    private JLabel scnLbl = new JLabel("Select scenario:  ");
-    private JLabel mtrLbl = new JLabel("Select metrics:  ");
+    private JLabel tmLabel = new JLabel("Trust model:  ");
+    private JLabel scnLabel = new JLabel("Scenario:  ");
+    private JLabel rmLabel = new JLabel("Ranking metric:  ");
+    private JLabel umLabel = new JLabel("Utility metric:  ");
 
     @Override
     public Component getComponent() {
@@ -79,8 +76,9 @@ public class MainPanel extends JPanel implements IParametersPanel {
 
     @Override
     public Object[] getParameters() {
-	return new Object[] { tmCmb.getSelectedItem(),
-		scnCmb.getSelectedItem(), getMetrics() };
+	return new Object[] { trustModel.getSelectedItem(),
+		scenario.getSelectedItem(), rankingMetric.getSelectedItem(),
+		utilityMetric.getSelectedItem() };
     }
 
     private JPanel getContentPanel() {
@@ -99,85 +97,86 @@ public class MainPanel extends JPanel implements IParametersPanel {
 
 	// Trust models
 	for (ITrustModel tm : ClassLoaderUtils.lookUp(ITrustModel.class, cl))
-	    tmCmb.addItem(tm);
+	    trustModel.addItem(tm);
 
-	tmCmb.addActionListener(listener);
+	trustModel.addActionListener(listener);
 
 	c.gridx = 0;
 	c.gridy = 0;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
-	panel.add(tmLbl, c);
+	panel.add(tmLabel, c);
 
 	c.gridx = 1;
 	c.gridy = 0;
 	c.anchor = GridBagConstraints.LINE_START;
 	c.fill = GridBagConstraints.HORIZONTAL;
-	panel.add(tmCmb, c);
+	panel.add(trustModel, c);
 
 	// Scenarios
 	for (IScenario scn : ClassLoaderUtils.lookUp(IScenario.class, cl))
-	    scnCmb.addItem(scn);
+	    scenario.addItem(scn);
 
-	scnCmb.addActionListener(listener);
+	scenario.addActionListener(listener);
 
 	c.gridx = 0;
 	c.gridy = 1;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
-	panel.add(scnLbl, c);
+	panel.add(scnLabel, c);
 
 	c.gridx = 1;
 	c.gridy = 1;
 	c.anchor = GridBagConstraints.LINE_START;
 	c.fill = GridBagConstraints.HORIZONTAL;
-	panel.add(scnCmb, c);
+	panel.add(scenario, c);
 
-	// Metrics
+	// Ranking metric
+	for (IRankingMetric mtr : ClassLoaderUtils.lookUp(IRankingMetric.class,
+		cl)) {
+	    rankingMetric.addItem(mtr);
+	}
+
+	rankingMetric.addActionListener(listener);
+
 	c.gridx = 0;
 	c.gridy = 2;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
-	panel.add(mtrLbl, c);
+	panel.add(rmLabel, c);
 
-	JCheckBox cb = null;
-	int i = 2;
+	c.gridx = 1;
+	c.gridy = 2;
 	c.anchor = GridBagConstraints.LINE_START;
+	c.fill = GridBagConstraints.HORIZONTAL;
+	panel.add(rankingMetric, c);
 
-	for (IMetric mtr : ClassLoaderUtils.lookUp(IMetric.class,
+	// Utility metric
+	for (IUtilityMetric mtr : ClassLoaderUtils.lookUp(IUtilityMetric.class,
 		cl)) {
-	    cb = new JCheckBox(mtr.getName(), true);
-	    cb.addActionListener(listener);
-	    cb.putClientProperty(mtr.getName(), mtr);
-	    c.gridx = 1;
-	    c.gridy = i++;
-	    panel.add(cb, c);
-	    mtrChbs.add(cb);
+	    utilityMetric.addItem(mtr);
 	}
+
+	utilityMetric.addActionListener(listener);
+
+	c.gridx = 0;
+	c.gridy = 3;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	panel.add(umLabel, c);
+
+	c.gridx = 1;
+	c.gridy = 3;
+	c.anchor = GridBagConstraints.LINE_START;
+	c.fill = GridBagConstraints.HORIZONTAL;
+	panel.add(utilityMetric, c);
 
 	return panel;
     }
 
-    private Set<IMetric> getMetrics() {
-	Set<IMetric> metrics = new HashSet<IMetric>();
-
-	for (JCheckBox jcb : mtrChbs) {
-	    if (jcb.isSelected()) {
-		metrics.add((IMetric) jcb.getClientProperty(jcb.getText()));
-	    }
-	}
-
-	return metrics;
-    }
-
     public void validateParameters() {
-	boolean valid = false;
-
-	for (JCheckBox jcb : mtrChbs)
-	    valid = valid || jcb.isSelected();
-
-	observer.update(null, valid);
-	observer.update(null, scnCmb.getSelectedItem());
-	observer.update(null, tmCmb.getSelectedItem());
+	// TODO: include both metrics
+	observer.update(null, scenario.getSelectedItem());
+	observer.update(null, trustModel.getSelectedItem());
     }
 }
