@@ -1,3 +1,4 @@
+testbed.scenario.RandomWithPartnerSelection
 testbed.scenario.Oscillation
 testbed.scenario.RandomWithNewCommers
 testbed.scenario.TransitiveWithChanges

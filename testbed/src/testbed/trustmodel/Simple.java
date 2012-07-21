@@ -10,23 +10,19 @@ import testbed.interfaces.Opinion;
 
 public class Simple extends AbstractTrustModel implements ITrustModel {
     // trust estimations
-    private Map<Integer, Double> trust;
+    protected Map<Integer, Double> trust;
 
     // cumulative interaction outcomes
-    private double[] exSum;
+    protected double[] exSum;
 
     // interaction count
-    private int[] exCnt;
+    protected int[] exCnt;
 
     // received opinions
-    private double[][] op;
+    protected double[][] op;
 
     // computed reputation
-    private double[] rep;
-
-    // temporary storage for experiences and opinions
-    private Set<Experience> experiences;
-    private Set<Opinion> opinions;
+    protected double[] rep;
 
     @Override
     public void initialize(Object... params) {
@@ -34,61 +30,48 @@ public class Simple extends AbstractTrustModel implements ITrustModel {
 	exSum = new double[0];
 	exCnt = new int[0];
 	op = new double[0][0];
-
-	experiences = null;
-	opinions = null;
     }
 
     @Override
     public void processExperiences(Set<Experience> experiences) {
-	this.experiences = experiences;
-    }
+	expandExperiences(experiences);
 
-    @Override
-    public void processOpinions(Set<Opinion> opinions) {
-	this.opinions = opinions;
-    }
-
-    @Override
-    public void calculateTrust() {
-	trust.clear();
-
-	// expand supporting arrays
-	expandArray(experiences, opinions);
-
-	// process new experiences
 	for (Experience e : experiences) {
 	    exSum[e.agent] += e.outcome;
 	    exCnt[e.agent] += 1;
 	}
+    }
 
-	// process opinions
-	for (Opinion o : opinions)
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	expandOpinions(opinions);
+
+	for (Opinion o : opinions) {
 	    op[o.agent1][o.agent2] = o.internalTrustDegree;
+	}
+    }
 
+    @Override
+    public void calculateTrust() {
 	// compute reputations
 	rep = new double[exSum.length];
 
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
+	for (int target = 0; target < op.length; target++) {
 	    double sum = 0;
 	    int count = 0;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		if (!Double.isNaN(op[agent1][agent2])) {
-		    sum += op[agent1][agent2];
+	    for (int reporter = 0; reporter < op.length; reporter++) {
+		if (!Double.isNaN(op[reporter][target])) {
+		    sum += op[reporter][target];
 		    count += 1;
 		}
 	    }
 
 	    if (count > 0)
-		rep[agent2] = sum / count;
+		rep[target] = sum / count;
 	    else
-		rep[agent2] = Double.NaN;
+		rep[target] = Double.NaN;
 	}
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
 
 	// combine experiences and reputation into trust
 	for (int agent = 0; agent < exCnt.length; agent++) {
@@ -111,8 +94,11 @@ public class Simple extends AbstractTrustModel implements ITrustModel {
 		trust.put(agent, t);
 	    }
 	}
+    }
 
-	return super.constructRankingsFromEstimations(trust);
+    @Override
+    public Map<Integer, Integer> getRankings(int service) {
+	return constructRankingsFromEstimations(trust);
     }
 
     @Override
@@ -121,42 +107,59 @@ public class Simple extends AbstractTrustModel implements ITrustModel {
     }
 
     /**
-     * Expands the supporting arrays (experienceCount, experienceSum and
-     * opinions) to the appropriate lengths.
+     * Expands the supporting array that hold opinions to appropriate length.
      * 
-     * @param experience
      * @param opinions
      */
-    private void expandArray(Set<Experience> experience, Set<Opinion> opinions) {
+    protected void expandOpinions(Set<Opinion> opinions) {
+	int max = op.length - 1;
+
+	for (Opinion o : opinions)
+	    if (o.agent2 > max || o.agent1 > max)
+		max = Math.max(o.agent1, o.agent2);
+
+	if (max > op.length - 1) {
+	    expandArrays(max);
+	}
+    }
+
+    /**
+     * Expands the supporting array that holds experiences to appropriate
+     * lengths.
+     * 
+     * @param experience
+     */
+    protected void expandExperiences(Set<Experience> experience) {
 	int max = exSum.length - 1;
 
 	for (Experience e : experience)
 	    if (e.agent > max)
 		max = e.agent;
 
-	for (Opinion o : opinions)
-	    if (o.agent2 > max || o.agent1 > max)
-		max = Math.max(o.agent1, o.agent2);
-
 	if (max > exSum.length - 1) {
-	    double[] newExSum = new double[max + 1];
-	    System.arraycopy(exSum, 0, newExSum, 0, exSum.length);
-	    exSum = newExSum;
-
-	    int[] newExCnt = new int[max + 1];
-	    System.arraycopy(exCnt, 0, newExCnt, 0, exCnt.length);
-	    exCnt = newExCnt;
-
-	    double[][] newOp = new double[max + 1][max + 1];
-
-	    for (int i = 0; i < newOp.length; i++)
-		for (int j = 0; j < newOp.length; j++)
-		    newOp[i][j] = Double.NaN;
-
-	    for (int i = 0; i < op.length; i++)
-		System.arraycopy(op[i], 0, newOp[i], 0, op.length);
-
-	    op = newOp;
+	    expandArrays(max);
 	}
     }
+
+    protected void expandArrays(int max) {
+	double[] newExSum = new double[max + 1];
+	System.arraycopy(exSum, 0, newExSum, 0, exSum.length);
+	exSum = newExSum;
+
+	int[] newExCnt = new int[max + 1];
+	System.arraycopy(exCnt, 0, newExCnt, 0, exCnt.length);
+	exCnt = newExCnt;
+
+	double[][] newOp = new double[max + 1][max + 1];
+
+	for (int i = 0; i < newOp.length; i++)
+	    for (int j = 0; j < newOp.length; j++)
+		newOp[i][j] = Double.NaN;
+
+	for (int i = 0; i < op.length; i++)
+	    System.arraycopy(op[i], 0, newOp[i], 0, op.length);
+
+	op = newOp;
+    }
+
 }
