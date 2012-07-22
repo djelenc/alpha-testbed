@@ -101,7 +101,6 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      */
     public Wizard(Dialog owner) {
 	wizardModel = new WizardModel();
-	// wizardDialog = new JDialog(owner);
 	wizardDialog = new ResizedJDialog(owner);
 	initComponents();
     }
@@ -116,7 +115,6 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      */
     public Wizard(Frame owner) {
 	wizardModel = new WizardModel();
-	// wizardDialog = new JDialog(owner);
 	wizardDialog = new ResizedJDialog(owner);
 	initComponents();
     }
@@ -189,7 +187,6 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      *         the RETURN_CODE constants at the beginning of the class.
      */
     public int showModalDialog() {
-
 	wizardDialog.setModal(true);
 	wizardDialog.pack();
 	wizardDialog.setVisible(true);
@@ -415,14 +412,20 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      */
 
     private void initComponents() {
-
 	wizardModel.addPropertyChangeListener(this);
 	wizardController = new WizardController(this);
 
 	wizardDialog.getContentPane().setLayout(new BorderLayout());
 	wizardDialog.addWindowListener(this);
-	final Point p = wizardDialog.getParent().getLocation();
-	wizardDialog.setLocation(p.x + 300, p.y + 300);
+
+	wizardDialog.setLocationRelativeTo(wizardDialog.getParent());
+
+	final Point p = wizardDialog.getLocation();
+
+	p.x -= wizardDialog.getPreferredSize().width / 2;
+	p.y -= wizardDialog.getPreferredSize().height / 2;
+
+	wizardDialog.setLocation(p);
 
 	// Create the outer wizard panel, which is responsible for three
 	// buttons:

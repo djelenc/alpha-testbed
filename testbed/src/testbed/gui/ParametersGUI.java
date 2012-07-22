@@ -91,6 +91,7 @@ public class ParametersGUI {
 		Arrays.toString(sim.getScenarioParameters()));
 	System.out.printf("Trust model parameters: %s\n",
 		Arrays.toString(sim.getTrustModelParameters()));
-	System.exit(0);
+	sim.refresh();
+	System.exit(sim.showDialog());
     }
 }

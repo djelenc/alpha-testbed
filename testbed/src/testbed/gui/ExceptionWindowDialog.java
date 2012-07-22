@@ -1,7 +1,6 @@
 package testbed.gui;
 
 import java.awt.Dimension;
-import java.awt.Point;
 
 import javax.swing.JDialog;
 
@@ -97,8 +96,7 @@ public class ExceptionWindowDialog extends JDialog {
     }
 
     public int showNotification() {
-	final Point p = getParent().getLocation();
-	setLocation(p.x + 300, p.y + 150);
+	setLocationRelativeTo(getParent());
 	setVisible(true);
 
 	return code;

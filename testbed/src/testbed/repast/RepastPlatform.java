@@ -75,9 +75,8 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    }
 	    context.add(atb);
 	} catch (Exception e) {
-	    if (0 != handleException(e)) {
-		RunEnvironment.getInstance().endAt(0);
-	    }
+	    handleException(e);
+	    RunEnvironment.getInstance().endAt(0);
 	}
 
 	// priority = 2 to ensure stepping has the highest priority
