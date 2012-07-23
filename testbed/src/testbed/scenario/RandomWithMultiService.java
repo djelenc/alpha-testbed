@@ -13,6 +13,7 @@ import testbed.deceptionmodel.Silent;
 import testbed.interfaces.Experience;
 import testbed.interfaces.ICondition;
 import testbed.interfaces.IDeceptionModel;
+import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.Opinion;
 
@@ -223,5 +224,10 @@ public class RandomWithMultiService extends AbstractScenario implements
     @Override
     public void setCurrentTime(int time) {
 	this.time = time;
+    }
+
+    @Override
+    public IParametersPanel getParametersPanel() {
+	return new RandomWithMultiServiceGUI();
     }
 }
