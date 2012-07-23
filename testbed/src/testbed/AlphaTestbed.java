@@ -3,6 +3,7 @@ package testbed;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.IDecisionMaking;
@@ -97,11 +98,10 @@ import testbed.interfaces.Opinion;
  * 
  */
 public class AlphaTestbed {
-
-    // Exception messages
-    private static final String INCOMPATIBLE_EX = "Trust model %s cannot be tested with scenario %s.";
-    private static final String UTILITY_VALUE_EX = "Unable to compute value for metric %s and service %d.";
-    private static final String METRIC_QUERY_EX = "Invalid query to getMetric(%d, %s).";
+    private static final String CREATION_ERROR = "Could not instantiate metric '%s'.";
+    private static final String INCOMPATIBLE_EX = "Trust model '%s' cannot be tested with scenario '%s'.";
+    private static final String INCOMPUTABLE_UTILITY = "Unable to compute metric '%s' for service '%d'.";
+    private static final String METRIC_QUERY_EX = "Invalid query for metric '%s' and service '%d'.";
 
     /** Reference to the trust model */
     private final ITrustModel model;
@@ -127,13 +127,16 @@ public class AlphaTestbed {
     /** Instance of an utility metric -- null in ranking mode */
     private final IUtilityMetric utilityMetric;
 
-    /** Temporary variable to hold the metric results */
-    private final double[][] score;
+    /** Temporary map that holds the metric results */
+    private final Map<Integer, Double> score;
 
     /** Convenience flag to denote the utility mode */
     private final boolean utilityMode;
 
-    /** Mapping of services to IUtilityMetric instances -- null in ranking mode */
+    /**
+     * Mapping of services to {@link IUtilityMetric} instances -- null in
+     * ranking mode
+     */
     private final Map<Integer, IUtilityMetric> allUtilityMetrics;
 
     public AlphaTestbed(ITrustModel model, IScenario scenario,
@@ -142,7 +145,7 @@ public class AlphaTestbed {
 	this.scenario = scenario;
 	this.rankingMetric = rankingMetric;
 
-	score = new double[scenario.getServices().size()][2];
+	score = new HashMap<Integer, Double>();
 
 	if (isValidUtilityMode(model, scenario)) {
 	    this.decision = (IDecisionMaking) model;
@@ -209,23 +212,41 @@ public class AlphaTestbed {
 	// calculate trust
 	model.calculateTrust();
 
-	// calculate metrics for all services
-	Map<Integer, Integer> rankings;
-	Map<Integer, Double> capabilities;
+	// ------------------------------- //
+	// -- Evaluate calculated trust -- //
+	// ------------------------------- //
 
 	for (int service : services) {
+	    final Map<Integer, Integer> rankings;
+	    final Map<Integer, Double> capabilities;
+
 	    rankings = model.getRankings(service);
 	    capabilities = scenario.getCapabilities(service);
 
 	    // evaluate rankings
-	    score[service][0] = rankingMetric.evaluate(rankings, capabilities);
+	    final int rankMetricKey;
+	    final double rankMetricScore;
+
+	    rankMetricKey = rankingMetric.getClass().hashCode() ^ service;
+	    rankMetricScore = rankingMetric.evaluate(rankings, capabilities);
+
+	    score.put(rankMetricKey, rankMetricScore);
 
 	    // evaluate utility
 	    if (isUtilityMode()) {
-		double value = -1d;
+		final int utilityMetricKey;
+		double utilityMetricScore = -1d;
 
 		if (!allUtilityMetrics.containsKey(service)) {
-		    allUtilityMetrics.put(service, utilityMetric);
+		    final IUtilityMetric um;
+		    try {
+			um = utilityMetric.getClass().newInstance();
+			um.initialize(); // TODO -- needs parameters
+			allUtilityMetrics.put(service, um);
+		    } catch (Exception e) {
+			throw new Error(String.format(CREATION_ERROR,
+				utilityMetric));
+		    }
 		}
 
 		// In a particular time tick, agent Alpha can interact with
@@ -234,24 +255,28 @@ public class AlphaTestbed {
 		// Additionally, in such case, the updated utility value (for
 		// that service) will reflect the utility that was obtained
 		// after interacting with the last agent in the set of partners.
+
+		IUtilityMetric um = null;
 		for (Map.Entry<Integer, Integer> e : partners.entrySet()) {
 		    final int agent = e.getKey();
 		    final int partnerService = e.getValue();
 
-		    final IUtilityMetric um = allUtilityMetrics.get(service);
+		    um = allUtilityMetrics.get(service);
 
 		    if (partnerService == service) {
-			value = um.evaluate(capabilities, agent);
+			utilityMetricScore = um.evaluate(capabilities, agent);
 		    }
 		}
 
 		// this should never be executed -- a sanity check
-		if (Double.compare(value, 0) < 0) {
-		    throw new IllegalArgumentException(String.format(
-			    UTILITY_VALUE_EX, utilityMetric.getName(), service));
+		if (Double.compare(utilityMetricScore, 0) < 0) {
+		    throw new Error(String.format(INCOMPUTABLE_UTILITY,
+			    um.getName(), service));
 		}
 
-		score[service][1] = value;
+		utilityMetricKey = um.getClass().hashCode() ^ service;
+
+		score.put(utilityMetricKey, utilityMetricScore);
 	    }
 	}
     }
@@ -266,18 +291,14 @@ public class AlphaTestbed {
      * @return The evaluation result
      */
     public double getMetric(int service, IMetric metric) {
-	final int metricIndex;
+	final Double result = score.get(metric.getClass().hashCode() ^ service);
 
-	if (metric instanceof IRankingMetric) {
-	    metricIndex = 0;
-	} else if (metric instanceof IUtilityMetric) {
-	    metricIndex = 1;
-	} else {
+	if (null == result) {
 	    throw new IllegalArgumentException(String.format(METRIC_QUERY_EX,
-		    service, metric));
+		    metric, service));
+	} else {
+	    return result;
 	}
-
-	return score[service][metricIndex];
     }
 
     public ITrustModel getModel() {
