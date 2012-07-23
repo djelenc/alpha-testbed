@@ -100,7 +100,6 @@ import testbed.interfaces.Opinion;
 public class AlphaTestbed {
     private static final String CREATION_ERROR = "Could not instantiate metric '%s'.";
     private static final String INCOMPATIBLE_EX = "Trust model '%s' cannot be tested with scenario '%s'.";
-    private static final String INCOMPUTABLE_UTILITY = "Unable to compute metric '%s' for service '%d'.";
     private static final String METRIC_QUERY_EX = "Invalid query for metric '%s' and service '%d'.";
 
     /** Reference to the trust model */
@@ -234,12 +233,9 @@ public class AlphaTestbed {
 
 	    // evaluate utility
 	    if (isUtilityMode()) {
-		final int utilityMetricKey;
-		double utilityMetricScore = -1d;
-
 		if (!allUtilityMetrics.containsKey(service)) {
-		    final IUtilityMetric um;
 		    try {
+			final IUtilityMetric um;
 			um = utilityMetric.getClass().newInstance();
 			um.initialize(); // TODO -- needs parameters
 			allUtilityMetrics.put(service, um);
@@ -249,34 +245,18 @@ public class AlphaTestbed {
 		    }
 		}
 
-		// In a particular time tick, agent Alpha can interact with
-		// different agents, but for the same type of service.
-		// Because of this, we need to iterate through all partners.
-		// Additionally, in such case, the updated utility value (for
-		// that service) will reflect the utility that was obtained
-		// after interacting with the last agent in the set of partners.
+		final Integer agent = partners.get(service);
 
-		IUtilityMetric um = null;
-		for (Map.Entry<Integer, Integer> e : partners.entrySet()) {
-		    final int agent = e.getKey();
-		    final int partnerService = e.getValue();
+		// if no partner for this service
+		if (null != agent) {
+		    final int utilityMetricKey;
+		    final double utilityMetricScore;
+		    final IUtilityMetric um = allUtilityMetrics.get(service);
 
-		    um = allUtilityMetrics.get(service);
-
-		    if (partnerService == service) {
-			utilityMetricScore = um.evaluate(capabilities, agent);
-		    }
+		    utilityMetricKey = um.getClass().hashCode() ^ service;
+		    utilityMetricScore = um.evaluate(capabilities, agent);
+		    score.put(utilityMetricKey, utilityMetricScore);
 		}
-
-		// this should never be executed -- a sanity check
-		if (Double.compare(utilityMetricScore, 0) < 0) {
-		    throw new Error(String.format(INCOMPUTABLE_UTILITY,
-			    um.getName(), service));
-		}
-
-		utilityMetricKey = um.getClass().hashCode() ^ service;
-
-		score.put(utilityMetricKey, utilityMetricScore);
 	    }
 	}
     }

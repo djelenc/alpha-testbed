@@ -25,15 +25,9 @@ public class RandomWithPartnerSelection extends Random implements
 	final Set<Experience> experiences = new HashSet<Experience>();
 
 	for (int service : SERVICES) {
-	    int agent = Integer.MIN_VALUE;
+	    final Integer agent = partners.get(service);
 
-	    for (Map.Entry<Integer, Integer> e : partners.entrySet()) {
-		if (e.getValue().equals(service)) {
-		    agent = e.getKey();
-		}
-	    }
-
-	    if (Integer.MIN_VALUE == agent) {
+	    if (null == agent) {
 		throw new IllegalArgumentException(String.format(
 			PARTNER_NOT_SET, service));
 	    }

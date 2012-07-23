@@ -32,9 +32,9 @@ public class SimpleWithDecisionMaking extends Simple implements IDecisionMaking 
 	    }
 
 	    if (bestAgent == Integer.MIN_VALUE)
-		bestAgent = 3;
+		bestAgent = 0; // TODO: A bad default.
 
-	    partners.put(bestAgent, service);
+	    partners.put(service, bestAgent);
 	}
 
 	return partners;

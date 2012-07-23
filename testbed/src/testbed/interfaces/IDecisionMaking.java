@@ -18,10 +18,10 @@ public interface IDecisionMaking {
      * Alpha wants to interact in the current time slot.
      * 
      * <p>
-     * Keys in the resulting map must represent agents, while values must
-     * represent services. Thus it is not possible to interact with a single
-     * agent more than once per time tick, but it is possible to interact with
-     * several agents with the same type of service.
+     * Keys in the resulting map must represent services, while values must
+     * represent agents. Thus it is possible to interact with a single agent
+     * more than once per time tick, but each interaction must be for a
+     * different service.
      * 
      * <p>
      * The map must contain only valid agents and services, otherwise an
