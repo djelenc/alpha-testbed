@@ -44,11 +44,11 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    Object[] trustModelSetup = gui.getTrustModelParameters();
 
 	    // set scenario
-	    IScenario scenario = (IScenario) generalSetup[1];
+	    IScenario scenario = (IScenario) generalSetup[0];
 	    scenario.initialize(scenarioSetup);
 
 	    // set trust model
-	    ITrustModel model = (ITrustModel) generalSetup[0];
+	    ITrustModel model = (ITrustModel) generalSetup[1];
 	    model.initialize(trustModelSetup);
 
 	    // FIXME: Once I implement GUI parameters for metric this is where I
@@ -63,7 +63,7 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    utilityMetric.initialize();
 
 	    // simulator
-	    atb = new AlphaTestbed(model, scenario, rankingMetric,
+	    atb = new AlphaTestbed(scenario, model, rankingMetric,
 		    utilityMetric);
 
 	    // Create metrics for the Metric holder class
@@ -101,7 +101,7 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	}
     }
 
-    private int handleException(Exception e) {
+    public int handleException(Exception e) {
 	final String title = e.getMessage();
 	final StringBuffer sb = new StringBuffer();
 	sb.append("== Stack Trace ==\n\n");

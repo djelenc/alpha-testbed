@@ -24,7 +24,7 @@ public class ProgramaticRun {
 	rm.initialize();
 
 	// alpha test-bed (utility metric in set to null)
-	final AlphaTestbed atb = new AlphaTestbed(model, scenario, rm, null);
+	final AlphaTestbed atb = new AlphaTestbed(scenario, model, rm, null);
 
 	for (int time = 1; time <= 300; time++) {
 	    atb.step(time);

@@ -138,7 +138,7 @@ public class AlphaTestbed {
      */
     private final Map<Integer, IUtilityMetric> allUtilityMetrics;
 
-    public AlphaTestbed(ITrustModel model, IScenario scenario,
+    public AlphaTestbed(IScenario scenario, ITrustModel model,
 	    IRankingMetric rankingMetric, IUtilityMetric utilityMetric) {
 	this.model = model;
 	this.scenario = scenario;

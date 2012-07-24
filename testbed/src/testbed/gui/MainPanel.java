@@ -85,8 +85,8 @@ public class MainPanel extends JPanel implements IParametersPanel {
 
     @Override
     public Object[] getParameters() {
-	return new Object[] { trustModel.getSelectedItem(),
-		scenario.getSelectedItem(), rankingMetric.getSelectedItem(),
+	return new Object[] { scenario.getSelectedItem(),
+		trustModel.getSelectedItem(), rankingMetric.getSelectedItem(),
 		utilityMetric.getSelectedItem() };
     }
 

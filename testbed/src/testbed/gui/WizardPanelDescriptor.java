@@ -2,11 +2,13 @@ package testbed.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IScenario;
@@ -232,15 +234,16 @@ public class WizardPanelDescriptor implements Observer {
 
 	if (null == elements) {
 	    final JPanel e = new JPanel();
-	    e.setLayout(new BorderLayout());
+	    e.setLayout(new FlowLayout());
 	    final JLabel label = new JLabel(
 		    "<html><p align='center'>No parameters required.</p></html>");
 
-	    e.add(label, BorderLayout.CENTER);
+	    e.add(label);
 	    elements = e;
 	}
 
-	panel.add(elements, BorderLayout.CENTER);
+	// to make it scrollable
+	panel.add(new JScrollPane(elements), BorderLayout.CENTER);
 
 	return panel;
     }

@@ -517,7 +517,7 @@ class ResizedJDialog extends JDialog {
 
     @Override
     public Dimension getPreferredSize() {
-	return new Dimension(500, 400);
+	return new Dimension(500, 450);
     }
 
     @Override
