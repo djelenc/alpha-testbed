@@ -42,4 +42,9 @@ public class KendallsTau extends AbstractMetric implements IRankingMetric {
 
 	return 2d * result / rankings.size() / (rankings.size() - 1);
     }
+    
+    @Override
+    public String getName() {
+	return "Kendall's Tau";
+    }
 }

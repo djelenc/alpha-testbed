@@ -58,4 +58,9 @@ public class SpearmansFootRule extends AbstractMetric implements IRankingMetric 
 
 	return 1 - result / normalization;
     }
+
+    @Override
+    public String getName() {
+	return "Spearman's Foot Rule";
+    }
 }

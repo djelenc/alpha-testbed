@@ -46,4 +46,9 @@ public class WeightedKendallsTau extends AbstractMetric implements
 
 	return result / sum;
     }
+
+    @Override
+    public String getName() {
+	return "Weighted Kendall's Tau";
+    }
 }
