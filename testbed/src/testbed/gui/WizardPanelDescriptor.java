@@ -251,6 +251,7 @@ public class WizardPanelDescriptor implements Observer {
 	    /*
 	     * enable/disable next/finish button
 	     */
+	    wizard.setBackButtonEnabled((Boolean) arg);
 	    wizard.setNextFinishButtonEnabled((Boolean) arg);
 	} else if (arg instanceof IScenario) {
 	    /*

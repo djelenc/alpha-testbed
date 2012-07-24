@@ -9,13 +9,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.List;
 import java.util.Observer;
+
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import testbed.common.ClassLoaderUtils;
+import testbed.interfaces.IDecisionMaking;
 import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.IPartnerSelection;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
@@ -23,6 +28,8 @@ import testbed.interfaces.IUtilityMetric;
 
 public class MainPanel extends JPanel implements IParametersPanel {
     private static final long serialVersionUID = -1187728078314667265L;
+
+    private List<ITrustModel> allTrustModels;
 
     private ClassLoader cl;
     private Observer observer;
@@ -46,6 +53,8 @@ public class MainPanel extends JPanel implements IParametersPanel {
     public void initialize(Observer o, Object... params) {
 	observer = o;
 	cl = (ClassLoader) params[0];
+
+	allTrustModels = ClassLoaderUtils.lookUp(ITrustModel.class, cl);
 
 	JPanel contentPanel = getContentPanel();
 	contentPanel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
@@ -81,6 +90,17 @@ public class MainPanel extends JPanel implements IParametersPanel {
 		utilityMetric.getSelectedItem() };
     }
 
+    private void populateTrustModels(boolean decisionMaking) {
+	trustModel.removeAllItems();
+
+	for (ITrustModel tm : allTrustModels) {
+	    if (tm instanceof IDecisionMaking && decisionMaking
+		    || !(tm instanceof IDecisionMaking) && !decisionMaking) {
+		trustModel.addItem(tm);
+	    }
+	}
+    }
+
     private JPanel getContentPanel() {
 	JPanel panel = new JPanel();
 
@@ -95,41 +115,45 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	panel.setLayout(new GridBagLayout());
 	GridBagConstraints c = new GridBagConstraints();
 
-	// Trust models
-	for (ITrustModel tm : ClassLoaderUtils.lookUp(ITrustModel.class, cl))
-	    trustModel.addItem(tm);
-
-	trustModel.addActionListener(listener);
-
-	c.gridx = 0;
-	c.gridy = 0;
-	c.fill = GridBagConstraints.NONE;
-	c.anchor = GridBagConstraints.LINE_END;
-	panel.add(tmLabel, c);
-
-	c.gridx = 1;
-	c.gridy = 0;
-	c.anchor = GridBagConstraints.LINE_START;
-	c.fill = GridBagConstraints.HORIZONTAL;
-	panel.add(trustModel, c);
-
 	// Scenarios
 	for (IScenario scn : ClassLoaderUtils.lookUp(IScenario.class, cl))
 	    scenario.addItem(scn);
 
 	scenario.addActionListener(listener);
+	scenario.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		populateTrustModels(scenario.getSelectedItem() instanceof IPartnerSelection);
+	    }
+	});
 
 	c.gridx = 0;
-	c.gridy = 1;
+	c.gridy = 0;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	panel.add(scnLabel, c);
 
 	c.gridx = 1;
-	c.gridy = 1;
+	c.gridy = 0;
 	c.anchor = GridBagConstraints.LINE_START;
 	c.fill = GridBagConstraints.HORIZONTAL;
 	panel.add(scenario, c);
+
+	// Trust models
+	populateTrustModels(scenario.getSelectedItem() instanceof IPartnerSelection);
+	trustModel.addActionListener(listener);
+
+	c.gridx = 0;
+	c.gridy = 1;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	panel.add(tmLabel, c);
+
+	c.gridx = 1;
+	c.gridy = 1;
+	c.anchor = GridBagConstraints.LINE_START;
+	c.fill = GridBagConstraints.HORIZONTAL;
+	panel.add(trustModel, c);
 
 	// Ranking metric
 	for (IRankingMetric mtr : ClassLoaderUtils.lookUp(IRankingMetric.class,
@@ -152,9 +176,9 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	panel.add(rankingMetric, c);
 
 	// Utility metric
-	for (IUtilityMetric mtr : ClassLoaderUtils.lookUp(IUtilityMetric.class,
+	for (IUtilityMetric m : ClassLoaderUtils.lookUp(IUtilityMetric.class,
 		cl)) {
-	    utilityMetric.addItem(mtr);
+	    utilityMetric.addItem(m);
 	}
 
 	utilityMetric.addActionListener(listener);
@@ -175,8 +199,12 @@ public class MainPanel extends JPanel implements IParametersPanel {
     }
 
     public void validateParameters() {
-	// TODO: include both metrics
-	observer.update(null, scenario.getSelectedItem());
-	observer.update(null, trustModel.getSelectedItem());
+	final ITrustModel tm = (ITrustModel) trustModel.getSelectedItem();
+	final IScenario scn = (IScenario) scenario.getSelectedItem();
+
+	utilityMetric.setEnabled(scn instanceof IPartnerSelection);
+
+	observer.update(null, scn);
+	observer.update(null, tm);
     }
 }
