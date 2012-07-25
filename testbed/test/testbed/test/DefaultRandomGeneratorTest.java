@@ -16,7 +16,7 @@ import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.IDeceptionModel;
 import testbed.interfaces.IRandomGenerator;
 
-public class RandomGeneratorTest {
+public class DefaultRandomGeneratorTest {
 
     IRandomGenerator rnd;
 
