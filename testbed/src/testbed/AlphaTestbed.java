@@ -1,6 +1,8 @@
 package testbed;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,8 +21,22 @@ import testbed.interfaces.Opinion;
  * <h1>The Alpha Testbed</h1>
  * <p>
  * The testbed that performs the evaluation. It has two modes of operation, the
- * ranking mode and the utility mode. The execution flow of the testbed and the
- * data it contains depend on the mode the testbed is in.
+ * <b>ranking mode</b> and the <b>utility mode</b>. The execution flow of the
+ * testbed and the data it contains depend on the mode the testbed is in.
+ * 
+ * <p>
+ * The testbed publishes the results of the evaluation by using subscribers.
+ * Subscribers are instances of classes that implement the
+ * {@link IMetricSubscriber} interface.
+ * 
+ * <p>
+ * The results are published in the following manner. First, the subscribers
+ * have to subscribe to the testbed by using
+ * {@link #subscribe(IMetricSubscriber)} method. Second, at the end of each
+ * evaluation step, the testbed notifies all subscribers by invoking their
+ * {@link IMetricSubscriber#update(AlphaTestbed)} methods. Finally, the
+ * subscribers are expected to pull the results of the evaluation via the
+ * {@link #getMetric(int, IMetric)} method.
  * 
  * <h2>Ranking mode</h2>
  * <p>
@@ -38,10 +54,10 @@ import testbed.interfaces.Opinion;
  * <li>The testbed conveys generated experiences to the trust model.
  * <li>The testbed instructs the trust model to evaluate trust.
  * <li>The testbed instruct the trust model to compute rankings of agents.
- * <li>The testbed evaluates received rankings.
- * </ol>
+ * <li>The testbed evaluates received rankings. /ol>
  * <p>
- * The last two steps are repeated for every type of service.
+ * The last two steps are repeated for every type of service. Finally, the
+ * subscribers are asked to retrieve the results.
  * 
  * <p>
  * In ranking mode, the testbed holds a reference to instances of a
@@ -73,7 +89,8 @@ import testbed.interfaces.Opinion;
  * <li>The testbed evaluates the utility which was obtained from interactions.
  * </ol>
  * <p>
- * The last three steps are repeated for every type of service.
+ * The last three steps are repeated for every type of service. Finally, the
+ * subscribers are asked to retrieve the results.
  * 
  * <p>
  * In utility mode, the testbed reference to the same instances as in ranking
@@ -138,11 +155,15 @@ public class AlphaTestbed {
      */
     private final Map<Integer, IUtilityMetric> allUtilityMetrics;
 
+    /** Subscribers to this evaluation run */
+    final private List<IMetricSubscriber> subscribers;
+
     public AlphaTestbed(IScenario scenario, ITrustModel model,
 	    IRankingMetric rankingMetric, IUtilityMetric utilityMetric) {
 	this.model = model;
 	this.scenario = scenario;
 	this.rankingMetric = rankingMetric;
+	this.subscribers = new ArrayList<IMetricSubscriber>();
 
 	score = new HashMap<Integer, Double>();
 
@@ -152,7 +173,7 @@ public class AlphaTestbed {
 	    this.utilityMetric = utilityMetric;
 	    this.allUtilityMetrics = new HashMap<Integer, IUtilityMetric>();
 	    this.utilityMode = true;
-	} else if (isValidRankingsMode(model, scenario)) {
+	} else if (isValidRankingMode(model, scenario)) {
 	    this.decision = null;
 	    this.selection = null;
 	    this.utilityMetric = null;
@@ -259,15 +280,20 @@ public class AlphaTestbed {
 		}
 	    }
 	}
+
+	// notify all subscribers
+	notifiySubscribers();
     }
 
     /**
-     * Returns the value of the metric for the given service
+     * Returns the value of the metric for the given service. This method should
+     * be called by all instances of {@link IMetricSubscriber} to pull the data
+     * from the test-bed.
      * 
      * @param service
-     *            The service of the evaluation
+     *            The type of service
      * @param metric
-     *            The metric for the evaluation
+     *            The metric
      * @return The evaluation result
      */
     public double getMetric(int service, IMetric metric) {
@@ -297,11 +323,11 @@ public class AlphaTestbed {
      *            Instance of a trust model
      * @param scenario
      *            Instance of a scenario
-     * @return True, if and only if instance of the trust model implements the
-     *         {@link IDecisionMaking} interface and the instance of a scenario
-     *         implements the {@link IPartnerSelection} interface.
+     * @return True, if and only if the instance of the trust model implements
+     *         the {@link IDecisionMaking} interface and the instance of a
+     *         scenario implements the {@link IPartnerSelection} interface.
      */
-    public boolean isValidUtilityMode(ITrustModel model, IScenario scenario) {
+    protected boolean isValidUtilityMode(ITrustModel model, IScenario scenario) {
 	return IDecisionMaking.class.isAssignableFrom(model.getClass())
 		&& IPartnerSelection.class
 			.isAssignableFrom(scenario.getClass());
@@ -315,23 +341,54 @@ public class AlphaTestbed {
      *            Instance of a trust model
      * @param scenario
      *            Instance of a scenario
-     * @return True, if and only if instance of the trust model does not
+     * @return True, if and only if the instance of the trust model does not
      *         implement the {@link IDecisionMaking} interface and the instance
      *         of a scenario does not implement the {@link IPartnerSelection}
      *         interface.
      */
-    public boolean isValidRankingsMode(ITrustModel model, IScenario scenario) {
+    protected boolean isValidRankingMode(ITrustModel model, IScenario scenario) {
 	return !IDecisionMaking.class.isAssignableFrom(model.getClass())
 		&& !IPartnerSelection.class.isAssignableFrom(scenario
 			.getClass());
     }
 
     /**
-     * Returns true, if the testbed is in the utility mode.
+     * Returns true, if the test-bed is in the utility mode.
      * 
      * @return
      */
     public boolean isUtilityMode() {
 	return utilityMode;
+    }
+
+    /**
+     * Subscribe to the notifications of the test-bed. The data has to be pulled
+     * from the test-bed instance using {@link #getMetric(int, IMetric)} method.
+     * 
+     * @param observer
+     *            The instance of the subscriber.
+     */
+    public void subscribe(IMetricSubscriber observer) {
+	subscribers.add(observer);
+    }
+
+    /**
+     * Removes the subscriber from the list of subscribers that the test-bed
+     * notifies at the end of each run.
+     * 
+     * @param subscriber
+     *            The instance to be removed.
+     */
+    public void remove(IMetricSubscriber subscriber) {
+	subscribers.remove(subscriber);
+    }
+
+    /**
+     * Notifies the subscribers that the new data is ready to be pulled from the
+     * test-bed.
+     */
+    protected void notifiySubscribers() {
+	for (IMetricSubscriber s : subscribers)
+	    s.update(this);
     }
 }

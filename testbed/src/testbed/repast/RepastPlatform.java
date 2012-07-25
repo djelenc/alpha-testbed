@@ -68,10 +68,11 @@ public class RepastPlatform extends DefaultContext<Object> implements
 
 	    // Create metrics for the Metric holder class
 	    for (int service : scenario.getServices()) {
-		context.add(new MetricHolder(service, rankingMetric, atb));
+		context.add(new RepastMetricAgent(service, rankingMetric, atb));
 
 		if (atb.isUtilityMode())
-		    context.add(new MetricHolder(service, utilityMetric, atb));
+		    context.add(new RepastMetricAgent(service, utilityMetric,
+			    atb));
 	    }
 	    context.add(atb);
 	} catch (Exception e) {
@@ -81,7 +82,7 @@ public class RepastPlatform extends DefaultContext<Object> implements
 
 	// priority = 2 to ensure stepping has the highest priority
 	ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-	ScheduleParameters params = ScheduleParameters.createRepeating(1, 1, 2);
+	ScheduleParameters params = ScheduleParameters.createRepeating(1, 1, 1);
 	schedule.schedule(params, this, "step");
 
 	return context;

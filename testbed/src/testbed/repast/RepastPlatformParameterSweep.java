@@ -64,10 +64,10 @@ public class RepastPlatformParameterSweep extends RepastPlatform {
 
 	    // Create metrics for the Metric holder class
 	    for (int service : scenario.getServices()) {
-		context.add(new MetricHolder(service, rankingMetric, atb));
+		context.add(new RepastMetricAgent(service, rankingMetric, atb));
 
 		if (atb.isUtilityMode())
-		    context.add(new MetricHolder(service, utilityMetric, atb));
+		    context.add(new RepastMetricAgent(service, utilityMetric, atb));
 	    }
 	    context.add(atb);
 	} catch (Exception e) {
