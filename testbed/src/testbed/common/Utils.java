@@ -4,97 +4,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
-import repast.simphony.random.RandomHelper;
 import testbed.interfaces.ICondition;
-import cern.jet.random.Normal;
 
 public class Utils {
     private static final String NL = System.getProperty("line.separator");
-    private static Normal normal = null;
-
-    /**
-     * Random generator with PDF of a Truncated normal distribution with given
-     * mean and standard deviation. The value falls under [0, 1].
-     * 
-     * @see <a href=
-     *      'http://en.wikipedia.org/wiki/Truncated_normal_distribution'>
-     *      Truncated normal distribution</a>
-     * 
-     * @param mean
-     *            Mean value
-     * @param sd
-     *            Standard deviation
-     * @return random number
-     */
-    public static double randomTND(double mean, double sd) {
-	normal = RandomHelper.getNormal();
-
-	if (normal == null) { // check needed when re-initializing simulation
-	    normal = RandomHelper.createNormal(0, 0);
-	}
-
-	double number;
-
-	do {
-	    number = normal.nextDouble(mean, sd);
-	} while (number > 1 || number < 0);
-
-	return number;
-    }
-
-    /**
-     * Random generator with PDF of an uniform distribution on (min, max).
-     * 
-     * @param min
-     *            Minimum value (exclusively)
-     * @param max
-     *            Maximum value (exclusively)
-     * @return Generated random value
-     */
-    public static double randomUnif(double min, double max) {
-	return RandomHelper.nextDoubleFromTo(min, max);
-    }
-
-    /**
-     * Random generator of integers with uniform distribution between [min, max]
-     * 
-     * @param min
-     * @param max
-     * @return random index
-     */
-    public static int randomUnifIndex(int min, int max) {
-	return RandomHelper.nextIntFromTo(min, max);
-    }
-
-    /**
-     * Returns a random element from the provided distribution (precisely --
-     * probability mass function).
-     * 
-     * To warrant a deterministic behavior, the distribution must be given as a
-     * {@link TreeMap}.
-     * 
-     * @param pmf
-     *            Probability mass function of possible outcomes expressed as a
-     *            {@link TreeMap}
-     * @return A random element
-     */
-    public static <T> T randomFromWeights(TreeMap<T, Double> pmf) {
-	if (pmf == null || pmf.isEmpty()) {
-	    return null;
-	}
-
-	double rnd = randomUnif(0, 1), weight = 0;
-
-	for (Map.Entry<T, Double> e : pmf.entrySet()) {
-	    weight += e.getValue();
-
-	    if (weight > rnd) {
-		return e.getKey();
-	    }
-	}
-
-	throw new Error("This part of code should be unreachable!");
-    }
 
     /**
      * Extracts a value from a given array of objects at given index and casts

@@ -9,6 +9,9 @@ import java.util.TreeMap;
 
 import testbed.common.LexiographicComparator;
 import testbed.common.Utils;
+import testbed.deceptionmodel.NegativeExaggeration;
+import testbed.deceptionmodel.PositiveExaggeration;
+import testbed.deceptionmodel.RandomDeception;
 import testbed.deceptionmodel.Silent;
 import testbed.interfaces.Experience;
 import testbed.interfaces.ICondition;
@@ -34,7 +37,7 @@ public class RandomWithMultiService extends AbstractScenario implements
     private Map<Integer, IDeceptionModel> deceptionModels;
     protected Set<Integer> agents, services;
 
-    protected double sd_i, sd_o;
+    protected double sd_i, sd_o, posExCoef, negExCoef;
 
     protected boolean numAgentsLarger = true;
     protected int pivot = 0;
@@ -101,6 +104,20 @@ public class RandomWithMultiService extends AbstractScenario implements
 	    services.add(i);
 	}
 
+	final ICondition<Double> validatorExagg = new ICondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The exaggeration parameter must be between 0 and 1, but was %.2f",
+				    var));
+	    }
+	};
+
+	posExCoef = Utils.extractParameter(validatorExagg, 5, parameters);
+	negExCoef = Utils.extractParameter(validatorExagg, 6, parameters);
+
 	// calculate combined map key for agents and services
 	this.numAgentsLarger = numAgents >= numServices;
 	this.pivot = (numAgentsLarger ? numAgents : numServices);
@@ -117,10 +134,23 @@ public class RandomWithMultiService extends AbstractScenario implements
 		key = (numAgentsLarger ? pivot * i + j : pivot * j + i);
 
 		// assign capability
-		capabilities.put(key, Utils.randomUnif(0, 1));
+		capabilities.put(key, generator.randomUnif(0, 1));
+
+		final IDeceptionModel model = generator
+			.randomFromWeights(dmPMF);
+
+		if (model instanceof PositiveExaggeration) {
+		    model.initialize(posExCoef);
+		} else if (model instanceof NegativeExaggeration) {
+		    model.initialize(negExCoef);
+		} else if (model instanceof RandomDeception) {
+		    model.initialize(generator);
+		} else {
+		    model.initialize();
+		}
 
 		// assign deception model
-		deceptionModels.put(key, Utils.randomFromWeights(dmPMF));
+		deceptionModels.put(key, model);
 	    }
 	}
     }
@@ -154,7 +184,7 @@ public class RandomWithMultiService extends AbstractScenario implements
 			cap = capabilities.get(key2);
 
 			// generate internal trust degree
-			itd = Utils.randomTND(cap, sd_o);
+			itd = generator.randomTND(cap, sd_o);
 			itd = deceptionModel.calculate(itd);
 
 			// create opinion tuple and add it to list
@@ -187,7 +217,7 @@ public class RandomWithMultiService extends AbstractScenario implements
 
 	    // generate interaction outcome
 	    cap = capabilities.get(key);
-	    outcome = Utils.randomTND(cap, sd_i);
+	    outcome = generator.randomTND(cap, sd_i);
 
 	    // create experience tuple and add it to list
 	    experience = new Experience(agent, service, time, outcome);

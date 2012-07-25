@@ -12,7 +12,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	OnlyOpinionsTMTest.class, BetaReputationTMTest.class,
 	BRSWithFilteringTMTest.class, TravosTMTest.class,
 	YuSinghSycaraTMTest.class, QADTMTest.class, QTMTest.class,
-	OscillationScenarioTest.class, RandomNumberImplementationsTest.class })
+	OscillationScenarioTest.class, RandomGeneratorTest.class })
 public class AllTests {
 
 }

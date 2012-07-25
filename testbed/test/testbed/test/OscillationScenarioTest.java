@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import testbed.common.DefaultRandomGenerator;
 import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.Silent;
@@ -23,6 +24,7 @@ public class OscillationScenarioTest {
     @Before
     public void setUp() {
 	scenario = new Oscillation();
+	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
     }
 
     @Test

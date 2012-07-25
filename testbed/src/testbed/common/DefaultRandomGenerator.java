@@ -3,13 +3,13 @@ package testbed.common;
 import java.util.Map;
 import java.util.TreeMap;
 
-import testbed.interfaces.IRandomNumberGenerator;
+import testbed.interfaces.IRandomGenerator;
 import cern.jet.random.Normal;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
 
-public class DefaultRandomNumberGenerator implements IRandomNumberGenerator {
+public class DefaultRandomGenerator implements IRandomGenerator {
     private static final String TOTAL_PROBABILIT_EX = "Total probabilit in pmf %s does not sum to %.2f, but is %.2f";
     private static final String INVALID_PROBABILITY_EX = "Invalid probability %.2f of element %s in pmf %s.";
     private static final String UNREACHABLE_CODE = "This part of code should be unreachable.";
@@ -20,7 +20,7 @@ public class DefaultRandomNumberGenerator implements IRandomNumberGenerator {
     private final Uniform uniform;
     private final RandomEngine engine;
 
-    public DefaultRandomNumberGenerator(int seed) {
+    public DefaultRandomGenerator(int seed) {
 	this.seed = seed;
 	this.engine = new MersenneTwister(seed);
 	this.uniform = new Uniform(engine);

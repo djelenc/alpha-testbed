@@ -12,6 +12,15 @@ import java.util.Set;
 public interface IScenario {
 
     /**
+     * Sets the random number generator. In order to produce repeatable results,
+     * all random numbers should be generated with this generator.
+     * 
+     * @param generator
+     *            Generator to be set
+     */
+    public void setRandomGenerator(IRandomGenerator generator);
+
+    /**
      * Initializes the scenario with an optional array of varargs Objects.
      * 
      * @param parameters

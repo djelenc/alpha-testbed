@@ -3,7 +3,7 @@ package testbed.scenario;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import testbed.common.Utils;
+
 import testbed.interfaces.Experience;
 import testbed.interfaces.IPartnerSelection;
 
@@ -34,7 +34,7 @@ public class RandomWithPartnerSelection extends Random implements
 
 	    // generate interaction outcome
 	    final double cap = capabilities.get(agent);
-	    final double outcome = Utils.randomTND(cap, sd_i);
+	    final double outcome = generator.randomTND(cap, sd_i);
 
 	    // create experience tuple and add it to list
 	    final Experience experience = new Experience(agent, service, time,

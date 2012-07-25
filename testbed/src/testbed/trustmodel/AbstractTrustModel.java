@@ -6,9 +6,17 @@ import java.util.PriorityQueue;
 
 import testbed.common.Tuple;
 import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.IRandomGenerator;
 import testbed.interfaces.ITrustModel;
 
 public abstract class AbstractTrustModel implements ITrustModel {
+
+    protected IRandomGenerator generator;
+
+    @Override
+    public void setRandomGenerator(IRandomGenerator generator) {
+	this.generator = generator;
+    }
 
     @Override
     public String getName() {

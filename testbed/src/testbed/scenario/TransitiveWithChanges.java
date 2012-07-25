@@ -109,7 +109,8 @@ public class TransitiveWithChanges extends AbstractScenario implements
 
 	for (int i = 0; i < numAgents; i++) {
 	    agents.add(i); // generate agents
-	    capabilities.put(i, Utils.randomUnif(0, 1)); // assign capabilities
+	    capabilities.put(i, generator.randomUnif(0, 1)); // assign
+							     // capabilities
 	}
 
 	// extract opinion and interaction densities
@@ -161,7 +162,7 @@ public class TransitiveWithChanges extends AbstractScenario implements
 		    cap = capabilities.get(a2);
 
 		    // generate internal trust degree
-		    itd = Utils.randomTND(cap, sd_o);
+		    itd = generator.randomTND(cap, sd_o);
 		    itd = dms[a1][a2].calculate(itd);
 
 		    // create opinion tuple and add it to list
@@ -181,7 +182,7 @@ public class TransitiveWithChanges extends AbstractScenario implements
 
 	// generate interaction outcome
 	final double cap = capabilities.get(agent);
-	final double outcome = Utils.randomTND(cap, sd_i);
+	final double outcome = generator.randomTND(cap, sd_i);
 
 	// create experience tuple and add it to list
 	final Experience experience = new Experience(agent, 0, time, outcome);
@@ -210,7 +211,7 @@ public class TransitiveWithChanges extends AbstractScenario implements
 	int counter = 0, agent;
 
 	while (counter < numPartners) {
-	    agent = Utils.randomUnifIndex(0, agents.size() - 1);
+	    agent = generator.randomUnifIndex(0, agents.size() - 1);
 
 	    if (!partners.contains(agent)) {
 		partners.add(agent);
@@ -247,7 +248,7 @@ public class TransitiveWithChanges extends AbstractScenario implements
 	    cap = capabilities.get(i);
 
 	    for (int j = 0; j < dms[i].length; j++) {
-		rnd = Utils.randomUnif(0, 1);
+		rnd = generator.randomUnif(0, 1);
 
 		if (cap > rnd) {
 		    dms[i][j] = truthful;
@@ -262,8 +263,8 @@ public class TransitiveWithChanges extends AbstractScenario implements
 	int i, j, counter = 0;
 
 	while (counter < limit) {
-	    i = Utils.randomUnifIndex(0, dms.length - 1);
-	    j = Utils.randomUnifIndex(0, dms.length - 1);
+	    i = generator.randomUnifIndex(0, dms.length - 1);
+	    j = generator.randomUnifIndex(0, dms.length - 1);
 
 	    if (dms[i][j] != silent) {
 		dms[i][j] = silent;
@@ -304,7 +305,7 @@ public class TransitiveWithChanges extends AbstractScenario implements
 
 	    // chose random agent to tell the truth about
 	    while (assignedTruthful < numTruthful) {
-		idx = Utils.randomUnifIndex(0, dms.length - 1);
+		idx = generator.randomUnifIndex(0, dms.length - 1);
 
 		if (dms[i][idx] == null) {
 		    dms[i][idx] = truthful;
@@ -324,8 +325,8 @@ public class TransitiveWithChanges extends AbstractScenario implements
 	int i, j, counter = 0;
 
 	while (counter < limit) {
-	    i = Utils.randomUnifIndex(0, dms.length - 1);
-	    j = Utils.randomUnifIndex(0, dms.length - 1);
+	    i = generator.randomUnifIndex(0, dms.length - 1);
+	    j = generator.randomUnifIndex(0, dms.length - 1);
 
 	    if (dms[i][j] != silent) {
 		dms[i][j] = silent;
@@ -369,8 +370,9 @@ public class TransitiveWithChanges extends AbstractScenario implements
 	    final int changes = (int) Math.round(agents.size() * changeDens);
 
 	    while (counter < changes) {
-		final int agent = Utils.randomUnifIndex(0, agents.size() - 1);
-		capabilities.put(agent, Utils.randomUnif(0, 1));
+		final int agent = generator.randomUnifIndex(0,
+			agents.size() - 1);
+		capabilities.put(agent, generator.randomUnif(0, 1));
 		counter += 1;
 	    }
 

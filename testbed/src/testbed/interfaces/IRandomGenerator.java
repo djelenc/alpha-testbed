@@ -8,7 +8,7 @@ import java.util.TreeMap;
  * @author David
  * 
  */
-public interface IRandomNumberGenerator {
+public interface IRandomGenerator {
 
     /**
      * Returns a random number generated from a Truncated normal distribution

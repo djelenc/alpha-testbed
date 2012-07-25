@@ -1,6 +1,7 @@
 package testbed.repast;
 
 import testbed.AlphaTestbed;
+import testbed.common.DefaultRandomGenerator;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
@@ -13,10 +14,12 @@ public class ProgramaticRun {
     public static void main(String[] args) {
 	// trust model
 	ITrustModel model = new YuSinghSycara();
+	model.setRandomGenerator(new DefaultRandomGenerator(0));
 	model.initialize();
 
 	// scenario
 	IScenario scenario = new Transitive();
+	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	scenario.initialize(100, 0.05, 0.1, 1d, 1d);
 
 	// ranking metric

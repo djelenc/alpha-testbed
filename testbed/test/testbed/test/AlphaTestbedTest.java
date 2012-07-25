@@ -12,6 +12,7 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.IDecisionMaking;
 import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IPartnerSelection;
+import testbed.interfaces.IRandomGenerator;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
@@ -66,7 +67,6 @@ public class AlphaTestbedTest {
 
 	    @Override
 	    public double evaluate(Map<Integer, Double> capabilities, int agent) {
-		// TODO Auto-generated method stub
 		return 0;
 	    }
 	};
@@ -139,6 +139,11 @@ class RankingsTrustModel implements ITrustModel {
 	return null;
     }
 
+    @Override
+    public void setRandomGenerator(IRandomGenerator generator) {
+
+    }
+
 }
 
 class RankingsScenario implements IScenario {
@@ -184,6 +189,11 @@ class RankingsScenario implements IScenario {
     @Override
     public IParametersPanel getParametersPanel() {
 	return null;
+    }
+
+    @Override
+    public void setRandomGenerator(IRandomGenerator generator) {
+
     }
 
 }

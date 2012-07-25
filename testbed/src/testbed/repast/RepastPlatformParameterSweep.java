@@ -6,7 +6,9 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import testbed.AlphaTestbed;
+import testbed.common.DefaultRandomGenerator;
 import testbed.gui.ParametersGUI;
+import testbed.interfaces.IRandomGenerator;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
@@ -35,16 +37,26 @@ public class RepastPlatformParameterSweep extends RepastPlatform {
 
 	    RunEnvironment.getInstance().endAt(300);
 
+	    // get parameter seed
+	    final int seed = (Integer) RunEnvironment.getInstance()
+		    .getParameters().getValue("randomSeed");
+
+	    final IRandomGenerator scnRnd, tmRnd;
+	    scnRnd = new DefaultRandomGenerator(seed);
+	    tmRnd = new DefaultRandomGenerator(seed);
+
 	    Object[] generalSetup = gui.getSetupParameters();
 	    Object[] scenarioSetup = gui.getScenarioParameters();
 	    Object[] trustModelSetup = gui.getTrustModelParameters();
 
 	    // set scenario
 	    IScenario scenario = (IScenario) generalSetup[0];
+	    scenario.setRandomGenerator(scnRnd);
 	    scenario.initialize(scenarioSetup);
 
 	    // set trust model
 	    ITrustModel model = (ITrustModel) generalSetup[1];
+	    model.setRandomGenerator(tmRnd);
 	    model.initialize(trustModelSetup);
 
 	    // FIXME: Once I implement GUI parameters for metric this is where I
@@ -67,7 +79,8 @@ public class RepastPlatformParameterSweep extends RepastPlatform {
 		context.add(new RepastMetricAgent(service, rankingMetric, atb));
 
 		if (atb.isUtilityMode())
-		    context.add(new RepastMetricAgent(service, utilityMetric, atb));
+		    context.add(new RepastMetricAgent(service, utilityMetric,
+			    atb));
 	    }
 	    context.add(atb);
 	} catch (Exception e) {

@@ -6,6 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import testbed.common.DefaultRandomGenerator;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.IDeceptionModel;
 import testbed.interfaces.IScenario;
@@ -16,6 +17,7 @@ public class RandomScenarioTest {
     @Test
     public void checkSizesOfCollections() {
 	IScenario scenario = new Random();
+	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	Map<IDeceptionModel, Double> deceptionModels = new HashMap<IDeceptionModel, Double>();
 	deceptionModels.put(new Truthful(), 1d);
 
@@ -33,6 +35,7 @@ public class RandomScenarioTest {
     @Test(expected = IllegalArgumentException.class)
     public void failWhenAdditionalParametersMissing() {
 	IScenario scenario = new Random();
+	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	scenario.initialize(1, 1);
     }
 }
