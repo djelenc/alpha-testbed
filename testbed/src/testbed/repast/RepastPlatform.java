@@ -1,5 +1,7 @@
 package testbed.repast;
 
+import java.util.Arrays;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -27,16 +29,32 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	try {
 	    context.setId("testbed");
 
-	    ClassLoader cl = ContextBuilder.class.getClassLoader();
+	    final ClassLoader cl = ContextBuilder.class.getClassLoader();
+	    final boolean batchRun = RunEnvironment.getInstance().isBatch();
+
+	    final int guiAnswer;
 
 	    if (null == gui) {
+		// first run (either single or batch)
 		gui = new ParametersGUI(cl);
+		gui.setBatchRun(batchRun);
+		guiAnswer = gui.showDialog();
 	    } else {
-		gui.refresh();
+		// subsequent runs
+		if (batchRun) {
+		    // batch run -- don't show dialog
+		    gui.setBatchRun(batchRun); // not sure
+		    guiAnswer = 0;
+		} else {
+		    // single run -- show dialog
+		    gui.refresh();
+		    gui.setBatchRun(batchRun);
+		    guiAnswer = gui.showDialog();
+		}
 	    }
 
-	    // if the user presses 'Cancel'
-	    if (gui.showDialog() != 0) {
+	    // if user pressed 'Cancel'
+	    if (guiAnswer != 0) {
 		RunEnvironment.getInstance().endAt(0);
 		return context;
 	    }
@@ -49,43 +67,67 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    scnRnd = new DefaultRandomGenerator(seed);
 	    tmRnd = new DefaultRandomGenerator(seed);
 
-	    Object[] generalSetup = gui.getSetupParameters();
-	    Object[] scenarioSetup = gui.getScenarioParameters();
-	    Object[] trustModelSetup = gui.getTrustModelParameters();
+	    final Object[] generalParams = gui.getSetupParameters();
+	    final Object[] scenarioParams = gui.getScenarioParameters();
+	    final Object[] trustModelParams = gui.getTrustModelParameters();
 
 	    // set scenario
-	    IScenario scenario = (IScenario) generalSetup[0];
+	    final IScenario scenario = (IScenario) generalParams[0];
 	    scenario.setRandomGenerator(scnRnd);
-	    scenario.initialize(scenarioSetup);
+	    scenario.initialize(scenarioParams);
 
 	    // set trust model
-	    ITrustModel model = (ITrustModel) generalSetup[1];
-	    model.setRandomGenerator(tmRnd);
-	    model.initialize(trustModelSetup);
+	    final ITrustModel trustModel = (ITrustModel) generalParams[1];
+	    trustModel.setRandomGenerator(tmRnd);
+	    trustModel.initialize(trustModelParams);
 
 	    // FIXME: Once I implement GUI parameters for metric this is where I
 	    // should pass in their arguments and initialize the metrics
 
 	    // Set ranking metric
-	    IRankingMetric rankingMetric = (IRankingMetric) generalSetup[2];
-	    rankingMetric.initialize(0.25); // TODO
+	    final IRankingMetric rm = (IRankingMetric) generalParams[2];
+	    rm.initialize(0.25); // TODO
 
 	    // set utility metric
-	    IUtilityMetric utilityMetric = (IUtilityMetric) generalSetup[3];
-	    utilityMetric.initialize();
+	    final IUtilityMetric um = (IUtilityMetric) generalParams[3];
+	    um.initialize();
 
 	    // simulator
-	    atb = new AlphaTestbed(scenario, model, rankingMetric,
-		    utilityMetric);
+	    atb = new AlphaTestbed(scenario, trustModel, rm, um);
 
 	    // Create metrics for the Metric holder class
 	    for (int service : scenario.getServices()) {
-		context.add(new RepastMetricAgent(service, rankingMetric, atb));
+		context.add(new RepastMetricAgent(service, rm, atb));
 
 		if (atb.isUtilityMode())
-		    context.add(new RepastMetricAgent(service, utilityMetric,
-			    atb));
+		    context.add(new RepastMetricAgent(service, um, atb));
 	    }
+
+	    // for batch runs
+	    if (batchRun) {
+		final int duration = (Integer) generalParams[4];
+		RunEnvironment.getInstance().endAt(duration);
+
+		final StringBuffer msg = new StringBuffer();
+
+		msg.append(String.format("Random seed: %d\n", seed));
+		msg.append(String.format("Scenario: %s\n", scenario));
+		msg.append(String.format("Scenario parameters: %s\n",
+			Arrays.toString(scenarioParams)));
+		msg.append(String.format("Trust model: %s\n", trustModel));
+		msg.append(String.format("Trust model parameters: %s\n",
+			Arrays.toString(trustModelParams)));
+		msg.append(String.format("Ranking metric: %s\n", rm));
+
+		if (atb.isUtilityMode()) {
+		    msg.append(String.format("Utility metric: %s\n", um));
+		}
+
+		msg.append('\n');
+
+		System.out.println(msg.toString());
+	    }
+
 	    context.add(atb);
 	} catch (Exception e) {
 	    handleException(e);

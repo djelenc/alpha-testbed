@@ -12,6 +12,7 @@ public class ParametersGUI {
 
     private static final Object[] EMPTY = new Object[0];
 
+    private MainPanel main;
     private Wizard wizard;
     private WizardPanelDescriptor mainWpd;
 
@@ -20,7 +21,6 @@ public class ParametersGUI {
 	wizard.getDialog().setTitle("Evaluation setup");
 	wizard.setClassLoader(cl);
 
-	final IParametersPanel main;
 	final WizardPanelDescriptor scenarioWpd, metricsWpd;
 
 	main = new MainPanel();
@@ -41,13 +41,24 @@ public class ParametersGUI {
 	main.initialize(mainWpd, cl);
 	wizard.setCurrentPanel(mainWpd.getID());
     }
+    
+    public void setBatchRun(boolean batch) {
+	main.setBatchRun(batch);
+    }
 
-    // sets the wizard to the starting panel
-    // while preserving the selected values
+    /**
+     * Sets the wizard to the starting panel, while preserving the selected
+     * values
+     */
     public void refresh() {
 	wizard.setCurrentPanel(mainWpd.getID());
     }
 
+    /**
+     * Shows the modal dialog (blocks the application).
+     * 
+     * @return The answer code (0 = OK, 1 = Cancel)
+     */
     public int showDialog() {
 	return wizard.showModalDialog();
     }

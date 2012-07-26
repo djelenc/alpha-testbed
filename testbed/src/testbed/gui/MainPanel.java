@@ -15,6 +15,8 @@ import java.util.Observer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import testbed.common.ClassLoaderUtils;
@@ -39,10 +41,14 @@ public class MainPanel extends JPanel implements IParametersPanel {
     private JComboBox rankingMetric = new JComboBox();
     private JComboBox utilityMetric = new JComboBox();
 
+    private JSpinner batchRunDuration = new JSpinner(new SpinnerNumberModel(
+	    300, 1, Integer.MAX_VALUE, 100));
+
     private JLabel tmLabel = new JLabel("Trust model:  ");
     private JLabel scnLabel = new JLabel("Scenario:  ");
     private JLabel rmLabel = new JLabel("Ranking metric:  ");
     private JLabel umLabel = new JLabel("Utility metric:  ");
+    private JLabel brdLabel = new JLabel("Batch run duration:  ");
 
     @Override
     public Component getComponent() {
@@ -87,7 +93,11 @@ public class MainPanel extends JPanel implements IParametersPanel {
     public Object[] getParameters() {
 	return new Object[] { scenario.getSelectedItem(),
 		trustModel.getSelectedItem(), rankingMetric.getSelectedItem(),
-		utilityMetric.getSelectedItem() };
+		utilityMetric.getSelectedItem(), getBatchRunDuration() };
+    }
+
+    private int getBatchRunDuration() {
+	return Integer.parseInt(String.valueOf(batchRunDuration.getValue()));
     }
 
     private void populateTrustModels(boolean decisionMaking) {
@@ -195,6 +205,34 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	c.fill = GridBagConstraints.HORIZONTAL;
 	panel.add(utilityMetric, c);
 
+	// empty region
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	c.gridx = 0;
+	c.gridy = 4;
+	panel.add(new JLabel(), c);
+	c.gridx = 1;
+	c.gridy = 4;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_START;
+	panel.add(new JLabel("<html><br/>"), c);
+
+	// The batch run duration
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	c.gridx = 0;
+	c.gridy = 5;
+	panel.add(brdLabel, c);
+	((JSpinner.DefaultEditor) batchRunDuration.getEditor()).getTextField()
+		.setColumns(4);
+	batchRunDuration
+		.setToolTipText("The duration of the batch run in ticks.");
+	c.gridx = 1;
+	c.gridy = 5;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_START;
+	panel.add(batchRunDuration, c);
+
 	return panel;
     }
 
@@ -203,8 +241,12 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	final IScenario scn = (IScenario) scenario.getSelectedItem();
 
 	utilityMetric.setEnabled(scn instanceof IPartnerSelection);
-
 	observer.update(null, scn);
 	observer.update(null, tm);
+    }
+
+    public void setBatchRun(boolean batchRun) {
+	batchRunDuration.setEnabled(batchRun);
+	brdLabel.setEnabled(batchRun);
     }
 }
