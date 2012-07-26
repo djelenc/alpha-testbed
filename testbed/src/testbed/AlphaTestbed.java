@@ -54,7 +54,8 @@ import testbed.interfaces.Opinion;
  * <li>The testbed conveys generated experiences to the trust model.
  * <li>The testbed instructs the trust model to evaluate trust.
  * <li>The testbed instruct the trust model to compute rankings of agents.
- * <li>The testbed evaluates received rankings. /ol>
+ * <li>The testbed evaluates received rankings.
+ * </ol>
  * <p>
  * The last two steps are repeated for every type of service. Finally, the
  * subscribers are asked to retrieve the results.
