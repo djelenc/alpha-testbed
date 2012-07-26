@@ -66,7 +66,7 @@ import testbed.interfaces.Opinion;
  * 
  * <h2>Utility mode</h2>
  * <p>
- * In utility mode the testbed treats the trust model as a cognitive entity.
+ * In utility mode, the testbed treats the trust model as a cognitive entity.
  * This means that the trust model is required to select partners for
  * interactions, whereas in ranking mode the testbed (or the scenario) was
  * responsible for selecting interaction partners. Besides measuring the
