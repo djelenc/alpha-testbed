@@ -8,7 +8,6 @@ import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.ICondition;
 import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -20,10 +19,10 @@ import testbed.interfaces.Opinion;
  * <li>I compute localized trust values from internal trust degrees. I multiply
  * the internalTrustDegree with the OPINION_FACTOR constant and then round the
  * result to the nearest integer. This represents the number of positive
- * interactions. The number of negative itneractions is computed by subtracting
+ * interactions. The number of negative interactions is computed by subtracting
  * the number of positive interactions from OPINION_FACTOR constant.
  * <li>The right-most column of matrix C describes Alpha's local experiences.
- * They are (similar as opinions) obtained by multiplying experience outcomes
+ * They are (similar to opinions) obtained by multiplying experience outcomes
  * with EXPERIENCE_FACTOR constant. Future interactions are recorded by adding
  * the number of positive interactions to this number.
  * <li>Because agents do not provide opinions about Alpha, the bottom row of
@@ -43,7 +42,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class EigenTrust extends AbstractTrustModel implements ITrustModel {
+public class EigenTrust extends AbstractTrustModel {
 
     public Map<Integer, Double> trust;
     public double[][] C;
@@ -54,10 +53,6 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
     public static double WEIGHT = 0.5;
     public static double EXPERIENCE = 5;
     public static double OPINION = 10;
-
-    // temporary storage for opinions and experiences
-    private Set<Opinion> opinions;
-    private Set<Experience> experiences;
 
     @Override
     public void initialize(Object... params) {
@@ -101,71 +96,11 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
 
 	EXPERIENCE = Utils.extractParameter(validatorMultiplier, 1, params);
 	OPINION = Utils.extractParameter(validatorMultiplier, 2, params);
-
-	opinions = null;
-	experiences = null;
-    }
-
-    /**
-     * Checks if experiences and opinions contain values that require expansion
-     * of arrays, and if they do, the method also expands the underlying (C,
-     * pCnt, pSum, p) arrays.
-     * 
-     * @param experience
-     * @param opinions
-     */
-    private void expandArray(Set<Experience> experience, Set<Opinion> opinions) {
-	final int limit = C.length - 2;
-	int maxAgent = limit;
-
-	for (Experience e : experience)
-	    if (e.agent > maxAgent)
-		maxAgent = e.agent;
-
-	for (Opinion o : opinions)
-	    if (o.agent2 > maxAgent || o.agent1 > maxAgent)
-		maxAgent = Math.max(o.agent1, o.agent2);
-
-	if (maxAgent > limit) {
-	    // resize C
-	    double[][] newC = new double[maxAgent + 2][maxAgent + 2];
-
-	    for (int i = 0; i < C.length - 1; i++)
-		for (int j = 0; j < C.length - 1; j++)
-		    newC[i][j] = C[i][j];
-
-	    for (int i = 0; i < C.length - 1; i++)
-		newC[i][newC.length - 1] = C[i][C.length - 1];
-
-	    C = newC;
-
-	    // resize p
-	    p = new double[maxAgent + 2];
-	    p[p.length - 1] = 1d;
-
-	    // resize positive experiences
-	    double[] newPosExp = new double[maxAgent + 2];
-	    for (int i = 0; i < posExp.length - 1; i++)
-		newPosExp[i] = posExp[i];
-
-	    posExp = newPosExp;
-	}
     }
 
     @Override
     public void processExperiences(Set<Experience> experiences) {
-	this.experiences = experiences;
-    }
-
-    @Override
-    public void processOpinions(Set<Opinion> opinions) {
-	this.opinions = opinions;
-    }
-
-    @Override
-    public void calculateTrust() {
-	// expand arrays
-	expandArray(experiences, opinions);
+	expandExperiences(experiences);
 
 	// process experiences
 	for (Experience e : experiences) {
@@ -179,6 +114,13 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
 	for (int i = 0; i < p.length - 1; i++)
 	    C[i][p.length - 1] = posExp[i];
 
+	calculateTrust();
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	expandOpinions(opinions);
+
 	// process opinions by creating matrix C
 	for (Opinion o : opinions) {
 	    final double pos = Math.round(OPINION * o.internalTrustDegree);
@@ -187,6 +129,11 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
 	    C[o.agent2][o.agent1] = Math.max(pos - neg, 0);
 	}
 
+	calculateTrust();
+    }
+
+    @Override
+    public void calculateTrust() {
 	// normalize matrix column wise
 	for (int col = 0; col < C.length; col++) {
 	    double sum = 0;
@@ -204,8 +151,8 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
 	}
 
 	// execute algorithm
-	double[] t_new = new double[p.length];
-	double[] t_old = new double[p.length];
+	final double[] t_new = new double[p.length];
+	final double[] t_old = new double[p.length];
 
 	// t_new = p
 	System.arraycopy(p, 0, t_new, 0, p.length);
@@ -258,5 +205,62 @@ public class EigenTrust extends AbstractTrustModel implements ITrustModel {
     @Override
     public IParametersPanel getParametersPanel() {
 	return new EigenTrustGUI();
+    }
+
+    /**
+     * The method also expands the underlying (C, pCnt, pSum, p) arrays.
+     * 
+     * @param experience
+     * @param opinions
+     */
+    protected void expandArrays(int maxAgent) {
+	// resize C
+	double[][] newC = new double[maxAgent + 2][maxAgent + 2];
+
+	for (int i = 0; i < C.length - 1; i++)
+	    for (int j = 0; j < C.length - 1; j++)
+		newC[i][j] = C[i][j];
+
+	for (int i = 0; i < C.length - 1; i++)
+	    newC[i][newC.length - 1] = C[i][C.length - 1];
+
+	C = newC;
+
+	// resize p
+	p = new double[maxAgent + 2];
+	p[p.length - 1] = 1d;
+
+	// resize positive experiences
+	double[] newPosExp = new double[maxAgent + 2];
+	for (int i = 0; i < posExp.length - 1; i++)
+	    newPosExp[i] = posExp[i];
+
+	posExp = newPosExp;
+    }
+
+    protected void expandOpinions(Set<Opinion> opinions) {
+	final int limit = C.length - 2;
+	int max = limit;
+
+	for (Opinion o : opinions)
+	    if (o.agent2 > max || o.agent1 > max)
+		max = Math.max(o.agent1, o.agent2);
+
+	if (max > limit) {
+	    expandArrays(max);
+	}
+    }
+
+    protected void expandExperiences(Set<Experience> experience) {
+	final int limit = C.length - 2;
+	int max = limit;
+
+	for (Experience e : experience)
+	    if (e.agent > max)
+		max = e.agent;
+
+	if (max > limit) {
+	    expandArrays(max);
+	}
     }
 }

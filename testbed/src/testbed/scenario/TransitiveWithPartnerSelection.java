@@ -8,13 +8,12 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.IPartnerSelection;
 
 /**
- * An extension of the {@link Random} scenario, where agent Alpha is required to
- * select interaction partners.
+ * A transitive scenario that allows an agent to select interaction partners.
  * 
  * @author David
  * 
  */
-public class RandomWithPartnerSelection extends Random implements
+public class TransitiveWithPartnerSelection extends Transitive implements
 	IPartnerSelection {
 
     private static final String PARTNER_NOT_SET = "No partner set for service %d.";
@@ -52,6 +51,6 @@ public class RandomWithPartnerSelection extends Random implements
 
     @Override
     public String getName() {
-	return "Random with partner selection";
+	return "Transitive with partner selection";
     }
 }
