@@ -54,6 +54,32 @@ public class EigenTrust extends AbstractTrustModel {
     public static double EXPERIENCE = 5;
     public static double OPINION = 10;
 
+    private static final ICondition<Double> VAL_WEIGHT, MULT_VAL;
+
+    static {
+	VAL_WEIGHT = new ICondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The weight must be a between 0 and 1 inclusively, but was %.2f",
+				    var));
+	    }
+	};
+
+	MULT_VAL = new ICondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 1 || var > 50)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
+				    var));
+	    }
+	};
+    }
+
     @Override
     public void initialize(Object... params) {
 	trust = new LinkedHashMap<Integer, Double>();
@@ -70,32 +96,9 @@ public class EigenTrust extends AbstractTrustModel {
 	// Alpha is the only pre-trusted peer
 	p[p.length - 1] = 1d;
 
-	final ICondition<Double> validatorWeight = new ICondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The weight must be a between 0 and 1 inclusively, but was %.2f",
-				    var));
-	    }
-	};
-
-	WEIGHT = Utils.extractParameter(validatorWeight, 0, params);
-
-	final ICondition<Double> validatorMultiplier = new ICondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 1 || var > 50)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
-				    var));
-	    }
-	};
-
-	EXPERIENCE = Utils.extractParameter(validatorMultiplier, 1, params);
-	OPINION = Utils.extractParameter(validatorMultiplier, 2, params);
+	WEIGHT = Utils.extractParameter(VAL_WEIGHT, 0, params);
+	EXPERIENCE = Utils.extractParameter(MULT_VAL, 1, params);
+	OPINION = Utils.extractParameter(MULT_VAL, 2, params);
     }
 
     @Override
