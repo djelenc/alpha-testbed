@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="Alpha Testbed" default="docs" basedir=".">
+	<property name="docs.dir" location="javadocs" />
+
+	<target name="clean">
+		<delete dir="${docs.dir}" />
+	</target>
+
+	<target name="docs">
+		<javadoc packagenames="testbed.*" sourcepath="src" destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="Alpha Testbed API">
+			<doctitle>
+				<![CDATA[<h1>Alpha Testbed JavaDoc</h1>]]></doctitle>
+		<bottom>
+			<![CDATA[<i>david.jelenc@fri.uni-lj.si</i>]]></bottom>
+</javadoc>
+</target>
+</project>

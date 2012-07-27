@@ -46,9 +46,12 @@ public class EigenTrust extends AbstractTrustModel {
 
     public Map<Integer, Double> trust;
     public double[][] C;
-    public double[] p;
 
-    public double[] posExp;
+    // count positive experiences
+    public double[] cuPosExp;
+
+    // Alpha normalized local experiences
+    public double[] p;
 
     public static double WEIGHT = 0.5;
     public static double EXPERIENCE = 5;
@@ -87,14 +90,11 @@ public class EigenTrust extends AbstractTrustModel {
 	// empty matrix
 	C = new double[1][1];
 
-	// pre-trusted nodes
+	// cumulative number of positive interaction outcomes
+	cuPosExp = new double[1];
+
+	// pre-trusted peers vector
 	p = new double[1];
-
-	// number of positive interaction outcomes
-	posExp = new double[1];
-
-	// Alpha is the only pre-trusted peer
-	p[p.length - 1] = 1d;
 
 	WEIGHT = Utils.extractParameter(VAL_WEIGHT, 0, params);
 	EXPERIENCE = Utils.extractParameter(MULT_VAL, 1, params);
@@ -110,12 +110,8 @@ public class EigenTrust extends AbstractTrustModel {
 	    final double pos = Math.round(EXPERIENCE * e.outcome);
 	    final double neg = EXPERIENCE - pos;
 
-	    posExp[e.agent] += Math.max(pos - neg, 0);
+	    cuPosExp[e.agent] += Math.max(pos - neg, 0);
 	}
-
-	// update Alpha's experience column with new data
-	for (int i = 0; i < p.length - 1; i++)
-	    C[i][p.length - 1] = posExp[i];
 
 	calculateTrust();
     }
@@ -137,7 +133,23 @@ public class EigenTrust extends AbstractTrustModel {
 
     @Override
     public void calculateTrust() {
-	// normalize matrix column wise
+	// update normalized local trust values
+	double totalPositive = 0;
+
+	for (int i = 0; i < cuPosExp.length; i++)
+	    totalPositive += cuPosExp[i];
+
+	if (Math.abs(totalPositive) > 0.0001) {
+	    // some local experiences
+	    for (int i = 0; i < cuPosExp.length; i++)
+		p[i] = cuPosExp[i] / totalPositive;
+	} else {
+	    // no local data -- uniform distribution
+	    for (int i = 0; i < cuPosExp.length; i++)
+		p[i] = 1d / cuPosExp.length;
+	}
+
+	// normalize matrix column-wise
 	for (int col = 0; col < C.length; col++) {
 	    double sum = 0;
 
@@ -182,7 +194,7 @@ public class EigenTrust extends AbstractTrustModel {
 
 	trust.clear();
 
-	for (int i = 0; i < t_old.length - 1; i++)
+	for (int i = 0; i < t_old.length; i++)
 	    trust.put(i, t_new[i]);
     }
 
@@ -218,31 +230,35 @@ public class EigenTrust extends AbstractTrustModel {
      */
     protected void expandArrays(int maxAgent) {
 	// resize C
-	double[][] newC = new double[maxAgent + 2][maxAgent + 2];
+	double[][] newC = new double[maxAgent + 1][maxAgent + 1];
 
-	for (int i = 0; i < C.length - 1; i++)
-	    for (int j = 0; j < C.length - 1; j++)
+	for (int i = 0; i < C.length; i++)
+	    for (int j = 0; j < C.length; j++)
 		newC[i][j] = C[i][j];
 
-	for (int i = 0; i < C.length - 1; i++)
+	for (int i = 0; i < C.length; i++)
 	    newC[i][newC.length - 1] = C[i][C.length - 1];
 
 	C = newC;
 
-	// resize p
-	p = new double[maxAgent + 2];
-	p[p.length - 1] = 1d;
-
 	// resize positive experiences
-	double[] newPosExp = new double[maxAgent + 2];
-	for (int i = 0; i < posExp.length - 1; i++)
-	    newPosExp[i] = posExp[i];
+	double[] newPosExp = new double[maxAgent + 1];
+	for (int i = 0; i < cuPosExp.length - 1; i++)
+	    newPosExp[i] = cuPosExp[i];
 
-	posExp = newPosExp;
+	cuPosExp = newPosExp;
+
+	// resize normalized local trust values
+	double[] newR = new double[maxAgent + 1];
+	for (int i = 0; i < p.length - 1; i++)
+	    newR[i] = p[i];
+
+	p = newR;
+
     }
 
     protected void expandOpinions(Set<Opinion> opinions) {
-	final int limit = C.length - 2;
+	final int limit = C.length - 1;
 	int max = limit;
 
 	for (Opinion o : opinions)
@@ -255,7 +271,7 @@ public class EigenTrust extends AbstractTrustModel {
     }
 
     protected void expandExperiences(Set<Experience> experience) {
-	final int limit = C.length - 2;
+	final int limit = C.length - 1;
 	int max = limit;
 
 	for (Experience e : experience)
