@@ -253,9 +253,15 @@ public class WizardPanelDescriptor implements Observer {
     public void update(Observable o, Object arg) {
 	if (arg instanceof Boolean) {
 	    // next/finish button
-	    final boolean flag = (Boolean) arg;
-	    wizard.setBackButtonEnabled(flag);
-	    wizard.setNextFinishButtonEnabled(flag);
+
+	    final boolean isThisWPD = wizard.getModel()
+		    .getCurrentPanelDescriptor().equals(this);
+
+	    if (isThisWPD) {
+		final boolean flag = (Boolean) arg;
+		wizard.setBackButtonEnabled(flag);
+		wizard.setNextFinishButtonEnabled(flag);
+	    }
 	} else {
 	    final Object id;
 	    final String name;
@@ -286,7 +292,7 @@ public class WizardPanelDescriptor implements Observer {
 		return;
 	    }
 
-	    // do not change if the new value is the same as old value
+	    // if new selection is the same as old selection
 	    if (null != current && null != novel
 		    && current.getClass() == novel.getClass()) {
 		return;
@@ -313,103 +319,6 @@ public class WizardPanelDescriptor implements Observer {
 	    } else if (arg instanceof IRankingMetric) {
 		wpd.setBack(ParametersGUI.MODELS);
 	    }
-	}
-    }
-
-    public void update1(Observable o, Object arg) {
-	if (arg instanceof Boolean) {
-	    // next/finish button
-	    final boolean flag = (Boolean) arg;
-	    wizard.setBackButtonEnabled(flag);
-	    wizard.setNextFinishButtonEnabled(flag);
-	} else if (arg instanceof IScenario) {
-	    // set scenario parameters panel
-	    final IParametersPanel current = wizard.getModel()
-		    .getPanelDescriptor(ParametersGUI.SCENARIO)
-		    .getIParametersPanel();
-
-	    final IScenario scenario = (IScenario) arg;
-	    final IParametersPanel novel = scenario.getParametersPanel();
-
-	    // do not change if the new value is the same as old value
-	    if (null != current && null != novel
-		    && current.getClass() == novel.getClass()) {
-		return;
-	    }
-
-	    // get ParametersPanel
-	    final IParametersPanel params = scenario.getParametersPanel();
-
-	    // create new WPD
-	    final WizardPanelDescriptor wpd = new WizardPanelDescriptor(
-		    ParametersGUI.SCENARIO, params, scenario.getName());
-
-	    // register WPD
-	    wizard.registerWizardPanel(wpd);
-
-	    // initialize WPD
-	    if (null != params)
-		params.initialize(wpd, wizard.getClassLoader());
-
-	    // set next / previous buttons
-	    wpd.setBack(ParametersGUI.MAIN);
-	    wpd.setNext(ParametersGUI.MODELS);
-	} else if (arg instanceof ITrustModel) {
-	    // set trust model parameters panel
-	    final IParametersPanel current = wizard.getModel()
-		    .getPanelDescriptor(ParametersGUI.MODELS)
-		    .getIParametersPanel();
-
-	    final ITrustModel model = (ITrustModel) arg;
-	    final IParametersPanel novel = model.getParametersPanel();
-
-	    // make change only if the value changed
-	    if (null != current && null != novel
-		    && current.getClass() == novel.getClass()) {
-		return;
-	    }
-
-	    // get ParametersPanel
-	    final IParametersPanel params = model.getParametersPanel();
-
-	    // create, register and initialize new WPD
-	    final WizardPanelDescriptor wpd = new WizardPanelDescriptor(
-		    ParametersGUI.MODELS, params, model.getName());
-	    wizard.registerWizardPanel(wpd);
-
-	    if (null != params)
-		params.initialize(wpd, wizard.getClassLoader());
-
-	    wpd.setBack(ParametersGUI.SCENARIO);
-	    wpd.setNext(ParametersGUI.METRICS);
-	} else if (arg instanceof IRankingMetric) {
-	    // set trust model parameters panel
-	    final IParametersPanel current = wizard.getModel()
-		    .getPanelDescriptor(ParametersGUI.METRICS)
-		    .getIParametersPanel();
-
-	    final IRankingMetric metric = (IRankingMetric) arg;
-	    final IParametersPanel novel = metric.getParametersPanel();
-
-	    // make change only if the value changed
-	    if (null != current && null != novel
-		    && current.getClass() == novel.getClass()) {
-		return;
-	    }
-
-	    // get ParametersPanel
-	    final IParametersPanel params = metric.getParametersPanel();
-
-	    // create, register and initialize new WPD
-	    final WizardPanelDescriptor wpd = new WizardPanelDescriptor(
-		    ParametersGUI.METRICS, params, metric.getName());
-	    wizard.registerWizardPanel(wpd);
-
-	    if (null != params)
-		params.initialize(wpd, wizard.getClassLoader());
-
-	    wpd.setBack(ParametersGUI.MODELS);
-	    // wpd.setNext(ParametersGUI.METRICS);
 	}
     }
 }

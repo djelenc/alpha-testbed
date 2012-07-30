@@ -12,7 +12,7 @@ public class ParametersGUI {
 
     private static final Object[] EMPTY = new Object[0];
 
-    private MainPanel main;
+    private MainPanel mainPanel;
     private Wizard wizard;
     private WizardPanelDescriptor mainWpd;
 
@@ -23,8 +23,9 @@ public class ParametersGUI {
 
 	final WizardPanelDescriptor scenarioWpd, modelWpd, rankingMetricWpd;
 
-	main = new MainPanel();
-	mainWpd = new WizardPanelDescriptor(MAIN, main, "General parameters");
+	mainPanel = new MainPanel();
+	mainWpd = new WizardPanelDescriptor(MAIN, mainPanel,
+		"General parameters");
 
 	scenarioWpd = new WizardPanelDescriptor(SCENARIO);
 	modelWpd = new WizardPanelDescriptor(MODELS);
@@ -42,12 +43,12 @@ public class ParametersGUI {
 	modelWpd.setNext(rankingMetricWpd.getID());
 	rankingMetricWpd.setBack(modelWpd.getID());
 
-	main.initialize(mainWpd, cl);
+	mainPanel.initialize(mainWpd, cl);
 	wizard.setCurrentPanel(mainWpd.getID());
     }
 
     public void setBatchRun(boolean batch) {
-	main.setBatchRun(batch);
+	mainPanel.setBatchRun(batch);
     }
 
     /**

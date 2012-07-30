@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-
 import testbed.gui.WizardPanelDescriptor;
 import testbed.interfaces.IParametersPanel;
 
@@ -162,9 +161,7 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
      * to a {@link WizardPanelDescriptor} instance.)
      */
     private void validateParameters() {
-	boolean valid = true;
-
-	observer.update(null, valid);
+	observer.update(null, true);
     }
 
 }
