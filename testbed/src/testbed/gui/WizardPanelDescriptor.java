@@ -256,6 +256,72 @@ public class WizardPanelDescriptor implements Observer {
 	    final boolean flag = (Boolean) arg;
 	    wizard.setBackButtonEnabled(flag);
 	    wizard.setNextFinishButtonEnabled(flag);
+	} else {
+	    final Object id;
+	    final String name;
+	    final IParametersPanel current, novel;
+
+	    if (arg instanceof IScenario) {
+		final IScenario scn = (IScenario) arg;
+		id = ParametersGUI.SCENARIO;
+		name = scn.getName();
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = scn.getParametersPanel();
+	    } else if (arg instanceof ITrustModel) {
+		final ITrustModel tm = (ITrustModel) arg;
+		id = ParametersGUI.MODELS;
+		name = tm.getName();
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = tm.getParametersPanel();
+	    } else if (arg instanceof IRankingMetric) {
+		final IRankingMetric rm = (IRankingMetric) arg;
+		id = ParametersGUI.METRICS;
+		name = rm.getName();
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = rm.getParametersPanel();
+	    } else {
+		return;
+	    }
+
+	    // do not change if the new value is the same as old value
+	    if (null != current && null != novel
+		    && current.getClass() == novel.getClass()) {
+		return;
+	    }
+
+	    // create new WPD
+	    final WizardPanelDescriptor wpd = new WizardPanelDescriptor(id,
+		    novel, name);
+
+	    // register new WPD
+	    wizard.registerWizardPanel(wpd);
+
+	    // initialize WPD
+	    if (null != novel)
+		novel.initialize(wpd, wizard.getClassLoader());
+
+	    // set next/previous
+	    if (arg instanceof IScenario) {
+		wpd.setBack(ParametersGUI.MAIN);
+		wpd.setNext(ParametersGUI.MODELS);
+	    } else if (arg instanceof ITrustModel) {
+		wpd.setBack(ParametersGUI.SCENARIO);
+		wpd.setNext(ParametersGUI.METRICS);
+	    } else if (arg instanceof IRankingMetric) {
+		wpd.setBack(ParametersGUI.MODELS);
+	    }
+	}
+    }
+
+    public void update1(Observable o, Object arg) {
+	if (arg instanceof Boolean) {
+	    // next/finish button
+	    final boolean flag = (Boolean) arg;
+	    wizard.setBackButtonEnabled(flag);
+	    wizard.setNextFinishButtonEnabled(flag);
 	} else if (arg instanceof IScenario) {
 	    // set scenario parameters panel
 	    final IParametersPanel current = wizard.getModel()

@@ -21,26 +21,26 @@ public class ParametersGUI {
 	wizard.getDialog().setTitle("Evaluation setup");
 	wizard.setClassLoader(cl);
 
-	final WizardPanelDescriptor scenarioWpd, modelWpd, metricWpd;
+	final WizardPanelDescriptor scenarioWpd, modelWpd, rankingMetricWpd;
 
 	main = new MainPanel();
 	mainWpd = new WizardPanelDescriptor(MAIN, main, "General parameters");
 
 	scenarioWpd = new WizardPanelDescriptor(SCENARIO);
 	modelWpd = new WizardPanelDescriptor(MODELS);
-	metricWpd = new WizardPanelDescriptor(METRICS);
+	rankingMetricWpd = new WizardPanelDescriptor(METRICS);
 
 	wizard.registerWizardPanel(mainWpd);
 	wizard.registerWizardPanel(scenarioWpd);
 	wizard.registerWizardPanel(modelWpd);
-	wizard.registerWizardPanel(metricWpd);
+	wizard.registerWizardPanel(rankingMetricWpd);
 
 	mainWpd.setNext(scenarioWpd.getID());
 	scenarioWpd.setBack(mainWpd.getID());
 	scenarioWpd.setNext(modelWpd.getID());
 	modelWpd.setBack(scenarioWpd.getID());
-	modelWpd.setNext(metricWpd.getID());
-	metricWpd.setNext(modelWpd.getID());
+	modelWpd.setNext(rankingMetricWpd.getID());
+	rankingMetricWpd.setBack(modelWpd.getID());
 
 	main.initialize(mainWpd, cl);
 	wizard.setCurrentPanel(mainWpd.getID());

@@ -242,8 +242,9 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	final IRankingMetric rm = (IRankingMetric) rankingMetric
 		.getSelectedItem();
 
-	utilityMetric.setEnabled(scn instanceof IPartnerSelection);
-	umLabel.setEnabled(scn instanceof IPartnerSelection);
+	final boolean enabled = scn instanceof IPartnerSelection;
+	utilityMetric.setEnabled(enabled);
+	umLabel.setEnabled(enabled);
 
 	observer.update(null, scn);
 	observer.update(null, tm);
