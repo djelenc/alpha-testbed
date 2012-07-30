@@ -239,10 +239,15 @@ public class MainPanel extends JPanel implements IParametersPanel {
     public void validateParameters() {
 	final ITrustModel tm = (ITrustModel) trustModel.getSelectedItem();
 	final IScenario scn = (IScenario) scenario.getSelectedItem();
+	final IRankingMetric rm = (IRankingMetric) rankingMetric
+		.getSelectedItem();
 
 	utilityMetric.setEnabled(scn instanceof IPartnerSelection);
+	umLabel.setEnabled(scn instanceof IPartnerSelection);
+
 	observer.update(null, scn);
 	observer.update(null, tm);
+	observer.update(null, rm);
     }
 
     public void setBatchRun(boolean batchRun) {

@@ -21,27 +21,31 @@ public class ParametersGUI {
 	wizard.getDialog().setTitle("Evaluation setup");
 	wizard.setClassLoader(cl);
 
-	final WizardPanelDescriptor scenarioWpd, metricsWpd;
+	final WizardPanelDescriptor scenarioWpd, modelWpd, metricWpd;
 
 	main = new MainPanel();
 	mainWpd = new WizardPanelDescriptor(MAIN, main, "General parameters");
 
 	scenarioWpd = new WizardPanelDescriptor(SCENARIO);
-	metricsWpd = new WizardPanelDescriptor(MODELS);
+	modelWpd = new WizardPanelDescriptor(MODELS);
+	metricWpd = new WizardPanelDescriptor(METRICS);
 
 	wizard.registerWizardPanel(mainWpd);
 	wizard.registerWizardPanel(scenarioWpd);
-	wizard.registerWizardPanel(metricsWpd);
+	wizard.registerWizardPanel(modelWpd);
+	wizard.registerWizardPanel(metricWpd);
 
 	mainWpd.setNext(scenarioWpd.getID());
 	scenarioWpd.setBack(mainWpd.getID());
-	scenarioWpd.setNext(metricsWpd.getID());
-	metricsWpd.setBack(scenarioWpd.getID());
+	scenarioWpd.setNext(modelWpd.getID());
+	modelWpd.setBack(scenarioWpd.getID());
+	modelWpd.setNext(metricWpd.getID());
+	metricWpd.setNext(modelWpd.getID());
 
 	main.initialize(mainWpd, cl);
 	wizard.setCurrentPanel(mainWpd.getID());
     }
-    
+
     public void setBatchRun(boolean batch) {
 	main.setBatchRun(batch);
     }
