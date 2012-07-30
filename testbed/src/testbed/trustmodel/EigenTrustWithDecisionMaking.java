@@ -33,7 +33,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	for (int service : services) {
 	    final boolean selectingNewPeer;
 	    final Integer bestAgent;
-	    selectingNewPeer = generator.randomUnif(0, 1) < 0.1;
+	    selectingNewPeer = generator.nextDoubleFromTo(0, 1) < 0.1;
 	    // selectingNewPeer = false;
 
 	    TreeMap<Integer, Double> agents = new TreeMap<Integer, Double>();
@@ -53,7 +53,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 					// selected but no such agent exists
 		    bestAgent = bestFromWeights();
 		} else {
-		    bestAgent = generator.randomFromWeights(agents);
+		    bestAgent = generator.fromWeights(agents);
 		}
 
 	    } else {
@@ -109,6 +109,6 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	for (Map.Entry<Integer, Double> e : agents.entrySet())
 	    agents.put(e.getKey(), e.getValue() / sum);
 
-	return generator.randomFromWeights(agents);
+	return generator.fromWeights(agents);
     }
 }

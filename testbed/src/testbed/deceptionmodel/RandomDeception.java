@@ -36,7 +36,7 @@ public class RandomDeception extends AbstractDeceptionModel implements IDeceptio
 
     @Override
     public double calculate(double value) {
-	return generator.randomUnif(0, 1);
+	return generator.nextDoubleFromTo(0, 1);
     }
 
 }

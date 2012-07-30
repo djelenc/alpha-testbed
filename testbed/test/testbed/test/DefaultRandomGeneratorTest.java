@@ -29,8 +29,8 @@ public class DefaultRandomGeneratorTest {
     public void testRandomBorders() {
 	double value1, value2;
 	for (int i = 0; i < 100; i++) {
-	    value1 = rnd.randomTND(0.01, 0.1);
-	    value2 = rnd.randomTND(0.99, 0.1);
+	    value1 = rnd.nextDoubleFromUnitTND(0.01, 0.1);
+	    value2 = rnd.nextDoubleFromUnitTND(0.99, 0.1);
 	    Assert.assertTrue(value1 <= 1 && value1 >= 0);
 	    Assert.assertTrue(value2 <= 1 && value2 >= 0);
 	}
@@ -42,10 +42,10 @@ public class DefaultRandomGeneratorTest {
 	int iterations = 10000;
 
 	for (int i = 0; i < iterations; i++) {
-	    case00 += rnd.randomTND(0.0, 0.1);
-	    case05 += rnd.randomTND(0.5, 0.1);
-	    case10 += rnd.randomTND(1.0, 0.1);
-	    caseUnif += rnd.randomUnif(0, 1);
+	    case00 += rnd.nextDoubleFromUnitTND(0.0, 0.1);
+	    case05 += rnd.nextDoubleFromUnitTND(0.5, 0.1);
+	    case10 += rnd.nextDoubleFromUnitTND(1.0, 0.1);
+	    caseUnif += rnd.nextDoubleFromTo(0, 1);
 	}
 
 	Assert.assertEquals(0.0797, case00 / iterations, 0.01);
@@ -69,7 +69,7 @@ public class DefaultRandomGeneratorTest {
 		new LexiographicComparator());
 
 	for (int i = 0; i < iterations; i++) {
-	    IDeceptionModel dm = rnd.randomFromWeights(distr);
+	    IDeceptionModel dm = rnd.fromWeights(distr);
 	    emp.put(dm, (emp.get(dm) == null ? 1d : emp.get(dm) + 1));
 	}
 
@@ -93,7 +93,7 @@ public class DefaultRandomGeneratorTest {
 	distr.put(new Silent(), 0.3);
 	distr.put(new Complementary(), 0.2);
 
-	rnd1.randomFromWeights(distr);
+	rnd1.fromWeights(distr);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -106,7 +106,7 @@ public class DefaultRandomGeneratorTest {
 	distr.put(new Silent(), 0.3);
 	distr.put(new Complementary(), 0.2);
 
-	rnd1.randomFromWeights(distr);
+	rnd1.fromWeights(distr);
     }
 
     @Test
@@ -122,14 +122,14 @@ public class DefaultRandomGeneratorTest {
 	distr.put(new RandomDeception(), 0.1);
 
 	for (int i = 0; i < 1000; i++) {
-	    Assert.assertEquals(rnd1.randomTND(0.75, 0.05),
-		    rnd2.randomTND(0.75, 0.05), 0.0000001);
-	    Assert.assertEquals(rnd1.randomUnif(0, 1), rnd2.randomUnif(0, 1),
+	    Assert.assertEquals(rnd1.nextDoubleFromUnitTND(0.75, 0.05),
+		    rnd2.nextDoubleFromUnitTND(0.75, 0.05), 0.0000001);
+	    Assert.assertEquals(rnd1.nextDoubleFromTo(0, 1), rnd2.nextDoubleFromTo(0, 1),
 		    0.0000001);
-	    Assert.assertEquals(rnd1.randomUnifIndex(5, 10),
-		    rnd2.randomUnifIndex(5, 10));
-	    Assert.assertEquals(rnd1.randomFromWeights(distr),
-		    rnd2.randomFromWeights(distr));
+	    Assert.assertEquals(rnd1.nextIntFromTo(5, 10),
+		    rnd2.nextIntFromTo(5, 10));
+	    Assert.assertEquals(rnd1.fromWeights(distr),
+		    rnd2.fromWeights(distr));
 	}
 
     }

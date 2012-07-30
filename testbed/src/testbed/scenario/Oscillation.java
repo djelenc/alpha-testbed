@@ -229,11 +229,11 @@ public class Oscillation extends AbstractScenario {
 	List<Integer> newBad = new ArrayList<Integer>(good);
 
 	for (int agent : newGood) {
-	    capabilities.put(agent, generator.randomUnif(0.5, 1));
+	    capabilities.put(agent, generator.nextDoubleFromTo(0.5, 1));
 	}
 
 	for (int agent : newBad) {
-	    capabilities.put(agent, generator.randomUnif(0, 0.5));
+	    capabilities.put(agent, generator.nextDoubleFromTo(0, 0.5));
 	}
 
 	good.clear();
@@ -258,11 +258,11 @@ public class Oscillation extends AbstractScenario {
 	    List<Integer> bad, Map<Integer, Double> capabilities) {
 	for (int agent : agents) {
 	    if (good.contains(agent)) {
-		capabilities.put(agent, generator.randomUnif(0.5, 1));
+		capabilities.put(agent, generator.nextDoubleFromTo(0.5, 1));
 	    } else if (bad.contains(agent)) {
-		capabilities.put(agent, generator.randomUnif(0, 0.5));
+		capabilities.put(agent, generator.nextDoubleFromTo(0, 0.5));
 	    } else {
-		capabilities.put(agent, generator.randomUnif(0, 1));
+		capabilities.put(agent, generator.nextDoubleFromTo(0, 1));
 	    }
 	}
     }
@@ -295,7 +295,7 @@ public class Oscillation extends AbstractScenario {
 	// define good
 	for (int i = 0; i < numGood; i++) {
 	    do {
-		agent = generator.randomUnifIndex(0, allAgents.size() - 1);
+		agent = generator.nextIntFromTo(0, allAgents.size() - 1);
 	    } while (good.contains(agent));
 
 	    good.add(agent);
@@ -304,7 +304,7 @@ public class Oscillation extends AbstractScenario {
 	// define bad
 	for (int i = 0; i < numBad; i++) {
 	    do {
-		agent = generator.randomUnifIndex(0, allAgents.size() - 1);
+		agent = generator.nextIntFromTo(0, allAgents.size() - 1);
 	    } while (good.contains(agent) || bad.contains(agent));
 
 	    bad.add(agent);
@@ -339,7 +339,7 @@ public class Oscillation extends AbstractScenario {
 
 		    if (!(dm instanceof Silent)) {
 			final double cap = capabilities.get(agent);
-			double itd = generator.randomTND(cap, sd_o);
+			double itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = dm.calculate(itd);
 
 			Opinion o = new Opinion(reporter, agent, 0, time, itd);
@@ -356,13 +356,13 @@ public class Oscillation extends AbstractScenario {
     public Set<Experience> generateExperiences() {
 	Set<Experience> experiences = new HashSet<Experience>();
 	// random agent
-	final int agent = generator.randomUnifIndex(0, agents.size() - 1);
+	final int agent = generator.nextIntFromTo(0, agents.size() - 1);
 
 	// get its capability
 	final double cap = capabilities.get(agent);
 
 	// generate interaction outcome
-	final double outcome = generator.randomTND(cap, sd_i);
+	final double outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
 	// create experience tuple and add it to the set
 	experiences.add(new Experience(agent, 0, time, outcome));

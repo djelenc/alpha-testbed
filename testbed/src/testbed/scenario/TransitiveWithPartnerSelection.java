@@ -33,7 +33,7 @@ public class TransitiveWithPartnerSelection extends Transitive implements
 
 	    // generate interaction outcome
 	    final double cap = capabilities.get(agent);
-	    final double outcome = generator.randomTND(cap, sd_i);
+	    final double outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
 	    // create experience tuple and add it to list
 	    final Experience experience;

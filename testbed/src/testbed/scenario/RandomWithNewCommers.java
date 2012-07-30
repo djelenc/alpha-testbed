@@ -151,7 +151,7 @@ public class RandomWithNewCommers extends AbstractScenario implements IScenario 
 	    agents.add(i);
 
 	    // assign capabilities
-	    capabilities.put(i, generator.randomUnif(0, 1));
+	    capabilities.put(i, generator.nextDoubleFromTo(0, 1));
 
 	    // assign deception model
 	    deceptionModels.put(i, getDM(i, numAgents, dmPMF));
@@ -211,7 +211,7 @@ public class RandomWithNewCommers extends AbstractScenario implements IScenario 
 			cap = capabilities.get(agent2);
 
 			// generate internal trust degree
-			itd = generator.randomTND(cap, sd_o);
+			itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = deceptionModel.calculate(itd);
 
 			// create opinion tuple and add it to list
@@ -240,7 +240,7 @@ public class RandomWithNewCommers extends AbstractScenario implements IScenario 
 
 	    // generate interaction outcome
 	    cap = capabilities.get(agent);
-	    outcome = generator.randomTND(cap, sd_i);
+	    outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
 	    // create experience tuple and add it to list
 	    experience = new Experience(agent, service, time, outcome);
@@ -284,7 +284,7 @@ public class RandomWithNewCommers extends AbstractScenario implements IScenario 
 		agents.add(agent);
 
 		// assign capabilities
-		capabilities.put(agent, generator.randomUnif(0, 1));
+		capabilities.put(agent, generator.nextDoubleFromTo(0, 1));
 
 		// assign deception model
 		deceptionModels.put(agent, dm);

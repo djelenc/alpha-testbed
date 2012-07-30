@@ -104,7 +104,7 @@ public class Transitive extends AbstractScenario implements IScenario {
 
 	for (int i = 0; i < numAgents; i++) {
 	    agents.add(i); // generate agents
-	    capabilities.put(i, generator.randomUnif(0, 1)); // assign
+	    capabilities.put(i, generator.nextDoubleFromTo(0, 1)); // assign
 							     // capabilities
 	}
 
@@ -142,7 +142,7 @@ public class Transitive extends AbstractScenario implements IScenario {
 		    cap = capabilities.get(a2);
 
 		    // generate internal trust degree
-		    itd = generator.randomTND(cap, sd_o);
+		    itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 		    itd = dms[a1][a2].calculate(itd);
 
 		    // create opinion tuple and add it to list
@@ -162,7 +162,7 @@ public class Transitive extends AbstractScenario implements IScenario {
 
 	// generate interaction outcome
 	final double cap = capabilities.get(agent);
-	final double outcome = generator.randomTND(cap, sd_i);
+	final double outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
 	// create experience tuple and add it to list
 	final Experience experience = new Experience(agent, 0, time, outcome);
@@ -191,7 +191,7 @@ public class Transitive extends AbstractScenario implements IScenario {
 	int counter = 0, agent;
 
 	while (counter < numPartners) {
-	    agent = generator.randomUnifIndex(0, agents.size() - 1);
+	    agent = generator.nextIntFromTo(0, agents.size() - 1);
 
 	    if (!partners.contains(agent)) {
 		partners.add(agent);
@@ -228,7 +228,7 @@ public class Transitive extends AbstractScenario implements IScenario {
 	    cap = capabilities.get(i);
 
 	    for (int j = 0; j < dms[i].length; j++) {
-		rnd = generator.randomUnif(0, 1);
+		rnd = generator.nextDoubleFromTo(0, 1);
 
 		if (cap > rnd) {
 		    dms[i][j] = truthful;
@@ -243,8 +243,8 @@ public class Transitive extends AbstractScenario implements IScenario {
 	int i, j, counter = 0;
 
 	while (counter < limit) {
-	    i = generator.randomUnifIndex(0, dms.length - 1);
-	    j = generator.randomUnifIndex(0, dms.length - 1);
+	    i = generator.nextIntFromTo(0, dms.length - 1);
+	    j = generator.nextIntFromTo(0, dms.length - 1);
 
 	    if (dms[i][j] != silent) {
 		dms[i][j] = silent;
@@ -285,7 +285,7 @@ public class Transitive extends AbstractScenario implements IScenario {
 
 	    // chose random agent to tell the truth about
 	    while (assignedTruthful < numTruthful) {
-		idx = generator.randomUnifIndex(0, dms.length - 1);
+		idx = generator.nextIntFromTo(0, dms.length - 1);
 
 		if (dms[i][idx] == null) {
 		    dms[i][idx] = truthful;
@@ -305,8 +305,8 @@ public class Transitive extends AbstractScenario implements IScenario {
 	int i, j, counter = 0;
 
 	while (counter < limit) {
-	    i = generator.randomUnifIndex(0, dms.length - 1);
-	    j = generator.randomUnifIndex(0, dms.length - 1);
+	    i = generator.nextIntFromTo(0, dms.length - 1);
+	    j = generator.nextIntFromTo(0, dms.length - 1);
 
 	    if (dms[i][j] != silent) {
 		dms[i][j] = silent;

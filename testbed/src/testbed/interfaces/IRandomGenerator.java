@@ -11,8 +11,12 @@ import java.util.TreeMap;
 public interface IRandomGenerator {
 
     /**
-     * Returns a random number generated from a Truncated normal distribution
-     * with given mean and standard deviation. The value falls under [0, 1].
+     * Generates a random number between [0, 1] using a truncated normal
+     * distribution with given mean and standard deviation.
+     * 
+     * <p>
+     * The mean parameter must be within [0, 1] or an
+     * {@link IllegalArgumentException} is thrown.
      * 
      * @see <a href=
      *      'http://en.wikipedia.org/wiki/Truncated_normal_distribution'>
@@ -25,7 +29,7 @@ public interface IRandomGenerator {
      *            Standard deviation
      * @return random number
      */
-    public double randomTND(double mean, double sd);
+    public double nextDoubleFromUnitTND(double mean, double sd);
 
     /**
      * Returns a random number from an uniform distribution from (min, max).
@@ -36,7 +40,7 @@ public interface IRandomGenerator {
      *            Maximum value (exclusively)
      * @return Generated random number
      */
-    public double randomUnif(double min, double max);
+    public double nextDoubleFromTo(double min, double max);
 
     /**
      * Returns a random integer from an uniform distribution between [min, max].
@@ -48,11 +52,12 @@ public interface IRandomGenerator {
      *            Maximum value (inclusively)
      * @return random index
      */
-    public int randomUnifIndex(int min, int max);
+    public int nextIntFromTo(int min, int max);
 
     /**
-     * Returns a random element from the set of keys in the provided Map. The
-     * map thus represents a probability mass functions of elements (keys).
+     * Returns a random element from the set of given elements. The elements to
+     * be selected must be given as a map, in which keys represent elements and
+     * values represent their respective probabilities.
      * 
      * <p>
      * To warrant a deterministic behavior, the distribution must be given as a
@@ -63,6 +68,6 @@ public interface IRandomGenerator {
      *            {@link TreeMap}
      * @return A random element
      */
-    public <T> T randomFromWeights(TreeMap<T, Double> pmf);
+    public <T> T fromWeights(TreeMap<T, Double> pmf);
 
 }

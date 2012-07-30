@@ -134,10 +134,10 @@ public class RandomWithMultiService extends AbstractScenario implements
 		key = (numAgentsLarger ? pivot * i + j : pivot * j + i);
 
 		// assign capability
-		capabilities.put(key, generator.randomUnif(0, 1));
+		capabilities.put(key, generator.nextDoubleFromTo(0, 1));
 
 		final IDeceptionModel model = generator
-			.randomFromWeights(dmPMF);
+			.fromWeights(dmPMF);
 
 		if (model instanceof PositiveExaggeration) {
 		    model.initialize(posExCoef);
@@ -184,7 +184,7 @@ public class RandomWithMultiService extends AbstractScenario implements
 			cap = capabilities.get(key2);
 
 			// generate internal trust degree
-			itd = generator.randomTND(cap, sd_o);
+			itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = deceptionModel.calculate(itd);
 
 			// create opinion tuple and add it to list
@@ -217,7 +217,7 @@ public class RandomWithMultiService extends AbstractScenario implements
 
 	    // generate interaction outcome
 	    cap = capabilities.get(key);
-	    outcome = generator.randomTND(cap, sd_i);
+	    outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
 	    // create experience tuple and add it to list
 	    experience = new Experience(agent, service, time, outcome);
