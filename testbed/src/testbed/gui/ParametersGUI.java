@@ -6,10 +6,10 @@ import testbed.interfaces.IParametersPanel;
 
 public class ParametersGUI {
     public static final String MAIN = "main";
-    public static final String RANK_METRIC = "ranking_metric";
+    public static final String RANK_METRIC = "rank_metric";
     public static final String UTILITY_METRIC = "utility_metric";
     public static final String SCENARIO = "scenario";
-    public static final String MODELS = "models";
+    public static final String MODELS = "model";
 
     private static final Object[] EMPTY = new Object[0];
 
@@ -25,7 +25,8 @@ public class ParametersGUI {
 	final WizardPanelDescriptor scenarioWpd, modelWpd, rankingMetricWpd, utilityMetricWpd;
 
 	mainPanel = new MainPanel();
-	mainWpd = new WizardPanelDescriptor(MAIN, mainPanel);
+	mainWpd = new WizardPanelDescriptor(MAIN, mainPanel,
+		"General parameters");
 
 	scenarioWpd = new WizardPanelDescriptor(SCENARIO);
 	modelWpd = new WizardPanelDescriptor(MODELS);
