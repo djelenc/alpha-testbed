@@ -30,25 +30,25 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    context.setId("testbed");
 
 	    final ClassLoader cl = ContextBuilder.class.getClassLoader();
-	    final boolean batchRun = RunEnvironment.getInstance().isBatch();
+	    final boolean isBatch = RunEnvironment.getInstance().isBatch();
 
 	    final int guiAnswer;
 
 	    if (null == gui) {
 		// first run (either single or batch)
 		gui = new ParametersGUI(cl);
-		gui.setBatchRun(batchRun);
+		gui.setBatchRun(isBatch);
 		guiAnswer = gui.showDialog();
 	    } else {
 		// subsequent runs
-		if (batchRun) {
+		if (isBatch) {
 		    // batch run -- don't show dialog
-		    gui.setBatchRun(batchRun); // not sure
+		    gui.setBatchRun(isBatch);
 		    guiAnswer = 0;
 		} else {
 		    // single run -- show dialog
 		    gui.refresh();
-		    gui.setBatchRun(batchRun);
+		    gui.setBatchRun(isBatch);
 		    guiAnswer = gui.showDialog();
 		}
 	    }
@@ -70,6 +70,8 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    final Object[] generalParams = gui.getSetupParameters();
 	    final Object[] scenarioParams = gui.getScenarioParameters();
 	    final Object[] trustModelParams = gui.getTrustModelParameters();
+	    final Object[] rmParams = gui.getRankMetricParameters();
+	    final Object[] umParams = gui.getUtilityMetricParameters();
 
 	    // set scenario
 	    final IScenario scenario = (IScenario) generalParams[0];
@@ -81,17 +83,14 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    trustModel.setRandomGenerator(tmRnd);
 	    trustModel.initialize(trustModelParams);
 
-	    // FIXME: Once I implement GUI parameters for metric this is where I
-	    // should pass in their arguments and initialize the metrics
-
 	    // Set ranking metric
 	    final IRankingMetric rm = (IRankingMetric) generalParams[2];
-	    rm.initialize(0.25); // TODO
+	    rm.initialize(rmParams);
 
 	    // set utility metric
 	    final IUtilityMetric um = (IUtilityMetric) generalParams[3];
 	    if (null != um) {
-		um.initialize();
+		um.initialize(umParams);
 	    }
 
 	    // simulator
@@ -106,7 +105,7 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    }
 
 	    // for batch runs
-	    if (batchRun) {
+	    if (isBatch) {
 		final int duration = (Integer) generalParams[4];
 		RunEnvironment.getInstance().endAt(duration);
 

@@ -82,8 +82,12 @@ public class ParametersGUI {
 	return getParameters(SCENARIO);
     }
 
-    public Object[] getMetricsParameters() {
-	throw new UnsupportedOperationException("Not implemented yet!");
+    public Object[] getRankMetricParameters() {
+	return getParameters(RANK_METRIC);
+    }
+
+    public Object[] getUtilityMetricParameters() {
+	return getParameters(UTILITY_METRIC);
     }
 
     public Object[] getTrustModelParameters() {
@@ -112,5 +116,9 @@ public class ParametersGUI {
 		Arrays.toString(sim.getScenarioParameters()));
 	System.out.printf("Trust model parameters: %s\n",
 		Arrays.toString(sim.getTrustModelParameters()));
+	System.out.printf("Rank metric parameters: %s\n",
+		Arrays.toString(sim.getRankMetricParameters()));
+	System.out.printf("Utility metric parameters: %s\n",
+		Arrays.toString(sim.getUtilityMetricParameters()));
     }
 }

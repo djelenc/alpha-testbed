@@ -4,6 +4,7 @@ import java.util.Map;
 
 import testbed.common.Utils;
 import testbed.interfaces.ICondition;
+import testbed.interfaces.IParametersPanel;
 
 public class AccuracyWithSensitivity extends Accuracy {
     protected double sensitivity = 0;
@@ -58,5 +59,10 @@ public class AccuracyWithSensitivity extends Accuracy {
     @Override
     public String getName() {
 	return "Accuracy with sensitivity";
+    }
+
+    @Override
+    public IParametersPanel getParametersPanel() {
+	return new AccuracyWithSensitivityGUI();
     }
 }
