@@ -326,8 +326,9 @@ public class WizardPanelDescriptor implements Observer {
 		wpd.setNext(ParametersGUI.RANK_METRIC);
 	    } else if (arg instanceof IRankingMetric) {
 		wpd.setBack(ParametersGUI.MODELS);
-		wpd.setNext(ParametersGUI.UTILITY_METRIC);
 	    } else {
+		wizard.getModel().getPanelDescriptor(ParametersGUI.RANK_METRIC)
+			.setNext(ParametersGUI.UTILITY_METRIC);
 		wpd.setBack(ParametersGUI.RANK_METRIC);
 	    }
 	}

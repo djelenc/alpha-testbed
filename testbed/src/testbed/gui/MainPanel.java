@@ -93,7 +93,15 @@ public class MainPanel extends JPanel implements IParametersPanel {
     public Object[] getParameters() {
 	return new Object[] { scenario.getSelectedItem(),
 		trustModel.getSelectedItem(), rankingMetric.getSelectedItem(),
-		utilityMetric.getSelectedItem(), getBatchRunDuration() };
+		getUtilityMetric(), getBatchRunDuration() };
+    }
+
+    private IUtilityMetric getUtilityMetric() {
+	if (utilityMetric.isEnabled()) {
+	    return (IUtilityMetric) utilityMetric.getSelectedItem();
+	} else {
+	    return null;
+	}
     }
 
     private int getBatchRunDuration() {
@@ -251,7 +259,10 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	observer.update(null, scn);
 	observer.update(null, tm);
 	observer.update(null, rm);
-	observer.update(null, um);
+
+	if (utilityMetric.isEnabled()) {
+	    observer.update(null, um);
+	}
     }
 
     public void setBatchRun(boolean batchRun) {

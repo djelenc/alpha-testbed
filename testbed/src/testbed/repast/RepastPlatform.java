@@ -90,7 +90,9 @@ public class RepastPlatform extends DefaultContext<Object> implements
 
 	    // set utility metric
 	    final IUtilityMetric um = (IUtilityMetric) generalParams[3];
-	    um.initialize();
+	    if (null != um) {
+		um.initialize();
+	    }
 
 	    // simulator
 	    atb = new AlphaTestbed(scenario, trustModel, rm, um);
