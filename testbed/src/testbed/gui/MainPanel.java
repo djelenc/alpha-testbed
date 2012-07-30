@@ -241,6 +241,8 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	final IScenario scn = (IScenario) scenario.getSelectedItem();
 	final IRankingMetric rm = (IRankingMetric) rankingMetric
 		.getSelectedItem();
+	final IUtilityMetric um = (IUtilityMetric) utilityMetric
+		.getSelectedItem();
 
 	final boolean enabled = scn instanceof IPartnerSelection;
 	utilityMetric.setEnabled(enabled);
@@ -249,6 +251,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	observer.update(null, scn);
 	observer.update(null, tm);
 	observer.update(null, rm);
+	observer.update(null, um);
     }
 
     public void setBatchRun(boolean batchRun) {

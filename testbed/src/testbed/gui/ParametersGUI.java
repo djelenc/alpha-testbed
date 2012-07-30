@@ -6,7 +6,8 @@ import testbed.interfaces.IParametersPanel;
 
 public class ParametersGUI {
     public static final String MAIN = "main";
-    public static final String METRICS = "metrics";
+    public static final String RANK_METRIC = "ranking_metric";
+    public static final String UTILITY_METRIC = "utility_metric";
     public static final String SCENARIO = "scenario";
     public static final String MODELS = "models";
 
@@ -21,20 +22,21 @@ public class ParametersGUI {
 	wizard.getDialog().setTitle("Evaluation setup");
 	wizard.setClassLoader(cl);
 
-	final WizardPanelDescriptor scenarioWpd, modelWpd, rankingMetricWpd;
+	final WizardPanelDescriptor scenarioWpd, modelWpd, rankingMetricWpd, utilityMetricWpd;
 
 	mainPanel = new MainPanel();
-	mainWpd = new WizardPanelDescriptor(MAIN, mainPanel,
-		"General parameters");
+	mainWpd = new WizardPanelDescriptor(MAIN, mainPanel);
 
 	scenarioWpd = new WizardPanelDescriptor(SCENARIO);
 	modelWpd = new WizardPanelDescriptor(MODELS);
-	rankingMetricWpd = new WizardPanelDescriptor(METRICS);
+	rankingMetricWpd = new WizardPanelDescriptor(RANK_METRIC);
+	utilityMetricWpd = new WizardPanelDescriptor(UTILITY_METRIC);
 
 	wizard.registerWizardPanel(mainWpd);
 	wizard.registerWizardPanel(scenarioWpd);
 	wizard.registerWizardPanel(modelWpd);
 	wizard.registerWizardPanel(rankingMetricWpd);
+	wizard.registerWizardPanel(utilityMetricWpd);
 
 	mainWpd.setNext(scenarioWpd.getID());
 	scenarioWpd.setBack(mainWpd.getID());
@@ -42,6 +44,8 @@ public class ParametersGUI {
 	modelWpd.setBack(scenarioWpd.getID());
 	modelWpd.setNext(rankingMetricWpd.getID());
 	rankingMetricWpd.setBack(modelWpd.getID());
+	rankingMetricWpd.setNext(utilityMetricWpd.getID());
+	utilityMetricWpd.setBack(rankingMetricWpd.getID());
 
 	mainPanel.initialize(mainWpd, cl);
 	wizard.setCurrentPanel(mainWpd.getID());

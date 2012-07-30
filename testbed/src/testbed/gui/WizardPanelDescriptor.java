@@ -14,6 +14,7 @@ import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IScenario;
 import testbed.interfaces.ITrustModel;
+import testbed.interfaces.IUtilityMetric;
 
 /**
  * A base descriptor class used to reference a Component panel for the Wizard,
@@ -21,8 +22,9 @@ import testbed.interfaces.ITrustModel;
  */
 public class WizardPanelDescriptor implements Observer {
 
+    private static final String ERROR_GUI = "Could not determine GUI type for parameters id = %s, element = %s";
     private static final String DEFAULT_IDENTIFIER = "DefaultIdentifier";
-    private static final String TITLE = "<html><h1>%s</h1></html>";
+    private static final String TITLE = "<html><h2>%s</h2></html>";
 
     /**
      * Identifier returned by getNextPanelDescriptor() to indicate that this is
@@ -67,12 +69,37 @@ public class WizardPanelDescriptor implements Observer {
      *            A class which extends java.awt.Component that will be inserted
      *            as a panel into the wizard dialog.
      */
-    public WizardPanelDescriptor(Object id, IParametersPanel params,
-	    String title) {
+    public WizardPanelDescriptor(Object id, Object element) {
+	final String title;
+	final Component component;
+
+	if (element instanceof ITrustModel) {
+	    paramsPanel = ((ITrustModel) element).getParametersPanel();
+	    component = paramsPanel.getComponent();
+	    title = String.format("Trust model: %s", element);
+	} else if (element instanceof IScenario) {
+	    paramsPanel = ((IScenario) element).getParametersPanel();
+	    title = String.format("Scenario: %s", element);
+	    component = paramsPanel.getComponent();
+	} else if (element instanceof IRankingMetric) {
+	    paramsPanel = ((IRankingMetric) element).getParametersPanel();
+	    title = String.format("Ranking metric: %s", element);
+	    component = paramsPanel.getComponent();
+	} else if (element instanceof IRankingMetric) {
+	    paramsPanel = ((IUtilityMetric) element).getParametersPanel();
+	    title = String.format("Utility metric: %s", element);
+	    component = paramsPanel.getComponent();
+	} else if (element instanceof MainPanel) {
+	    component = (Component) element;
+	    title = "Main parameters";
+	} else {
+	    throw new Error(String.format(ERROR_GUI, id, element));
+	}
+
 	identifier = id;
-	paramsPanel = params;
+
 	name = String.format(TITLE, title);
-	panel = createPanel((params == null ? null : params.getComponent()));
+	panel = createPanel((component == null ? null : component));
     }
 
     /**
@@ -264,30 +291,32 @@ public class WizardPanelDescriptor implements Observer {
 	    }
 	} else {
 	    final Object id;
-	    final String name;
 	    final IParametersPanel current, novel;
 
 	    if (arg instanceof IScenario) {
 		final IScenario scn = (IScenario) arg;
 		id = ParametersGUI.SCENARIO;
-		name = scn.getName();
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = scn.getParametersPanel();
 	    } else if (arg instanceof ITrustModel) {
 		final ITrustModel tm = (ITrustModel) arg;
 		id = ParametersGUI.MODELS;
-		name = tm.getName();
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = tm.getParametersPanel();
 	    } else if (arg instanceof IRankingMetric) {
 		final IRankingMetric rm = (IRankingMetric) arg;
-		id = ParametersGUI.METRICS;
-		name = rm.getName();
+		id = ParametersGUI.RANK_METRIC;
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = rm.getParametersPanel();
+	    } else if (arg instanceof IUtilityMetric) {
+		final IUtilityMetric um = (IUtilityMetric) arg;
+		id = ParametersGUI.UTILITY_METRIC;
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = um.getParametersPanel();
 	    } else {
 		return;
 	    }
@@ -300,7 +329,7 @@ public class WizardPanelDescriptor implements Observer {
 
 	    // create new WPD
 	    final WizardPanelDescriptor wpd = new WizardPanelDescriptor(id,
-		    novel, name);
+		    novel);
 
 	    // register new WPD
 	    wizard.registerWizardPanel(wpd);
@@ -315,9 +344,12 @@ public class WizardPanelDescriptor implements Observer {
 		wpd.setNext(ParametersGUI.MODELS);
 	    } else if (arg instanceof ITrustModel) {
 		wpd.setBack(ParametersGUI.SCENARIO);
-		wpd.setNext(ParametersGUI.METRICS);
+		wpd.setNext(ParametersGUI.RANK_METRIC);
 	    } else if (arg instanceof IRankingMetric) {
 		wpd.setBack(ParametersGUI.MODELS);
+		wpd.setNext(ParametersGUI.UTILITY_METRIC);
+	    } else {
+		wpd.setBack(ParametersGUI.RANK_METRIC);
 	    }
 	}
     }
