@@ -17,14 +17,6 @@ import testbed.interfaces.IDecisionMaking;
 public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	IDecisionMaking {
 
-    protected int time;
-
-    @Override
-    public void initialize(Object... params) {
-	super.initialize(params);
-	time = 0;
-    }
-
     @Override
     public Map<Integer, Integer> getNextInteractionPartners(
 	    Set<Integer> services) {
@@ -88,11 +80,6 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	    sb.append(String.format("%d=%.2f, ", e.getKey(), e.getValue()));
 
 	return sb.toString();
-    }
-
-    @Override
-    public void setCurrentTime(int time) {
-	this.time = time;
     }
 
     public Integer bestFromWeights() {

@@ -13,7 +13,7 @@ import testbed.interfaces.IRankingMetric;
 import testbed.interfaces.IUtilityMetric;
 import testbed.metric.Accuracy;
 import testbed.metric.Coverage;
-import testbed.metric.NormalizedUtility;
+import testbed.metric.CumulativeNormalizedUtility;
 
 public class MetricsTest {
 
@@ -41,7 +41,7 @@ public class MetricsTest {
 
     @Test
     public void metricsType() {
-	IMetric utility = new NormalizedUtility();
+	IMetric utility = new CumulativeNormalizedUtility();
 	IMetric accuracy = new Accuracy();
 	utility.initialize();
 	accuracy.initialize();
@@ -54,7 +54,7 @@ public class MetricsTest {
 
     @Test
     public void normalizedUtility() {
-	IUtilityMetric utility = new NormalizedUtility();
+	IUtilityMetric utility = new CumulativeNormalizedUtility();
 
 	utility.initialize();
 

@@ -6,28 +6,22 @@ import testbed.interfaces.IUtilityMetric;
 
 public class NormalizedUtility extends AbstractMetric implements IUtilityMetric {
 
-    private double total, maximal;
-
-    @Override
-    public void initialize(Object... params) {
-	total = 0;
-	maximal = 0;
-    }
-
     @Override
     public double evaluate(Map<Integer, Double> capabilities, int agent) {
-	total += capabilities.get(agent);
-
-	double max = Double.MIN_VALUE;
+	final double obtained = capabilities.get(agent);
+	double maximum = 0d;
 
 	for (Map.Entry<Integer, Double> cap : capabilities.entrySet()) {
-	    if (Double.compare(cap.getValue(), max) > 0) {
-		max = cap.getValue();
+	    if (Double.compare(cap.getValue(), maximum) > 0) {
+		maximum = cap.getValue();
 	    }
 	}
 
-	maximal += max;
+	return obtained / maximum;
+    }
 
-	return total / maximal;
+    @Override
+    public String getName() {
+	return "Normalized utility";
     }
 }

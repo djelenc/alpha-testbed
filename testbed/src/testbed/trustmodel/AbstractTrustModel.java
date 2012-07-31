@@ -34,12 +34,12 @@ public abstract class AbstractTrustModel implements ITrustModel {
     }
 
     /**
-     * Constructs a map of rankings from a given rank of floating poitn
-     * estimations. The estimations must lie on [0,1]. The highest estimation
-     * gets rank 1.
+     * Constructs a map of rankings from a given map of estimations given in
+     * double values. The estimations have to be within [0,1]. The highest
+     * estimation gets rank 1.
      * 
      * <p>
-     * The algorith assigns the same rank to agents, who have the same
+     * The algorithm assigns the same rank to agents, which have the same
      * estimations. The algorithm uses a <a href=
      * 'http://en.wikipedia.org/w/index.php?title=Ranking&oldid=460628427'>dense
      * ranking strategy</a>, which means that in case of ties, algorithm does

@@ -58,14 +58,12 @@ public interface ITrustModel {
     /**
      * Computes the ranking of agents for a given service. The ranking has to be
      * given in a map, where keys represent agents and values represent their
-     * corresponding ranks.
+     * ranks.
      * 
      * <p>
-     * The ranking should starts with 1 and need not to contain all available
-     * agents. Assigning multiple agents to the same rank is also allowed.
-     * 
-     * <p>
-     * For instance, for agents 1, 2, 3, 4, 5 a valid ranking may be:
+     * The ranking should start with 1 and does not need to cover all available
+     * agents. Assigning multiple agents to the same rank is also permitted. For
+     * instance, for agents 1, 2, 3, 4, 5 a valid ranking may be:
      * 
      * <p>
      * <blockquote>
