@@ -140,16 +140,16 @@ public class AlphaTestbed {
     private final IPartnerSelection selection;
 
     /** Instance of a ranking metric */
-    private final IRankingMetric rankingMetric;
+    private final Class<? extends IRankingMetric> rankingMetricClass;
 
     /** Parameters for creating ranking metric instances */
-    private final Object[] rankingMetricParams;
+    private final Object[] rankingMetricParameters;
 
     /** Instance of an utility metric -- null in ranking mode */
-    private final IUtilityMetric utilityMetric;
+    private final Class<? extends IUtilityMetric> utilityMetricClass;
 
     /** Parameters for creating utility metric instances */
-    private final Object[] utilityMetricParams;
+    private final Object[] utilityMetricParameters;
 
     /** Temporary map that holds the metric results */
     private final Map<Integer, Double> score;
@@ -169,36 +169,39 @@ public class AlphaTestbed {
     /** Subscribers to this evaluation run */
     final private List<IMetricSubscriber> subscribers;
 
-    public AlphaTestbed(IScenario scenario, ITrustModel model,
+    public AlphaTestbed(IScenario scn, ITrustModel tm,
 	    IRankingMetric rankingMetric, Object[] rmParams,
 	    IUtilityMetric utilityMetric, Object[] umParams) {
-	this.model = model;
-	this.scenario = scenario;
-	this.rankingMetric = rankingMetric;
-	this.rankingMetricParams = rmParams;
-	this.allRankingMetrics = new HashMap<Integer, IRankingMetric>();
-	this.subscribers = new ArrayList<IMetricSubscriber>();
+	model = tm;
+	scenario = scn;
 
-	score = new HashMap<Integer, Double>();
-
-	if (isValidUtilityMode(model, scenario)) {
-	    this.decision = (IDecisionMaking) model;
-	    this.selection = (IPartnerSelection) scenario;
-	    this.utilityMetric = utilityMetric;
-	    this.utilityMetricParams = umParams;
-	    this.allUtilityMetrics = new HashMap<Integer, IUtilityMetric>();
-	    this.utilityMode = true;
-	} else if (isValidRankingMode(model, scenario)) {
-	    this.decision = null;
-	    this.selection = null;
-	    this.utilityMetric = null;
-	    this.utilityMetricParams = null;
-	    this.allUtilityMetrics = null;
-	    this.utilityMode = false;
+	if (isValidUtilityMode(tm, scn)) {
+	    decision = (IDecisionMaking) tm;
+	    selection = (IPartnerSelection) scn;
+	    rankingMetricClass = rankingMetric.getClass();
+	    rankingMetricParameters = rmParams;
+	    allRankingMetrics = new HashMap<Integer, IRankingMetric>();
+	    utilityMetricClass = utilityMetric.getClass();
+	    utilityMetricParameters = umParams;
+	    allUtilityMetrics = new HashMap<Integer, IUtilityMetric>();
+	    utilityMode = true;
+	} else if (isValidRankingMode(tm, scn)) {
+	    decision = null;
+	    selection = null;
+	    rankingMetricClass = rankingMetric.getClass();
+	    rankingMetricParameters = rmParams;
+	    allRankingMetrics = new HashMap<Integer, IRankingMetric>();
+	    utilityMetricClass = null;
+	    utilityMetricParameters = null;
+	    allUtilityMetrics = null;
+	    utilityMode = false;
 	} else {
 	    throw new IllegalArgumentException(String.format(INCOMPATIBLE_EX,
-		    model.getName(), scenario.getName()));
+		    tm.getName(), scn.getName()));
 	}
+
+	subscribers = new ArrayList<IMetricSubscriber>();
+	score = new HashMap<Integer, Double>();
     }
 
     /**
@@ -410,12 +413,13 @@ public class AlphaTestbed {
 
 	if (null == metric) {
 	    try {
-		metric = rankingMetric.getClass().newInstance();
-		metric.initialize(rankingMetricParams);
+		metric = rankingMetricClass.newInstance();
+		metric.initialize(rankingMetricParameters);
 		allRankingMetrics.put(service, metric);
 	    } catch (Exception e) {
-		throw new Error(String.format(CREATION_ERROR, rankingMetric,
-			Arrays.toString(rankingMetricParams)));
+		throw new Error(String.format(CREATION_ERROR,
+			rankingMetricClass,
+			Arrays.toString(rankingMetricParameters)));
 	    }
 	}
 
@@ -440,12 +444,13 @@ public class AlphaTestbed {
 
 	if (null == metric) {
 	    try {
-		metric = utilityMetric.getClass().newInstance();
-		metric.initialize(utilityMetricParams);
+		metric = utilityMetricClass.newInstance();
+		metric.initialize(utilityMetricParameters);
 		allUtilityMetrics.put(service, metric);
 	    } catch (Exception e) {
-		throw new Error(String.format(CREATION_ERROR, utilityMetric,
-			Arrays.toString(utilityMetricParams)));
+		throw new Error(String.format(CREATION_ERROR,
+			utilityMetricClass,
+			Arrays.toString(utilityMetricParameters)));
 	    }
 	}
 
