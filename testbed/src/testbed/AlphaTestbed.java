@@ -117,58 +117,114 @@ import testbed.interfaces.Opinion;
  * 
  */
 public class AlphaTestbed {
-    private static final String CREATION_ERROR = "Could not instantiate metric '%s' using parameters %s.";
-    private static final String INCOMPATIBLE_EX = "Trust model '%s' cannot be tested with scenario '%s'.";
-    private static final String METRIC_QUERY_EX = "Invalid query for metric '%s' and service '%d'.";
+    protected static final String CREATION_ERROR = "Could not instantiate metric '%s' using parameters %s.";
+    protected static final String INCOMPATIBLE_EX = "Trust model '%s' cannot be tested with scenario '%s'.";
+    protected static final String METRIC_QUERY_EX = "Invalid query for metric '%s' and service '%d'.";
 
     /** Reference to the trust model */
-    private final ITrustModel model;
+    protected final ITrustModel model;
 
     /**
      * Reference to the decision making capabilities of a trust model -- null in
      * ranking mode
      */
-    private final IDecisionMaking decision;
+    protected final IDecisionMaking decision;
 
     /** Reference to the scenario */
-    private final IScenario scenario;
+    protected final IScenario scenario;
 
     /**
      * Reference to the partner selection capability of the scenario -- null in
      * ranking mode
      */
-    private final IPartnerSelection selection;
+    protected final IPartnerSelection selection;
 
-    /** Instance of a ranking metric */
-    private final Class<? extends IRankingMetric> rankingMetricClass;
+    /** Class of ranking metric instances */
+    protected final Class<? extends IRankingMetric> rankingMetricClass;
 
     /** Parameters for creating ranking metric instances */
-    private final Object[] rankingMetricParameters;
+    protected final Object[] rankingMetricParameters;
 
-    /** Instance of an utility metric -- null in ranking mode */
-    private final Class<? extends IUtilityMetric> utilityMetricClass;
+    /** Class of utility metric instances -- null in ranking mode */
+    protected final Class<? extends IUtilityMetric> utilityMetricClass;
 
     /** Parameters for creating utility metric instances */
-    private final Object[] utilityMetricParameters;
+    protected final Object[] utilityMetricParameters;
 
     /** Temporary map that holds the metric results */
-    private final Map<Integer, Double> score;
+    protected final Map<Integer, Double> score;
 
     /** Convenience flag to denote the utility mode */
-    private final boolean utilityMode;
+    protected final boolean utilityMode;
 
     /** Mapping of services to {@link IRankingMetric} instance */
-    private final Map<Integer, IRankingMetric> allRankingMetrics;
+    protected final Map<Integer, IRankingMetric> allRankingMetrics;
 
     /**
      * Mapping of services to {@link IUtilityMetric} instances -- null in
      * ranking mode
      */
-    private final Map<Integer, IUtilityMetric> allUtilityMetrics;
+    protected final Map<Integer, IUtilityMetric> allUtilityMetrics;
 
     /** Subscribers to this evaluation run */
-    final private List<IMetricSubscriber> subscribers;
+    protected final List<IMetricSubscriber> subscribers;
 
+    /**
+     * Constructor of for the AlphaTestbed class. Its parameters have the
+     * following semantics:
+     * <ol>
+     * <li>An {@link IScenario} instance. The instance must be initialized (that
+     * is, the method {@link IScenario#initialize(Object...)} must be called
+     * before the instance is passed to this constructor).
+     * <li>An {@link ITrustModel} instance. Similar to scenario instance, the
+     * instance of the trust model must also be initialized before it is passed
+     * to this constructor.<br/>
+     * <br/>
+     * Additionally, the {@link ITrustModel} instance must be compatible with
+     * the {@link IScenario} instance. There are only two valid combinations.
+     * <ol>
+     * <li>In the first case, the scenario instance implements the
+     * {@link IPartnerSelection} interface and the trust model instance
+     * implements the {@link IDecisionMaking}. This combination constitutes the
+     * so called <b>utility mode</b>.
+     * <li>In the second case, the scenario instance <b>does not</b> implement
+     * the {@link IPartnerSelection} interface, and the trust model instance
+     * <b>does not</b> implement the {@link IDecisionMaking} interface. This
+     * combination constitutes the so called <b>ranking mode</b>.
+     * </ol>
+     * If the given combination of scenario and trust model does not constitute
+     * a valid combination, an {@link IllegalArgumentException} is thrown.
+     * <li>An instance of the {@link IRankingMetric}. This instance is only used
+     * to infer the type (i.e. class) for the ranking metric. The testbed will
+     * create the actual instance of the {@link IRankingMetric} that will be
+     * used for evaluation.
+     * <li>The varargs parameter used to initialize a {@link IRankingMetric}
+     * instance. The testbed uses these parameters when creates and initializes
+     * new instances of the {@link IRankingMetric}.
+     * <li>An instance of the {@link IUtilityMetric}. This instance is only used
+     * to infer the type (i.e. class) for the utility metric. The testbed will
+     * create the actual instance of the {@link IUtilityMetric} that will be
+     * used for evaluation.
+     * <li>The varargs parameter used to initialize a {@link IUtilityMetric}
+     * instance. The testbed uses these parameters when creates and initializes
+     * new instances of the {@link IUtilityMetric}.
+     * </ol>
+     * 
+     * @param scn
+     *            A scenario instance
+     * @param tm
+     *            A trust model instance
+     * @param rankingMetric
+     *            A ranking metric instance
+     * @param rmParams
+     *            A set of varargs arguments to initialize a ranking metric
+     *            instance
+     * @param utilityMetric
+     *            A utility metric instance
+     * @param umParams
+     *            A set of varargs arguments to initialize an utility metric
+     *            instance
+     */
     public AlphaTestbed(IScenario scn, ITrustModel tm,
 	    IRankingMetric rankingMetric, Object[] rmParams,
 	    IUtilityMetric utilityMetric, Object[] umParams) {
