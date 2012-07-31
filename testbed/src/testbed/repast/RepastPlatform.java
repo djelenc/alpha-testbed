@@ -85,16 +85,13 @@ public class RepastPlatform extends DefaultContext<Object> implements
 
 	    // Set ranking metric
 	    final IRankingMetric rm = (IRankingMetric) generalParams[2];
-	    rm.initialize(rmParams);
 
 	    // set utility metric
 	    final IUtilityMetric um = (IUtilityMetric) generalParams[3];
-	    if (null != um) {
-		um.initialize(umParams);
-	    }
 
 	    // simulator
-	    atb = new AlphaTestbed(scenario, trustModel, rm, um);
+	    atb = new AlphaTestbed(scenario, trustModel, rm, rmParams, um,
+		    umParams);
 
 	    // Create metrics for the Metric holder class
 	    for (int service : scenario.getServices()) {
@@ -135,7 +132,6 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    RunEnvironment.getInstance().endAt(0);
 	}
 
-	// priority = 2 to ensure stepping has the highest priority
 	ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 	ScheduleParameters params = ScheduleParameters.createRepeating(1, 1, 1);
 	schedule.schedule(params, this, "step");

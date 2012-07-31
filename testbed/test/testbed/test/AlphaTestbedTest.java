@@ -76,28 +76,28 @@ public class AlphaTestbedTest {
     public void testRankingMode() {
 	ITrustModel tm = new RankingsTrustModel();
 	IScenario scn = new RankingsScenario();
-	new AlphaTestbed(scn, tm, ranking, utility);
+	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test
     public void testUtilityMode() {
 	ITrustModel tm = new DecisionMakingTrustModel();
 	IScenario scn = new PartnerSelectionScenario();
-	new AlphaTestbed(scn, tm, ranking, utility);
+	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void decisionMakingTrustModelOnRankingsScenario() {
 	ITrustModel tm = new DecisionMakingTrustModel();
 	IScenario scn = new RankingsScenario();
-	new AlphaTestbed(scn, tm, ranking, utility);
+	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void rankingsTrustModelOnPartnerSelectionScenario() {
 	ITrustModel tm = new RankingsTrustModel();
 	IScenario scn = new PartnerSelectionScenario();
-	new AlphaTestbed(scn, tm, ranking, utility);
+	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
 }

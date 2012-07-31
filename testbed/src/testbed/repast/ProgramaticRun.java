@@ -44,7 +44,8 @@ public class ProgramaticRun implements IMetricSubscriber {
 	rm.initialize();
 
 	// alpha test-bed (utility metric in set to null)
-	final AlphaTestbed atb = new AlphaTestbed(scenario, model, rm, null);
+	final AlphaTestbed atb = new AlphaTestbed(scenario, model, rm, null,
+		null, null);
 
 	atb.subscribe(new ProgramaticRun());
 

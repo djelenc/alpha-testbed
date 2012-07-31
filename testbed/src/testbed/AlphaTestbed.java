@@ -1,6 +1,7 @@
 package testbed;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +117,7 @@ import testbed.interfaces.Opinion;
  * 
  */
 public class AlphaTestbed {
-    private static final String CREATION_ERROR = "Could not instantiate metric '%s'.";
+    private static final String CREATION_ERROR = "Could not instantiate metric '%s' using parameters %s.";
     private static final String INCOMPATIBLE_EX = "Trust model '%s' cannot be tested with scenario '%s'.";
     private static final String METRIC_QUERY_EX = "Invalid query for metric '%s' and service '%d'.";
 
@@ -141,14 +142,23 @@ public class AlphaTestbed {
     /** Instance of a ranking metric */
     private final IRankingMetric rankingMetric;
 
+    /** Parameters for creating ranking metric instances */
+    private final Object[] rankingMetricParams;
+
     /** Instance of an utility metric -- null in ranking mode */
     private final IUtilityMetric utilityMetric;
+
+    /** Parameters for creating utility metric instances */
+    private final Object[] utilityMetricParams;
 
     /** Temporary map that holds the metric results */
     private final Map<Integer, Double> score;
 
     /** Convenience flag to denote the utility mode */
     private final boolean utilityMode;
+
+    /** Mapping of services to {@link IRankingMetric} instance */
+    private final Map<Integer, IRankingMetric> allRankingMetrics;
 
     /**
      * Mapping of services to {@link IUtilityMetric} instances -- null in
@@ -160,10 +170,13 @@ public class AlphaTestbed {
     final private List<IMetricSubscriber> subscribers;
 
     public AlphaTestbed(IScenario scenario, ITrustModel model,
-	    IRankingMetric rankingMetric, IUtilityMetric utilityMetric) {
+	    IRankingMetric rankingMetric, Object[] rmParams,
+	    IUtilityMetric utilityMetric, Object[] umParams) {
 	this.model = model;
 	this.scenario = scenario;
 	this.rankingMetric = rankingMetric;
+	this.rankingMetricParams = rmParams;
+	this.allRankingMetrics = new HashMap<Integer, IRankingMetric>();
 	this.subscribers = new ArrayList<IMetricSubscriber>();
 
 	score = new HashMap<Integer, Double>();
@@ -172,12 +185,14 @@ public class AlphaTestbed {
 	    this.decision = (IDecisionMaking) model;
 	    this.selection = (IPartnerSelection) scenario;
 	    this.utilityMetric = utilityMetric;
+	    this.utilityMetricParams = umParams;
 	    this.allUtilityMetrics = new HashMap<Integer, IUtilityMetric>();
 	    this.utilityMode = true;
 	} else if (isValidRankingMode(model, scenario)) {
 	    this.decision = null;
 	    this.selection = null;
 	    this.utilityMetric = null;
+	    this.utilityMetricParams = null;
 	    this.allUtilityMetrics = null;
 	    this.utilityMode = false;
 	} else {
@@ -190,9 +205,7 @@ public class AlphaTestbed {
      * Performs one step of evaluation.
      * 
      * <p>
-     * The method queries the scenario for experiences and opinions and then
-     * conveys them to the trust model. Finally, the rankings are evaluated with
-     * provided metrics and the results are stored to a temporary variable.
+     * This behavior of this method depends on the mode of the testbed.
      * 
      * @param time
      *            Current time
@@ -245,38 +258,24 @@ public class AlphaTestbed {
 	    capabilities = scenario.getCapabilities(service);
 
 	    // evaluate rankings
-	    final int rankMetricKey;
-	    final double rankMetricScore;
-
-	    rankMetricKey = rankingMetric.getClass().hashCode() ^ service;
-	    rankMetricScore = rankingMetric.evaluate(rankings, capabilities);
+	    final IRankingMetric rm = getRankingMetricInstance(service);
+	    final int rankMetricKey = rm.getClass().hashCode() ^ service;
+	    final double rankMetricScore = rm.evaluate(rankings, capabilities);
 
 	    score.put(rankMetricKey, rankMetricScore);
 
 	    // evaluate utility
 	    if (isUtilityMode()) {
-		if (!allUtilityMetrics.containsKey(service)) {
-		    try {
-			final IUtilityMetric um;
-			um = utilityMetric.getClass().newInstance();
-			um.initialize(); // TODO -- needs parameters
-			allUtilityMetrics.put(service, um);
-		    } catch (Exception e) {
-			throw new Error(String.format(CREATION_ERROR,
-				utilityMetric));
-		    }
-		}
-
 		final Integer agent = partners.get(service);
 
-		// if no partner for this service
+		// if partner for this service was selected
 		if (null != agent) {
+		    final IUtilityMetric um = getUtilityMetricInstance(service);
 		    final int utilityMetricKey;
 		    final double utilityMetricScore;
-		    final IUtilityMetric um = allUtilityMetrics.get(service);
-
 		    utilityMetricKey = um.getClass().hashCode() ^ service;
 		    utilityMetricScore = um.evaluate(capabilities, agent);
+
 		    score.put(utilityMetricKey, utilityMetricScore);
 		}
 	    }
@@ -391,5 +390,65 @@ public class AlphaTestbed {
     protected void notifiySubscribers() {
 	for (IMetricSubscriber s : subscribers)
 	    s.update(this);
+    }
+
+    /**
+     * Returns an instance of the ranking metric for the given service.
+     * 
+     * <p>
+     * Method retrieves the instance from the the map of all ranking metric
+     * instances. If for the given service, the map does not contain a metric
+     * instance, the method creates a new instance, initializes it with
+     * parameters, adds instance to the map and returns the instance.
+     * 
+     * @param service
+     *            Type of service
+     * @return An instance of the metric
+     */
+    protected IRankingMetric getRankingMetricInstance(int service) {
+	IRankingMetric metric = allRankingMetrics.get(service);
+
+	if (null == metric) {
+	    try {
+		metric = rankingMetric.getClass().newInstance();
+		metric.initialize(rankingMetricParams);
+		allRankingMetrics.put(service, metric);
+	    } catch (Exception e) {
+		throw new Error(String.format(CREATION_ERROR, rankingMetric,
+			Arrays.toString(rankingMetricParams)));
+	    }
+	}
+
+	return metric;
+    }
+
+    /**
+     * Returns an instance of the utility metric for the given service.
+     * 
+     * <p>
+     * Method retrieves the instance from the the map of all utility metric
+     * instances. If for the given service, the map does not contain a metric
+     * instance, the method creates a new instance, initializes it with
+     * parameters, adds instance to the map and returns the instance.
+     * 
+     * @param service
+     *            Type of service
+     * @return An instance of the metric
+     */
+    protected IUtilityMetric getUtilityMetricInstance(int service) {
+	IUtilityMetric metric = allUtilityMetrics.get(service);
+
+	if (null == metric) {
+	    try {
+		metric = utilityMetric.getClass().newInstance();
+		metric.initialize(utilityMetricParams);
+		allUtilityMetrics.put(service, metric);
+	    } catch (Exception e) {
+		throw new Error(String.format(CREATION_ERROR, utilityMetric,
+			Arrays.toString(utilityMetricParams)));
+	    }
+	}
+
+	return metric;
     }
 }
