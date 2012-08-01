@@ -1,23 +1,22 @@
 package testbed.trustmodel;
 
+import static testbed.trustmodel.TD.fromDouble;
+import static testbed.trustmodel.TD.fromIndex;
+import static testbed.trustmodel.TD.values;
+
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
-
-import static testbed.trustmodel.TD.fromDouble;
-import static testbed.trustmodel.TD.fromIndex;
-import static testbed.trustmodel.TD.values;
 
 /**
  * Trust model of Alfarez Abdul-Rahman and Stephen Hailes
  * 
  * <p>
- * <a href='http://dx.doi.org/10.1109/HICSS.2000.926814'>Alfarez Abdul-Rahman
+ * <a href="http://dx.doi.org/10.1109/HICSS.2000.926814">Alfarez Abdul-Rahman
  * and Stephen Hailes. Supporting trust in virtual communities. In Proceedings
  * of the 33rd Annual Hawaii International Conference on System Sciences,
  * 2000.</a>
@@ -25,8 +24,7 @@ import static testbed.trustmodel.TD.values;
  * @author David
  * 
  */
-public class AbdulRahmanHailes extends AbstractTrustModel implements
-	ITrustModel {
+public class AbdulRahmanHailes extends AbstractTrustModel {
 
     /**
      * Direct trust
@@ -52,14 +50,6 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
      */
     private TD[][][] REC;
 
-    // temporary variables for efficiency
-    private Map<Integer, Double> trust;
-    private ArrayList<Integer> union;
-
-    // temporary storage for experiences and opinions
-    private Set<Experience> experiences;
-    private Set<Opinion> opinions;
-
     @SuppressWarnings("unchecked")
     @Override
     public void initialize(Object... params) {
@@ -72,50 +62,34 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
 	    for (int j = 0; j < R[i].length; j++)
 		for (int k = 0; k < R[i][j].length; k++)
 		    R[i][j][k] = new ArrayList<Integer>();
-
-	trust = new LinkedHashMap<Integer, Double>();
-	union = new ArrayList<Integer>();
-	experiences = null;
-	opinions = null;
     }
 
     @Override
     public void processOpinions(Set<Opinion> opinions) {
-	this.opinions = opinions;
+	expandArrays(null, opinions);
+
+	for (Opinion o : opinions)
+	    REC[o.agent1][o.agent2][o.service] = TD
+		    .fromDouble(o.internalTrustDegree);
     }
 
     @Override
     public void processExperiences(Set<Experience> experiences) {
-	this.experiences = experiences;
-    }
-
-    @Override
-    public void calculateTrust() {
-	// expand arrays if necessary
-	expandArray(experiences, opinions);
-
-	// store opinions as recommendations
-	for (Opinion o : opinions)
-	    REC[o.agent1][o.agent2][o.service] = TD
-		    .fromDouble(o.internalTrustDegree);
-
-	// process experiences
-	TD actual, recommended;
-	int diff;
+	expandArrays(experiences, null);
 
 	for (Experience e : experiences) {
 	    // record experience as direct trust
-	    actual = fromDouble(e.outcome);
+	    final TD actual = fromDouble(e.outcome);
 	    Q[e.agent][e.service][actual.ordinal()] += 1;
 
 	    // compare new experience with so far obtained opinions
 	    for (int recommender = 0; recommender < REC.length; recommender++) {
 		if (REC[recommender][e.agent][e.service] != null) {
 		    // obtain the recommended value
-		    recommended = REC[recommender][e.agent][e.service];
+		    final TD recommended = REC[recommender][e.agent][e.service];
 
 		    // compute the difference between recommended and actual
-		    diff = recommended.ordinal() - actual.ordinal();
+		    final int diff = recommended.ordinal() - actual.ordinal();
 
 		    // record the difference
 		    R[recommender][e.service][recommended.ordinal()].add(diff);
@@ -125,46 +99,47 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
     }
 
     @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	// clear temporary variables
-	trust.clear();
-	union.clear();
+    public void calculateTrust() {
+	// later, dude.
+    }
 
-	int rtd, weight, sd;
-	TD experience, recommended, corrected, aggregated;
+    public Map<Integer, Double> compute(int service) {
+	final Map<Integer, Double> trust = new HashMap<Integer, Double>();
+	final ArrayList<Integer> union = new ArrayList<Integer>();
 
 	for (int agent = 0; agent < Q.length; agent++) {
 	    // mode from experiences
-	    experience = modeTD(Q[agent][service]);
+	    final TD experience = modeTD(Q[agent][service]);
 
 	    if (experience != null) {
 		// if experiences exist
 		trust.put(agent, experience.numeric);
 	    } else {
 		// if no experience exist, compute from recommendations
-
-		int[] opinions = new int[4];
+		final int[] opinions = new int[4];
 
 		for (int recommender = 0; recommender < REC.length; recommender++) {
-		    recommended = REC[recommender][agent][service];
+		    final TD recommended = REC[recommender][agent][service];
 
 		    if (recommended != null) {
 			// compute RTD
 			union.clear();
+
 			for (int j = 0; j < R[recommender][service].length; j++)
 			    union.addAll(R[recommender][service][j]);
 
-			rtd = modeSDAbs(union);
+			final int rtd = modeSDAbs(union);
 
 			// compute weight from RTD
-			weight = getWeight(rtd);
+			final int weight = getWeight(rtd);
 
 			// obtain semantic distance
-			sd = modeSD(R[recommender][service][recommended
+			final int sd = modeSD(R[recommender][service][recommended
 				.ordinal()]);
 
 			// correct recommendation with semantic distance
-			corrected = fromIndex(recommended.ordinal() - sd);
+			final TD corrected = fromIndex(recommended.ordinal()
+				- sd);
 
 			// record correct recommendation and its weight
 			opinions[corrected.ordinal()] += weight;
@@ -172,14 +147,22 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
 		}
 
 		// aggregate opinions
-		aggregated = modeTD(opinions);
+		final TD aggregated = modeTD(opinions);
 
 		if (aggregated != null)
 		    trust.put(agent, aggregated.numeric);
 	    }
 	}
 
-	return super.constructRankingsFromEstimations(trust);
+	return trust;
+    }
+
+    @Override
+    public Map<Integer, Integer> getRankings(int service) {
+	final Map<Integer, Double> trust = compute(service);
+	final Map<Integer, Integer> rankings = constructRankingsFromEstimations(trust);
+
+	return rankings;
     }
 
     /**
@@ -347,25 +330,29 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
      * @param experience
      * @param opinions
      */
-    private void expandArray(Set<Experience> experience, Set<Opinion> opinions) {
+    private void expandArrays(Set<Experience> experience, Set<Opinion> opinions) {
 	// Q, R, REC -- same length
 	int maxAgent = Q.length - 1;
 	int maxService = Q[0].length - 1;
 
-	for (Experience e : experience) {
-	    if (e.agent > maxAgent)
-		maxAgent = e.agent;
+	if (null != experience) {
+	    for (Experience e : experience) {
+		if (e.agent > maxAgent)
+		    maxAgent = e.agent;
 
-	    if (e.service > maxService)
-		maxService = e.service;
+		if (e.service > maxService)
+		    maxService = e.service;
+	    }
 	}
 
-	for (Opinion o : opinions) {
-	    if (o.agent2 > maxAgent || o.agent1 > maxAgent)
-		maxAgent = Math.max(o.agent1, o.agent2);
+	if (null != opinions) {
+	    for (Opinion o : opinions) {
+		if (o.agent2 > maxAgent || o.agent1 > maxAgent)
+		    maxAgent = Math.max(o.agent1, o.agent2);
 
-	    if (o.service > maxService)
-		maxService = o.service;
+		if (o.service > maxService)
+		    maxService = o.service;
+	    }
 	}
 
 	if (maxAgent > Q.length - 1 || maxService > Q[0].length - 1) {
@@ -408,5 +395,10 @@ public class AbdulRahmanHailes extends AbstractTrustModel implements
 
 	    R = newR;
 	}
+    }
+
+    @Override
+    public String getName() {
+	return "Abdul-Rahman, Hailes";
     }
 }

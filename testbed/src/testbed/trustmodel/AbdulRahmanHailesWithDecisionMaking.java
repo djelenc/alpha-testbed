@@ -8,8 +8,8 @@ import java.util.TreeMap;
 import testbed.interfaces.IDecisionMaking;
 
 /**
- * Trust model on the basis of the {@link YuSinghSycara} that supports selection
- * partners for interactions. The selection is probabilistic.
+ * Trust model on the basis of the {@link AbdulRahmanHailes} that supports
+ * selection partners for interactions. The selection is probabilistic.
  * 
  * <p>
  * <b>Note that the original proposal contains no such procedure. This is for
@@ -18,8 +18,8 @@ import testbed.interfaces.IDecisionMaking;
  * @author David
  * 
  */
-public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
-	IDecisionMaking {
+public class AbdulRahmanHailesWithDecisionMaking extends AbdulRahmanHailes
+	implements IDecisionMaking {
 
     protected int time;
 
@@ -40,9 +40,16 @@ public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, Double> trust = compute();
+	    final Map<Integer, Double> trust = compute(service);
 	    final Integer best = bestFromWeights(trust);
-	    partners.put(service, best);
+
+	    if (null == best) {
+		// TODO: This happens only in the first tick, where no
+		// experiences exist
+		partners.put(service, 0);
+	    } else {
+		partners.put(service, best);
+	    }
 	}
 
 	return partners;
@@ -53,7 +60,7 @@ public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 	double sum = 0;
 
 	// final double power = 1d;
-	final double power = Math.log(1 + time);
+	final double power = Math.sqrt(1 + time);
 
 	for (Map.Entry<Integer, Double> e : trust.entrySet()) {
 	    final double prob = Math.pow(e.getValue(), power);
@@ -65,11 +72,11 @@ public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 	    agents.put(e.getKey(), e.getValue() / sum);
 
 	return generator.fromWeights(agents);
-
     }
 
     @Override
     public String getName() {
 	return super.getName() + " with decisions";
     }
+
 }

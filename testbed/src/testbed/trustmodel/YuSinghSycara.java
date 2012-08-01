@@ -188,4 +188,9 @@ public class YuSinghSycara extends AbstractTrustModel {
 	    credibility = newWeights;
 	}
     }
+
+    @Override
+    public String getName() {
+	return "Yu, Singh, Sycara";
+    }
 }
