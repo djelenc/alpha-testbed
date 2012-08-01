@@ -31,7 +31,7 @@ public class BetaReputationTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	Assert.assertEquals(0.70, tm.compute().get(0).R, 0.001);
+	Assert.assertEquals(0.70, tm.computePairs().get(0).R, 0.001);
 
 	time = 2;
 	experiences.clear();
@@ -44,7 +44,7 @@ public class BetaReputationTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	Assert.assertEquals(0.70, tm.compute().get(0).R, 0.001);
+	Assert.assertEquals(0.70, tm.computePairs().get(0).R, 0.001);
 
 	time = 3;
 	experiences.clear();
@@ -56,8 +56,8 @@ public class BetaReputationTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	Assert.assertEquals(0.95, tm.compute().get(0).R, 0.001);
-	Assert.assertEquals(0.30, tm.compute().get(0).S, 0.001);
+	Assert.assertEquals(0.95, tm.computePairs().get(0).R, 0.001);
+	Assert.assertEquals(0.30, tm.computePairs().get(0).S, 0.001);
 
 	time = 4;
 	experiences.clear();
@@ -70,10 +70,10 @@ public class BetaReputationTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	Assert.assertEquals(0.50, tm.compute().get(2).R, 0.001);
-	Assert.assertEquals(0.50, tm.compute().get(2).S, 0.001);
-	Assert.assertEquals(0.08823, tm.compute().get(3).R, 0.001);
-	Assert.assertEquals(0.02941, tm.compute().get(3).S, 0.001);
+	Assert.assertEquals(0.50, tm.computePairs().get(2).R, 0.001);
+	Assert.assertEquals(0.50, tm.computePairs().get(2).S, 0.001);
+	Assert.assertEquals(0.08823, tm.computePairs().get(3).R, 0.001);
+	Assert.assertEquals(0.02941, tm.computePairs().get(3).S, 0.001);
 
 	// experiences.clear();
 	// experiences.add(new Experience(0, 0, 4, 1.0));
