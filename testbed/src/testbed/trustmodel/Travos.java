@@ -12,7 +12,6 @@ import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.ICondition;
 import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -48,7 +47,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class Travos extends AbstractTrustModel implements ITrustModel {
+public class Travos extends AbstractTrustModel {
     protected static final ICondition<Double> VAL_MULTPLIER, VAL_THRESHOLD;
 
     static {

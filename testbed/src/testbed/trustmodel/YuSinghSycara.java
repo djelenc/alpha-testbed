@@ -5,10 +5,23 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
-public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
+/**
+ * Trust model of Yu, Singh and Sycara
+ * 
+ * 
+ * <p>
+ * As proposed in <a href=
+ * "http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1368412&isnumber=29953"
+ * > Bin Yu, Munidar P. Singh, Katia Sycara, Developing trust in large-scale
+ * peer-to-peer systems, Multi-Agent Security and Survivability, 2004 IEEE First
+ * Symposium on, 2004</a>
+ * 
+ * @author David
+ * 
+ */
+public class YuSinghSycara extends AbstractTrustModel {
 
     // discount factor for liars
     public static final double BETA = 0.5;
@@ -19,39 +32,17 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
     public Opinion[][] opinions = null;
     public double[] credibility = null;
 
-    // temporary storage for experiences and opinions
-    private Set<Experience> exps;
-    private Set<Opinion> ops;
-
     @Override
     public void initialize(Object... params) {
 	local = new LinkedHashMap<Integer, double[]>();
 	opinions = new Opinion[0][0];
 	credibility = new double[0];
-
-	exps = null;
-	ops = null;
     }
 
     @Override
-    public void processExperiences(Set<Experience> experiences) {
-	this.exps = experiences;
-    }
+    public void processExperiences(Set<Experience> exps) {
+	expandArrays(exps, null);
 
-    @Override
-    public void processOpinions(Set<Opinion> opinions) {
-	this.ops = opinions;
-    }
-
-    @Override
-    public void calculateTrust() {
-	expandArrays(exps, ops);
-
-	// store opinions
-	for (Opinion o : ops)
-	    opinions[o.agent1][o.agent2] = o;
-
-	// store new experiences
 	for (Experience e : exps) {
 	    double[] history = local.get(e.agent);
 
@@ -76,7 +67,19 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
 		}
 	    }
 	}
+    }
 
+    @Override
+    public void processOpinions(Set<Opinion> ops) {
+	expandArrays(null, ops);
+
+	for (Opinion o : ops)
+	    opinions[o.agent1][o.agent2] = o;
+    }
+
+    @Override
+    public void calculateTrust() {
+	// weirdly empty.
     }
 
     public Map<Integer, Double> compute() {
@@ -151,17 +154,19 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
      * @param ops
      *            Set of opinions
      */
-    private void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
+    protected void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
 	final int limit = opinions.length - 1;
 	int max = limit;
 
-	for (Experience e : exp)
-	    if (e.agent > max)
-		max = e.agent;
+	if (null != exp)
+	    for (Experience e : exp)
+		if (e.agent > max)
+		    max = e.agent;
 
-	for (Opinion o : ops)
-	    if (o.agent2 > max || o.agent1 > max)
-		max = Math.max(o.agent1, o.agent2);
+	if (null != ops)
+	    for (Opinion o : ops)
+		if (o.agent2 > max || o.agent1 > max)
+		    max = Math.max(o.agent1, o.agent2);
 
 	if (max > limit) {
 	    // copy opinions
