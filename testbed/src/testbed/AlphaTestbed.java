@@ -170,8 +170,8 @@ public class AlphaTestbed {
     protected final List<IMetricSubscriber> subscribers;
 
     /**
-     * Constructor of for the AlphaTestbed class. Its parameters have the
-     * following semantics:
+     * Constructor for the AlphaTestbed class. Its parameters have the following
+     * semantics:
      * <ol>
      * <li>An {@link IScenario} instance. The instance must be initialized (that
      * is, the method {@link IScenario#initialize(Object...)} must be called

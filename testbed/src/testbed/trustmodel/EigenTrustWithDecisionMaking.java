@@ -9,7 +9,8 @@ import testbed.interfaces.IDecisionMaking;
 
 /**
  * Trust model on the basis of the {@link EigenTrust} trust model that supports
- * selection partners for interactions.
+ * selection partners for interactions. The partner selection procedure is
+ * probabilistic.
  * 
  * @author David
  * 
@@ -26,7 +27,6 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	    final boolean selectingNewPeer;
 	    final Integer bestAgent;
 	    selectingNewPeer = generator.nextDoubleFromTo(0, 1) < 0.1;
-	    // selectingNewPeer = false;
 
 	    TreeMap<Integer, Double> agents = new TreeMap<Integer, Double>();
 
@@ -41,22 +41,22 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 		for (Map.Entry<Integer, Double> e : agents.entrySet())
 		    agents.put(e.getKey(), 1d / count);
 
-		if (agents.isEmpty()) { // case when an agent with score 0 was
-					// selected but no such agent exists
+		if (agents.isEmpty()) {
+		    // case when an agent with score 0 was
+		    // selected but no such agent exists
 		    bestAgent = bestFromWeights();
 		} else {
 		    bestAgent = generator.fromWeights(agents);
 		}
-
 	    } else {
 		final Integer best = bestFromWeights();
 
 		if (null == best) {
 		    bestAgent = 1;
-		    // when the sum is 0 -- I should inspect why!
-		    System.err.println("Null best agents.");
-		    System.out.printf("Trust: %s\n", print(trust));
-		    System.out.printf("Proba: %s\n", print(agents));
+		    // TODO: when the sum is 0 -- I should inspect why!
+		    // System.err.println("Null best agents.");
+		    // System.out.printf("Trust: %s\n", print(trust));
+		    // System.out.printf("Proba: %s\n", print(agents));
 		} else {
 		    bestAgent = best;
 		}

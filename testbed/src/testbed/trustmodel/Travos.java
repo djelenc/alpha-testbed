@@ -33,7 +33,7 @@ import testbed.interfaces.Opinion;
  * from this scaled number. This can be explained as if an interaction consists
  * of several sub-interactions all of which have a binary outcome and the final
  * outcome is a pair of successful and unsuccessful interactions (it is
- * basically a mapping: [0, 1] -> N × N)
+ * basically a mapping: [0, 1] &rarr; N &times; N)
  * <li>Scaling internalTrustDegrees from opinions by the same FACTOR and
  * computing the pair in the same way as interaction outcomes. This gives all
  * opinions the same weight (m + n = FACTOR). The FACTOR also needs to be large

@@ -8,8 +8,12 @@ import java.util.TreeMap;
 import testbed.interfaces.IDecisionMaking;
 
 /**
- * Trust model on the basis of the {@link Simple} trust model that supports
- * selection partners for interactions.
+ * Trust model on the basis of the {@link Travos} that supports selection
+ * partners for interactions. The selection is probabilistic.
+ * 
+ * <p>
+ * <b>Note that the original Travos proposal contains no such procedure. This is
+ * for experimental purposes only.</b>
  * 
  * @author David
  * 
@@ -47,8 +51,8 @@ public class TravosWithDecisionMaking extends Travos implements IDecisionMaking 
 	final TreeMap<Integer, Double> agents = new TreeMap<Integer, Double>();
 	double sum = 0;
 
-	// final double power = 1 + time / 10d;
-	final double power = 1d;
+	// final double power = 1d;
+	final double power = Math.log(1 + time);
 
 	for (Map.Entry<Integer, Double> e : trust.entrySet()) {
 	    final double prob = Math.pow(e.getValue(), power);
