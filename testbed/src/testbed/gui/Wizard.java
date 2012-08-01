@@ -32,6 +32,9 @@ import javax.swing.border.EmptyBorder;
  */
 public class Wizard extends WindowAdapter implements PropertyChangeListener {
 
+    public static final int WINDOW_HEIGHT = 450;
+    public static final int WINDOW_WIDTH = 600;
+
     /**
      * Indicates that the 'Finish' button was pressed to close the dialog.
      */
@@ -517,7 +520,7 @@ class ResizedJDialog extends JDialog {
 
     @Override
     public Dimension getPreferredSize() {
-	return new Dimension(500, 450);
+	return new Dimension(Wizard.WINDOW_WIDTH, Wizard.WINDOW_HEIGHT);
     }
 
     @Override

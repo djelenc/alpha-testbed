@@ -29,12 +29,11 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class RandomWithMultiService extends AbstractScenario implements
-	IScenario {
+public class RandomMultiService extends AbstractScenario implements IScenario {
     protected int time;
 
-    private Map<Integer, Double> capabilities;
-    private Map<Integer, IDeceptionModel> deceptionModels;
+    protected Map<Integer, Double> capabilities;
+    protected Map<Integer, IDeceptionModel> deceptionModels;
     protected Set<Integer> agents, services;
 
     protected double sd_i, sd_o, posExCoef, negExCoef;
@@ -136,8 +135,7 @@ public class RandomWithMultiService extends AbstractScenario implements
 		// assign capability
 		capabilities.put(key, generator.nextDoubleFromTo(0, 1));
 
-		final IDeceptionModel model = generator
-			.fromWeights(dmPMF);
+		final IDeceptionModel model = generator.fromWeights(dmPMF);
 
 		if (model instanceof PositiveExaggeration) {
 		    model.initialize(posExCoef);
@@ -259,5 +257,10 @@ public class RandomWithMultiService extends AbstractScenario implements
     @Override
     public IParametersPanel getParametersPanel() {
 	return new RandomWithMultiServiceGUI();
+    }
+
+    @Override
+    public String getName() {
+	return "Random with multiple services";
     }
 }

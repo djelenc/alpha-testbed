@@ -8,16 +8,22 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.IPartnerSelection;
 
 /**
- * An extension of the {@link Random} scenario, where agent Alpha is required to
- * select interaction partners.
+ * An extension of the {@link RandomMultiService} scenario, where agent Alpha is
+ * required to select interaction partners.
  * 
  * @author David
  * 
  */
-public class RandomWithPartnerSelection extends Random implements
-	IPartnerSelection {
+public class RandomMultiServiceWithPartnerSelection extends RandomMultiService
+	implements IPartnerSelection {
 
-    private Map<Integer, Integer> partners;
+    protected Map<Integer, Integer> partners = null;
+
+    @Override
+    public void initialize(Object... parameters) {
+	super.initialize(parameters);
+	partners = null;
+    }
 
     @Override
     public Set<Experience> generateExperiences() {
@@ -26,12 +32,14 @@ public class RandomWithPartnerSelection extends Random implements
 	for (int service : getServices()) {
 	    final Integer agent = partners.get(service);
 
-	    if (null == agent || !getAgents().contains(agent)) {
+	    if (null == agent || !getAgents().contains(agent))
 		continue;
-	    }
+
+	    final int key = (numAgentsLarger ? pivot * agent + service : pivot
+		    * service + agent);
 
 	    // generate interaction outcome
-	    final double cap = capabilities.get(agent);
+	    final double cap = capabilities.get(key);
 	    final double outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
 	    // create experience tuple and add it to list
@@ -50,6 +58,6 @@ public class RandomWithPartnerSelection extends Random implements
 
     @Override
     public String getName() {
-	return "Random with partner selection";
+	return super.getName() + " and partner selection";
     }
 }
