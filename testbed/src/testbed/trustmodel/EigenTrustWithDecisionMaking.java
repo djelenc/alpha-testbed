@@ -24,39 +24,39 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final boolean selectingNewPeer;
-	    final Integer bestAgent;
-	    selectingNewPeer = generator.nextDoubleFromTo(0, 1) < 0.1;
+	    final Map<Integer, Double> trust = compute();
+	    final boolean selectingNewPeer = generator.nextDoubleFromTo(0, 1) < 0.1;
 
-	    TreeMap<Integer, Double> agents = new TreeMap<Integer, Double>();
+	    final Integer bestAgent;
 
 	    if (selectingNewPeer) {
+		final Map<Integer, Double> uniform = new HashMap<Integer, Double>();
 		int count = 0;
+
+		// add to map agents all agents with trust 0
 		for (Map.Entry<Integer, Double> e : trust.entrySet()) {
 		    if (e.getValue() < 0.0001) {
-			agents.put(e.getKey(), 1d);
+			uniform.put(e.getKey(), 1d);
 			count++;
 		    }
 		}
-		for (Map.Entry<Integer, Double> e : agents.entrySet())
-		    agents.put(e.getKey(), 1d / count);
 
-		if (agents.isEmpty()) {
-		    // case when an agent with score 0 was
-		    // selected but no such agent exists
-		    bestAgent = bestFromWeights();
+		if (0 == count) {
+		    // we decided to select a peer with trust 0, but no such
+		    // peer exist -- we have to select the usual way
+		    bestAgent = bestFromWeights(trust);
 		} else {
-		    bestAgent = generator.fromWeights(agents);
+		    // uniform selection amongst agents with trust 0
+		    bestAgent = bestFromWeights(uniform);
 		}
 	    } else {
-		final Integer best = bestFromWeights();
+		// selecting according to the probabilities
+		final Integer best = bestFromWeights(trust);
 
 		if (null == best) {
 		    bestAgent = 1;
 		    // TODO: when the sum is 0 -- I should inspect why!
-		    // System.err.println("Null best agents.");
-		    // System.out.printf("Trust: %s\n", print(trust));
-		    // System.out.printf("Proba: %s\n", print(agents));
+		    System.err.println("Null best agent -- using default.");
 		} else {
 		    bestAgent = best;
 		}
@@ -66,6 +66,29 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	}
 
 	return partners;
+    }
+
+    public Integer bestFromWeights(Map<Integer, Double> trust) {
+	final TreeMap<Integer, Double> pmf = new TreeMap<Integer, Double>();
+
+	double sum = 0;
+	// remove zero values
+	for (Map.Entry<Integer, Double> e : trust.entrySet()) {
+	    if (e.getValue() > 0.00000001) {
+		final int agent = e.getKey();
+		final double prob = e.getValue();
+
+		pmf.put(agent, prob);
+		sum += prob;
+	    }
+	}
+
+	// normalize to get proper PMF
+	for (Map.Entry<Integer, Double> e : pmf.entrySet())
+	    pmf.put(e.getKey(), e.getValue() / sum);
+
+	// random selection
+	return generator.fromWeights(pmf);
     }
 
     @Override
@@ -80,22 +103,5 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	    sb.append(String.format("%d=%.2f, ", e.getKey(), e.getValue()));
 
 	return sb.toString();
-    }
-
-    public Integer bestFromWeights() {
-	final TreeMap<Integer, Double> agents = new TreeMap<Integer, Double>();
-	double sum = 0;
-
-	for (Map.Entry<Integer, Double> e : trust.entrySet()) {
-	    if (e.getValue() > 0.00000001) {
-		agents.put(e.getKey(), e.getValue());
-		sum += e.getValue();
-	    }
-	}
-
-	for (Map.Entry<Integer, Double> e : agents.entrySet())
-	    agents.put(e.getKey(), e.getValue() / sum);
-
-	return generator.fromWeights(agents);
     }
 }

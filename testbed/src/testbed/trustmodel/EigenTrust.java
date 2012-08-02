@@ -16,21 +16,31 @@ import testbed.interfaces.Opinion;
  * <p>
  * Implementation notes
  * <ul>
- * <li>I compute localized trust values from internal trust degrees. I multiply
- * the internalTrustDegree with the OPINION_FACTOR constant and then round the
- * result to the nearest integer. This represents the number of positive
- * interactions. The number of negative interactions is computed by subtracting
- * the number of positive interactions from OPINION_FACTOR constant.
- * <li>The right-most column of matrix C describes Alpha's local experiences.
- * They are (similar to opinions) obtained by multiplying experience outcomes
- * with EXPERIENCE_FACTOR constant. Future interactions are recorded by adding
- * the number of positive interactions to this number.
- * <li>Because agents do not provide opinions about Alpha, the bottom row of
- * matrix C always contains zeros.
- * <li>Alpha is the only pre-trusted peer -- in the vector of pre-trusted peers
- * all values are set to 0, expect the vale that corresponds to the Id of Alpha
- * agent (which is always the maximal ID).
- * <li>The default weight for pre-trusted peers is 0.5.
+ * <li>The interactions outcomes are recorded in the <b>cntExp</b> array. Values
+ * in this array represent the cumulative number of positive interactions of
+ * agent Alpha with this agent -- s<sub>j</sub>. Such numbers are obtained in
+ * the following procedure:
+ * <ol>
+ * <li>Obtain the number of positive interaction outcomes<br/>
+ * <br/>
+ * <center>pos<sub>i</sub> = Round(factor<sub>experience</sub> &times;
+ * interaction_outcome<sub>i</sub>)</center><br/>
+ * where factor<sub>experience</sub> is a user specified parameter.
+ * <li>Obtain the number of negative interaction outcomes <br/>
+ * <center>neg<sub>i</sub> = factor<sub>experience</sub> -
+ * pos<sub>i</sub></center><br/>
+ * <li>Compute the local trust value:<br/>
+ * <center>s<sub>j</sub> = Max(pos<sub>i</sub> - neg<sub>i</sub>, 0)</center>
+ * <br/>
+ * <li>Add the computed local trust value to its corresponding position in the
+ * <b>cntExp</b> array.
+ * </ol>
+ * <li>The pre-trust vector represents Alpha's normalized local experiences. The
+ * pre-trust vector is computed by normalizing the values in the cntExp array.
+ * <li>Obtained opinions are stored in the cntOp array. This array is used to
+ * compute normalized local trust values that constitute the matrix C. The
+ * computation is analogous to the computation of values in cntExp array and to
+ * the computation of values in the pre-trusted peers vector.
  * </ul>
  * 
  * <p>
@@ -43,21 +53,17 @@ import testbed.interfaces.Opinion;
  * 
  */
 public class EigenTrust extends AbstractTrustModel {
+    private static final ICondition<Double> VAL_WEIGHT, MULT_VAL;
 
-    public Map<Integer, Double> trust;
-    public double[][] C;
+    // holds positive opinions count
+    public int[][] cntOp;
 
     // count positive experiences
-    public double[] cuPosExp;
+    public int[] cntExp;
 
-    // Alpha normalized local experiences
-    public double[] p;
-
-    public static double WEIGHT = 0.5;
-    public static double EXPERIENCE = 5;
-    public static double OPINION = 10;
-
-    private static final ICondition<Double> VAL_WEIGHT, MULT_VAL;
+    public double weightFactor = 0.5;
+    public double experienceFactor = 5;
+    public double opinionFactor = 10;
 
     static {
 	VAL_WEIGHT = new ICondition<Double>() {
@@ -85,85 +91,56 @@ public class EigenTrust extends AbstractTrustModel {
 
     @Override
     public void initialize(Object... params) {
-	trust = new LinkedHashMap<Integer, Double>();
-
-	// empty matrix
-	C = new double[1][1];
-
 	// cumulative number of positive interaction outcomes
-	cuPosExp = new double[1];
+	cntExp = new int[1];
 
-	// pre-trusted peers vector
-	p = new double[1];
+	// cumulative number of positive opinions
+	// this number gets rewritten each time a new opinion arrives
+	cntOp = new int[1][1];
 
-	WEIGHT = Utils.extractParameter(VAL_WEIGHT, 0, params);
-	EXPERIENCE = Utils.extractParameter(MULT_VAL, 1, params);
-	OPINION = Utils.extractParameter(MULT_VAL, 2, params);
+	weightFactor = Utils.extractParameter(VAL_WEIGHT, 0, params);
+	experienceFactor = Utils.extractParameter(MULT_VAL, 1, params);
+	opinionFactor = Utils.extractParameter(MULT_VAL, 2, params);
     }
 
     @Override
     public void processExperiences(Set<Experience> experiences) {
-	expandExperiences(experiences);
+	expandArrays(experiences, null);
 
 	// process experiences
 	for (Experience e : experiences) {
-	    final double pos = Math.round(EXPERIENCE * e.outcome);
-	    final double neg = EXPERIENCE - pos;
+	    final double pos = Math.round(experienceFactor * e.outcome);
+	    final double neg = experienceFactor - pos;
 
-	    cuPosExp[e.agent] += Math.max(pos - neg, 0);
+	    cntExp[e.agent] += Math.max(pos - neg, 0);
 	}
-
-	calculateTrust();
     }
 
     @Override
     public void processOpinions(Set<Opinion> opinions) {
-	expandOpinions(opinions);
+	expandArrays(null, opinions);
 
 	// process opinions by creating matrix C
 	for (Opinion o : opinions) {
-	    final double pos = Math.round(OPINION * o.internalTrustDegree);
-	    final double neg = OPINION - pos;
+	    final double pos = Math
+		    .round(opinionFactor * o.internalTrustDegree);
+	    final double neg = opinionFactor - pos;
 
-	    C[o.agent2][o.agent1] = Math.max(pos - neg, 0);
+	    cntOp[o.agent2][o.agent1] = (int) Math.max(pos - neg, 0);
 	}
-
-	calculateTrust();
     }
 
     @Override
     public void calculateTrust() {
-	// update normalized local trust values
-	double totalPositive = 0;
 
-	for (int i = 0; i < cuPosExp.length; i++)
-	    totalPositive += cuPosExp[i];
+    }
 
-	if (Math.abs(totalPositive) > 0.0001) {
-	    // some local experiences
-	    for (int i = 0; i < cuPosExp.length; i++)
-		p[i] = cuPosExp[i] / totalPositive;
-	} else {
-	    // no local data -- uniform distribution
-	    for (int i = 0; i < cuPosExp.length; i++)
-		p[i] = 1d / cuPosExp.length;
-	}
+    public Map<Integer, Double> compute() {
+	// pre-trust vector
+	double[] p = computePretrustVector(cntExp);
 
-	// normalize matrix column-wise
-	for (int col = 0; col < C.length; col++) {
-	    double sum = 0;
-
-	    for (int row = 0; row < C[col].length; row++)
-		sum += C[row][col];
-
-	    if (Math.abs(sum) > 0.0001)
-		for (int row = 0; row < C[col].length; row++)
-		    C[row][col] /= sum;
-	    else
-		// if a peer trusts/knows no-one
-		for (int row = 0; row < C[col].length; row++)
-		    C[row][col] = p[row];
-	}
+	// matrix C
+	double[][] C = computeMatrix(cntOp, p);
 
 	// execute algorithm
 	final double[] t_new = new double[p.length];
@@ -188,16 +165,94 @@ public class EigenTrust extends AbstractTrustModel {
 
 	    // t_new = (1 - weight) * t_new + weight * p
 	    for (int i = 0; i < t_old.length; i++)
-		t_new[i] = (1 - WEIGHT) * t_new[i] + WEIGHT * p[i];
+		t_new[i] = (1 - weightFactor) * t_new[i] + weightFactor * p[i];
 
 	} while (!hasConverged(t_new, t_old));
 
-	trust.clear();
+	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int i = 0; i < t_old.length; i++)
 	    trust.put(i, t_new[i]);
+
+	return trust;
     }
 
+    /**
+     * Returns a pre-trust vector from an array of positive experiences counts.
+     * 
+     * @param experienceCount
+     *            Array in which indexes represent agents and values represent
+     *            the number of positive experiences with that agents.
+     * @return Array of doubles representing the pre-trust vector
+     */
+    public double[] computePretrustVector(final int[] experienceCount) {
+	final double[] p = new double[experienceCount.length];
+	int sumPosExp = 0;
+
+	for (int i = 0; i < experienceCount.length; i++)
+	    sumPosExp += experienceCount[i];
+
+	if (sumPosExp > 0) {
+	    // at least some local experiences exist
+	    final double normalization = sumPosExp;
+
+	    for (int i = 0; i < experienceCount.length; i++)
+		p[i] = experienceCount[i] / normalization;
+	} else {
+	    // no local data -- uniform distribution
+	    for (int i = 0; i < experienceCount.length; i++)
+		p[i] = 1d / experienceCount.length;
+	}
+
+	return p;
+    }
+
+    /**
+     * Computes a matrix from an integer matrix of positive opinions
+     * 
+     * @param opinionCount
+     *            Array of positive opinion counts
+     * @param p
+     *            Pre-trust vector (needed when no-one has an opinion about a
+     *            particular agent)
+     * @return A matrix normalized column-wise
+     */
+    public double[][] computeMatrix(final int[][] opinionCount, final double[] p) {
+	final double[][] C = new double[opinionCount.length][opinionCount.length];
+
+	// normalize matrix column-wise
+	for (int col = 0; col < C.length; col++) {
+	    int colSum = 0;
+
+	    for (int row = 0; row < C[col].length; row++)
+		colSum += opinionCount[row][col];
+
+	    if (colSum > 0) {
+		// at least someone has an opinion
+		final double normalization = colSum;
+
+		for (int row = 0; row < C[col].length; row++)
+		    C[row][col] = opinionCount[row][col] / normalization;
+	    } else {
+		// if a peer trusts/knows no-one
+		for (int row = 0; row < C[col].length; row++)
+		    C[row][col] = p[row];
+	    }
+	}
+
+	return C;
+    }
+
+    /**
+     * Determines whether the Euclidean distance between two vectors is small
+     * enough in order for the EigenTrust algorithm to stop.
+     * 
+     * @param t_new
+     *            The first vector
+     * @param t_old
+     *            The second vector
+     * @return True, when the difference is small enough, fase otherwise
+     */
     public boolean hasConverged(double[] t_new, double[] t_old) {
 	double sum = 0;
 
@@ -209,7 +264,7 @@ public class EigenTrust extends AbstractTrustModel {
 
     @Override
     public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(trust);
+	return constructRankingsFromEstimations(compute());
     }
 
     @Override
@@ -223,63 +278,44 @@ public class EigenTrust extends AbstractTrustModel {
     }
 
     /**
-     * The method also expands the underlying (C, pCnt, pSum, p) arrays.
+     * Expands the underlying array that hold experiences and opinions
      * 
-     * @param experience
+     * @param experiences
+     *            Set of experiences (can be null)
      * @param opinions
+     *            Set of opinions (can be null)
      */
-    protected void expandArrays(int maxAgent) {
-	// resize C
-	double[][] newC = new double[maxAgent + 1][maxAgent + 1];
-
-	for (int i = 0; i < C.length; i++)
-	    for (int j = 0; j < C.length; j++)
-		newC[i][j] = C[i][j];
-
-	for (int i = 0; i < C.length; i++)
-	    newC[i][newC.length - 1] = C[i][C.length - 1];
-
-	C = newC;
-
-	// resize positive experiences
-	double[] newPosExp = new double[maxAgent + 1];
-	for (int i = 0; i < cuPosExp.length - 1; i++)
-	    newPosExp[i] = cuPosExp[i];
-
-	cuPosExp = newPosExp;
-
-	// resize normalized local trust values
-	double[] newR = new double[maxAgent + 1];
-	for (int i = 0; i < p.length - 1; i++)
-	    newR[i] = p[i];
-
-	p = newR;
-
-    }
-
-    protected void expandOpinions(Set<Opinion> opinions) {
-	final int limit = C.length - 1;
+    protected void expandArrays(Set<Experience> experiences,
+	    Set<Opinion> opinions) {
+	final int limit = cntOp.length - 1;
 	int max = limit;
 
-	for (Opinion o : opinions)
-	    if (o.agent2 > max || o.agent1 > max)
-		max = Math.max(o.agent1, o.agent2);
+	if (null != experiences)
+	    for (Experience e : experiences)
+		if (e.agent > max)
+		    max = e.agent;
+
+	if (null != opinions)
+	    for (Opinion o : opinions)
+		if (o.agent2 > max || o.agent1 > max)
+		    max = Math.max(o.agent1, o.agent2);
 
 	if (max > limit) {
-	    expandArrays(max);
-	}
-    }
+	    // resize opinions' array
+	    int[][] newCntOp = new int[max + 1][max + 1];
 
-    protected void expandExperiences(Set<Experience> experience) {
-	final int limit = C.length - 1;
-	int max = limit;
+	    for (int i = 0; i < cntOp.length; i++)
+		for (int j = 0; j < cntOp.length; j++)
+		    newCntOp[i][j] = cntOp[i][j];
 
-	for (Experience e : experience)
-	    if (e.agent > max)
-		max = e.agent;
+	    cntOp = newCntOp;
 
-	if (max > limit) {
-	    expandArrays(max);
+	    // resize positive experiences array
+	    int[] newPosExp = new int[max + 1];
+	    for (int i = 0; i < cntExp.length; i++)
+		newPosExp[i] = cntExp[i];
+
+	    cntExp = newPosExp;
 	}
     }
 }

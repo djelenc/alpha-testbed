@@ -86,8 +86,8 @@ public class Utils {
      *            Input map
      * @return Input map implemented as a tree map
      */
-    public static Map<Integer, Integer> orderedMap(Map<Integer, Integer> input) {
-	final Map<Integer, Integer> output = new TreeMap<Integer, Integer>();
+    public static <T, K> Map<T, K> orderedMap(Map<T, K> input) {
+	final Map<T, K> output = new TreeMap<T, K>();
 	output.putAll(input);
 
 	return output;
