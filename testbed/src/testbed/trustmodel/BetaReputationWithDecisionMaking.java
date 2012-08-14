@@ -3,8 +3,8 @@ package testbed.trustmodel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
+import testbed.common.PartnerSelectionTemplates;
 import testbed.interfaces.IDecisionMaking;
 
 /**
@@ -21,6 +21,14 @@ import testbed.interfaces.IDecisionMaking;
 public class BetaReputationWithDecisionMaking extends BetaReputation implements
 	IDecisionMaking {
 
+    protected PartnerSelectionTemplates selector;
+
+    @Override
+    public void initialize(Object... params) {
+	super.initialize(params);
+	selector = new PartnerSelectionTemplates(generator);
+    }
+
     @Override
     public Map<Integer, Integer> getNextInteractionPartners(
 	    Set<Integer> services) {
@@ -28,9 +36,11 @@ public class BetaReputationWithDecisionMaking extends BetaReputation implements
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = compute();
-	    final Integer best = bestFromWeights(trust);
+	    final Integer best = selector.probabilisticAndPowered(trust, 10);
+	    // final Integer best = selector.probabilisticAndPowered(trust,
+	    // time);
 
-	    if (1 == time) {
+	    if (null == best) {
 		/*
 		 * This happens only in the first tick, where no experiences
 		 * exist -- because all opinions are discounted (and in the
@@ -43,25 +53,6 @@ public class BetaReputationWithDecisionMaking extends BetaReputation implements
 	}
 
 	return partners;
-    }
-
-    public Integer bestFromWeights(Map<Integer, Double> trust) {
-	final TreeMap<Integer, Double> agents = new TreeMap<Integer, Double>();
-	double sum = 0;
-
-	// final double power = 1d;
-	final double power = Math.sqrt(1 + time);
-
-	for (Map.Entry<Integer, Double> e : trust.entrySet()) {
-	    final double prob = Math.pow(e.getValue(), power);
-	    agents.put(e.getKey(), prob);
-	    sum += prob;
-	}
-
-	for (Map.Entry<Integer, Double> e : agents.entrySet())
-	    agents.put(e.getKey(), e.getValue() / sum);
-
-	return generator.fromWeights(agents);
     }
 
     @Override

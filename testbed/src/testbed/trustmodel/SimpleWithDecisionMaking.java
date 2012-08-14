@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import testbed.common.PartnerSelectionTemplates;
 import testbed.interfaces.IDecisionMaking;
 
 /**
@@ -15,26 +16,28 @@ import testbed.interfaces.IDecisionMaking;
  */
 public class SimpleWithDecisionMaking extends Simple implements IDecisionMaking {
 
+    protected PartnerSelectionTemplates selector;
+
+    @Override
+    public void initialize(Object... params) {
+	super.initialize(params);
+	selector = new PartnerSelectionTemplates(generator);
+    }
+
     @Override
     public Map<Integer, Integer> getNextInteractionPartners(
 	    Set<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    int bestAgent = Integer.MIN_VALUE;
-	    double maxTrust = Double.MIN_VALUE;
+	    final Integer bestAgent = selector.maximal(trust);
 
-	    for (Map.Entry<Integer, Double> entry : trust.entrySet()) {
-		if (maxTrust < entry.getValue()) {
-		    maxTrust = entry.getValue();
-		    bestAgent = entry.getKey();
-		}
+	    // only in the the first tick
+	    if (null == bestAgent) {
+		partners.put(service, 0);
+	    } else {
+		partners.put(service, bestAgent);
 	    }
-
-	    if (bestAgent == Integer.MIN_VALUE)
-		bestAgent = 0; // TODO: A bad default.
-
-	    partners.put(service, bestAgent);
 	}
 
 	return partners;
