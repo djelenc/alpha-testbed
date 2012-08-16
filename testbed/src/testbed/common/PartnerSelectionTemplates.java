@@ -13,7 +13,8 @@ import testbed.interfaces.IRandomGenerator;
  * 
  */
 public class PartnerSelectionTemplates {
-    private static final String NEGATIVE_NUMBER = "The value at ke %d was negative: %.2f. Only positive values are allowed.";
+    private static final String NEGATIVE = "Negative value at %d => %.2f. Only positive values are allowed.";
+
     final private IRandomGenerator generator;
 
     public PartnerSelectionTemplates(IRandomGenerator generator) {
@@ -25,11 +26,11 @@ public class PartnerSelectionTemplates {
      * probabilities.
      * 
      * <p>
-     * The values are first raised to the power given as the second parameter,
-     * and then finally normalized. Because of this it is not required that the
-     * given map of trust values is a proper PMF (i.e. the sum of trust values
-     * in the given map does not need to be one -- this function will normalize
-     * the weights).
+     * The values are first raised to the power which is given as the second
+     * parameter, and then normalized. Because of this, it is not required that
+     * the given map of trust values is a proper PMF (i.e. the sum of trust
+     * values in the given map does not need to be one -- this function will
+     * normalize the weights).
      * 
      * <p>
      * The assigned trust values, however, have to be positive numbers.
@@ -50,8 +51,8 @@ public class PartnerSelectionTemplates {
 
 	for (Map.Entry<Integer, Double> e : trust.entrySet()) {
 	    if (e.getValue() < 0)
-		throw new IllegalArgumentException(String.format(
-			NEGATIVE_NUMBER, e.getKey(), e.getValue()));
+		throw new IllegalArgumentException(String.format(NEGATIVE,
+			e.getKey(), e.getValue()));
 
 	    final double prob = Math.pow(e.getValue(), power);
 	    agents.put(e.getKey(), prob);

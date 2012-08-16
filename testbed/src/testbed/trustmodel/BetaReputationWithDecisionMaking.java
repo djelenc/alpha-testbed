@@ -43,8 +43,8 @@ public class BetaReputationWithDecisionMaking extends BetaReputation implements
 	    if (null == best) {
 		/*
 		 * This happens only in the first tick, where no experiences
-		 * exist -- because all opinions are discounted (and in the
-		 * beginning the discount factor is 0), all opinions become 0.
+		 * exist -- because all opinions are discounted and in the
+		 * beginning the discount factor is 0, all opinions are 0.
 		 */
 		partners.put(service, 0);
 	    } else {
