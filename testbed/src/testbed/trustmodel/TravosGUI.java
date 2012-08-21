@@ -103,7 +103,7 @@ public class TravosGUI extends JPanel implements IParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	multiplier = new JSpinner(new SpinnerNumberModel(5, 1, 10, 1));
+	multiplier = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
 	((JSpinner.DefaultEditor) multiplier.getEditor()).getTextField()
 		.setColumns(3);
 	multiplier

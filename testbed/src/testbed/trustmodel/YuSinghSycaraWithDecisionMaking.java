@@ -44,7 +44,7 @@ public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = compute();
-	    final Integer best = selector.probabilisticAndPowered(trust, 10);
+	    final Integer best = selector.maximal(trust);
 	    partners.put(service, best);
 	}
 

@@ -3,20 +3,65 @@ package testbed.trustmodel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
+import testbed.common.PartnerSelectionTemplates;
+import testbed.common.Utils;
+import testbed.interfaces.ICondition;
 import testbed.interfaces.IDecisionMaking;
+import testbed.interfaces.IParametersPanel;
 
 /**
  * Trust model on the basis of the {@link EigenTrust} trust model that supports
- * selection partners for interactions. The partner selection procedure is
- * probabilistic.
+ * selection partners for interactions.
+ * 
+ * <p>
+ * The proposal contains two partner selection procedures
+ * <ol>
+ * <li>Selecting the most trustworthy agent as the collaborator
+ * <li>Selecting a random agent as the collaborator, where the PMf of the random
+ * selection is created from the computed trust values.
+ * </ol>
  * 
  * @author David
  * 
  */
 public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	IDecisionMaking {
+
+    protected static final ICondition<Double> VAL_THRESHOLD;
+    protected static final ICondition<Boolean> VAL_PROCEDURE;
+
+    static {
+	VAL_PROCEDURE = new ICondition<Boolean>() {
+	    @Override
+	    public void eval(Boolean var) throws IllegalArgumentException {
+
+	    }
+	};
+
+	VAL_THRESHOLD = new ICondition<Double>() {
+	    @Override
+	    public void eval(Double var) throws IllegalArgumentException {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The threshold must be a between 0 and 1 inclusively, but was %.2f",
+				    var));
+	    }
+	};
+    }
+
+    protected PartnerSelectionTemplates selector;
+    protected boolean probSelection;
+    protected double zeroThreshold;
+
+    @Override
+    public void initialize(Object... params) {
+	super.initialize(params);
+	selector = new PartnerSelectionTemplates(generator);
+	probSelection = Utils.extractParameter(VAL_PROCEDURE, 3, params);
+	zeroThreshold = Utils.extractParameter(VAL_THRESHOLD, 4, params);
+    }
 
     @Override
     public Map<Integer, Integer> getNextInteractionPartners(
@@ -25,41 +70,47 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = compute();
-	    final boolean selectingNewPeer = generator.nextDoubleFromTo(0, 1) < 0.1;
-
 	    final Integer bestAgent;
 
-	    if (selectingNewPeer) {
-		final Map<Integer, Double> uniform = new HashMap<Integer, Double>();
-		int count = 0;
+	    if (probSelection) {
+		// selecting from peers with trust 0
+		if (generator.nextDoubleFromTo(0, 1) < zeroThreshold) {
+		    final Map<Integer, Double> uniform = new HashMap<Integer, Double>();
+		    int count = 0;
 
-		// add to map agents all agents with trust 0
-		for (Map.Entry<Integer, Double> e : trust.entrySet()) {
-		    if (e.getValue() < 0.0001) {
-			uniform.put(e.getKey(), 1d);
-			count++;
+		    // add to map agents all agents with trust 0
+		    for (Map.Entry<Integer, Double> e : trust.entrySet()) {
+			if (e.getValue() < 0.0001) {
+			    uniform.put(e.getKey(), 1d);
+			    count++;
+			}
+		    }
+
+		    if (0 == count) {
+			// there are no peers with trust 0
+			// we have to select in the usual way
+			bestAgent = selector.probabilisticAndPowered(trust, 1d);
+			// bestAgent = bestFromWeights(trust);
+		    } else {
+			// uniform selection amongst agents with trust 0
+			bestAgent = selector.probabilisticAndPowered(uniform,
+				1d);
+			// bestAgent = bestFromWeights(uniform);
+		    }
+		} else {
+		    // selecting according to the probabilities
+		    final Integer best = selector.probabilisticAndPowered(
+			    trust, 1d);
+
+		    if (null == best) {
+			bestAgent = 0;
+			System.err.println("Null best agent -- using default.");
+		    } else {
+			bestAgent = best;
 		    }
 		}
-
-		if (0 == count) {
-		    // we decided to select a peer with trust 0, but no such
-		    // peer exist -- we have to select the usual way
-		    bestAgent = bestFromWeights(trust);
-		} else {
-		    // uniform selection amongst agents with trust 0
-		    bestAgent = bestFromWeights(uniform);
-		}
 	    } else {
-		// selecting according to the probabilities
-		final Integer best = bestFromWeights(trust);
-
-		if (null == best) {
-		    bestAgent = 1;
-		    // TODO: when the sum is 0 -- I should inspect why!
-		    System.err.println("Null best agent -- using default.");
-		} else {
-		    bestAgent = best;
-		}
+		bestAgent = selector.maximal(trust);
 	    }
 
 	    partners.put(service, bestAgent);
@@ -68,40 +119,13 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	return partners;
     }
 
-    public Integer bestFromWeights(Map<Integer, Double> trust) {
-	final TreeMap<Integer, Double> pmf = new TreeMap<Integer, Double>();
-
-	double sum = 0;
-	// remove zero values
-	for (Map.Entry<Integer, Double> e : trust.entrySet()) {
-	    if (e.getValue() > 0.00000001) {
-		final int agent = e.getKey();
-		final double prob = e.getValue();
-
-		pmf.put(agent, prob);
-		sum += prob;
-	    }
-	}
-
-	// normalize to get proper PMF
-	for (Map.Entry<Integer, Double> e : pmf.entrySet())
-	    pmf.put(e.getKey(), e.getValue() / sum);
-
-	// random selection
-	return generator.fromWeights(pmf);
-    }
-
     @Override
     public String getName() {
 	return "EigenTrust with decisions";
     }
 
-    public String print(Map<Integer, Double> map) {
-	StringBuffer sb = new StringBuffer();
-
-	for (Map.Entry<Integer, Double> e : map.entrySet())
-	    sb.append(String.format("%d=%.2f, ", e.getKey(), e.getValue()));
-
-	return sb.toString();
+    @Override
+    public IParametersPanel getParametersPanel() {
+	return new EigenTrustWithDecisionMakingGUI();
     }
 }

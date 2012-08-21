@@ -36,9 +36,7 @@ public class BetaReputationWithDecisionMaking extends BetaReputation implements
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = compute();
-	    final Integer best = selector.probabilisticAndPowered(trust, 10);
-	    // final Integer best = selector.probabilisticAndPowered(trust,
-	    // time);
+	    final Integer best = selector.maximal(trust);
 
 	    if (null == best) {
 		/*
@@ -57,7 +55,7 @@ public class BetaReputationWithDecisionMaking extends BetaReputation implements
 
     @Override
     public String getName() {
-	return super.getName() + " with decision making";
+	return super.getName() + " with decisions";
     }
 
 }

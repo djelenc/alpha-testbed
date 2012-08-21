@@ -21,9 +21,9 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
 
     private static final long serialVersionUID = -1558821473401798087L;
 
-    private JSpinner weight, expMltpl, opMltpl;
+    protected JSpinner weight, expMltpl, opMltpl;
 
-    private Observer observer;
+    protected Observer observer;
 
     @Override
     public void initialize(Observer o, Object... params) {
@@ -68,15 +68,15 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
 		getOpinionMultiplier() };
     }
 
-    private double getOpinionMultiplier() {
+    protected double getOpinionMultiplier() {
 	return Double.parseDouble(String.valueOf(opMltpl.getValue()));
     }
 
-    private double getExperienceMultiplier() {
+    protected double getExperienceMultiplier() {
 	return Double.parseDouble(String.valueOf(expMltpl.getValue()));
     }
 
-    private double getWeight() {
+    protected double getWeight() {
 	return Double.parseDouble(String.valueOf(weight.getValue()));
     }
 
@@ -85,7 +85,7 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
      * 
      * @return The panel with created elements
      */
-    private JPanel getContentPanel() {
+    protected JPanel getContentPanel() {
 	JPanel panel = new JPanel();
 
 	panel.setLayout(new GridBagLayout());
@@ -160,7 +160,7 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
      * This method invokes the observer's update method. (Observer should be set
      * to a {@link WizardPanelDescriptor} instance.)
      */
-    private void validateParameters() {
+    protected void validateParameters() {
 	observer.update(null, true);
     }
 
