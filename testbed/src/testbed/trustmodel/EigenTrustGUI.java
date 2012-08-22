@@ -121,7 +121,7 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	expMltpl = new JSpinner(new SpinnerNumberModel(5, 1, 50, 1));
+	expMltpl = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
 	((JSpinner.DefaultEditor) expMltpl.getEditor()).getTextField()
 		.setColumns(3);
 	expMltpl.setToolTipText("Multiplier that converts a contionouos interaction outcome from [0, 1] "

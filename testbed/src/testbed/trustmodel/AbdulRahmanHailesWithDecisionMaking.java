@@ -43,7 +43,7 @@ public class AbdulRahmanHailesWithDecisionMaking extends AbdulRahmanHailes
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = compute(service);
-	    final Integer best = selector.maximal(trust);
+	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
 
 	    // This happens only in the first tick, where no experiences exist
 	    if (null == best) {
