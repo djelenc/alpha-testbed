@@ -32,32 +32,20 @@ import testbed.interfaces.IDeceptionModel;
 import testbed.interfaces.IParametersPanel;
 
 /**
- * Builds a GUI for the {@link Random}.
- * 
- * <p>
- * The method {@link RandomGUI#getParameters()} returns an array of
- * objects that represent parameters with the following semantics ():
- * <ul>
- * <li>0: (int) number of agents
- * <li>1: (double) standard deviation for generating experiences
- * <li>2: (double) standard deviation for generation opinions
- * <li>3: (Map<IDeceptionModel, Double>) distribution of deception models
- * <li>4: (double) positive exaggeration coefficient
- * <li>5: (double) negative exaggeration coefficient
- * </ul>
+ * Builds a GUI for the {@link Random} scenario.
  * 
  * @author David
  * 
  */
 public class RandomGUI extends JPanel implements IParametersPanel {
-    private static final long serialVersionUID = -155882645839798087L;
+    protected static final long serialVersionUID = -155882645839798087L;
 
-    private Map<IDeceptionModel, JSpinner> dmsPMF;
-    private JSpinner numOfAgents, sdExperiences, sdOpinions, posExCoef,
+    protected Map<IDeceptionModel, JSpinner> dmsPMF;
+    protected JSpinner numOfAgents, sdExperiences, sdOpinions, posExCoef,
 	    negExCoef;
 
-    private ClassLoader cl;
-    private Observer observer;
+    protected ClassLoader cl;
+    protected Observer observer;
 
     @Override
     public void initialize(Observer o, Object... params) {
@@ -105,23 +93,23 @@ public class RandomGUI extends JPanel implements IParametersPanel {
 		getNegExCoef() };
     }
 
-    private int getNumberOfAgents() {
+    protected int getNumberOfAgents() {
 	return Integer.parseInt(String.valueOf(numOfAgents.getValue()));
     }
 
-    private double getSdExperiences() {
+    protected double getSdExperiences() {
 	return Double.parseDouble(String.valueOf(sdExperiences.getValue()));
     }
 
-    private double getSdOpinions() {
+    protected double getSdOpinions() {
 	return Double.parseDouble(String.valueOf(sdOpinions.getValue()));
     }
 
-    private double getPosExCoef() {
+    protected double getPosExCoef() {
 	return Double.parseDouble(String.valueOf(posExCoef.getValue()));
     }
 
-    private double getNegExCoef() {
+    protected double getNegExCoef() {
 	return Double.parseDouble(String.valueOf(negExCoef.getValue()));
     }
 
@@ -130,7 +118,7 @@ public class RandomGUI extends JPanel implements IParametersPanel {
      * 
      * @return The panel with created elements
      */
-    private JPanel getContentPanel() {
+    protected JPanel getContentPanel() {
 	final JPanel panel = new JPanel();
 
 	panel.setLayout(new GridBagLayout());
@@ -281,7 +269,7 @@ public class RandomGUI extends JPanel implements IParametersPanel {
      * 
      * @return
      */
-    private Map<IDeceptionModel, Double> getDeceptionModelsPMF() {
+    protected Map<IDeceptionModel, Double> getDeceptionModelsPMF() {
 	Map<IDeceptionModel, Double> pmf = new HashMap<IDeceptionModel, Double>();
 
 	double val = 0;

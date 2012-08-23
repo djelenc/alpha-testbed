@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
+import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IPartnerSelection;
 
 /**
@@ -52,5 +53,10 @@ public class TransitiveWithPartnerSelection extends Transitive implements
     @Override
     public String getName() {
 	return "Transitive with partner selection";
+    }
+
+    @Override
+    public IParametersPanel getParametersPanel() {
+	return new TransitiveWithPartnerSelectionGUI();
     }
 }

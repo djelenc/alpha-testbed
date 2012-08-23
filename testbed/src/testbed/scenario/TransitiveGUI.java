@@ -18,13 +18,13 @@ import javax.swing.border.EmptyBorder;
 import testbed.gui.WizardPanelDescriptor;
 import testbed.interfaces.IParametersPanel;
 
-public class TransitiveGUI extends JPanel implements
-	IParametersPanel {
-    private static final long serialVersionUID = -1558821473401798087L;
+public class TransitiveGUI extends JPanel implements IParametersPanel {
+    protected static final long serialVersionUID = -1558821473401798087L;
 
-    private JSpinner numOfAgents, sdExperiences, sdOpinions, interDens, opDens;
+    protected JSpinner numOfAgents, sdExperiences, sdOpinions, interDens,
+	    opDens;
 
-    private Observer observer;
+    protected Observer observer;
 
     @Override
     public void initialize(Observer o, Object... params) {
@@ -69,23 +69,23 @@ public class TransitiveGUI extends JPanel implements
 		getSdOpinions(), getInteractionDensity(), getOpinionDensity() };
     }
 
-    private double getOpinionDensity() {
+    protected double getOpinionDensity() {
 	return Double.parseDouble(String.valueOf(opDens.getValue()));
     }
 
-    private double getInteractionDensity() {
+    protected double getInteractionDensity() {
 	return Double.parseDouble(String.valueOf(interDens.getValue()));
     }
 
-    private int getNumberOfAgents() {
+    protected int getNumberOfAgents() {
 	return Integer.parseInt(String.valueOf(numOfAgents.getValue()));
     }
 
-    private double getSdExperiences() {
+    protected double getSdExperiences() {
 	return Double.parseDouble(String.valueOf(sdExperiences.getValue()));
     }
 
-    private double getSdOpinions() {
+    protected double getSdOpinions() {
 	return Double.parseDouble(String.valueOf(sdOpinions.getValue()));
     }
 
@@ -94,7 +94,7 @@ public class TransitiveGUI extends JPanel implements
      * 
      * @return The panel with created elements
      */
-    private JPanel getContentPanel() {
+    protected JPanel getContentPanel() {
 	JPanel panel = new JPanel();
 	panel.setLayout(new GridBagLayout());
 
@@ -207,7 +207,7 @@ public class TransitiveGUI extends JPanel implements
      * This method invokes the observer's update method. (Observer should be set
      * to a {@link WizardPanelDescriptor} instance.)
      */
-    private void validateParameters() {
+    protected void validateParameters() {
 	boolean valid = true;
 
 	observer.update(null, valid);

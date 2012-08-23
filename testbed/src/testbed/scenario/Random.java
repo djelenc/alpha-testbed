@@ -14,6 +14,7 @@ import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.RandomDeception;
 import testbed.deceptionmodel.Silent;
+import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.Experience;
 import testbed.interfaces.ICondition;
 import testbed.interfaces.IDeceptionModel;
@@ -27,12 +28,17 @@ import testbed.interfaces.Opinion;
  * <li>The scenario only has one type of service (service "0").
  * <li>The assignment of capabilities is (uniformly) random. Capabilities are
  * generated at start and they do not change.
- * <li>The assignment of deception models is random but in compliance with the
- * distribution that is given as the parameter. Deception models are generated
- * at start and they do not change. Also, agents use the assigned deception
- * models consistently.
+ * <li>The assignment of deception models is random but follows the distribution
+ * that is given as the parameter. Deception models are generated at start and
+ * they do not change. Also, agents use the assigned deception models
+ * consistently -- for instance, if an agent is using a {@link Truthful}
+ * deception model, then that agents reports a truthful opinion for all agents.
  * <li>Alpha interacts with only one agent per time tick.
  * <li>Alpha obtains opinions from all agents in every tick.
+ * <li>Every agent in the system has an opinion about all other agents in the
+ * system (i.e. everyone knows everyone). The only exception is if an agent is
+ * using a {@link Silent} deception model. In that case, such agent does not
+ * give any opinions.
  * </ul>
  * 
  * <p>
@@ -44,19 +50,19 @@ import testbed.interfaces.Opinion;
  * <li>2: (double) standard deviation for generation opinions
  * <li>3: (Map<{@link IDeceptionModel}, Double>) distribution of deception
  * models
- * <li>5: (double) negative exaggeration coefficient
  * <li>4: (double) positive exaggeration coefficient
+ * <li>5: (double) negative exaggeration coefficient
  * </ul>
  * 
  * @author David
  * 
  */
 public class Random extends AbstractScenario implements IScenario {
-    private static final String DM_EX = "Could not get deception model for agent %d (%d total agents) from %s";
-    private static final String TOTAL_PROB_EX = "The sum of probabilities must be %.2f, but was %.2f.";
-    private static final String EXAGG_EX = "The exaggeration parameter must be between 0 and 1, but was %.2f";
-    private static final String ST_DEV_EX = "The standard deviation must be a non-negative double, but was %.2f";
-    private static final String AGENT_NUM_EX = "The number of agents and services must be positive integer, but was %d";
+    protected static final String DM_EX = "Could not get deception model for agent %d (%d total agents) from %s";
+    protected static final String TOTAL_PROB_EX = "The sum of probabilities must be %.2f, but was %.2f.";
+    protected static final String EXAGG_EX = "The exaggeration parameter must be between 0 and 1, but was %.2f";
+    protected static final String ST_DEV_EX = "The standard deviation must be a non-negative double, but was %.2f";
+    protected static final String AGENT_NUM_EX = "The number of agents and services must be positive integer, but was %d";
 
     protected final static ICondition<Integer> VAL_SIZE;
     protected final static ICondition<Double> VAL_SD, VAL_EXAGG;
