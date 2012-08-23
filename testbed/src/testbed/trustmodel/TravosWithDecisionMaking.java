@@ -42,7 +42,7 @@ public class TravosWithDecisionMaking extends Travos implements IDecisionMaking 
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = compute();
-	    final Integer best = selector.probabilisticAndPowered(trust, Math.log(time));
+	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
 	    partners.put(service, best);
 	}
 
