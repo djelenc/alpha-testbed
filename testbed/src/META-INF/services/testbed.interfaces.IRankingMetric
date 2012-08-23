@@ -1,4 +1,5 @@
 testbed.metric.Accuracy
+testbed.metric.AccuracyTopHalf
 testbed.metric.AccuracyWithSensitivity
 testbed.metric.SpearmansFootRule
 testbed.metric.KendallsTau
