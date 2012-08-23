@@ -52,10 +52,4 @@ public class BetaReputationWithDecisionMaking extends BetaReputation implements
 
 	return partners;
     }
-
-    @Override
-    public String getName() {
-	return super.getName() + " with decisions";
-    }
-
 }

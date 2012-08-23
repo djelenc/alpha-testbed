@@ -42,7 +42,7 @@ public class TravosWithDecisionMaking extends Travos implements IDecisionMaking 
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = compute();
-	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
+	    final Integer best = selector.probabilisticAndPowered(trust, Math.log(time));
 	    partners.put(service, best);
 	}
 
@@ -51,6 +51,6 @@ public class TravosWithDecisionMaking extends Travos implements IDecisionMaking 
 
     @Override
     public String getName() {
-	return "Travos with decisions";
+	return "Travos";
     }
 }

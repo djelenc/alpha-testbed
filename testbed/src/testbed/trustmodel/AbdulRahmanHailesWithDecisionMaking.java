@@ -55,10 +55,4 @@ public class AbdulRahmanHailesWithDecisionMaking extends AbdulRahmanHailes
 
 	return partners;
     }
-
-    @Override
-    public String getName() {
-	return super.getName() + " with decisions";
-    }
-
 }

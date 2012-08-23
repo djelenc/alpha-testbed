@@ -121,7 +121,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 
     @Override
     public String getName() {
-	return "EigenTrust with decisions";
+	return "EigenTrust";
     }
 
     @Override

@@ -45,7 +45,7 @@ public class SimpleWithDecisionMaking extends Simple implements IDecisionMaking 
 
     @Override
     public String getName() {
-	return "Simple with decisions";
+	return "Simple";
     }
 
 }

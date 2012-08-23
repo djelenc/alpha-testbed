@@ -50,9 +50,4 @@ public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 
 	return partners;
     }
-
-    @Override
-    public String getName() {
-	return super.getName() + " with decisions";
-    }
 }
