@@ -1,6 +1,8 @@
 package testbed.test;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.junit.Assert;
@@ -23,6 +25,18 @@ public class DefaultRandomGeneratorTest {
     @Before
     public void setUp() {
 	rnd = new DefaultRandomGenerator(0);
+    }
+
+    @Test
+    public void testMethod() {
+	Set<Integer> all = new HashSet<Integer>();
+	all.add(1);
+	all.add(2);
+	all.add(3);
+
+	Assert.assertEquals(1, rnd.chooseRandom(all, 1 / 3d).size());
+	Assert.assertEquals(2, rnd.chooseRandom(all, 2 / 3d).size());
+	Assert.assertEquals(3, rnd.chooseRandom(all, 3 / 3d).size());
     }
 
     @Test
@@ -124,8 +138,8 @@ public class DefaultRandomGeneratorTest {
 	for (int i = 0; i < 1000; i++) {
 	    Assert.assertEquals(rnd1.nextDoubleFromUnitTND(0.75, 0.05),
 		    rnd2.nextDoubleFromUnitTND(0.75, 0.05), 0.0000001);
-	    Assert.assertEquals(rnd1.nextDoubleFromTo(0, 1), rnd2.nextDoubleFromTo(0, 1),
-		    0.0000001);
+	    Assert.assertEquals(rnd1.nextDoubleFromTo(0, 1),
+		    rnd2.nextDoubleFromTo(0, 1), 0.0000001);
 	    Assert.assertEquals(rnd1.nextIntFromTo(5, 10),
 		    rnd2.nextIntFromTo(5, 10));
 	    Assert.assertEquals(rnd1.fromWeights(distr),

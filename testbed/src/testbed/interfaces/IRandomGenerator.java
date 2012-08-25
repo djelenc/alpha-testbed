@@ -1,5 +1,6 @@
 package testbed.interfaces;
 
+import java.util.Collection;
 import java.util.TreeMap;
 
 /**
@@ -69,5 +70,23 @@ public interface IRandomGenerator {
      * @return A random element
      */
     public <T> T fromWeights(TreeMap<T, Double> pmf);
+
+    /**
+     * Returns a collection, which is subset of items from allItems. The number
+     * of items in the returned collection is determined by the fraction
+     * parameter.
+     * 
+     * <p>
+     * To enforce deterministic behavior, the items in the collection have to
+     * implement the {@link Comparable} interface.
+     * 
+     * @param allItems
+     *            Collection of all items
+     * @param fraction
+     *            Fraction of items to be selected
+     * @return Subset of items
+     */
+    public <T> Collection<T> chooseRandom(Collection<T> allItems,
+	    double fraction);
 
 }

@@ -1,5 +1,6 @@
 package testbed.interfaces;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -88,6 +89,39 @@ public class ExampleGenerator implements IRandomGenerator {
 	}
 
 	throw new Error(UNREACHABLE_CODE);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> Collection<T> chooseRandom(Collection<T> allItems,
+	    double fraction) {
+	final long numItems = Math.round(allItems.size() * fraction);
+	final Collection<T> selectedItems;
+
+	try {
+	    selectedItems = allItems.getClass().newInstance();
+	} catch (Exception e) {
+	    throw new Error(e);
+	}
+
+	final TreeMap<T, Double> pmf = new TreeMap<T, Double>();
+
+	for (T item : allItems) {
+	    pmf.put(item, 1d / allItems.size());
+	}
+
+	int counter = 0;
+	while (counter < numItems) {
+	    final T item = fromWeights(pmf);
+	    selectedItems.add(item);
+	    pmf.remove(item);
+	    counter += 1;
+
+	    for (T key : pmf.keySet())
+		pmf.put(key, 1d / (allItems.size() - counter));
+	}
+
+	return selectedItems;
     }
 
     /**
