@@ -20,6 +20,21 @@ import testbed.interfaces.IParametersPanel;
  * 
  */
 public class TransitiveWithChanges extends Transitive {
+    protected static final ICondition<Integer> VAL_INTERVAL;
+
+    static {
+	VAL_INTERVAL = new ICondition<Integer>() {
+	    @Override
+	    public void eval(Integer var) {
+		if (var < 0)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The change interval must be positive integer, but was %d.",
+				    var));
+	    }
+	};
+
+    }
 
     /** Time between changes */
     protected int changeInterval;
@@ -32,32 +47,10 @@ public class TransitiveWithChanges extends Transitive {
 	super.initialize(params);
 
 	// extract opinion and interaction densities
-	final ICondition<Double> validatorDensity = new ICondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The density must be between 0 and 1 inclusively, but was %.2f",
-				    var));
-	    }
-	};
-
-	changeDens = Utils.extractParameter(validatorDensity, 5, params);
+	changeDens = Utils.extractParameter(VAL_DENS, 5, params);
 
 	// extract opinion and interaction densities
-	final ICondition<Integer> validatorInterval = new ICondition<Integer>() {
-	    @Override
-	    public void eval(Integer var) {
-		if (var < 0)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The change interval must be positive integer, but was %d.",
-				    var));
-	    }
-	};
-
-	changeInterval = Utils.extractParameter(validatorInterval, 6, params);
+	changeInterval = Utils.extractParameter(VAL_INTERVAL, 6, params);
     }
 
     @Override
@@ -80,7 +73,8 @@ public class TransitiveWithChanges extends Transitive {
 		counter += 1;
 	    }
 
-	    partners = assignInteractionPartners(agents, interDens);
+	    partners.clear();
+	    partners.addAll(generator.chooseRandom(agents, interDens));
 	    dms = assignDeceptionModels(agents, capabilities, opDens);
 	}
     }

@@ -1,8 +1,10 @@
 package testbed.scenario;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -52,12 +54,15 @@ import testbed.interfaces.Opinion;
  * models
  * <li>4: (double) positive exaggeration coefficient
  * <li>5: (double) negative exaggeration coefficient
+ * <li>6: (double) ratio between the number of distinct interaction partners and
+ * all agents
  * </ul>
  * 
  * @author David
  * 
  */
 public class Random extends AbstractScenario implements IScenario {
+    protected static final String DENS_EX = "The density must be between 0 and 1 inclusively, but was %.2f";
     protected static final String DM_EX = "Could not get deception model for agent %d (%d total agents) from %s";
     protected static final String TOTAL_PROB_EX = "The sum of probabilities must be %.2f, but was %.2f.";
     protected static final String EXAGG_EX = "The exaggeration parameter must be between 0 and 1, but was %.2f";
@@ -65,7 +70,7 @@ public class Random extends AbstractScenario implements IScenario {
     protected static final String AGENT_NUM_EX = "The number of agents and services must be positive integer, but was %d";
 
     protected final static ICondition<Integer> VAL_SIZE;
-    protected final static ICondition<Double> VAL_SD, VAL_EXAGG;
+    protected final static ICondition<Double> VAL_SD, VAL_EXAGG, VAL_DENS;
     protected final static ICondition<Map<IDeceptionModel, Double>> VAL_PROB;
 
     protected static final Set<Integer> SERVICES = new HashSet<Integer>();
@@ -113,6 +118,15 @@ public class Random extends AbstractScenario implements IScenario {
 	    }
 	};
 
+	VAL_DENS = new ICondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(String.format(DENS_EX,
+			    var));
+	    }
+	};
+
 	SERVICES.add(0);
     }
 
@@ -122,13 +136,17 @@ public class Random extends AbstractScenario implements IScenario {
     protected Map<Integer, IDeceptionModel> deceptionModels;
     protected Set<Integer> agents;
 
-    protected double sd_i, sd_o, posExCoef, negExCoef;
+    protected double sd_i, sd_o, posExCoef, negExCoef, interDens;
+
+    // Set of Alpha's interaction partners (subset of agents)
+    protected List<Integer> partners;
 
     @Override
     public void initialize(Object... parameters) {
 	capabilities = new LinkedHashMap<Integer, Double>();
 	deceptionModels = new LinkedHashMap<Integer, IDeceptionModel>();
 	agents = new LinkedHashSet<Integer>();
+	partners = new ArrayList<Integer>();
 	time = 0;
 
 	int numAgents = Utils.extractParameter(VAL_SIZE, 0, parameters);
@@ -170,6 +188,10 @@ public class Random extends AbstractScenario implements IScenario {
 	    // assign deception model
 	    deceptionModels.put(agent, getDM(agent, numAgents, dmPMF));
 	}
+
+	interDens = Utils.extractParameter(VAL_DENS, 6, parameters);
+
+	partners.addAll(generator.chooseRandom(agents, interDens));
     }
 
     /**
@@ -251,7 +273,7 @@ public class Random extends AbstractScenario implements IScenario {
 
 	for (int service : SERVICES) {
 	    // get agent to interact with
-	    agent = time % agents.size();
+	    agent = partners.get(time % partners.size());
 
 	    // generate interaction outcome
 	    cap = capabilities.get(agent);

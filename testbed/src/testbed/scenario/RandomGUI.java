@@ -42,7 +42,7 @@ public class RandomGUI extends JPanel implements IParametersPanel {
 
     protected Map<IDeceptionModel, JSpinner> dmsPMF;
     protected JSpinner numOfAgents, sdExperiences, sdOpinions, posExCoef,
-	    negExCoef;
+	    negExCoef, interDens;
 
     protected ClassLoader cl;
     protected Observer observer;
@@ -90,7 +90,7 @@ public class RandomGUI extends JPanel implements IParametersPanel {
     public Object[] getParameters() {
 	return new Object[] { getNumberOfAgents(), getSdExperiences(),
 		getSdOpinions(), getDeceptionModelsPMF(), getPosExCoef(),
-		getNegExCoef() };
+		getNegExCoef(), getInteractionDensity() };
     }
 
     protected int getNumberOfAgents() {
@@ -111,6 +111,10 @@ public class RandomGUI extends JPanel implements IParametersPanel {
 
     protected double getNegExCoef() {
 	return Double.parseDouble(String.valueOf(negExCoef.getValue()));
+    }
+
+    protected double getInteractionDensity() {
+	return Double.parseDouble(String.valueOf(interDens.getValue()));
     }
 
     /**
@@ -260,6 +264,24 @@ public class RandomGUI extends JPanel implements IParametersPanel {
 
 	    dmsPMF.put(dm, tf);
 	}
+
+	// Interaction density
+	lbl = new JLabel("Interaction density:  ");
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	c.gridx = 0;
+	c.gridy = i;
+	panel.add(lbl, c);
+	interDens = new JSpinner(new SpinnerNumberModel(0.10, 0, 1, 0.05));
+	((JSpinner.DefaultEditor) interDens.getEditor()).getTextField()
+		.setColumns(3);
+	interDens
+		.setToolTipText("The proportion of agents with agent Alpha interacts.");
+	c.gridx = 1;
+	c.gridy = i++;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_START;
+	panel.add(interDens, c);
 
 	return panel;
     }

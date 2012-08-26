@@ -12,12 +12,14 @@ import testbed.interfaces.IParametersPanel;
  * they all use {@link Complementary} deception model.
  * 
  * <p>
- * The scenario requires the same parameters as the {@link Random} scenario plus
- * two additional parameters:
+ * The scenario requires almost the same parameters as the {@link Random}
+ * scenario, but there are some differences. Parameter 6 is ignored (all agents
+ * are potential interaction counterparts), and two additional parameters are
+ * required:
  * <ul>
- * <li>6 (int): changeInterval -- the interval at which new agents enter the
+ * <li>7 (int): changeInterval -- the interval at which new agents enter the
  * system
- * <li>7 (int): howManyNewAgents -- the number of new agents that enter the
+ * <li>8 (int): howManyNewAgents -- the number of new agents that enter the
  * system at every changeInterval
  * </ul>
  * 
@@ -63,8 +65,8 @@ public class RandomWithNewcomers extends Random {
     public void initialize(Object... parameters) {
 	super.initialize(parameters);
 
-	changeInterval = Utils.extractParameter(VAL_INTERVAL, 6, parameters);
-	newcomersNumber = Utils.extractParameter(VAL_NEW_NUM, 7, parameters);
+	changeInterval = Utils.extractParameter(VAL_INTERVAL, 7, parameters);
+	newcomersNumber = Utils.extractParameter(VAL_NEW_NUM, 8, parameters);
     }
 
     @Override
@@ -89,6 +91,9 @@ public class RandomWithNewcomers extends Random {
 		// assign deception model
 		deceptionModels.put(agent, LIAR);
 	    }
+
+	    partners.clear();
+	    partners.addAll(agents);
 	}
     }
 

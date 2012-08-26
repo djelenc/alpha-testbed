@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
+import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IPartnerSelection;
 
 /**
@@ -51,5 +52,10 @@ public class RandomWithPartnerSelection extends Random implements
     @Override
     public String getName() {
 	return "Random with partner selection";
+    }
+    
+    @Override
+    public IParametersPanel getParametersPanel() {
+	return new RandomWithPartnerSelectionGUI();
     }
 }

@@ -49,6 +49,44 @@ import testbed.interfaces.Opinion;
  */
 public class Transitive extends AbstractScenario implements IScenario {
 
+    protected static final ICondition<Integer> VAL_SIZE;
+    protected static final ICondition<Double> VAL_SD, VAL_DENS;
+
+    static {
+	VAL_SIZE = new ICondition<Integer>() {
+	    @Override
+	    public void eval(Integer var) {
+		if (var < 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The number of agents and services must be non negative integer, but was %d",
+				    var));
+	    }
+	};
+
+	VAL_DENS = new ICondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The density must be between 0 and 1 inclusively, but was %.2f",
+				    var));
+	    }
+	};
+
+	VAL_SD = new ICondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The standard deviation must be a non-negative double, but was %.2f",
+				    var));
+	    }
+	};
+    }
+
     // Set of all agents
     protected Set<Integer> agents;
 
@@ -74,57 +112,28 @@ public class Transitive extends AbstractScenario implements IScenario {
 	time = 0;
 
 	// extract number of agents and services
-	final ICondition<Integer> validatorSize = new ICondition<Integer>() {
-	    @Override
-	    public void eval(Integer var) {
-		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The number of agents and services must be non negative integer, but was %d",
-				    var));
-	    }
-	};
-
-	int numAgents = Utils.extractParameter(validatorSize, 0, parameters);
+	int numAgents = Utils.extractParameter(VAL_SIZE, 0, parameters);
 
 	// extract SD for generating IOs and ITDs
-	final ICondition<Double> validatorSD = new ICondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The standard deviation must be a non-negative double, but was %.2f",
-				    var));
-	    }
-	};
-
-	sd_i = Utils.extractParameter(validatorSD, 1, parameters);
-	sd_o = Utils.extractParameter(validatorSD, 2, parameters);
+	sd_i = Utils.extractParameter(VAL_SD, 1, parameters);
+	sd_o = Utils.extractParameter(VAL_SD, 2, parameters);
 
 	for (int i = 0; i < numAgents; i++) {
-	    agents.add(i); // generate agents
-	    capabilities.put(i, generator.nextDoubleFromTo(0, 1)); // assign
-							     // capabilities
+	    // generate agents
+	    agents.add(i);
+
+	    // assign capabilities
+	    capabilities.put(i, generator.nextDoubleFromTo(0, 1));
 	}
 
 	// extract opinion and interaction densities
-	final ICondition<Double> validatorDensity = new ICondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The density must be between 0 and 1 inclusively, but was %.2f",
-				    var));
-	    }
-	};
-
-	interDens = Utils.extractParameter(validatorDensity, 3, parameters);
-	opDens = Utils.extractParameter(validatorDensity, 4, parameters);
+	interDens = Utils.extractParameter(VAL_DENS, 3, parameters);
+	opDens = Utils.extractParameter(VAL_DENS, 4, parameters);
 
 	// define interaction partners
-	partners = assignInteractionPartners(agents, interDens);
+	partners.addAll(generator.chooseRandom(agents, interDens));
+
+	// assign deception models
 	dms = assignDeceptionModels(agents, capabilities, opDens);
     }
 
@@ -174,35 +183,6 @@ public class Transitive extends AbstractScenario implements IScenario {
     }
 
     /**
-     * Constructs a subset of agents from a given set of agents by random
-     * selection. Agents in the newly constructed set are Alpha's interaction
-     * partners.
-     * 
-     * @param agents
-     *            The set of all agents to choose from
-     * @param interactionDensity
-     *            The percentage of agents to interact with.
-     * @return
-     */
-    public List<Integer> assignInteractionPartners(Set<Integer> agents,
-	    double interactionDensity) {
-	final List<Integer> partners = new ArrayList<Integer>();
-	final long numPartners = Math.round(agents.size() * interactionDensity);
-	int counter = 0, agent;
-
-	while (counter < numPartners) {
-	    agent = generator.nextIntFromTo(0, agents.size() - 1);
-
-	    if (!partners.contains(agent)) {
-		partners.add(agent);
-		counter += 1;
-	    }
-	}
-
-	return partners;
-    }
-
-    /**
      * Assign deception models using transitivity: higher capability means a
      * higher chance that an agent is truthful.
      * 
@@ -217,18 +197,17 @@ public class Transitive extends AbstractScenario implements IScenario {
     public IDeceptionModel[][] assignDeceptionModels(Set<Integer> agents,
 	    Map<Integer, Double> capabilities, double opinionDensity) {
 
-	IDeceptionModel[][] dms = new IDeceptionModel[agents.size()][agents
+	final IDeceptionModel[][] dms = new IDeceptionModel[agents.size()][agents
 		.size()];
 	final IDeceptionModel truthful = new Truthful();
 	final IDeceptionModel liar = new Complementary();
 	final IDeceptionModel silent = new Silent();
-	double cap, rnd;
 
 	for (int i = 0; i < dms.length; i++) {
-	    cap = capabilities.get(i);
+	    final double cap = capabilities.get(i);
 
 	    for (int j = 0; j < dms[i].length; j++) {
-		rnd = generator.nextDoubleFromTo(0, 1);
+		final double rnd = generator.nextDoubleFromTo(0, 1);
 
 		if (cap > rnd) {
 		    dms[i][j] = truthful;
@@ -240,11 +219,11 @@ public class Transitive extends AbstractScenario implements IScenario {
 
 	// make opinions sparse
 	final int limit = (int) ((1 - opinionDensity) * dms.length * dms.length);
-	int i, j, counter = 0;
+	int counter = 0;
 
 	while (counter < limit) {
-	    i = generator.nextIntFromTo(0, dms.length - 1);
-	    j = generator.nextIntFromTo(0, dms.length - 1);
+	    final int i = generator.nextIntFromTo(0, dms.length - 1);
+	    final int j = generator.nextIntFromTo(0, dms.length - 1);
 
 	    if (dms[i][j] != silent) {
 		dms[i][j] = silent;

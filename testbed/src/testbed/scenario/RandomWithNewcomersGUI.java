@@ -1,5 +1,6 @@
 package testbed.scenario;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JLabel;
@@ -21,6 +22,21 @@ public class RandomWithNewcomersGUI extends RandomGUI {
     @Override
     public JPanel getContentPanel() {
 	final JPanel parent = super.getContentPanel();
+
+	// remove interaction density
+	parent.remove(interDens);
+
+	for (Component c : parent.getComponents()) {
+	    if (c instanceof JLabel) {
+		JLabel lbl = (JLabel) c;
+
+		if (lbl.getText().startsWith("Interaction density")) {
+		    parent.remove(lbl);
+		}
+	    }
+
+	}
+
 	final GridBagConstraints c = new GridBagConstraints();
 
 	int yPosition = parent.getComponentCount() / 2;

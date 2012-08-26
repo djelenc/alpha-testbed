@@ -256,7 +256,7 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
 
     @Override
     public IParametersPanel getParametersPanel() {
-	return new RandomWithMultiServiceGUI();
+	return new RandomMultiServiceGUI();
     }
 
     @Override

@@ -58,6 +58,6 @@ public class RandomMultiServiceWithPartnerSelection extends RandomMultiService
 
     @Override
     public String getName() {
-	return super.getName() + " and partner selection";
+	return "Random/multi-service with partner selection";
     }
 }
