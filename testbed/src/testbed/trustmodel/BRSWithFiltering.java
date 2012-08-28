@@ -322,4 +322,9 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
     public IParametersPanel getParametersPanel() {
 	return new BRSWithFilteringGUI();
     }
+
+    @Override
+    public String getName() {
+	return "BRS with filtering";
+    }
 }

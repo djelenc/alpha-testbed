@@ -1,3 +1,4 @@
+testbed.metric.KendallsTauB
 testbed.metric.Accuracy
 testbed.metric.AccuracyTopHalf
 testbed.metric.AccuracyWithSensitivity

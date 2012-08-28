@@ -14,6 +14,7 @@ import testbed.interfaces.IUtilityMetric;
 import testbed.metric.Accuracy;
 import testbed.metric.Coverage;
 import testbed.metric.CumulativeNormalizedUtility;
+import testbed.metric.KendallsTauB;
 
 public class MetricsTest {
 
@@ -37,6 +38,41 @@ public class MetricsTest {
 	cpbs.put(2, 0.9);
 	cpbs.put(3, 0.8);
 	cpbs.put(4, 0.7);
+    }
+
+    @Test
+    public void kendallTauB() {
+	IRankingMetric taub = new KendallsTauB();
+	taub.initialize();
+
+	rnks.clear();
+	cpbs.clear();
+
+	rnks.put(1, 1);
+	rnks.put(2, 3);
+	rnks.put(3, 3);
+	rnks.put(4, 2);
+	rnks.put(5, 3);
+	rnks.put(6, 2);
+	rnks.put(7, 1);
+	rnks.put(8, 3);
+	rnks.put(9, 2);
+	rnks.put(10, 3);
+
+	cpbs.put(1, 3d);
+	cpbs.put(2, 1d);
+	cpbs.put(3, 2d);
+	cpbs.put(4, 3d);
+	cpbs.put(5, 1d);
+	cpbs.put(6, 2d);
+	cpbs.put(7, 2d);
+	cpbs.put(8, 1d);
+	cpbs.put(9, 2d);
+	cpbs.put(10, 1d);
+
+	final double score = taub.evaluate(rnks, cpbs) * 2 - 1;
+
+	Assert.assertEquals(0.730251, score, 0.0001);
     }
 
     @Test
