@@ -13,24 +13,23 @@ import java.util.Map;
 public class AccuracyTopHalf extends Accuracy {
 
     @Override
-    public double evaluate(Map<Integer, Integer> rankings,
+    public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,
 	    Map<Integer, Double> capabilities) {
-	if (rankings.size() == 0) {
+	if (trust.size() == 0) {
 	    return 0;
-	} else if (rankings.size() == 1) {
+	} else if (trust.size() == 1) {
 	    return 1;
 	}
 
-	int result = 0, cmpCount = 0, r1, r2;
-	double c1, c2;
+	int result = 0, cmpCount = 0;
 
-	for (Map.Entry<Integer, Integer> rank1 : rankings.entrySet()) {
-	    for (Map.Entry<Integer, Integer> rank2 : rankings.entrySet()) {
-		if (!rank1.equals(rank2)) {
-		    r1 = rank1.getValue();
-		    r2 = rank2.getValue();
-		    c1 = capabilities.get(rank1.getKey());
-		    c2 = capabilities.get(rank2.getKey());
+	for (Map.Entry<Integer, T> trust1 : trust.entrySet()) {
+	    for (Map.Entry<Integer, T> trust2 : trust.entrySet()) {
+		if (!trust1.equals(trust2)) {
+		    final T r1 = trust1.getValue();
+		    final T r2 = trust2.getValue();
+		    final Double c1 = capabilities.get(trust1.getKey());
+		    final Double c2 = capabilities.get(trust2.getKey());
 
 		    if (c1 > 0.5 || c2 > 0.5) {
 			result += evaluatePair(r1, r2, c1, c2);

@@ -30,10 +30,19 @@ public class MetricsTest {
 	// Rankings: ID => Rank
 	// Capabilities: ID => Capability
 
-	rnks.put(1, 1);
-	rnks.put(2, 2);
-	rnks.put(3, 3);
-	rnks.put(4, 4);
+	// rnks.put(1, 1);
+	// rnks.put(2, 2);
+	// rnks.put(3, 3);
+	// rnks.put(4, 4);
+	// cpbs.put(1, 1.0);
+	// cpbs.put(2, 0.9);
+	// cpbs.put(3, 0.8);
+	// cpbs.put(4, 0.7);
+
+	rnks.put(1, 10);
+	rnks.put(2, 9);
+	rnks.put(3, 8);
+	rnks.put(4, 7);
 	cpbs.put(1, 1.0);
 	cpbs.put(2, 0.9);
 	cpbs.put(3, 0.8);
@@ -46,28 +55,27 @@ public class MetricsTest {
 	taub.initialize();
 
 	rnks.clear();
+	rnks.put(1, -1);
+	rnks.put(2, 1);
+	rnks.put(3, 1);
+	rnks.put(4, 0);
+	rnks.put(5, 1);
+	rnks.put(6, 0);
+	rnks.put(7, -1);
+	rnks.put(8, 1);
+	rnks.put(9, 0);
+	rnks.put(10, 1);
+
 	cpbs.clear();
-
-	rnks.put(1, 1);
-	rnks.put(2, 3);
-	rnks.put(3, 3);
-	rnks.put(4, 2);
-	rnks.put(5, 3);
-	rnks.put(6, 2);
-	rnks.put(7, 1);
-	rnks.put(8, 3);
-	rnks.put(9, 2);
-	rnks.put(10, 3);
-
-	cpbs.put(1, 3d);
+	cpbs.put(1, -1d);
 	cpbs.put(2, 1d);
-	cpbs.put(3, 2d);
-	cpbs.put(4, 3d);
+	cpbs.put(3, 0d);
+	cpbs.put(4, -1d);
 	cpbs.put(5, 1d);
-	cpbs.put(6, 2d);
-	cpbs.put(7, 2d);
+	cpbs.put(6, 0d);
+	cpbs.put(7, 0d);
 	cpbs.put(8, 1d);
-	cpbs.put(9, 2d);
+	cpbs.put(9, 0d);
 	cpbs.put(10, 1d);
 
 	final double score = taub.evaluate(rnks, cpbs) * 2 - 1;
@@ -154,16 +162,16 @@ public class MetricsTest {
 	Accuracy accuracy = new Accuracy();
 
 	Assert.assertEquals(1, accuracy.evaluatePair(1, 1, 0.7, 0.7));
-	Assert.assertEquals(1, accuracy.evaluatePair(1, 2, 0.7, 0.7));
-	Assert.assertEquals(0, accuracy.evaluatePair(2, 1, 0.7, 0.7));
+	Assert.assertEquals(1, accuracy.evaluatePair(2, 1, 0.7, 0.7));
+	Assert.assertEquals(0, accuracy.evaluatePair(1, 2, 0.7, 0.7));
 	Assert.assertEquals(1, accuracy.evaluatePair(2, 2, 0.7, 0.7));
 	Assert.assertEquals(1, accuracy.evaluatePair(1, 1, 0.9, 0.7));
-	Assert.assertEquals(1, accuracy.evaluatePair(1, 2, 0.9, 0.7));
-	Assert.assertEquals(0, accuracy.evaluatePair(2, 1, 0.9, 0.7));
+	Assert.assertEquals(1, accuracy.evaluatePair(2, 1, 0.9, 0.7));
+	Assert.assertEquals(0, accuracy.evaluatePair(1, 2, 0.9, 0.7));
 	Assert.assertEquals(1, accuracy.evaluatePair(2, 2, 0.9, 0.7));
 	Assert.assertEquals(0, accuracy.evaluatePair(1, 1, 0.7, 0.9));
-	Assert.assertEquals(0, accuracy.evaluatePair(1, 2, 0.7, 0.9));
-	Assert.assertEquals(1, accuracy.evaluatePair(2, 1, 0.7, 0.9));
+	Assert.assertEquals(0, accuracy.evaluatePair(2, 1, 0.7, 0.9));
+	Assert.assertEquals(1, accuracy.evaluatePair(1, 2, 0.7, 0.9));
 	Assert.assertEquals(0, accuracy.evaluatePair(2, 2, 0.7, 0.9));
     }
 

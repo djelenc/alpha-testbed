@@ -86,7 +86,7 @@ public interface IRandomGenerator {
      *            Fraction of items to be selected
      * @return Subset of items
      */
-    public <T> Collection<T> chooseRandom(Collection<T> allItems,
-	    double fraction);
+    public <T extends Comparable<T>> Collection<T> chooseRandom(
+	    Collection<T> allItems, double fraction);
 
 }

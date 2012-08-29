@@ -25,6 +25,7 @@ import testbed.interfaces.IParametersPanel;
  * @author David
  * 
  */
+@SuppressWarnings("unchecked")
 public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	IDecisionMaking {
 
@@ -69,7 +70,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, Double> trust = compute();
+	    final Map<Integer, Double> trust = getRankings(service);
 	    final Integer bestAgent;
 
 	    if (probSelection) {

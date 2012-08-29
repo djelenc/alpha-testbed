@@ -95,8 +95,8 @@ public class DefaultRandomGenerator implements IRandomGenerator {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Collection<T> chooseRandom(Collection<T> allItems,
-	    double fraction) {
+    public <T extends Comparable<T>> Collection<T> chooseRandom(
+	    Collection<T> allItems, double fraction) {
 	final long numItems = Math.round(allItems.size() * fraction);
 	final Collection<T> selectedItems;
 

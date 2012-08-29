@@ -143,7 +143,9 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
 	return null;
     }
 
-    public Map<Integer, Double> compute() {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Double> getRankings(int service) {
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
@@ -190,11 +192,6 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
 	}
 
 	return trust;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute());
     }
 
     @Override

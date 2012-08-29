@@ -48,7 +48,7 @@ public class TravosTMTest {
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
-	tm.compute();
+	tm.getRankings(0);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class TravosTMTest {
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
-	Map<Integer, Double> trust = tm.compute();
+	Map<Integer, Double> trust = tm.getRankings(0);
 
 	Assert.assertEquals(0.7500, trust.get(2), 0.001);
 	Assert.assertEquals(0.1579, trust.get(3), 0.001);
@@ -108,6 +108,6 @@ public class TravosTMTest {
 	tm.observations.get(10)[3].R = 18;
 	tm.observations.get(10)[3].S = 8;
 
-	Assert.assertEquals(0.8349, tm.compute().get(6), 0.001);
+	Assert.assertEquals(0.8349, tm.getRankings(0).get(6), 0.001);
     }
 }

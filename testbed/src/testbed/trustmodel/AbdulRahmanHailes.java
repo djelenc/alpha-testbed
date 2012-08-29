@@ -103,8 +103,10 @@ public class AbdulRahmanHailes extends AbstractTrustModel {
 	// later, dude.
     }
 
-    public Map<Integer, Double> compute(int service) {
-	final Map<Integer, Double> trust = new HashMap<Integer, Double>();
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, TD> getRankings(int service) {
+	final Map<Integer, TD> trust = new HashMap<Integer, TD>();
 	final ArrayList<Integer> union = new ArrayList<Integer>();
 
 	for (int agent = 0; agent < Q.length; agent++) {
@@ -113,7 +115,7 @@ public class AbdulRahmanHailes extends AbstractTrustModel {
 
 	    if (experience != null) {
 		// if experiences exist
-		trust.put(agent, experience.numeric);
+		trust.put(agent, experience);
 	    } else {
 		// if no experience exist, compute from recommendations
 		final int[] opinions = new int[4];
@@ -150,19 +152,11 @@ public class AbdulRahmanHailes extends AbstractTrustModel {
 		final TD aggregated = modeTD(opinions);
 
 		if (aggregated != null)
-		    trust.put(agent, aggregated.numeric);
+		    trust.put(agent, aggregated);
 	    }
 	}
 
 	return trust;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	final Map<Integer, Double> trust = compute(service);
-	final Map<Integer, Integer> rankings = constructRankingsFromEstimations(trust);
-
-	return rankings;
     }
 
     /**

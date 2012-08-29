@@ -73,7 +73,9 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
 	    row[e.agent] = normalizedNumeric(e.outcome);
     }
 
-    public Map<Integer, Double> compute(int service) {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Double> getRankings(int service) {
 	Map<Integer, Double> newTrust = operator.compute(row, op);
 
 	// now update Alpha's row
@@ -81,11 +83,6 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
 	    row[e.getKey()] = fromNumeric(e.getValue());
 
 	return newTrust;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute(service));
     }
 
     @Override

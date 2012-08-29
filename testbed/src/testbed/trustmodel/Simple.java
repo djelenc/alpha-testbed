@@ -9,9 +9,6 @@ import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 public class Simple extends AbstractTrustModel implements ITrustModel {
-    // trust estimations
-    protected Map<Integer, Double> trust;
-
     // cumulative interaction outcomes
     protected double[] exSum;
 
@@ -26,7 +23,6 @@ public class Simple extends AbstractTrustModel implements ITrustModel {
 
     @Override
     public void initialize(Object... params) {
-	trust = new LinkedHashMap<Integer, Double>();
 	exSum = new double[0];
 	exCnt = new int[0];
 	op = new double[0][0];
@@ -53,6 +49,14 @@ public class Simple extends AbstractTrustModel implements ITrustModel {
 
     @Override
     public void calculateTrust() {
+	// pass
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Double> getRankings(int service) {
+	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+
 	// compute reputations
 	rep = new double[exSum.length];
 
@@ -94,11 +98,8 @@ public class Simple extends AbstractTrustModel implements ITrustModel {
 		trust.put(agent, t);
 	    }
 	}
-    }
 
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(trust);
+	return trust;
     }
 
     @Override

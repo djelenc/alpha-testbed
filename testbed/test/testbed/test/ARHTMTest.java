@@ -12,6 +12,28 @@ import testbed.trustmodel.TD;
 public class ARHTMTest {
 
     @Test
+    public void compareEnums() {
+	Assert.assertTrue(TD.VG.compareTo(TD.G) > 0);
+	Assert.assertTrue(TD.VG.compareTo(TD.B) > 0);
+	Assert.assertTrue(TD.VG.compareTo(TD.VB) > 0);
+	Assert.assertTrue(TD.G.compareTo(TD.B) > 0);
+	Assert.assertTrue(TD.G.compareTo(TD.VB) > 0);
+	Assert.assertTrue(TD.B.compareTo(TD.VB) > 0);
+	Assert.assertEquals(TD.VG.compareTo(TD.VG), 0);
+	Assert.assertEquals(TD.G.compareTo(TD.G), 0);
+	Assert.assertEquals(TD.B.compareTo(TD.B), 0);
+	Assert.assertEquals(TD.VB.compareTo(TD.VB), 0);
+    }
+
+    @Test
+    public void testTDFromIndex() {
+	Assert.assertEquals(TD.VB, TD.fromIndex(0));
+	Assert.assertEquals(TD.B, TD.fromIndex(1));
+	Assert.assertEquals(TD.G, TD.fromIndex(2));
+	Assert.assertEquals(TD.VG, TD.fromIndex(3));
+    }
+
+    @Test
     public void testTDFromDouble() {
 	Assert.assertEquals(TD.VB, TD.fromDouble(0d));
 	Assert.assertEquals(TD.VB, TD.fromDouble(0.1));
@@ -31,11 +53,11 @@ public class ARHTMTest {
 	Assert.assertNull(AbdulRahmanHailes.modeTD(stats));
 
 	stats[0] = 3;
-	Assert.assertSame(TD.VG, AbdulRahmanHailes.modeTD(stats));
-	stats[1] = 3;
-	Assert.assertSame(TD.G, AbdulRahmanHailes.modeTD(stats));
-	stats[3] = 3;
 	Assert.assertSame(TD.VB, AbdulRahmanHailes.modeTD(stats));
+	stats[1] = 3;
+	Assert.assertSame(TD.B, AbdulRahmanHailes.modeTD(stats));
+	stats[3] = 3;
+	Assert.assertSame(TD.VG, AbdulRahmanHailes.modeTD(stats));
     }
 
     @Test

@@ -21,7 +21,7 @@ public class RandomScenarioTest {
 	Map<IDeceptionModel, Double> deceptionModels = new HashMap<IDeceptionModel, Double>();
 	deceptionModels.put(new Truthful(), 1d);
 
-	scenario.initialize(1, 0.1, 0.05, deceptionModels, 0.25, 0.25);
+	scenario.initialize(1, 0.1, 0.05, deceptionModels, 0.25, 0.25, 1d);
 
 	Assert.assertEquals(1, scenario.getAgents().size());
 	Assert.assertEquals(1, scenario.getServices().size());

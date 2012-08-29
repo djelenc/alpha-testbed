@@ -82,7 +82,8 @@ public class YuSinghSycara extends AbstractTrustModel {
 	// weirdly empty.
     }
 
-    public Map<Integer, Double> compute() {
+    @SuppressWarnings("unchecked")
+    public Map<Integer, Double> getRankings(int service) {
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
@@ -133,11 +134,6 @@ public class YuSinghSycara extends AbstractTrustModel {
 	}
 
 	return trust;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute());
     }
 
     @Override

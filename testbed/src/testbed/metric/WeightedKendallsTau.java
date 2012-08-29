@@ -18,7 +18,7 @@ public class WeightedKendallsTau extends AbstractMetric implements
 	IRankingMetric {
 
     @Override
-    public double evaluate(Map<Integer, Integer> rankings,
+    public <T extends Comparable<T>> double evaluate(Map<Integer, T> rankings,
 	    Map<Integer, Double> capabilities) {
 	if (rankings.size() == 0) {
 	    return 0;
@@ -26,20 +26,24 @@ public class WeightedKendallsTau extends AbstractMetric implements
 	    return 1;
 	}
 
-	int r1, r2;
-	double c1, c2, sum = 0, result = 0;
+	double sum = 0, result = 0;
 
-	for (Map.Entry<Integer, Integer> rank1 : rankings.entrySet()) {
-	    for (Map.Entry<Integer, Integer> rank2 : rankings.entrySet()) {
+	for (Map.Entry<Integer, T> rank1 : rankings.entrySet()) {
+	    for (Map.Entry<Integer, T> rank2 : rankings.entrySet()) {
 		if (rank1.getKey() < rank2.getKey()) {
-		    r1 = rank1.getValue();
-		    r2 = rank2.getValue();
-		    c1 = capabilities.get(rank1.getKey());
-		    c2 = capabilities.get(rank2.getKey());
-		    sum += Math.abs(c1 - c2);
+		    final T r1 = rank1.getValue();
+		    final T r2 = rank2.getValue();
+		    final Double c1 = capabilities.get(rank1.getKey());
+		    final Double c2 = capabilities.get(rank2.getKey());
 
-		    if ((r1 < r2 && c1 > c2) || (r1 > r2 && c1 < c2))
-			result += Math.abs(c1 - c2);
+		    final double difference = Math.abs(c1 - c2);
+
+		    sum += difference;
+
+		    if ((r1.compareTo(r2) > 0 && c1.compareTo(c2) > 0)
+			    || (r1.compareTo(r2) < 0 && c1.compareTo(c2) < 0)) {
+			result += difference;
+		    }
 		}
 	    }
 	}

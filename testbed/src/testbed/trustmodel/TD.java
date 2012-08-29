@@ -8,7 +8,7 @@ package testbed.trustmodel;
  * 
  */
 public enum TD {
-    VG(0.75), G(0.50), B(0.25), VB(0.00);
+    VB(0.00), B(0.25), G(0.50), VG(0.75);
 
     public final double numeric;
 
@@ -17,12 +17,19 @@ public enum TD {
     }
 
     public static TD fromDouble(double d) {
-	for (TD td : values())
-	    if (d >= td.numeric)
-		return td;
+	if (d < 0d || d > 1d)
+	    throw new IllegalArgumentException(String.format(
+		    "TD must be within [0, 1], but was %.2f", d));
 
-	throw new IllegalArgumentException(String.format(
-		"Cannot determine TD for value %.2f", d));
+	if (d < B.numeric) {
+	    return VB;
+	} else if (d < G.numeric) {
+	    return B;
+	} else if (d < VG.numeric) {
+	    return G;
+	} else {
+	    return VG;
+	}
     }
 
     public static TD fromIndex(int i) {

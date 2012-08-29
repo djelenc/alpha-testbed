@@ -18,6 +18,7 @@ import testbed.interfaces.IDecisionMaking;
  * @author David
  * 
  */
+@SuppressWarnings("unchecked")
 public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 	IDecisionMaking {
 
@@ -43,7 +44,7 @@ public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, Double> trust = compute();
+	    final Map<Integer, Double> trust = getRankings(service);
 	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
 	    partners.put(service, best);
 	}

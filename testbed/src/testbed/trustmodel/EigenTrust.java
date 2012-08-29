@@ -135,7 +135,9 @@ public class EigenTrust extends AbstractTrustModel {
 
     }
 
-    public Map<Integer, Double> compute() {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Double> getRankings(int service) {
 	// pre-trust vector
 	double[] p = computePretrustVector(cntExp);
 
@@ -260,11 +262,6 @@ public class EigenTrust extends AbstractTrustModel {
 	    sum += (t_new[i] - t_old[i]) * (t_new[i] - t_old[i]);
 
 	return Math.sqrt(sum) < 0.01;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute());
     }
 
     @Override

@@ -43,8 +43,8 @@ public class AlphaTestbedTest {
 	    }
 
 	    @Override
-	    public double evaluate(Map<Integer, Integer> rankings,
-		    Map<Integer, Double> capabilities) {
+	    public <T extends Comparable<T>> double evaluate(
+		    Map<Integer, T> rankings, Map<Integer, Double> capabilities) {
 		return 0;
 	    }
 	};
@@ -125,11 +125,6 @@ class RankingsTrustModel implements ITrustModel {
     }
 
     @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return null;
-    }
-
-    @Override
     public IParametersPanel getParametersPanel() {
 	return null;
     }
@@ -142,6 +137,11 @@ class RankingsTrustModel implements ITrustModel {
     @Override
     public void setRandomGenerator(IRandomGenerator generator) {
 
+    }
+
+    @Override
+    public <T extends Comparable<T>> Map<Integer, T> getRankings(int service) {
+	return null;
     }
 
 }

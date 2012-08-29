@@ -138,7 +138,9 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	    opinions[o.agent1][o.agent2] = o;
     }
 
-    public Map<Integer, Double> compute() {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Double> getRankings(int service) {
 	final Map<Integer, BRSPair> experienceTrust = computeExperiences();
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
@@ -243,11 +245,6 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	}
 
 	return reputation;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return super.constructRankingsFromEstimations(compute());
     }
 
     /**

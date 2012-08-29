@@ -126,7 +126,9 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
 	return trust;
     }
 
-    public Map<Integer, Double> compute() {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Double> getRankings(int service) {
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 	final Map<Integer, BRSPair> pairs = computePairs();
 
@@ -139,13 +141,6 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
 	}
 
 	return trust;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	final Map<Integer, Double> trust = compute();
-
-	return constructRankingsFromEstimations(trust);
     }
 
     /**

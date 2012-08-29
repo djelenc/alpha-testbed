@@ -17,18 +17,12 @@ import testbed.interfaces.Opinion;
  * 
  */
 public class OnlyOpinions extends AbstractTrustModel implements ITrustModel {
-    private Map<Integer, Double> trust;
-
     // opinions
     private double[][] op;
-
-    private Set<Opinion> opinions;
 
     @Override
     public void initialize(Object... params) {
 	op = new double[0][0];
-	trust = new LinkedHashMap<Integer, Double>();
-	opinions = null;
     }
 
     @Override
@@ -38,38 +32,38 @@ public class OnlyOpinions extends AbstractTrustModel implements ITrustModel {
 
     @Override
     public void processOpinions(Set<Opinion> opinions) {
-	this.opinions = opinions;
-    }
-
-    @Override
-    public void calculateTrust() {
-	trust.clear();
-
 	expandArray(opinions);
 
 	for (Opinion o : opinions)
 	    op[o.agent1][o.agent2] = o.internalTrustDegree;
+    }
 
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
+    @Override
+    public void calculateTrust() {
+	// pass
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Double> getRankings(int service) {
+	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+
+	for (int agent = 0; agent < op.length; agent++) {
 	    double sum = 0;
 	    int count = 0;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		if (!Double.isNaN(op[agent1][agent2])) {
-		    sum += op[agent1][agent2];
+	    for (int reporter = 0; reporter < op.length; reporter++) {
+		if (!Double.isNaN(op[reporter][agent])) {
+		    sum += op[reporter][agent];
 		    count += 1;
 		}
 	    }
 
 	    if (count > 0)
-		trust.put(agent2, sum / count);
+		trust.put(agent, sum / count);
 	}
 
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return super.constructRankingsFromEstimations(trust);
+	return trust;
     }
 
     @Override

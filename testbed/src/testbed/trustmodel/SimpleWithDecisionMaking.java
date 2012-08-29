@@ -30,7 +30,9 @@ public class SimpleWithDecisionMaking extends Simple implements IDecisionMaking 
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Integer bestAgent = selector.maximal(trust);
+	    final Map<Integer, Double> trust = getRankings(service);
+	    final Integer bestAgent = selector.probabilisticAndPowered(trust,
+		    1d);
 
 	    // only in the the first tick
 	    if (null == bestAgent) {

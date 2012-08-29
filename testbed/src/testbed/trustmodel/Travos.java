@@ -208,12 +208,9 @@ public class Travos extends AbstractTrustModel {
 	}
     }
 
-    /**
-     * Computes the trust values as defined by the model.
-     * 
-     * @return The map of agents and their respective trust values.
-     */
-    public Map<Integer, Double> compute() {
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Integer, Double> getRankings(int service) {
 	// trust evaluations
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
@@ -419,11 +416,6 @@ public class Travos extends AbstractTrustModel {
 	}
 
 	opinions = newOp;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute());
     }
 
     @Override

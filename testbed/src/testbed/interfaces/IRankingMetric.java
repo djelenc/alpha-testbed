@@ -22,6 +22,6 @@ public interface IRankingMetric extends IMetric {
      * 
      * @return An evaluation score between 0 and 1, inclusively.
      */
-    public double evaluate(Map<Integer, Integer> rankings,
+    public <T extends Comparable<T>> double evaluate(Map<Integer, T> rankings,
 	    Map<Integer, Double> capabilities);
 }

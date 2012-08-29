@@ -56,6 +56,9 @@ public interface ITrustModel {
     public void calculateTrust();
 
     /**
+     * TODO: Fix JavaDoc comments
+     * 
+     * <p>
      * Computes the ranking of agents for a given service. The ranking has to be
      * given in a map, where keys represent agents and values represent their
      * ranks.
@@ -87,7 +90,7 @@ public interface ITrustModel {
      *            type of service
      * @return
      */
-    public Map<Integer, Integer> getRankings(int service);
+    public <T extends Comparable<T>> Map<Integer, T> getRankings(int service);
 
     /**
      * Returns an {@link IParametersPanel} instance, which is responsible for

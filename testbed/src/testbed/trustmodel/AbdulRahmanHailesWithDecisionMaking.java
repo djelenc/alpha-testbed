@@ -1,6 +1,7 @@
 package testbed.trustmodel;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import testbed.interfaces.IDecisionMaking;
  * @author David
  * 
  */
+@SuppressWarnings("unchecked")
 public class AbdulRahmanHailesWithDecisionMaking extends AbdulRahmanHailes
 	implements IDecisionMaking {
 
@@ -42,7 +44,13 @@ public class AbdulRahmanHailesWithDecisionMaking extends AbdulRahmanHailes
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, Double> trust = compute(service);
+	    final Map<Integer, TD> computedTrust = getRankings(service);
+	    final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+
+	    for (int agent : computedTrust.keySet()) {
+		trust.put(agent, computedTrust.get(agent).numeric);
+	    }
+
 	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
 
 	    // This happens only in the first tick, where no experiences exist

@@ -35,7 +35,7 @@ public class BetaReputationWithDecisionMaking extends BetaReputation implements
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, Double> trust = compute();
+	    final Map<Integer, Double> trust = getRankings(service);
 	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
 
 	    if (null == best) {
