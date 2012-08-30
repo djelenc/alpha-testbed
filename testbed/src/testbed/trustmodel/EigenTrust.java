@@ -135,7 +135,6 @@ public class EigenTrust extends AbstractTrustModel {
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<Integer, Double> getRankings(int service) {
 	// pre-trust vector

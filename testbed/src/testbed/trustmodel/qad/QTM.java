@@ -8,11 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
+import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.IRandomGenerator;
 import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.AbstractTrustModel;
 
-public class QTM extends AbstractTrustModel implements ITrustModel {
+public class QTM implements ITrustModel<Omega> {
 
     public static final int HISTORY_LENGTH = 10;
 
@@ -143,10 +144,9 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
 	return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Map<Integer, Double> getRankings(int service) {
-	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+    public Map<Integer, Omega> getRankings(int service) {
+	Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
 	    double localRating = 0;
@@ -188,7 +188,7 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
 	    final double score = Math.round(weight * localRating + (1 - weight)
 		    * reputation);
 
-	    trust.put(agent, score);
+	    trust.put(agent, Omega.fromNumeric(score));
 	}
 
 	return trust;
@@ -288,5 +288,22 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
 	}
 
 	return trust;
+    }
+
+    protected IRandomGenerator generator;
+
+    @Override
+    public void setRandomGenerator(IRandomGenerator generator) {
+	this.generator = generator;
+    }
+
+    @Override
+    public IParametersPanel getParametersPanel() {
+	return null;
+    }
+
+    @Override
+    public String getName() {
+	return "Qualitative model";
     }
 }

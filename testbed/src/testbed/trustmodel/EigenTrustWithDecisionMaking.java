@@ -25,7 +25,6 @@ import testbed.interfaces.IParametersPanel;
  * @author David
  * 
  */
-@SuppressWarnings("unchecked")
 public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	IDecisionMaking {
 

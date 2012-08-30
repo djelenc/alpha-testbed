@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
+import testbed.interfaces.ITrustModel;
+
 public class ClassLoaderUtils {
 
     private static final Logger logger = Logger
@@ -36,6 +38,28 @@ public class ClassLoaderUtils {
 	List<T> result = new ArrayList<T>();
 
 	for (T impl : ServiceLoader.load(clazz, classLoader)) {
+	    result.add(impl);
+	}
+
+	return result;
+    }
+
+    /**
+     * Returns a List of ITrustModel implementations using provided class
+     * loader. The implementations have to be registered in
+     * META-INF/services/testbed.interfaces.ITrustModel file.
+     * 
+     * @param clazz
+     * @param classLoader
+     * @return
+     */
+    public static <T extends Comparable<T>> List<ITrustModel<?>> lookUpTrustModels(
+	    ClassLoader classLoader) {
+
+	List<ITrustModel<?>> result = new ArrayList<ITrustModel<?>>();
+
+	for (ITrustModel<?> impl : ServiceLoader.load(ITrustModel.class,
+		classLoader)) {
 	    result.add(impl);
 	}
 

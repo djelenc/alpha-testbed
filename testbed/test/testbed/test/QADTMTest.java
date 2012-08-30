@@ -49,48 +49,48 @@ public class QADTMTest {
 		{ T, T, T } };
 
 	Omega[] experiences = new Omega[] { PT, PD, null };
-	Map<Integer, Double> trust = null;
+	Map<Integer, Omega> trust = null;
 
 	o = EXTREME_OPTIMIST;
 	trust = o.compute(experiences, opinions);
-	assertEquals(fromNumeric(trust.get(0)), T);
-	assertEquals(fromNumeric(trust.get(1)), T);
-	assertEquals(fromNumeric(trust.get(2)), T);
+	assertEquals((trust.get(0)), T);
+	assertEquals((trust.get(1)), T);
+	assertEquals((trust.get(2)), T);
 
 	o = EXTREME_PESSIMIST;
 	trust = o.compute(experiences, opinions);
-	assertEquals(fromNumeric(trust.get(0)), D);
-	assertEquals(fromNumeric(trust.get(1)), D);
-	assertEquals(fromNumeric(trust.get(2)), D);
+	assertEquals((trust.get(0)), D);
+	assertEquals((trust.get(1)), D);
+	assertEquals((trust.get(2)), D);
 
 	o = CENTRALIST;
 	trust = o.compute(experiences, opinions);
-	assertEquals(fromNumeric(trust.get(0)), U);
-	assertEquals(fromNumeric(trust.get(1)), U);
-	assertEquals(fromNumeric(trust.get(2)), U);
+	assertEquals((trust.get(0)), U);
+	assertEquals((trust.get(1)), U);
+	assertEquals((trust.get(2)), U);
 
 	o = NON_CENTRALIST;
 	trust = o.compute(experiences, opinions);
-	assertEquals(fromNumeric(trust.get(0)), PT);
-	assertEquals(fromNumeric(trust.get(1)), PD);
-	assertEquals(fromNumeric(trust.get(2)), U);
+	assertEquals((trust.get(0)), PT);
+	assertEquals((trust.get(1)), PD);
+	assertEquals((trust.get(2)), U);
 
 	o = MODERATE_OPTIMIST;
 	trust = o.compute(experiences, opinions);
-	assertEquals(fromNumeric(trust.get(0)), PT);
-	assertEquals(fromNumeric(trust.get(1)), U);
-	assertEquals(fromNumeric(trust.get(2)), PD);
+	assertEquals((trust.get(0)), PT);
+	assertEquals((trust.get(1)), U);
+	assertEquals((trust.get(2)), PD);
 
 	o = MODERATE_PESSIMIST;
 	trust = o.compute(experiences, opinions);
-	assertEquals(fromNumeric(trust.get(0)), U);
-	assertEquals(fromNumeric(trust.get(1)), PD);
-	assertEquals(fromNumeric(trust.get(2)), PT);
+	assertEquals((trust.get(0)), U);
+	assertEquals((trust.get(1)), PD);
+	assertEquals((trust.get(2)), PT);
 
 	o = STABLE;
 	trust = o.compute(experiences, opinions);
-	assertEquals(fromNumeric(trust.get(0)), PT);
-	assertEquals(fromNumeric(trust.get(1)), PD);
+	assertEquals((trust.get(0)), PT);
+	assertEquals((trust.get(1)), PD);
 	assertNull(trust.get(2));
     }
 

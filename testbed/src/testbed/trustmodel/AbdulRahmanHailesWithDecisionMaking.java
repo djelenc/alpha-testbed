@@ -19,7 +19,6 @@ import testbed.interfaces.IDecisionMaking;
  * @author David
  * 
  */
-@SuppressWarnings("unchecked")
 public class AbdulRahmanHailesWithDecisionMaking extends AbdulRahmanHailes
 	implements IDecisionMaking {
 

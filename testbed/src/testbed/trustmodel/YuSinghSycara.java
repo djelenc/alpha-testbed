@@ -82,7 +82,6 @@ public class YuSinghSycara extends AbstractTrustModel {
 	// weirdly empty.
     }
 
-    @SuppressWarnings("unchecked")
     public Map<Integer, Double> getRankings(int service) {
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 

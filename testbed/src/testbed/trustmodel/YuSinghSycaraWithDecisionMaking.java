@@ -18,7 +18,6 @@ import testbed.interfaces.IDecisionMaking;
  * @author David
  * 
  */
-@SuppressWarnings("unchecked")
 public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 	IDecisionMaking {
 

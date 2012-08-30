@@ -122,7 +122,7 @@ public class AlphaTestbed {
     protected static final String METRIC_QUERY_EX = "Invalid query for metric '%s' and service '%d'.";
 
     /** Reference to the trust model */
-    protected final ITrustModel model;
+    protected final ITrustModel<?> model;
 
     /**
      * Reference to the decision making capabilities of a trust model -- null in
@@ -225,7 +225,7 @@ public class AlphaTestbed {
      *            A set of varargs arguments to initialize an utility metric
      *            instance
      */
-    public AlphaTestbed(IScenario scn, ITrustModel tm,
+    public AlphaTestbed(IScenario scn, ITrustModel<?> tm,
 	    IRankingMetric rankingMetric, Object[] rmParams,
 	    IUtilityMetric utilityMetric, Object[] umParams) {
 	model = tm;
@@ -310,16 +310,17 @@ public class AlphaTestbed {
 	// ------------------------------- //
 
 	for (int service : services) {
-	    final Map<Integer, Integer> rankings;
+	    // final Map<Integer, T> rankings;
 	    final Map<Integer, Double> capabilities;
 
-	    rankings = model.getRankings(service);
+	    // rankings = (Map<Integer, T>) model.getRankings(service);
 	    capabilities = scenario.getCapabilities(service);
 
 	    // evaluate rankings
 	    final IRankingMetric rm = getRankingMetricInstance(service);
 	    final int rankMetricKey = rm.getClass().hashCode() ^ service;
-	    final double rankMetricScore = rm.evaluate(rankings, capabilities);
+	    final double rankMetricScore = rm.evaluate(
+		    model.getRankings(service), capabilities);
 
 	    score.put(rankMetricKey, rankMetricScore);
 
@@ -366,7 +367,7 @@ public class AlphaTestbed {
 	}
     }
 
-    public ITrustModel getModel() {
+    public ITrustModel<?> getModel() {
 	return model;
     }
 
@@ -386,7 +387,8 @@ public class AlphaTestbed {
      *         the {@link IDecisionMaking} interface and the instance of a
      *         scenario implements the {@link IPartnerSelection} interface.
      */
-    protected boolean isValidUtilityMode(ITrustModel model, IScenario scenario) {
+    protected boolean isValidUtilityMode(ITrustModel<?> model,
+	    IScenario scenario) {
 	return IDecisionMaking.class.isAssignableFrom(model.getClass())
 		&& IPartnerSelection.class
 			.isAssignableFrom(scenario.getClass());
@@ -405,7 +407,8 @@ public class AlphaTestbed {
      *         of a scenario does not implement the {@link IPartnerSelection}
      *         interface.
      */
-    protected boolean isValidRankingMode(ITrustModel model, IScenario scenario) {
+    protected boolean isValidRankingMode(ITrustModel<?> model,
+	    IScenario scenario) {
 	return !IDecisionMaking.class.isAssignableFrom(model.getClass())
 		&& !IPartnerSelection.class.isAssignableFrom(scenario
 			.getClass());

@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -16,7 +15,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class OnlyOpinions extends AbstractTrustModel implements ITrustModel {
+public class OnlyOpinions extends AbstractTrustModel {
     // opinions
     private double[][] op;
 
@@ -43,7 +42,6 @@ public class OnlyOpinions extends AbstractTrustModel implements ITrustModel {
 	// pass
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<Integer, Double> getRankings(int service) {
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();

@@ -208,7 +208,6 @@ public class Travos extends AbstractTrustModel {
 	}
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<Integer, Double> getRankings(int service) {
 	// trust evaluations

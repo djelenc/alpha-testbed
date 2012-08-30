@@ -30,7 +30,7 @@ public class ProgramaticRun implements IMetricSubscriber {
 
     public static void main(String[] args) {
 	// trust model
-	ITrustModel model = new YuSinghSycara();
+	ITrustModel<?> model = new YuSinghSycara();
 	model.setRandomGenerator(new DefaultRandomGenerator(0));
 	model.initialize();
 
@@ -43,7 +43,7 @@ public class ProgramaticRun implements IMetricSubscriber {
 	IRankingMetric rm = new Accuracy();
 	rm.initialize();
 
-	// alpha test-bed (utility metric in set to null)
+	// alpha test-bed (utility metric set to null)
 	final AlphaTestbed atb = new AlphaTestbed(scenario, model, rm, null,
 		null, null);
 

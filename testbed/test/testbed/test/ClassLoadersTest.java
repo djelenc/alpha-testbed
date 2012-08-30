@@ -17,17 +17,16 @@ import testbed.interfaces.ITrustModel;
 public class ClassLoadersTest {
 
     @Test
-    public void testLookUp() {
-
+    public <T extends Comparable<T>> void testLookUp() {
 	ClassLoader classLoader = Thread.currentThread()
 		.getContextClassLoader();
 
 	List<IScenario> generators = ClassLoaderUtils.lookUp(IScenario.class,
 		classLoader);
-	List<IRankingMetric> metrics = ClassLoaderUtils.lookUp(IRankingMetric.class,
-		classLoader);
-	List<ITrustModel> trustModels = ClassLoaderUtils.lookUp(
-		ITrustModel.class, classLoader);
+	List<IRankingMetric> metrics = ClassLoaderUtils.lookUp(
+		IRankingMetric.class, classLoader);
+	List<ITrustModel<?>> trustModels = ClassLoaderUtils
+		.lookUpTrustModels(classLoader);
 	List<IDeceptionModel> deceptionModels = ClassLoaderUtils.lookUp(
 		IDeceptionModel.class, classLoader);
 
@@ -72,18 +71,11 @@ public class ClassLoadersTest {
 
     @Test
     public void testServiceLoaderIMetric() {
-	ServiceLoader<IRankingMetric> all = ServiceLoader.load(IRankingMetric.class);
+	ServiceLoader<IRankingMetric> all = ServiceLoader
+		.load(IRankingMetric.class);
 
 	Assert.assertTrue(all.iterator().hasNext());
 	Assert.assertTrue(all.iterator().next() instanceof IRankingMetric);
-    }
-
-    @Test
-    public void testServiceLoaderITrustModel() {
-	ServiceLoader<ITrustModel> all = ServiceLoader.load(ITrustModel.class);
-
-	Assert.assertTrue(all.iterator().hasNext());
-	Assert.assertTrue(all.iterator().next() instanceof ITrustModel);
     }
 
     @Test

@@ -9,7 +9,7 @@ import testbed.interfaces.IParametersPanel;
 import testbed.interfaces.IRandomGenerator;
 import testbed.interfaces.ITrustModel;
 
-public abstract class AbstractTrustModel implements ITrustModel {
+public abstract class AbstractTrustModel implements ITrustModel<Double> {
 
     protected IRandomGenerator generator;
 

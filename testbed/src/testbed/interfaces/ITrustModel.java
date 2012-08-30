@@ -3,7 +3,7 @@ package testbed.interfaces;
 import java.util.Map;
 import java.util.Set;
 
-public interface ITrustModel {
+public interface ITrustModel<T extends Comparable<T>> {
 
     /**
      * Sets the random number generator. In order to produce repeatable results,
@@ -90,7 +90,7 @@ public interface ITrustModel {
      *            type of service
      * @return
      */
-    public <T extends Comparable<T>> Map<Integer, T> getRankings(int service);
+    public Map<Integer, T> getRankings(int service);
 
     /**
      * Returns an {@link IParametersPanel} instance, which is responsible for

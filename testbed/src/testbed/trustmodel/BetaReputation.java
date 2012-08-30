@@ -9,7 +9,6 @@ import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.ICondition;
 import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -23,7 +22,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class BetaReputation extends AbstractTrustModel implements ITrustModel {
+public class BetaReputation extends AbstractTrustModel {
 
     protected static final String EX_FF = "The forgetting factor must be a between 0 and 1 inclusively, but was %.2f";
     protected static final ICondition<Double> VAL_FF;
@@ -126,7 +125,6 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
 	return trust;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<Integer, Double> getRankings(int service) {
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();

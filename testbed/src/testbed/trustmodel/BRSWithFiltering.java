@@ -14,7 +14,6 @@ import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.ICondition;
 import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -26,7 +25,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel {
+public class BRSWithFiltering extends AbstractTrustModel {
 
     private int time = 0;
 
@@ -138,7 +137,6 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	    opinions[o.agent1][o.agent2] = o;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<Integer, Double> getRankings(int service) {
 	final Map<Integer, BRSPair> experienceTrust = computeExperiences();

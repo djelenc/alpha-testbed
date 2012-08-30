@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
-public class Simple extends AbstractTrustModel implements ITrustModel {
+public class Simple extends AbstractTrustModel {
     // cumulative interaction outcomes
     protected double[] exSum;
 
@@ -52,7 +51,6 @@ public class Simple extends AbstractTrustModel implements ITrustModel {
 	// pass
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<Integer, Double> getRankings(int service) {
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();

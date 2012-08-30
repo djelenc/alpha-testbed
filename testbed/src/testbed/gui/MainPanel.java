@@ -31,7 +31,7 @@ import testbed.interfaces.IUtilityMetric;
 public class MainPanel extends JPanel implements IParametersPanel {
     private static final long serialVersionUID = -1187728078314667265L;
 
-    private List<ITrustModel> allTrustModels;
+    private List<ITrustModel<?>> allTrustModels;
 
     private ClassLoader cl;
     private Observer observer;
@@ -60,7 +60,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	observer = o;
 	cl = (ClassLoader) params[0];
 
-	allTrustModels = ClassLoaderUtils.lookUp(ITrustModel.class, cl);
+	allTrustModels = ClassLoaderUtils.lookUpTrustModels(cl);
 
 	JPanel contentPanel = getContentPanel();
 	contentPanel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
@@ -111,7 +111,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
     private void populateTrustModels(boolean decisionMaking) {
 	trustModel.removeAllItems();
 
-	for (ITrustModel tm : allTrustModels) {
+	for (ITrustModel<?> tm : allTrustModels) {
 	    if (tm instanceof IDecisionMaking && decisionMaking
 		    || !(tm instanceof IDecisionMaking) && !decisionMaking) {
 		trustModel.addItem(tm);
@@ -245,7 +245,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
     }
 
     public void validateParameters() {
-	final ITrustModel tm = (ITrustModel) trustModel.getSelectedItem();
+	final ITrustModel<?> tm = (ITrustModel<?>) trustModel.getSelectedItem();
 	final IScenario scn = (IScenario) scenario.getSelectedItem();
 	final IRankingMetric rm = (IRankingMetric) rankingMetric
 		.getSelectedItem();

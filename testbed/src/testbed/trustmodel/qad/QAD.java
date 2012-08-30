@@ -1,6 +1,5 @@
 package testbed.trustmodel.qad;
 
-import static testbed.trustmodel.qad.Omega.fromNumeric;
 import static testbed.trustmodel.qad.Omega.normalizedNumeric;
 
 import java.util.Map;
@@ -10,9 +9,9 @@ import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.ICondition;
 import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.IRandomGenerator;
 import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.AbstractTrustModel;
 
 /**
  * Qualitative assessment dynamics
@@ -20,7 +19,7 @@ import testbed.trustmodel.AbstractTrustModel;
  * @author David
  * 
  */
-public class QAD extends AbstractTrustModel implements ITrustModel {
+public class QAD implements ITrustModel<Omega> {
     // matrix for other agents
     public Omega[][] op;
 
@@ -33,6 +32,8 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
     // temporary storage for opinions and experiences
     private Set<Opinion> opinions;
     private Set<Experience> experiences;
+
+    protected IRandomGenerator generator;
 
     @Override
     public void initialize(Object... params) {
@@ -73,14 +74,13 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
 	    row[e.agent] = normalizedNumeric(e.outcome);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Map<Integer, Double> getRankings(int service) {
-	Map<Integer, Double> newTrust = operator.compute(row, op);
+    public Map<Integer, Omega> getRankings(int service) {
+	Map<Integer, Omega> newTrust = operator.compute(row, op);
 
 	// now update Alpha's row
-	for (Map.Entry<Integer, Double> e : newTrust.entrySet())
-	    row[e.getKey()] = fromNumeric(e.getValue());
+	for (Map.Entry<Integer, Omega> e : newTrust.entrySet())
+	    row[e.getKey()] = e.getValue();
 
 	return newTrust;
     }
@@ -123,5 +123,10 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
     @Override
     public IParametersPanel getParametersPanel() {
 	return new QADGUI();
+    }
+
+    @Override
+    public void setRandomGenerator(IRandomGenerator generator) {
+	this.generator = generator;
     }
 }

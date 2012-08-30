@@ -74,35 +74,35 @@ public class AlphaTestbedTest {
 
     @Test
     public void testRankingMode() {
-	ITrustModel tm = new RankingsTrustModel();
+	ITrustModel<?> tm = new RankingsTrustModel();
 	IScenario scn = new RankingsScenario();
 	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test
     public void testUtilityMode() {
-	ITrustModel tm = new DecisionMakingTrustModel();
+	ITrustModel<?> tm = new DecisionMakingTrustModel();
 	IScenario scn = new PartnerSelectionScenario();
 	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void decisionMakingTrustModelOnRankingsScenario() {
-	ITrustModel tm = new DecisionMakingTrustModel();
+	ITrustModel<?> tm = new DecisionMakingTrustModel();
 	IScenario scn = new RankingsScenario();
 	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void rankingsTrustModelOnPartnerSelectionScenario() {
-	ITrustModel tm = new RankingsTrustModel();
+	ITrustModel<?> tm = new RankingsTrustModel();
 	IScenario scn = new PartnerSelectionScenario();
 	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
 }
 
-class RankingsTrustModel implements ITrustModel {
+class RankingsTrustModel implements ITrustModel<Double> {
 
     @Override
     public void initialize(Object... params) {
@@ -140,7 +140,7 @@ class RankingsTrustModel implements ITrustModel {
     }
 
     @Override
-    public <T extends Comparable<T>> Map<Integer, T> getRankings(int service) {
+    public Map<Integer, Double> getRankings(int service) {
 	return null;
     }
 
