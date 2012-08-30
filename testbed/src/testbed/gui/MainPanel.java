@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.ListCellRenderer;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
@@ -137,6 +138,9 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	for (IScenario scn : ClassLoaderUtils.lookUp(IScenario.class, cl))
 	    scenario.addItem(scn);
 
+	final ListCellRenderer renderer = new CustomComboBoxRenderer();
+
+	scenario.setRenderer(renderer);
 	scenario.addActionListener(listener);
 	scenario.addActionListener(new ActionListener() {
 	    @Override
@@ -160,6 +164,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	// Trust models
 	populateTrustModels(scenario.getSelectedItem() instanceof IPartnerSelection);
 	trustModel.addActionListener(listener);
+	trustModel.setRenderer(renderer);
 
 	c.gridx = 0;
 	c.gridy = 1;
@@ -180,6 +185,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	}
 
 	rankingMetric.addActionListener(listener);
+	rankingMetric.setRenderer(renderer);
 
 	c.gridx = 0;
 	c.gridy = 2;
@@ -200,6 +206,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	}
 
 	utilityMetric.addActionListener(listener);
+	utilityMetric.setRenderer(renderer);
 
 	c.gridx = 0;
 	c.gridy = 3;

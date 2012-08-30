@@ -13,30 +13,35 @@ import testbed.interfaces.IRandomGenerator;
  * @author David
  * 
  */
-public class RandomDeception extends AbstractDeceptionModel implements IDeceptionModel {
+public class RandomDeception extends AbstractDeceptionModel implements
+	IDeceptionModel {
 
     private IRandomGenerator generator;
 
     @Override
     public void initialize(Object... params) {
-	generator = Utils.extractParameter(
-		new ICondition<IRandomGenerator>() {
-		    @Override
-		    public void eval(IRandomGenerator var)
-			    throws IllegalArgumentException {
+	generator = Utils.extractParameter(new ICondition<IRandomGenerator>() {
+	    @Override
+	    public void eval(IRandomGenerator var)
+		    throws IllegalArgumentException {
 
-			if (null == var) {
-			    throw new IllegalArgumentException(
-				    "Random generator not set.");
-			}
+		if (null == var) {
+		    throw new IllegalArgumentException(
+			    "Random generator not set.");
+		}
 
-		    }
-		}, 0, params);
+	    }
+	}, 0, params);
     }
 
     @Override
     public double calculate(double value) {
 	return generator.nextDoubleFromTo(0, 1);
+    }
+
+    @Override
+    public String getName() {
+	return "Random opinion";
     }
 
 }
