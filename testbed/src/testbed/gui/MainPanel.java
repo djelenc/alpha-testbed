@@ -138,9 +138,10 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	for (IScenario scn : ClassLoaderUtils.lookUp(IScenario.class, cl))
 	    scenario.addItem(scn);
 
-	final ListCellRenderer renderer = new CustomComboBoxRenderer();
+	final ListCellRenderer renderer = new CustomComboBoxRenderer(
+		scenario.getRenderer());
 
-	scenario.setRenderer(renderer);
+	// scenario.setRenderer(renderer);
 	scenario.addActionListener(listener);
 	scenario.addActionListener(new ActionListener() {
 	    @Override

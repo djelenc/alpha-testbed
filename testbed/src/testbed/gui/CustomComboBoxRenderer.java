@@ -2,8 +2,9 @@ package testbed.gui;
 
 import java.awt.Component;
 
+import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import javax.swing.ListCellRenderer;
 
 import org.aspectj.bridge.IMessage;
 
@@ -18,12 +19,19 @@ import testbed.interfaces.ITrustModel;
  * @author David
  * 
  */
-class CustomComboBoxRenderer extends BasicComboBoxRenderer {
+class CustomComboBoxRenderer extends JLabel implements ListCellRenderer {
     private static final long serialVersionUID = 2824150777814818533L;
+
+    private ListCellRenderer parent;
+
+    public CustomComboBoxRenderer(ListCellRenderer parent) {
+	this.parent = parent;
+    }
 
     public Component getListCellRendererComponent(JList list, Object value,
 	    int index, boolean isSelected, boolean cellHasFocus) {
-	super.getListCellRendererComponent(list, value, index, isSelected,
+
+	parent.getListCellRendererComponent(list, value, index, isSelected,
 		cellHasFocus);
 
 	if (value instanceof ITrustModel<?>) {
@@ -40,6 +48,13 @@ class CustomComboBoxRenderer extends BasicComboBoxRenderer {
 	    setText(dm.getName());
 	}
 
-	return this;
+	return (Component) parent;
     }
+
+    @Override
+    public void setText(String text) {
+	if (parent != null)
+	    ((JLabel) parent).setText(text);
+    }
+
 }
