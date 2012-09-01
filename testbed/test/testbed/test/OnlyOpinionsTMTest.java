@@ -52,7 +52,7 @@ public class OnlyOpinionsTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	Map<Integer, Double> trust = tm.getRankings(0);
+	Map<Integer, Double> trust = tm.getTrust(0);
 
 	Assert.assertEquals(1d, trust.get(5), 0.001);
 	Assert.assertEquals(0.6, trust.get(0), 0.001);
@@ -66,7 +66,7 @@ public class OnlyOpinionsTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	trust = tm.getRankings(0);
+	trust = tm.getTrust(0);
 
 	Assert.assertEquals(0d, trust.get(5), 0.001);
 	Assert.assertEquals(0.6, trust.get(0), 0.001);

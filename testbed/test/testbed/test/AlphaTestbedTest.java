@@ -140,7 +140,7 @@ class RankingsTrustModel implements ITrustModel<Double> {
     }
 
     @Override
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	return null;
     }
 

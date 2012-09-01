@@ -320,7 +320,7 @@ public class AlphaTestbed {
 	    final IRankingMetric rm = getRankingMetricInstance(service);
 	    final int rankMetricKey = rm.getClass().hashCode() ^ service;
 	    final double rankMetricScore = rm.evaluate(
-		    model.getRankings(service), capabilities);
+		    model.getTrust(service), capabilities);
 
 	    score.put(rankMetricKey, rankMetricScore);
 

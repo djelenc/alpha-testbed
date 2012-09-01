@@ -15,7 +15,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class OnlyOpinions extends AbstractTrustModel {
+public class OnlyOpinions extends AbstractTrustModel<Double> {
     // opinions
     private double[][] op;
 
@@ -43,7 +43,7 @@ public class OnlyOpinions extends AbstractTrustModel {
     }
 
     @Override
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int agent = 0; agent < op.length; agent++) {

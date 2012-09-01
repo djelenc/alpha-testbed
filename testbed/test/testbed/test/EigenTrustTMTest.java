@@ -58,8 +58,8 @@ public class EigenTrustTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	Assert.assertEquals(new Integer(2), tm.getRankings(0).get(0));
-	Assert.assertEquals(new Integer(1), tm.getRankings(0).get(1));
-	Assert.assertEquals(new Integer(3), tm.getRankings(0).get(2));
+	Assert.assertEquals(new Integer(2), tm.getTrust(0).get(0));
+	Assert.assertEquals(new Integer(1), tm.getTrust(0).get(1));
+	Assert.assertEquals(new Integer(3), tm.getTrust(0).get(2));
     }
 }

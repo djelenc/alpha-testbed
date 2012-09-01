@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IRandomGenerator;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -27,7 +24,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class AbdulRahmanHailes implements ITrustModel<TD> {
+public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
 
     /**
      * Direct trust
@@ -107,7 +104,7 @@ public class AbdulRahmanHailes implements ITrustModel<TD> {
     }
 
     @Override
-    public Map<Integer, TD> getRankings(int service) {
+    public Map<Integer, TD> getTrust(int service) {
 	final Map<Integer, TD> trust = new HashMap<Integer, TD>();
 	final ArrayList<Integer> union = new ArrayList<Integer>();
 
@@ -396,17 +393,5 @@ public class AbdulRahmanHailes implements ITrustModel<TD> {
     @Override
     public String getName() {
 	return "Abdul-Rahman, Hailes";
-    }
-
-    protected IRandomGenerator generator;
-
-    @Override
-    public void setRandomGenerator(IRandomGenerator generator) {
-	this.generator = generator;
-    }
-
-    @Override
-    public IParametersPanel getParametersPanel() {
-	return null;
     }
 }

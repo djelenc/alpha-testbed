@@ -52,7 +52,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class EigenTrust extends AbstractTrustModel {
+public class EigenTrust extends AbstractTrustModel<Double> {
     private static final ICondition<Double> VAL_WEIGHT, MULT_VAL;
 
     // holds positive opinions count
@@ -136,7 +136,7 @@ public class EigenTrust extends AbstractTrustModel {
     }
 
     @Override
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	// pre-trust vector
 	double[] p = computePretrustVector(cntExp);
 

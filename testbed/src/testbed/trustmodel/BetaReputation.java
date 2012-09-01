@@ -22,7 +22,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class BetaReputation extends AbstractTrustModel {
+public class BetaReputation extends AbstractTrustModel<Double> {
 
     protected static final String EX_FF = "The forgetting factor must be a between 0 and 1 inclusively, but was %.2f";
     protected static final ICondition<Double> VAL_FF;
@@ -126,7 +126,7 @@ public class BetaReputation extends AbstractTrustModel {
     }
 
     @Override
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 	final Map<Integer, BRSPair> pairs = computePairs();
 

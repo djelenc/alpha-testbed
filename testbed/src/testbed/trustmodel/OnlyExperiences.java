@@ -16,7 +16,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class OnlyExperiences extends AbstractTrustModel {
+public class OnlyExperiences extends AbstractTrustModel<Double> {
     // agent => cumulative interaction outcomes
     private Map<Integer, Double> exSum;
 
@@ -64,7 +64,7 @@ public class OnlyExperiences extends AbstractTrustModel {
     }
 
     @Override
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int agent : exSum.keySet()) {

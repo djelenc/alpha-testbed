@@ -48,7 +48,7 @@ public class OnlyExperiencesTMTest {
 	tm.calculateTrust();
 	experiences.clear();
 
-	Map<Integer, Double> trust = tm.getRankings(0);
+	Map<Integer, Double> trust = tm.getTrust(0);
 
 	Assert.assertEquals(0.9, trust.get(0), 0.001);
 	Assert.assertEquals(0.8, trust.get(1), 0.001);

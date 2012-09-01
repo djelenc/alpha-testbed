@@ -43,7 +43,7 @@ public class AbdulRahmanHailesWithDecisionMaking extends AbdulRahmanHailes
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, TD> computedTrust = getRankings(service);
+	    final Map<Integer, TD> computedTrust = getTrust(service);
 	    final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	    for (int agent : computedTrust.keySet()) {

@@ -56,41 +56,15 @@ public interface ITrustModel<T extends Comparable<T>> {
     public void calculateTrust();
 
     /**
-     * TODO: Fix JavaDoc comments
-     * 
-     * <p>
-     * Computes the ranking of agents for a given service. The ranking has to be
-     * given in a map, where keys represent agents and values represent their
-     * ranks.
-     * 
-     * <p>
-     * The ranking should start with 1 and does not need to cover all available
-     * agents. Assigning multiple agents to the same rank is also permitted. For
-     * instance, for agents 1, 2, 3, 4, 5 a valid ranking may be:
-     * 
-     * <p>
-     * <blockquote>
-     * 
-     * <pre>
-     * Map&lt;Integer, Integer&gt; ranking = new HashMap&lt;Integer, Integer&gt;();
-     * ranking.put(1, 1);
-     * ranking.put(2, 1);
-     * ranking.put(3, 2);
-     * </pre>
-     * 
-     * </blockquote>
-     * 
-     * 
-     * <p>
-     * In this example agents 1 and 2 are the most trustworthy, agent 3 is less,
-     * and the agents 4 and 5 are omitted.
-     * 
+     * Returns the calculated trust values for a given service. The trust values
+     * have to be packaged in a map, whose keys represent agents and its values
+     * represent their computed trust values.
      * 
      * @param service
      *            type of service
-     * @return
+     * @return Map where keys represent agents and values computed trust values
      */
-    public Map<Integer, T> getRankings(int service);
+    public Map<Integer, T> getTrust(int service);
 
     /**
      * Returns an {@link IParametersPanel} instance, which is responsible for

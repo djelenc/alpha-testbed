@@ -7,7 +7,7 @@ import java.util.Set;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 
-public class Simple extends AbstractTrustModel {
+public class Simple extends AbstractTrustModel<Double> {
     // cumulative interaction outcomes
     protected double[] exSum;
 
@@ -52,7 +52,7 @@ public class Simple extends AbstractTrustModel {
     }
 
     @Override
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	// compute reputations

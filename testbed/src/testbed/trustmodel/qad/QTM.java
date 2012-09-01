@@ -145,7 +145,7 @@ public class QTM implements ITrustModel<Omega> {
     }
 
     @Override
-    public Map<Integer, Omega> getRankings(int service) {
+    public Map<Integer, Omega> getTrust(int service) {
 	Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {

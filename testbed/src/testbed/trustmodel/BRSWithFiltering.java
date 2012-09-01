@@ -25,7 +25,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class BRSWithFiltering extends AbstractTrustModel {
+public class BRSWithFiltering extends AbstractTrustModel<Double> {
 
     private int time = 0;
 
@@ -138,7 +138,7 @@ public class BRSWithFiltering extends AbstractTrustModel {
     }
 
     @Override
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	final Map<Integer, BRSPair> experienceTrust = computeExperiences();
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 

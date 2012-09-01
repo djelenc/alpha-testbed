@@ -30,15 +30,6 @@ public class MetricsTest {
 	// Rankings: ID => Rank
 	// Capabilities: ID => Capability
 
-	// rnks.put(1, 1);
-	// rnks.put(2, 2);
-	// rnks.put(3, 3);
-	// rnks.put(4, 4);
-	// cpbs.put(1, 1.0);
-	// cpbs.put(2, 0.9);
-	// cpbs.put(3, 0.8);
-	// cpbs.put(4, 0.7);
-
 	rnks.put(1, 10);
 	rnks.put(2, 9);
 	rnks.put(3, 8);

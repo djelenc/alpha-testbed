@@ -69,7 +69,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, Double> trust = getRankings(service);
+	    final Map<Integer, Double> trust = getTrust(service);
 	    final Integer bestAgent;
 
 	    if (probSelection) {

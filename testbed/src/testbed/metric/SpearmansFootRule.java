@@ -2,58 +2,38 @@ package testbed.metric;
 
 import java.util.Map;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import testbed.interfaces.IRankingMetric;
 
 /**
  * Spearman's foot rule metric.
  * 
- * <p>
- * TODO: <font color='red'>
- * <ul>
- * <li>Implementation is not finished yet. What happens if rankings and
- * capabilities (the parameters of evaluate method) have different size?
- * <li>How should I handle the ties?
- * </ul>
- * </font>
+ * TODO: what if the length of given estimations differs from the length of
+ * actuals?
  * 
  * @author David
  * 
  */
 public class SpearmansFootRule extends AbstractMetric implements IRankingMetric {
 
-    // private static OnlyExperiences tm;
-
-    @Override
-    public void initialize(Object... params) {
-	// tm = new OnlyExperiences();
-    }
-
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> rankings,
 	    Map<Integer, Double> capabilities) {
-	throw new NotImplementedException();
-	/*
-	 * if (rankings.size() == 0) { return 0; } else if (rankings.size() ==
-	 * 1) { return 1; }
-	 * 
-	 * Map<Integer, Integer> tr = tm
-	 * .constructRankingsFromEstimations(capabilities);
-	 * 
-	 * int result = 0, tmR, cR, id;
-	 * 
-	 * // This gives the maximum distance between two rankings int k =
-	 * tr.size(); double t = Math.ceil((k + 1) / 2d); double normalization =
-	 * 2 * (-t * t + k * t + 2 * t - k - 1);
-	 * 
-	 * for (Map.Entry<Integer, Integer> rank : rankings.entrySet()) { id =
-	 * rank.getKey(); tmR = rank.getValue(); // TM rank cR = tr.get(id); //
-	 * capability rank
-	 * 
-	 * result += Math.abs(tmR - cR); }
-	 * 
-	 * return 1 - result / normalization;
-	 */
+	final Map<Integer, Number> data = fractionalRanking(rankings);
+	final Map<Integer, Number> truth = fractionalRanking(capabilities);
+
+	double squaredSum = 0;
+
+	for (Map.Entry<Integer, Number> e : data.entrySet()) {
+	    final int agent = e.getKey();
+	    final double dataRank = e.getValue().doubleValue();
+	    final double truthRank = truth.get(agent).doubleValue();
+	    final double rankDiff = dataRank - truthRank;
+	    squaredSum += rankDiff * rankDiff;
+	}
+
+	final int n = data.size();
+
+	return (2d - 6 * squaredSum / n / (n * n - 1d)) / 2d;
     }
 
     @Override

@@ -75,7 +75,7 @@ public class QAD implements ITrustModel<Omega> {
     }
 
     @Override
-    public Map<Integer, Omega> getRankings(int service) {
+    public Map<Integer, Omega> getTrust(int service) {
 	Map<Integer, Omega> newTrust = operator.compute(row, op);
 
 	// now update Alpha's row

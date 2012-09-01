@@ -21,7 +21,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class YuSinghSycara extends AbstractTrustModel {
+public class YuSinghSycara extends AbstractTrustModel<Double> {
 
     // discount factor for liars
     public static final double BETA = 0.5;
@@ -82,7 +82,7 @@ public class YuSinghSycara extends AbstractTrustModel {
 	// weirdly empty.
     }
 
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {

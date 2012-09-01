@@ -47,7 +47,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class Travos extends AbstractTrustModel {
+public class Travos extends AbstractTrustModel<Double> {
     protected static final ICondition<Double> VAL_MULTPLIER, VAL_THRESHOLD;
 
     static {
@@ -209,7 +209,7 @@ public class Travos extends AbstractTrustModel {
     }
 
     @Override
-    public Map<Integer, Double> getRankings(int service) {
+    public Map<Integer, Double> getTrust(int service) {
 	// trust evaluations
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
