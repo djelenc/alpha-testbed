@@ -1,9 +1,9 @@
 testbed.metric.KendallsTauB
 testbed.metric.SpearmansFootRule
+testbed.metric.Euclidean
 testbed.metric.Accuracy
 testbed.metric.AccuracyTopHalf
 testbed.metric.AccuracyWithSensitivity
 testbed.metric.KendallsTau
 testbed.metric.WeightedKendallsTau
 testbed.metric.Coverage
-testbed.metric.NumericDifference

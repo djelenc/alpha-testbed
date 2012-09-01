@@ -7,8 +7,8 @@ import testbed.interfaces.IRankingMetric;
 /**
  * Spearman's foot rule metric.
  * 
- * TODO: what if the length of given estimations differs from the length of
- * actuals?
+ * <p>
+ * Assumes the rankings have the same length.
  * 
  * @author David
  * 
