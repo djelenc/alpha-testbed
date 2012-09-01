@@ -9,13 +9,8 @@ public abstract class AbstractScenario implements IScenario {
     protected IRandomGenerator generator;
 
     @Override
-    public String getName() {
-	return getClass().getSimpleName();
-    }
-
-    @Override
     public String toString() {
-	return getName();
+	return getClass().getSimpleName();
     }
 
     @Override

@@ -120,7 +120,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "EigenTrust";
     }
 

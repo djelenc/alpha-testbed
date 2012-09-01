@@ -80,7 +80,7 @@ public class TransitiveWithChanges extends Transitive {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Transitive with changes";
     }
 }

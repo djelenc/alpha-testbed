@@ -253,7 +253,7 @@ public class AlphaTestbed {
 	    utilityMode = false;
 	} else {
 	    throw new IllegalArgumentException(String.format(INCOMPATIBLE_EX,
-		    tm.getName(), scn.getName()));
+		    tm, scn));
 	}
 
 	subscribers = new ArrayList<IMetricSubscriber>();
@@ -319,8 +319,8 @@ public class AlphaTestbed {
 	    // evaluate rankings
 	    final IRankingMetric rm = getRankingMetricInstance(service);
 	    final int rankMetricKey = rm.getClass().hashCode() ^ service;
-	    final double rankMetricScore = rm.evaluate(
-		    model.getTrust(service), capabilities);
+	    final double rankMetricScore = rm.evaluate(model.getTrust(service),
+		    capabilities);
 
 	    score.put(rankMetricKey, rankMetricScore);
 

@@ -17,13 +17,8 @@ public abstract class AbstractMetric implements IMetric {
     }
 
     @Override
-    public String getName() {
-	return getClass().getSimpleName();
-    }
-
-    @Override
     public String toString() {
-	return getName();
+	return getClass().getSimpleName();
     }
 
     @Override

@@ -56,7 +56,7 @@ public class AccuracyWithSensitivity extends Accuracy {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Accuracy with sensitivity";
     }
 

@@ -40,7 +40,7 @@ public class RandomDeception extends AbstractDeceptionModel implements
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Random opinion";
     }
 

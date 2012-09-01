@@ -65,7 +65,7 @@ public class OnlyOpinions extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Opinions only";
     }
 

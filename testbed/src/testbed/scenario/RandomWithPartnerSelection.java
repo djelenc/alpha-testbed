@@ -50,10 +50,10 @@ public class RandomWithPartnerSelection extends Random implements
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Random with partner selection";
     }
-    
+
     @Override
     public IParametersPanel getParametersPanel() {
 	return new RandomWithPartnerSelectionGUI();

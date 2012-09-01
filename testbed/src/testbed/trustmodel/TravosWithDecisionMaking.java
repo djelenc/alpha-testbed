@@ -50,7 +50,7 @@ public class TravosWithDecisionMaking extends Travos implements IDecisionMaking 
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Travos";
     }
 }

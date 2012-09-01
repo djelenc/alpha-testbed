@@ -9,12 +9,7 @@ public abstract class AbstractDeceptionModel implements IDeceptionModel {
     }
 
     @Override
-    public String getName() {
-	return getClass().getSimpleName();
-    }
-
-    @Override
     public String toString() {
-	return getName();
+	return getClass().getSimpleName();
     }
 }

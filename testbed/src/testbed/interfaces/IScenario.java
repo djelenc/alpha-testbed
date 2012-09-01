@@ -47,13 +47,6 @@ public interface IScenario {
     public Map<Integer, Double> getCapabilities(int service);
 
     /**
-     * Returns generator's friendly name.
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
      * Generates a set of {@link Opinion} tuples.
      * 
      * @return

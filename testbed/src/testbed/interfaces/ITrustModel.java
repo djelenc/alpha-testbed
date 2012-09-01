@@ -77,12 +77,4 @@ public interface ITrustModel<T extends Comparable<T>> {
      * @return
      */
     public IParametersPanel getParametersPanel();
-
-    /**
-     * Returns friendly name of a trust model
-     * 
-     * @return
-     */
-    public String getName();
-
 }

@@ -259,7 +259,7 @@ public class BetaReputation extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Beta reputation system";
     }
 }

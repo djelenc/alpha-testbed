@@ -40,7 +40,7 @@ public class NumericDifference extends AbstractMetric implements IRankingMetric 
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Numeric difference";
     }
 }

@@ -37,7 +37,7 @@ public class SpearmansFootRule extends AbstractMetric implements IRankingMetric 
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Spearman's Foot Rule";
     }
 }

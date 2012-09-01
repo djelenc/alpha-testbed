@@ -43,7 +43,7 @@ public class AccuracyTopHalf extends Accuracy {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Accuracy(0.5)";
     }
 

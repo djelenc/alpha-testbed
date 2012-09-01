@@ -391,7 +391,7 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Abdul-Rahman, Hailes";
     }
 }

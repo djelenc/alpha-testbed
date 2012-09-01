@@ -21,7 +21,7 @@ public class SandBoxing {
 	}
 
 	Assert.assertTrue(copy != m);
-	Assert.assertEquals(copy.getName(), m.getName());
+	Assert.assertEquals(copy.toString(), m.toString());
 	Assert.assertNotSame("The same", copy, m);
     }
 

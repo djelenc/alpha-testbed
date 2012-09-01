@@ -21,7 +21,7 @@ public class NormalizedUtility extends AbstractMetric implements IUtilityMetric 
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Normalized utility";
     }
 }

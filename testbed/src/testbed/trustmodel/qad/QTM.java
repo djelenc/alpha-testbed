@@ -303,7 +303,7 @@ public class QTM implements ITrustModel<Omega> {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Qualitative model";
     }
 }

@@ -33,7 +33,7 @@ public class CumulativeNormalizedUtility extends AbstractMetric implements
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Cumulative normalized utility";
     }
 }

@@ -26,6 +26,6 @@ public abstract class ExaggerationModel extends AbstractDeceptionModel
 
     protected void kappaUnsetError() throws IllegalArgumentException {
 	throw new IllegalArgumentException(String.format(
-		"Kappa was not set for the deception model %s", getName()));
+		"Kappa was not set for the deception model %s", this));
     }
 }

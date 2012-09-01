@@ -18,13 +18,6 @@ public interface IMetric {
     public void initialize(Object... params);
 
     /**
-     * Returns a friendly name for the metric
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
      * Returns {@link IParametersPanel} instance, which defines GUI for setting
      * parameters for this metric.
      * 

@@ -14,7 +14,7 @@ public class PositiveExaggeration extends ExaggerationModel implements
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Positive exaggeration";
     }
 }

@@ -98,7 +98,7 @@ public class RandomWithNewcomers extends Random {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Random with newcomers";
     }
 }

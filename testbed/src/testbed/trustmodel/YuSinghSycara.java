@@ -185,7 +185,7 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Yu, Singh, Sycara";
     }
 }

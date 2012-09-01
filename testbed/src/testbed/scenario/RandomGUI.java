@@ -203,7 +203,7 @@ public class RandomGUI extends JPanel implements IParametersPanel {
 	// Distribution of deception models
 	for (IDeceptionModel dm : ClassLoaderUtils.lookUp(
 		IDeceptionModel.class, cl)) {
-	    lbl = new JLabel(dm.getName() + ":  ");
+	    lbl = new JLabel(dm + ":  ");
 	    c.fill = GridBagConstraints.NONE;
 	    c.anchor = GridBagConstraints.LINE_END;
 	    c.gridx = 0;
@@ -255,8 +255,7 @@ public class RandomGUI extends JPanel implements IParametersPanel {
 		    negExCoef = exagg;
 		} else {
 		    throw new IllegalArgumentException(
-			    "Unknown exaggeration deception model: "
-				    + dm.getName());
+			    "Unknown exaggeration deception model: " + dm);
 		}
 	    }
 

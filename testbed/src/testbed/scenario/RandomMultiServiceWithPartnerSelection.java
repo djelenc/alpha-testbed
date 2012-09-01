@@ -57,7 +57,7 @@ public class RandomMultiServiceWithPartnerSelection extends RandomMultiService
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Random/multi-service with partner selection";
     }
 }

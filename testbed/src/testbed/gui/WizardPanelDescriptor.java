@@ -271,28 +271,28 @@ public class WizardPanelDescriptor implements Observer {
 	    if (arg instanceof IScenario) {
 		final IScenario scn = (IScenario) arg;
 		id = ParametersGUI.SCENARIO;
-		title = String.format("Scenario: %s", scn.getName());
+		title = String.format("Scenario: %s", scn);
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = scn.getParametersPanel();
 	    } else if (arg instanceof ITrustModel) {
 		final ITrustModel<?> tm = (ITrustModel<?>) arg;
 		id = ParametersGUI.MODELS;
-		title = String.format("Trust model: %s", tm.getName());
+		title = String.format("Trust model: %s", tm);
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = tm.getParametersPanel();
 	    } else if (arg instanceof IRankingMetric) {
 		final IRankingMetric rm = (IRankingMetric) arg;
 		id = ParametersGUI.RANK_METRIC;
-		title = String.format("Ranking metric: %s", rm.getName());
+		title = String.format("Ranking metric: %s", rm);
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = rm.getParametersPanel();
 	    } else if (arg instanceof IUtilityMetric) {
 		final IUtilityMetric um = (IUtilityMetric) arg;
 		id = ParametersGUI.UTILITY_METRIC;
-		title = String.format("Utility metric: %s", um.getName());
+		title = String.format("Utility metric: %s", um);
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = um.getParametersPanel();

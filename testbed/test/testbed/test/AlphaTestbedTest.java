@@ -38,11 +38,6 @@ public class AlphaTestbedTest {
 	    }
 
 	    @Override
-	    public String getName() {
-		return null;
-	    }
-
-	    @Override
 	    public <T extends Comparable<T>> double evaluate(
 		    Map<Integer, T> rankings, Map<Integer, Double> capabilities) {
 		return 0;
@@ -57,11 +52,6 @@ public class AlphaTestbedTest {
 
 	    @Override
 	    public IParametersPanel getParametersPanel() {
-		return null;
-	    }
-
-	    @Override
-	    public String getName() {
 		return null;
 	    }
 
@@ -130,11 +120,6 @@ class RankingsTrustModel implements ITrustModel<Double> {
     }
 
     @Override
-    public String getName() {
-	return null;
-    }
-
-    @Override
     public void setRandomGenerator(IRandomGenerator generator) {
 
     }
@@ -158,11 +143,6 @@ class RankingsScenario implements IScenario {
 
     @Override
     public Map<Integer, Double> getCapabilities(int service) {
-	return null;
-    }
-
-    @Override
-    public String getName() {
 	return null;
     }
 

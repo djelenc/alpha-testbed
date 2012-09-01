@@ -59,7 +59,7 @@ public class KendallsTauB extends AbstractMetric implements IRankingMetric {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Kendall's tau-b";
     }
 }

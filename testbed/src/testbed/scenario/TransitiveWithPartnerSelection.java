@@ -51,7 +51,7 @@ public class TransitiveWithPartnerSelection extends Transitive implements
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Transitive with partner selection";
     }
 

@@ -38,9 +38,9 @@ public class RepastMetricAgent implements IMetricSubscriber {
     public RepastMetricAgent(int service, IMetric metric, AlphaTestbed testbed) {
 	this.service = service;
 	this.metric = metric;
-	this.name = String.format("%s[%d]", metric.getName(), service);
-	this.model = testbed.getModel().getName();
-	this.scenario = testbed.getScenario().getName();
+	this.name = String.format("%s[%d]", metric.toString(), service);
+	this.model = testbed.getModel().toString();
+	this.scenario = testbed.getScenario().toString();
 
 	// subscribe notifications
 	testbed.subscribe(this);

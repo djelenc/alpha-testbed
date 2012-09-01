@@ -45,7 +45,7 @@ public class ClassLoadersTest {
 		new File("c:/testlib/some.jar").toURI().toURL(), cl);
 
 	for (IRankingMetric dg : ServiceLoader.load(IRankingMetric.class)) {
-	    System.out.println(dg.getName());
+	    System.out.println(dg);
 	}
     }
 
@@ -57,7 +57,7 @@ public class ClassLoadersTest {
 	ClassLoaderUtils.addDirToClasspath(new File("c:/testlib"), cl);
 
 	for (IRankingMetric dg : ServiceLoader.load(IRankingMetric.class)) {
-	    System.out.println(dg.getName());
+	    System.out.println(dg);
 	}
     }
 

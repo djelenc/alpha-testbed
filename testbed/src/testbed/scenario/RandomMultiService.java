@@ -260,7 +260,7 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Random with multiple services";
     }
 }
