@@ -31,7 +31,8 @@ public class RandomWithNewcomers extends Random {
     protected static final String INTERVAL_EX = "The change interval must be a positive integer, but was %d.";
     protected static final String NEW_NUM_EX = "The number of newcomers must be a positive integer, but was %d.";
     protected static final DeceptionModel LIAR = new Complementary();
-    protected final static ParameterCondition<Integer> VAL_NEW_NUM, VAL_INTERVAL;
+    protected final static ParameterCondition<Integer> VAL_NEW_NUM,
+	    VAL_INTERVAL;
 
     /** Time between changes */
     protected int changeInterval;

@@ -50,8 +50,7 @@ import testbed.interfaces.Opinion;
  * <li>0: (int) number of agents
  * <li>1: (double) standard deviation for generating experiences
  * <li>2: (double) standard deviation for generation opinions
- * <li>3: (Map<{@link DeceptionModel}, Double>) distribution of deception
- * models
+ * <li>3: (Map<{@link DeceptionModel}, Double>) distribution of deception models
  * <li>4: (double) positive exaggeration coefficient
  * <li>5: (double) negative exaggeration coefficient
  * <li>6: (double) ratio between the number of distinct interaction partners and
@@ -70,7 +69,8 @@ public class Random extends AbstractScenario implements Scenario {
     protected static final String AGENT_NUM_EX = "The number of agents and services must be positive integer, but was %d";
 
     protected final static ParameterCondition<Integer> VAL_SIZE;
-    protected final static ParameterCondition<Double> VAL_SD, VAL_EXAGG, VAL_DENS;
+    protected final static ParameterCondition<Double> VAL_SD, VAL_EXAGG,
+	    VAL_DENS;
     protected final static ParameterCondition<Map<DeceptionModel, Double>> VAL_PROB;
 
     protected static final Set<Integer> SERVICES = new HashSet<Integer>();

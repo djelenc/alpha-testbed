@@ -201,8 +201,8 @@ public class RandomGUI extends JPanel implements ParametersPanel {
 	JSpinner tf = null;
 
 	// Distribution of deception models
-	for (DeceptionModel dm : ClassLoaderUtils.lookUp(
-		DeceptionModel.class, cl)) {
+	for (DeceptionModel dm : ClassLoaderUtils.lookUp(DeceptionModel.class,
+		cl)) {
 	    lbl = new JLabel(dm + ":  ");
 	    c.fill = GridBagConstraints.NONE;
 	    c.anchor = GridBagConstraints.LINE_END;

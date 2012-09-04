@@ -124,8 +124,8 @@ public class ExampleGeneratorTest {
 	for (int i = 0; i < 1000; i++) {
 	    Assert.assertEquals(rnd1.nextDoubleFromUnitTND(0.75, 0.05),
 		    rnd2.nextDoubleFromUnitTND(0.75, 0.05), 0.0000001);
-	    Assert.assertEquals(rnd1.nextDoubleFromTo(0, 1), rnd2.nextDoubleFromTo(0, 1),
-		    0.0000001);
+	    Assert.assertEquals(rnd1.nextDoubleFromTo(0, 1),
+		    rnd2.nextDoubleFromTo(0, 1), 0.0000001);
 	    Assert.assertEquals(rnd1.nextIntFromTo(5, 10),
 		    rnd2.nextIntFromTo(5, 10));
 	    Assert.assertEquals(rnd1.fromWeights(distr),

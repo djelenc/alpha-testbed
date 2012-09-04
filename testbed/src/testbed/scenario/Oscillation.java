@@ -35,7 +35,8 @@ public class Oscillation extends AbstractScenario {
     protected static final DeceptionModel NEG_EXAGG = new NegativeExaggeration();
 
     // input parameter validators
-    protected static final ParameterCondition<Integer> VAL_SIZE, VAL_CHANGE_INT;
+    protected static final ParameterCondition<Integer> VAL_SIZE,
+	    VAL_CHANGE_INT;
     protected static final ParameterCondition<Double> VAL_SD, VAL_FRAC;
 
     // time

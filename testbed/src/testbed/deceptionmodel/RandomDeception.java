@@ -20,18 +20,19 @@ public class RandomDeception extends AbstractDeceptionModel implements
 
     @Override
     public void initialize(Object... params) {
-	generator = Utils.extractParameter(new ParameterCondition<RandomGenerator>() {
-	    @Override
-	    public void eval(RandomGenerator var)
-		    throws IllegalArgumentException {
+	generator = Utils.extractParameter(
+		new ParameterCondition<RandomGenerator>() {
+		    @Override
+		    public void eval(RandomGenerator var)
+			    throws IllegalArgumentException {
 
-		if (null == var) {
-		    throw new IllegalArgumentException(
-			    "Random generator not set.");
-		}
+			if (null == var) {
+			    throw new IllegalArgumentException(
+				    "Random generator not set.");
+			}
 
-	    }
-	}, 0, params);
+		    }
+		}, 0, params);
     }
 
     @Override

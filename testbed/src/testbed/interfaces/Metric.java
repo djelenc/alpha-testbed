@@ -23,8 +23,8 @@ public interface Metric {
      * 
      * If the metric needs no parameters, this method should return null.
      * 
-     * @return Instance of the {@link ParametersPanel} or null if parameters
-     *         are not needed.
+     * @return Instance of the {@link ParametersPanel} or null if parameters are
+     *         not needed.
      */
     public ParametersPanel getParametersPanel();
 }

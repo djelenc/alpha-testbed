@@ -68,8 +68,7 @@ public class WizardPanelDescriptor implements Observer {
      *            A class which extends java.awt.Component that will be inserted
      *            as a panel into the wizard dialog.
      */
-    public WizardPanelDescriptor(Object id, ParametersPanel params,
-	    String title) {
+    public WizardPanelDescriptor(Object id, ParametersPanel params, String title) {
 	identifier = id;
 	paramsPanel = params;
 	name = String.format(TITLE, title);

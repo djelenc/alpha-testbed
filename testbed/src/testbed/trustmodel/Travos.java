@@ -48,7 +48,8 @@ import testbed.interfaces.Opinion;
  * 
  */
 public class Travos extends AbstractTrustModel<Double> {
-    protected static final ParameterCondition<Double> VAL_MULTPLIER, VAL_THRESHOLD;
+    protected static final ParameterCondition<Double> VAL_MULTPLIER,
+	    VAL_THRESHOLD;
 
     static {
 	VAL_MULTPLIER = new ParameterCondition<Double>() {

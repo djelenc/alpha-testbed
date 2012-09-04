@@ -195,8 +195,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	panel.add(rankingMetric, c);
 
 	// Utility metric
-	for (UtilityMetric m : ClassLoaderUtils.lookUp(UtilityMetric.class,
-		cl)) {
+	for (UtilityMetric m : ClassLoaderUtils.lookUp(UtilityMetric.class, cl)) {
 	    utilityMetric.addItem(m);
 	}
 

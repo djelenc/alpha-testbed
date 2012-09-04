@@ -25,8 +25,8 @@ public class Utils {
      *             If any errors occur during execution or when the passed in
      *             parameters are invalid
      */
-    public static <T> T extractParameter(ParameterCondition<T> functor, int index,
-	    Object[] params) throws IllegalArgumentException {
+    public static <T> T extractParameter(ParameterCondition<T> functor,
+	    int index, Object[] params) throws IllegalArgumentException {
 	try {
 	    @SuppressWarnings("unchecked")
 	    T var = (T) params[index];

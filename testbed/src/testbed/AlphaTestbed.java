@@ -161,8 +161,8 @@ public class AlphaTestbed {
     protected final Map<Integer, RankingMetric> allRankingMetrics;
 
     /**
-     * Mapping of services to {@link UtilityMetric} instances -- null in
-     * ranking mode
+     * Mapping of services to {@link UtilityMetric} instances -- null in ranking
+     * mode
      */
     protected final Map<Integer, UtilityMetric> allUtilityMetrics;
 
@@ -180,8 +180,8 @@ public class AlphaTestbed {
      * instance of the trust model must also be initialized before it is passed
      * to this constructor.<br/>
      * <br/>
-     * Additionally, the {@link TrustModel} instance must be compatible with
-     * the {@link Scenario} instance. There are only two valid combinations.
+     * Additionally, the {@link TrustModel} instance must be compatible with the
+     * {@link Scenario} instance. There are only two valid combinations.
      * <ol>
      * <li>In the first case, the scenario instance implements the
      * {@link PartnerSelection} interface and the trust model instance
@@ -196,15 +196,15 @@ public class AlphaTestbed {
      * a valid combination, an {@link IllegalArgumentException} is thrown.
      * <li>An instance of the {@link RankingMetric}. This instance is only used
      * to infer the type (i.e. class) for the ranking metric. The testbed will
-     * create the actual instance of the {@link RankingMetric} that will be
-     * used for evaluation.
+     * create the actual instance of the {@link RankingMetric} that will be used
+     * for evaluation.
      * <li>The varargs parameter used to initialize a {@link RankingMetric}
      * instance. The testbed uses these parameters when creates and initializes
      * new instances of the {@link RankingMetric}.
      * <li>An instance of the {@link UtilityMetric}. This instance is only used
      * to infer the type (i.e. class) for the utility metric. The testbed will
-     * create the actual instance of the {@link UtilityMetric} that will be
-     * used for evaluation.
+     * create the actual instance of the {@link UtilityMetric} that will be used
+     * for evaluation.
      * <li>The varargs parameter used to initialize a {@link UtilityMetric}
      * instance. The testbed uses these parameters when creates and initializes
      * new instances of the {@link UtilityMetric}.
@@ -310,10 +310,8 @@ public class AlphaTestbed {
 	// ------------------------------- //
 
 	for (int service : services) {
-	    // final Map<Integer, T> rankings;
 	    final Map<Integer, Double> capabilities;
 
-	    // rankings = (Map<Integer, T>) model.getRankings(service);
 	    capabilities = scenario.getCapabilities(service);
 
 	    // evaluate rankings
@@ -387,11 +385,9 @@ public class AlphaTestbed {
      *         the {@link DecisionMaking} interface and the instance of a
      *         scenario implements the {@link PartnerSelection} interface.
      */
-    protected boolean isValidUtilityMode(TrustModel<?> model,
-	    Scenario scenario) {
+    protected boolean isValidUtilityMode(TrustModel<?> model, Scenario scenario) {
 	return DecisionMaking.class.isAssignableFrom(model.getClass())
-		&& PartnerSelection.class
-			.isAssignableFrom(scenario.getClass());
+		&& PartnerSelection.class.isAssignableFrom(scenario.getClass());
     }
 
     /**
@@ -407,11 +403,10 @@ public class AlphaTestbed {
      *         of a scenario does not implement the {@link PartnerSelection}
      *         interface.
      */
-    protected boolean isValidRankingMode(TrustModel<?> model,
-	    Scenario scenario) {
+    protected boolean isValidRankingMode(TrustModel<?> model, Scenario scenario) {
 	return !DecisionMaking.class.isAssignableFrom(model.getClass())
-		&& !PartnerSelection.class.isAssignableFrom(scenario
-			.getClass());
+		&& !PartnerSelection.class
+			.isAssignableFrom(scenario.getClass());
     }
 
     /**
