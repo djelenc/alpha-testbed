@@ -1,12 +1,12 @@
 package testbed.repast;
 
 import testbed.AlphaTestbed;
-import testbed.IMetricSubscriber;
+import testbed.MetricSubscriber;
 import testbed.common.DefaultRandomGenerator;
-import testbed.interfaces.IMetric;
-import testbed.interfaces.IRankingMetric;
-import testbed.interfaces.IScenario;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.Metric;
+import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Scenario;
+import testbed.interfaces.TrustModel;
 import testbed.metric.Accuracy;
 import testbed.scenario.Transitive;
 import testbed.trustmodel.YuSinghSycara;
@@ -18,10 +18,10 @@ import testbed.trustmodel.YuSinghSycara;
  * @author David
  * 
  */
-public class ProgramaticRun implements IMetricSubscriber {
+public class ProgramaticRun implements MetricSubscriber {
 
     private final int service;
-    private final IMetric metric;
+    private final Metric metric;
 
     public ProgramaticRun() {
 	service = 0;
@@ -30,17 +30,17 @@ public class ProgramaticRun implements IMetricSubscriber {
 
     public static void main(String[] args) {
 	// trust model
-	ITrustModel<?> model = new YuSinghSycara();
+	TrustModel<?> model = new YuSinghSycara();
 	model.setRandomGenerator(new DefaultRandomGenerator(0));
 	model.initialize();
 
 	// scenario
-	IScenario scenario = new Transitive();
+	Scenario scenario = new Transitive();
 	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	scenario.initialize(100, 0.05, 0.1, 1d, 1d);
 
 	// ranking metric
-	IRankingMetric rm = new Accuracy();
+	RankingMetric rm = new Accuracy();
 	rm.initialize();
 
 	// alpha test-bed (utility metric set to null)

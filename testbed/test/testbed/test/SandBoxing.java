@@ -4,15 +4,15 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import testbed.interfaces.IMetric;
+import testbed.interfaces.Metric;
 import testbed.metric.CumulativeNormalizedUtility;
 
 public class SandBoxing {
 
     @Test
     public void objectCreation() {
-	IMetric m = new CumulativeNormalizedUtility();
-	IMetric copy;
+	Metric m = new CumulativeNormalizedUtility();
+	Metric copy;
 
 	try {
 	    copy = m.getClass().newInstance();
@@ -27,8 +27,8 @@ public class SandBoxing {
 
     @Test
     public void hashing() {
-	IMetric nu1 = new CumulativeNormalizedUtility();
-	IMetric nu2 = new CumulativeNormalizedUtility();
+	Metric nu1 = new CumulativeNormalizedUtility();
+	Metric nu2 = new CumulativeNormalizedUtility();
 	nu1.initialize();
 	nu2.initialize();
 

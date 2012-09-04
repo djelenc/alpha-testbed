@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IPartnerSelection;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.PartnerSelection;
 
 /**
  * An extension of the {@link Random} scenario, where agent Alpha is required to
@@ -16,7 +16,7 @@ import testbed.interfaces.IPartnerSelection;
  * 
  */
 public class RandomWithPartnerSelection extends Random implements
-	IPartnerSelection {
+	PartnerSelection {
 
     private Map<Integer, Integer> partners;
 
@@ -55,7 +55,7 @@ public class RandomWithPartnerSelection extends Random implements
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new RandomWithPartnerSelectionGUI();
     }
 }

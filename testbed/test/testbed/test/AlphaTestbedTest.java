@@ -9,31 +9,31 @@ import org.junit.Test;
 
 import testbed.AlphaTestbed;
 import testbed.interfaces.Experience;
-import testbed.interfaces.IDecisionMaking;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IPartnerSelection;
-import testbed.interfaces.IRandomGenerator;
-import testbed.interfaces.IRankingMetric;
-import testbed.interfaces.IScenario;
-import testbed.interfaces.ITrustModel;
-import testbed.interfaces.IUtilityMetric;
+import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.PartnerSelection;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Scenario;
+import testbed.interfaces.TrustModel;
+import testbed.interfaces.UtilityMetric;
 import testbed.interfaces.Opinion;
 
 public class AlphaTestbedTest {
 
-    IRankingMetric ranking;
-    IUtilityMetric utility;
+    RankingMetric ranking;
+    UtilityMetric utility;
 
     @Before
     public void setUp() {
-	ranking = new IRankingMetric() {
+	ranking = new RankingMetric() {
 
 	    @Override
 	    public void initialize(Object... params) {
 	    }
 
 	    @Override
-	    public IParametersPanel getParametersPanel() {
+	    public ParametersPanel getParametersPanel() {
 		return null;
 	    }
 
@@ -44,14 +44,14 @@ public class AlphaTestbedTest {
 	    }
 	};
 
-	utility = new IUtilityMetric() {
+	utility = new UtilityMetric() {
 
 	    @Override
 	    public void initialize(Object... params) {
 	    }
 
 	    @Override
-	    public IParametersPanel getParametersPanel() {
+	    public ParametersPanel getParametersPanel() {
 		return null;
 	    }
 
@@ -64,35 +64,35 @@ public class AlphaTestbedTest {
 
     @Test
     public void testRankingMode() {
-	ITrustModel<?> tm = new RankingsTrustModel();
-	IScenario scn = new RankingsScenario();
+	TrustModel<?> tm = new RankingsTrustModel();
+	Scenario scn = new RankingsScenario();
 	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test
     public void testUtilityMode() {
-	ITrustModel<?> tm = new DecisionMakingTrustModel();
-	IScenario scn = new PartnerSelectionScenario();
+	TrustModel<?> tm = new DecisionMakingTrustModel();
+	Scenario scn = new PartnerSelectionScenario();
 	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void decisionMakingTrustModelOnRankingsScenario() {
-	ITrustModel<?> tm = new DecisionMakingTrustModel();
-	IScenario scn = new RankingsScenario();
+	TrustModel<?> tm = new DecisionMakingTrustModel();
+	Scenario scn = new RankingsScenario();
 	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void rankingsTrustModelOnPartnerSelectionScenario() {
-	ITrustModel<?> tm = new RankingsTrustModel();
-	IScenario scn = new PartnerSelectionScenario();
+	TrustModel<?> tm = new RankingsTrustModel();
+	Scenario scn = new PartnerSelectionScenario();
 	new AlphaTestbed(scn, tm, ranking, null, utility, null);
     }
 
 }
 
-class RankingsTrustModel implements ITrustModel<Double> {
+class RankingsTrustModel implements TrustModel<Double> {
 
     @Override
     public void initialize(Object... params) {
@@ -115,12 +115,12 @@ class RankingsTrustModel implements ITrustModel<Double> {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return null;
     }
 
     @Override
-    public void setRandomGenerator(IRandomGenerator generator) {
+    public void setRandomGenerator(RandomGenerator generator) {
 
     }
 
@@ -131,7 +131,7 @@ class RankingsTrustModel implements ITrustModel<Double> {
 
 }
 
-class RankingsScenario implements IScenario {
+class RankingsScenario implements Scenario {
 
     @Override
     public void initialize(Object... parameters) {
@@ -167,19 +167,19 @@ class RankingsScenario implements IScenario {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return null;
     }
 
     @Override
-    public void setRandomGenerator(IRandomGenerator generator) {
+    public void setRandomGenerator(RandomGenerator generator) {
 
     }
 
 }
 
 class PartnerSelectionScenario extends RankingsScenario implements
-	IPartnerSelection {
+	PartnerSelection {
 
     @Override
     public void setNextInteractionPartners(Map<Integer, Integer> partners) {
@@ -188,7 +188,7 @@ class PartnerSelectionScenario extends RankingsScenario implements
 }
 
 class DecisionMakingTrustModel extends RankingsTrustModel implements
-	IDecisionMaking {
+	DecisionMaking {
     @Override
     public Map<Integer, Integer> getNextInteractionPartners(
 	    Set<Integer> services) {

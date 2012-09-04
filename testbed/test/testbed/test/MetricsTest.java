@@ -8,9 +8,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import testbed.interfaces.IMetric;
-import testbed.interfaces.IRankingMetric;
-import testbed.interfaces.IUtilityMetric;
+import testbed.interfaces.Metric;
+import testbed.interfaces.RankingMetric;
+import testbed.interfaces.UtilityMetric;
 import testbed.metric.Accuracy;
 import testbed.metric.Coverage;
 import testbed.metric.CumulativeNormalizedUtility;
@@ -42,7 +42,7 @@ public class MetricsTest {
 
     @Test
     public void kendallTauB() {
-	IRankingMetric taub = new KendallsTauB();
+	RankingMetric taub = new KendallsTauB();
 	taub.initialize();
 
 	rnks.clear();
@@ -76,20 +76,20 @@ public class MetricsTest {
 
     @Test
     public void metricsType() {
-	IMetric utility = new CumulativeNormalizedUtility();
-	IMetric accuracy = new Accuracy();
+	Metric utility = new CumulativeNormalizedUtility();
+	Metric accuracy = new Accuracy();
 	utility.initialize();
 	accuracy.initialize();
 
-	Assert.assertTrue(utility instanceof IUtilityMetric);
-	Assert.assertFalse(utility instanceof IRankingMetric);
-	Assert.assertTrue(accuracy instanceof IRankingMetric);
-	Assert.assertFalse(accuracy instanceof IUtilityMetric);
+	Assert.assertTrue(utility instanceof UtilityMetric);
+	Assert.assertFalse(utility instanceof RankingMetric);
+	Assert.assertTrue(accuracy instanceof RankingMetric);
+	Assert.assertFalse(accuracy instanceof UtilityMetric);
     }
 
     @Test
     public void normalizedUtility() {
-	IUtilityMetric utility = new CumulativeNormalizedUtility();
+	UtilityMetric utility = new CumulativeNormalizedUtility();
 
 	utility.initialize();
 
@@ -104,7 +104,7 @@ public class MetricsTest {
 
     @Test
     public void accuracyTheSameRankings() {
-	IRankingMetric accuracy = new Accuracy();
+	RankingMetric accuracy = new Accuracy();
 
 	rnks.put(1, 1);
 	rnks.put(2, 1);
@@ -115,8 +115,8 @@ public class MetricsTest {
 
     @Test
     public void accuracyAllcorrectIncompleteCoverage() {
-	IRankingMetric accuracy = new Accuracy();
-	IRankingMetric coverage = new Coverage();
+	RankingMetric accuracy = new Accuracy();
+	RankingMetric coverage = new Coverage();
 
 	rnks.remove(3);
 	Assert.assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
@@ -125,8 +125,8 @@ public class MetricsTest {
 
     @Test
     public void accuracy2WrongCoverageFull() {
-	IRankingMetric accuracy = new Accuracy();
-	IRankingMetric coverage = new Coverage();
+	RankingMetric accuracy = new Accuracy();
+	RankingMetric coverage = new Coverage();
 
 	cpbs.put(4, 0.8);
 	cpbs.put(3, 0.7);
@@ -136,7 +136,7 @@ public class MetricsTest {
 
     @Test
     public void accuracy1Wrong() {
-	IRankingMetric accuracy = new Accuracy();
+	RankingMetric accuracy = new Accuracy();
 
 	cpbs.put(4, 0.8);
 	Assert.assertEquals(11.0 / 12.0, accuracy.evaluate(rnks, cpbs), 0.0001);
@@ -144,7 +144,7 @@ public class MetricsTest {
 
     @Test
     public void accuracyAllCorrect() {
-	IRankingMetric accuracy = new Accuracy();
+	RankingMetric accuracy = new Accuracy();
 	Assert.assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
     }
 

@@ -9,7 +9,7 @@ import java.util.Set;
  * collaborators for interactions.
  * 
  */
-public interface IScenario {
+public interface Scenario {
 
     /**
      * Sets the random number generator. In order to produce repeatable results,
@@ -18,7 +18,7 @@ public interface IScenario {
      * @param generator
      *            Generator to be set
      */
-    public void setRandomGenerator(IRandomGenerator generator);
+    public void setRandomGenerator(RandomGenerator generator);
 
     /**
      * Initializes the scenario with an optional array of varargs Objects.
@@ -75,7 +75,7 @@ public interface IScenario {
     public Set<Integer> getServices();
 
     /**
-     * Returns an {@link IParametersPanel} instance, which is responsible for
+     * Returns an {@link ParametersPanel} instance, which is responsible for
      * generating a graphical user interface for setting scenario parameters.
      * 
      * <p>
@@ -83,5 +83,5 @@ public interface IScenario {
      * 
      * @return
      */
-    public IParametersPanel getParametersPanel();
+    public ParametersPanel getParametersPanel();
 }

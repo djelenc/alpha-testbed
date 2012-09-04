@@ -1,8 +1,8 @@
 package testbed.repast;
 
 import testbed.AlphaTestbed;
-import testbed.IMetricSubscriber;
-import testbed.interfaces.IMetric;
+import testbed.MetricSubscriber;
+import testbed.interfaces.Metric;
 
 /**
  * An utility class to enable a simple plotting and constructing data sets in
@@ -24,10 +24,10 @@ import testbed.interfaces.IMetric;
  * @author David
  * 
  */
-public class RepastMetricAgent implements IMetricSubscriber {
+public class RepastMetricAgent implements MetricSubscriber {
 
     private final int service;
-    private final IMetric metric;
+    private final Metric metric;
 
     private final String name;
     private final String model;
@@ -35,7 +35,7 @@ public class RepastMetricAgent implements IMetricSubscriber {
 
     private double currentValue = 0;
 
-    public RepastMetricAgent(int service, IMetric metric, AlphaTestbed testbed) {
+    public RepastMetricAgent(int service, Metric metric, AlphaTestbed testbed) {
 	this.service = service;
 	this.metric = metric;
 	this.name = String.format("%s[%d]", metric.toString(), service);

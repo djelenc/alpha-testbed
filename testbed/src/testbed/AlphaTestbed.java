@@ -9,13 +9,13 @@ import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.IDecisionMaking;
-import testbed.interfaces.IMetric;
-import testbed.interfaces.IPartnerSelection;
-import testbed.interfaces.IRankingMetric;
-import testbed.interfaces.IScenario;
-import testbed.interfaces.ITrustModel;
-import testbed.interfaces.IUtilityMetric;
+import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.Metric;
+import testbed.interfaces.PartnerSelection;
+import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Scenario;
+import testbed.interfaces.TrustModel;
+import testbed.interfaces.UtilityMetric;
 import testbed.interfaces.Opinion;
 
 /**
@@ -28,16 +28,16 @@ import testbed.interfaces.Opinion;
  * <p>
  * The testbed publishes the results of the evaluation by using subscribers.
  * Subscribers are instances of classes that implement the
- * {@link IMetricSubscriber} interface.
+ * {@link MetricSubscriber} interface.
  * 
  * <p>
  * The results are published in the following manner. First, the subscribers
  * have to subscribe to the testbed by using
- * {@link #subscribe(IMetricSubscriber)} method. Second, at the end of each
+ * {@link #subscribe(MetricSubscriber)} method. Second, at the end of each
  * evaluation step, the testbed notifies all subscribers by invoking their
- * {@link IMetricSubscriber#update(AlphaTestbed)} methods. Finally, the
+ * {@link MetricSubscriber#update(AlphaTestbed)} methods. Finally, the
  * subscribers are expected to pull the results of the evaluation via the
- * {@link #getMetric(int, IMetric)} method.
+ * {@link #getMetric(int, Metric)} method.
  * 
  * <h2>Ranking mode</h2>
  * <p>
@@ -63,7 +63,7 @@ import testbed.interfaces.Opinion;
  * 
  * <p>
  * In ranking mode, the testbed holds a reference to instances of a
- * {@link ITrustModel}, a {@link IScenario}, and a {@link IRankingMetric}. Other
+ * {@link TrustModel}, a {@link Scenario}, and a {@link RankingMetric}. Other
  * class members are set to null or ignored.
  * 
  * <h2>Utility mode</h2>
@@ -96,17 +96,17 @@ import testbed.interfaces.Opinion;
  * 
  * <p>
  * In utility mode, the testbed reference to the same instances as in ranking
- * mode (an instance of {@link ITrustModel}, {@link IScenario}, and
- * {@link IRankingMetric}). Besides those, the utility mode also references an
- * implementation of an {@link IDecisionMaking} interface (part of a trust model
- * that selects interaction partners), an {@link IPartnerSelection} interface
+ * mode (an instance of {@link TrustModel}, {@link Scenario}, and
+ * {@link RankingMetric}). Besides those, the utility mode also references an
+ * implementation of an {@link DecisionMaking} interface (part of a trust model
+ * that selects interaction partners), an {@link PartnerSelection} interface
  * implementation (part of scenario that receives the partner selections and
  * prepares corresponding {@link Experience} tuples) and an instance of a
- * {@link IUtilityMetric} to evaluate the obtained utility. Because the
- * {@link IUtilityMetric} is stateful (and the state is different for every
- * service), we need to have an instance of such {@link IUtilityMetric} instance
+ * {@link UtilityMetric} to evaluate the obtained utility. Because the
+ * {@link UtilityMetric} is stateful (and the state is different for every
+ * service), we need to have an instance of such {@link UtilityMetric} instance
  * for every possible type of service. The testbed stores all those instances in
- * the map of type {@link Map}<{@link Integer}, {@link IUtilityMetric}>, because
+ * the map of type {@link Map}<{@link Integer}, {@link UtilityMetric}>, because
  * they track state.
  * 
  * <p>
@@ -122,31 +122,31 @@ public class AlphaTestbed {
     protected static final String METRIC_QUERY_EX = "Invalid query for metric '%s' and service '%d'.";
 
     /** Reference to the trust model */
-    protected final ITrustModel<?> model;
+    protected final TrustModel<?> model;
 
     /**
      * Reference to the decision making capabilities of a trust model -- null in
      * ranking mode
      */
-    protected final IDecisionMaking decision;
+    protected final DecisionMaking decision;
 
     /** Reference to the scenario */
-    protected final IScenario scenario;
+    protected final Scenario scenario;
 
     /**
      * Reference to the partner selection capability of the scenario -- null in
      * ranking mode
      */
-    protected final IPartnerSelection selection;
+    protected final PartnerSelection selection;
 
     /** Class of ranking metric instances */
-    protected final Class<? extends IRankingMetric> rankingMetricClass;
+    protected final Class<? extends RankingMetric> rankingMetricClass;
 
     /** Parameters for creating ranking metric instances */
     protected final Object[] rankingMetricParameters;
 
     /** Class of utility metric instances -- null in ranking mode */
-    protected final Class<? extends IUtilityMetric> utilityMetricClass;
+    protected final Class<? extends UtilityMetric> utilityMetricClass;
 
     /** Parameters for creating utility metric instances */
     protected final Object[] utilityMetricParameters;
@@ -157,57 +157,57 @@ public class AlphaTestbed {
     /** Convenience flag to denote the utility mode */
     protected final boolean utilityMode;
 
-    /** Mapping of services to {@link IRankingMetric} instance */
-    protected final Map<Integer, IRankingMetric> allRankingMetrics;
+    /** Mapping of services to {@link RankingMetric} instance */
+    protected final Map<Integer, RankingMetric> allRankingMetrics;
 
     /**
-     * Mapping of services to {@link IUtilityMetric} instances -- null in
+     * Mapping of services to {@link UtilityMetric} instances -- null in
      * ranking mode
      */
-    protected final Map<Integer, IUtilityMetric> allUtilityMetrics;
+    protected final Map<Integer, UtilityMetric> allUtilityMetrics;
 
     /** Subscribers to this evaluation run */
-    protected final List<IMetricSubscriber> subscribers;
+    protected final List<MetricSubscriber> subscribers;
 
     /**
      * Constructor for the AlphaTestbed class. Its parameters have the following
      * semantics:
      * <ol>
-     * <li>An {@link IScenario} instance. The instance must be initialized (that
-     * is, the method {@link IScenario#initialize(Object...)} must be called
+     * <li>An {@link Scenario} instance. The instance must be initialized (that
+     * is, the method {@link Scenario#initialize(Object...)} must be called
      * before the instance is passed to this constructor).
-     * <li>An {@link ITrustModel} instance. Similar to scenario instance, the
+     * <li>An {@link TrustModel} instance. Similar to scenario instance, the
      * instance of the trust model must also be initialized before it is passed
      * to this constructor.<br/>
      * <br/>
-     * Additionally, the {@link ITrustModel} instance must be compatible with
-     * the {@link IScenario} instance. There are only two valid combinations.
+     * Additionally, the {@link TrustModel} instance must be compatible with
+     * the {@link Scenario} instance. There are only two valid combinations.
      * <ol>
      * <li>In the first case, the scenario instance implements the
-     * {@link IPartnerSelection} interface and the trust model instance
-     * implements the {@link IDecisionMaking}. This combination constitutes the
+     * {@link PartnerSelection} interface and the trust model instance
+     * implements the {@link DecisionMaking}. This combination constitutes the
      * so called <b>utility mode</b>.
      * <li>In the second case, the scenario instance <b>does not</b> implement
-     * the {@link IPartnerSelection} interface, and the trust model instance
-     * <b>does not</b> implement the {@link IDecisionMaking} interface. This
+     * the {@link PartnerSelection} interface, and the trust model instance
+     * <b>does not</b> implement the {@link DecisionMaking} interface. This
      * combination constitutes the so called <b>ranking mode</b>.
      * </ol>
      * If the given combination of scenario and trust model does not constitute
      * a valid combination, an {@link IllegalArgumentException} is thrown.
-     * <li>An instance of the {@link IRankingMetric}. This instance is only used
+     * <li>An instance of the {@link RankingMetric}. This instance is only used
      * to infer the type (i.e. class) for the ranking metric. The testbed will
-     * create the actual instance of the {@link IRankingMetric} that will be
+     * create the actual instance of the {@link RankingMetric} that will be
      * used for evaluation.
-     * <li>The varargs parameter used to initialize a {@link IRankingMetric}
+     * <li>The varargs parameter used to initialize a {@link RankingMetric}
      * instance. The testbed uses these parameters when creates and initializes
-     * new instances of the {@link IRankingMetric}.
-     * <li>An instance of the {@link IUtilityMetric}. This instance is only used
+     * new instances of the {@link RankingMetric}.
+     * <li>An instance of the {@link UtilityMetric}. This instance is only used
      * to infer the type (i.e. class) for the utility metric. The testbed will
-     * create the actual instance of the {@link IUtilityMetric} that will be
+     * create the actual instance of the {@link UtilityMetric} that will be
      * used for evaluation.
-     * <li>The varargs parameter used to initialize a {@link IUtilityMetric}
+     * <li>The varargs parameter used to initialize a {@link UtilityMetric}
      * instance. The testbed uses these parameters when creates and initializes
-     * new instances of the {@link IUtilityMetric}.
+     * new instances of the {@link UtilityMetric}.
      * </ol>
      * 
      * @param scn
@@ -225,28 +225,28 @@ public class AlphaTestbed {
      *            A set of varargs arguments to initialize an utility metric
      *            instance
      */
-    public AlphaTestbed(IScenario scn, ITrustModel<?> tm,
-	    IRankingMetric rankingMetric, Object[] rmParams,
-	    IUtilityMetric utilityMetric, Object[] umParams) {
+    public AlphaTestbed(Scenario scn, TrustModel<?> tm,
+	    RankingMetric rankingMetric, Object[] rmParams,
+	    UtilityMetric utilityMetric, Object[] umParams) {
 	model = tm;
 	scenario = scn;
 
 	if (isValidUtilityMode(tm, scn)) {
-	    decision = (IDecisionMaking) tm;
-	    selection = (IPartnerSelection) scn;
+	    decision = (DecisionMaking) tm;
+	    selection = (PartnerSelection) scn;
 	    rankingMetricClass = rankingMetric.getClass();
 	    rankingMetricParameters = rmParams;
-	    allRankingMetrics = new HashMap<Integer, IRankingMetric>();
+	    allRankingMetrics = new HashMap<Integer, RankingMetric>();
 	    utilityMetricClass = utilityMetric.getClass();
 	    utilityMetricParameters = umParams;
-	    allUtilityMetrics = new HashMap<Integer, IUtilityMetric>();
+	    allUtilityMetrics = new HashMap<Integer, UtilityMetric>();
 	    utilityMode = true;
 	} else if (isValidRankingMode(tm, scn)) {
 	    decision = null;
 	    selection = null;
 	    rankingMetricClass = rankingMetric.getClass();
 	    rankingMetricParameters = rmParams;
-	    allRankingMetrics = new HashMap<Integer, IRankingMetric>();
+	    allRankingMetrics = new HashMap<Integer, RankingMetric>();
 	    utilityMetricClass = null;
 	    utilityMetricParameters = null;
 	    allUtilityMetrics = null;
@@ -256,7 +256,7 @@ public class AlphaTestbed {
 		    tm, scn));
 	}
 
-	subscribers = new ArrayList<IMetricSubscriber>();
+	subscribers = new ArrayList<MetricSubscriber>();
 	score = new HashMap<Integer, Double>();
     }
 
@@ -317,7 +317,7 @@ public class AlphaTestbed {
 	    capabilities = scenario.getCapabilities(service);
 
 	    // evaluate rankings
-	    final IRankingMetric rm = getRankingMetricInstance(service);
+	    final RankingMetric rm = getRankingMetricInstance(service);
 	    final int rankMetricKey = rm.getClass().hashCode() ^ service;
 	    final double rankMetricScore = rm.evaluate(model.getTrust(service),
 		    capabilities);
@@ -330,7 +330,7 @@ public class AlphaTestbed {
 
 		// if partner for this service was selected
 		if (null != agent) {
-		    final IUtilityMetric um = getUtilityMetricInstance(service);
+		    final UtilityMetric um = getUtilityMetricInstance(service);
 		    final int utilityMetricKey;
 		    final double utilityMetricScore;
 		    utilityMetricKey = um.getClass().hashCode() ^ service;
@@ -347,7 +347,7 @@ public class AlphaTestbed {
 
     /**
      * Returns the value of the metric for the given service. This method should
-     * be called by all instances of {@link IMetricSubscriber} to pull the data
+     * be called by all instances of {@link MetricSubscriber} to pull the data
      * from the test-bed.
      * 
      * @param service
@@ -356,7 +356,7 @@ public class AlphaTestbed {
      *            The metric
      * @return The evaluation result
      */
-    public double getMetric(int service, IMetric metric) {
+    public double getMetric(int service, Metric metric) {
 	final Double result = score.get(metric.getClass().hashCode() ^ service);
 
 	if (null == result) {
@@ -367,11 +367,11 @@ public class AlphaTestbed {
 	}
     }
 
-    public ITrustModel<?> getModel() {
+    public TrustModel<?> getModel() {
 	return model;
     }
 
-    public IScenario getScenario() {
+    public Scenario getScenario() {
 	return scenario;
     }
 
@@ -384,13 +384,13 @@ public class AlphaTestbed {
      * @param scenario
      *            Instance of a scenario
      * @return True, if and only if the instance of the trust model implements
-     *         the {@link IDecisionMaking} interface and the instance of a
-     *         scenario implements the {@link IPartnerSelection} interface.
+     *         the {@link DecisionMaking} interface and the instance of a
+     *         scenario implements the {@link PartnerSelection} interface.
      */
-    protected boolean isValidUtilityMode(ITrustModel<?> model,
-	    IScenario scenario) {
-	return IDecisionMaking.class.isAssignableFrom(model.getClass())
-		&& IPartnerSelection.class
+    protected boolean isValidUtilityMode(TrustModel<?> model,
+	    Scenario scenario) {
+	return DecisionMaking.class.isAssignableFrom(model.getClass())
+		&& PartnerSelection.class
 			.isAssignableFrom(scenario.getClass());
     }
 
@@ -403,14 +403,14 @@ public class AlphaTestbed {
      * @param scenario
      *            Instance of a scenario
      * @return True, if and only if the instance of the trust model does not
-     *         implement the {@link IDecisionMaking} interface and the instance
-     *         of a scenario does not implement the {@link IPartnerSelection}
+     *         implement the {@link DecisionMaking} interface and the instance
+     *         of a scenario does not implement the {@link PartnerSelection}
      *         interface.
      */
-    protected boolean isValidRankingMode(ITrustModel<?> model,
-	    IScenario scenario) {
-	return !IDecisionMaking.class.isAssignableFrom(model.getClass())
-		&& !IPartnerSelection.class.isAssignableFrom(scenario
+    protected boolean isValidRankingMode(TrustModel<?> model,
+	    Scenario scenario) {
+	return !DecisionMaking.class.isAssignableFrom(model.getClass())
+		&& !PartnerSelection.class.isAssignableFrom(scenario
 			.getClass());
     }
 
@@ -425,12 +425,12 @@ public class AlphaTestbed {
 
     /**
      * Subscribe to the notifications of the test-bed. The data has to be pulled
-     * from the test-bed instance using {@link #getMetric(int, IMetric)} method.
+     * from the test-bed instance using {@link #getMetric(int, Metric)} method.
      * 
      * @param observer
      *            The instance of the subscriber.
      */
-    public void subscribe(IMetricSubscriber observer) {
+    public void subscribe(MetricSubscriber observer) {
 	subscribers.add(observer);
     }
 
@@ -441,7 +441,7 @@ public class AlphaTestbed {
      * @param subscriber
      *            The instance to be removed.
      */
-    public void remove(IMetricSubscriber subscriber) {
+    public void remove(MetricSubscriber subscriber) {
 	subscribers.remove(subscriber);
     }
 
@@ -450,7 +450,7 @@ public class AlphaTestbed {
      * test-bed.
      */
     protected void notifiySubscribers() {
-	for (IMetricSubscriber s : subscribers)
+	for (MetricSubscriber s : subscribers)
 	    s.update(this);
     }
 
@@ -467,8 +467,8 @@ public class AlphaTestbed {
      *            Type of service
      * @return An instance of the metric
      */
-    protected IRankingMetric getRankingMetricInstance(int service) {
-	IRankingMetric metric = allRankingMetrics.get(service);
+    protected RankingMetric getRankingMetricInstance(int service) {
+	RankingMetric metric = allRankingMetrics.get(service);
 
 	if (null == metric) {
 	    try {
@@ -498,8 +498,8 @@ public class AlphaTestbed {
      *            Type of service
      * @return An instance of the metric
      */
-    protected IUtilityMetric getUtilityMetricInstance(int service) {
-	IUtilityMetric metric = allUtilityMetrics.get(service);
+    protected UtilityMetric getUtilityMetricInstance(int service) {
+	UtilityMetric metric = allUtilityMetrics.get(service);
 
 	if (null == metric) {
 	    try {

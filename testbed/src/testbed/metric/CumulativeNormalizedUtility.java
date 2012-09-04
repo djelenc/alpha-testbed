@@ -2,10 +2,10 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.IUtilityMetric;
+import testbed.interfaces.UtilityMetric;
 
 public class CumulativeNormalizedUtility extends AbstractMetric implements
-	IUtilityMetric {
+	UtilityMetric {
 
     private double total, maximal;
 

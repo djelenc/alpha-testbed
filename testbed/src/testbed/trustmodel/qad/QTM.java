@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IRandomGenerator;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.TrustModel;
 import testbed.interfaces.Opinion;
 
-public class QTM implements ITrustModel<Omega> {
+public class QTM implements TrustModel<Omega> {
 
     public static final int HISTORY_LENGTH = 10;
 
@@ -290,15 +290,15 @@ public class QTM implements ITrustModel<Omega> {
 	return trust;
     }
 
-    protected IRandomGenerator generator;
+    protected RandomGenerator generator;
 
     @Override
-    public void setRandomGenerator(IRandomGenerator generator) {
+    public void setRandomGenerator(RandomGenerator generator) {
 	this.generator = generator;
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return null;
     }
 

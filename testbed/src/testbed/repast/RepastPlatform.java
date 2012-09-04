@@ -12,11 +12,11 @@ import testbed.AlphaTestbed;
 import testbed.common.DefaultRandomGenerator;
 import testbed.gui.ExceptionWindowDialog;
 import testbed.gui.ParametersGUI;
-import testbed.interfaces.IRandomGenerator;
-import testbed.interfaces.IRankingMetric;
-import testbed.interfaces.IScenario;
-import testbed.interfaces.ITrustModel;
-import testbed.interfaces.IUtilityMetric;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Scenario;
+import testbed.interfaces.TrustModel;
+import testbed.interfaces.UtilityMetric;
 
 public class RepastPlatform extends DefaultContext<Object> implements
 	ContextBuilder<Object> {
@@ -63,7 +63,7 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    final int seed = (Integer) RunEnvironment.getInstance()
 		    .getParameters().getValue("randomSeed");
 
-	    final IRandomGenerator scnRnd, tmRnd;
+	    final RandomGenerator scnRnd, tmRnd;
 	    scnRnd = new DefaultRandomGenerator(seed);
 	    tmRnd = new DefaultRandomGenerator(seed);
 
@@ -74,20 +74,20 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    final Object[] umParams = gui.getUtilityMetricParameters();
 
 	    // set scenario
-	    final IScenario scenario = (IScenario) generalParams[0];
+	    final Scenario scenario = (Scenario) generalParams[0];
 	    scenario.setRandomGenerator(scnRnd);
 	    scenario.initialize(scenarioParams);
 
 	    // set trust model
-	    final ITrustModel<?> trustModel = (ITrustModel<?>) generalParams[1];
+	    final TrustModel<?> trustModel = (TrustModel<?>) generalParams[1];
 	    trustModel.setRandomGenerator(tmRnd);
 	    trustModel.initialize(trustModelParams);
 
 	    // Set ranking metric
-	    final IRankingMetric rm = (IRankingMetric) generalParams[2];
+	    final RankingMetric rm = (RankingMetric) generalParams[2];
 
 	    // set utility metric
-	    final IUtilityMetric um = (IUtilityMetric) generalParams[3];
+	    final UtilityMetric um = (UtilityMetric) generalParams[3];
 
 	    // simulator
 	    atb = new AlphaTestbed(scenario, trustModel, rm, rmParams, um,

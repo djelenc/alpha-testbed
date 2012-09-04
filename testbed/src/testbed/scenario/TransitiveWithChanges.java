@@ -1,8 +1,8 @@
 package testbed.scenario;
 
 import testbed.common.Utils;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 
 /**
  * Transitive scenario where changes occur at given change intervals. At every
@@ -20,10 +20,10 @@ import testbed.interfaces.IParametersPanel;
  * 
  */
 public class TransitiveWithChanges extends Transitive {
-    protected static final ICondition<Integer> VAL_INTERVAL;
+    protected static final ParameterCondition<Integer> VAL_INTERVAL;
 
     static {
-	VAL_INTERVAL = new ICondition<Integer>() {
+	VAL_INTERVAL = new ParameterCondition<Integer>() {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 0)
@@ -54,7 +54,7 @@ public class TransitiveWithChanges extends Transitive {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new TransitiveWithChangesGUI();
     }
 

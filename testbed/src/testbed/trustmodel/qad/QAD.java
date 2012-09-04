@@ -7,10 +7,10 @@ import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IRandomGenerator;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.TrustModel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -19,7 +19,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class QAD implements ITrustModel<Omega> {
+public class QAD implements TrustModel<Omega> {
     // matrix for other agents
     public Omega[][] op;
 
@@ -33,14 +33,14 @@ public class QAD implements ITrustModel<Omega> {
     private Set<Opinion> opinions;
     private Set<Experience> experiences;
 
-    protected IRandomGenerator generator;
+    protected RandomGenerator generator;
 
     @Override
     public void initialize(Object... params) {
 	op = new Omega[0][0];
 	row = new Omega[0];
 
-	final ICondition<Operator> validator = new ICondition<Operator>() {
+	final ParameterCondition<Operator> validator = new ParameterCondition<Operator>() {
 	    @Override
 	    public void eval(Operator var) {
 
@@ -121,12 +121,12 @@ public class QAD implements ITrustModel<Omega> {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new QADGUI();
     }
 
     @Override
-    public void setRandomGenerator(IRandomGenerator generator) {
+    public void setRandomGenerator(RandomGenerator generator) {
 	this.generator = generator;
     }
 }

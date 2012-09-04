@@ -8,7 +8,7 @@ package testbed.interfaces;
  * @param <T>
  *            Parameter type
  */
-public interface ICondition<T> {
+public interface ParameterCondition<T> {
     /**
      * If the parameter is valid the method does NOT throw an
      * {@link IllegalArgumentException}. If the parameter is invalid the method

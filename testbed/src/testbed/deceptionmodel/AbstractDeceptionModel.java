@@ -1,8 +1,8 @@
 package testbed.deceptionmodel;
 
-import testbed.interfaces.IDeceptionModel;
+import testbed.interfaces.DeceptionModel;
 
-public abstract class AbstractDeceptionModel implements IDeceptionModel {
+public abstract class AbstractDeceptionModel implements DeceptionModel {
 
     @Override
     public void initialize(Object... params) {

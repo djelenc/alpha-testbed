@@ -2,9 +2,9 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.IRankingMetric;
+import testbed.interfaces.RankingMetric;
 
-public class Coverage extends AbstractMetric implements IRankingMetric {
+public class Coverage extends AbstractMetric implements RankingMetric {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,

@@ -3,7 +3,7 @@ package testbed.common;
 import java.util.Map;
 import java.util.TreeMap;
 
-import testbed.interfaces.IRandomGenerator;
+import testbed.interfaces.RandomGenerator;
 
 /**
  * A class that provides a few template implementations of the partner selection
@@ -15,9 +15,9 @@ import testbed.interfaces.IRandomGenerator;
 public class PartnerSelectionTemplates {
     private static final String NEGATIVE = "Negative value at %d => %.2f. Only positive values are allowed.";
 
-    final private IRandomGenerator generator;
+    final private RandomGenerator generator;
 
-    public PartnerSelectionTemplates(IRandomGenerator generator) {
+    public PartnerSelectionTemplates(RandomGenerator generator) {
 	this.generator = generator;
     }
 

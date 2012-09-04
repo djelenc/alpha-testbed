@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
-import testbed.interfaces.ICondition;
+import testbed.interfaces.ParameterCondition;
 
 public class Utils {
     private static final String NL = System.getProperty("line.separator");
@@ -25,7 +25,7 @@ public class Utils {
      *             If any errors occur during execution or when the passed in
      *             parameters are invalid
      */
-    public static <T> T extractParameter(ICondition<T> functor, int index,
+    public static <T> T extractParameter(ParameterCondition<T> functor, int index,
 	    Object[] params) throws IllegalArgumentException {
 	try {
 	    @SuppressWarnings("unchecked")

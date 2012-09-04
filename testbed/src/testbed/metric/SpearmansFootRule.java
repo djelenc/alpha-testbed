@@ -2,7 +2,7 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.IRankingMetric;
+import testbed.interfaces.RankingMetric;
 
 /**
  * Spearman's foot rule metric.
@@ -13,7 +13,7 @@ import testbed.interfaces.IRankingMetric;
  * @author David
  * 
  */
-public class SpearmansFootRule extends AbstractMetric implements IRankingMetric {
+public class SpearmansFootRule extends AbstractMetric implements RankingMetric {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> rankings,

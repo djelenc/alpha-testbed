@@ -3,15 +3,15 @@ package testbed.metric;
 import java.util.Map;
 
 import testbed.common.Utils;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 
 public class AccuracyWithSensitivity extends Accuracy {
     protected double sensitivity = 0;
 
     @Override
     public void initialize(Object... params) {
-	ICondition<Double> validator = new ICondition<Double>() {
+	ParameterCondition<Double> validator = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var > 1 || var < 0) {
@@ -61,7 +61,7 @@ public class AccuracyWithSensitivity extends Accuracy {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new AccuracyWithSensitivityGUI();
     }
 }

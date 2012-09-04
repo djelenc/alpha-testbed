@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import testbed.common.Utils;
-import testbed.interfaces.ICondition;
+import testbed.interfaces.ParameterCondition;
 
 public class UtilsTest {
 
@@ -31,7 +31,7 @@ public class UtilsTest {
 
     @Test
     public void extractParameters() {
-	ICondition<Double> cond = new ICondition<Double>() {
+	ParameterCondition<Double> cond = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 1d)

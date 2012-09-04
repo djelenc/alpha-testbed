@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.common.PartnerSelectionTemplates;
-import testbed.interfaces.IDecisionMaking;
+import testbed.interfaces.DecisionMaking;
 
 /**
  * Trust model on the basis of the {@link BetaReputation} that supports
@@ -19,7 +19,7 @@ import testbed.interfaces.IDecisionMaking;
  * 
  */
 public class BetaReputationWithDecisionMaking extends BetaReputation implements
-	IDecisionMaking {
+	DecisionMaking {
 
     protected PartnerSelectionTemplates selector;
 

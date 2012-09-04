@@ -8,7 +8,7 @@ import java.util.Map;
  * @author David
  * 
  */
-public interface IUtilityMetric extends IMetric {
+public interface UtilityMetric extends Metric {
 
     /**
      * Returns the normalized cumulative utility that has been obtained so far.

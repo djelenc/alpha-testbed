@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.common.PartnerSelectionTemplates;
-import testbed.interfaces.IDecisionMaking;
+import testbed.interfaces.DecisionMaking;
 
 /**
  * Trust model on the basis of the {@link Simple} trust model that supports
@@ -14,7 +14,7 @@ import testbed.interfaces.IDecisionMaking;
  * @author David
  * 
  */
-public class SimpleWithDecisionMaking extends Simple implements IDecisionMaking {
+public class SimpleWithDecisionMaking extends Simple implements DecisionMaking {
 
     protected PartnerSelectionTemplates selector;
 

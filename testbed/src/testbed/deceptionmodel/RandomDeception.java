@@ -1,28 +1,28 @@
 package testbed.deceptionmodel;
 
 import testbed.common.Utils;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IRandomGenerator;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.RandomGenerator;
 
 /**
  * Random deception model returns a completely random value from (0, 1). The
  * initialization method requires a valid instance of the
- * {@link IRandomGenerator}.
+ * {@link RandomGenerator}.
  * 
  * @author David
  * 
  */
 public class RandomDeception extends AbstractDeceptionModel implements
-	IDeceptionModel {
+	DeceptionModel {
 
-    private IRandomGenerator generator;
+    private RandomGenerator generator;
 
     @Override
     public void initialize(Object... params) {
-	generator = Utils.extractParameter(new ICondition<IRandomGenerator>() {
+	generator = Utils.extractParameter(new ParameterCondition<RandomGenerator>() {
 	    @Override
-	    public void eval(IRandomGenerator var)
+	    public void eval(RandomGenerator var)
 		    throws IllegalArgumentException {
 
 		if (null == var) {

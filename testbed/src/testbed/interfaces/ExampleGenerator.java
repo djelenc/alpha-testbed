@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
-import testbed.interfaces.IRandomGenerator;
+import testbed.interfaces.RandomGenerator;
 
 /**
  * An example of the random number generator implementation. This class can be
@@ -14,7 +14,7 @@ import testbed.interfaces.IRandomGenerator;
  * @author David
  * 
  */
-public class ExampleGenerator implements IRandomGenerator {
+public class ExampleGenerator implements RandomGenerator {
     private static final String MEAN_EX = "The mean must be between [0, 1], but was %.2f.";
     private static final String TOTAL_PROBABILIT_EX = "Total probabilit in pmf %s does not sum to %.2f, but is %.2f";
     private static final String INVALID_PROBABILITY_EX = "Invalid probability %.2f of element %s in pmf %s.";

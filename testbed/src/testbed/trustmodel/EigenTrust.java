@@ -6,8 +6,8 @@ import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -53,7 +53,7 @@ import testbed.interfaces.Opinion;
  * 
  */
 public class EigenTrust extends AbstractTrustModel<Double> {
-    private static final ICondition<Double> VAL_WEIGHT, MULT_VAL;
+    private static final ParameterCondition<Double> VAL_WEIGHT, MULT_VAL;
 
     // holds positive opinions count
     public int[][] cntOp;
@@ -66,7 +66,7 @@ public class EigenTrust extends AbstractTrustModel<Double> {
     public double opinionFactor = 10;
 
     static {
-	VAL_WEIGHT = new ICondition<Double>() {
+	VAL_WEIGHT = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -77,7 +77,7 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 	    }
 	};
 
-	MULT_VAL = new ICondition<Double>() {
+	MULT_VAL = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 1 || var > 50)
@@ -269,7 +269,7 @@ public class EigenTrust extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new EigenTrustGUI();
     }
 

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.IPartnerSelection;
+import testbed.interfaces.PartnerSelection;
 
 /**
  * An extension of the {@link RandomMultiService} scenario, where agent Alpha is
@@ -15,7 +15,7 @@ import testbed.interfaces.IPartnerSelection;
  * 
  */
 public class RandomMultiServiceWithPartnerSelection extends RandomMultiService
-	implements IPartnerSelection {
+	implements PartnerSelection {
 
     protected Map<Integer, Integer> partners = null;
 

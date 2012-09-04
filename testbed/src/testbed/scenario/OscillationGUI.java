@@ -18,9 +18,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import testbed.gui.WizardPanelDescriptor;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParametersPanel;
 
-public class OscillationGUI extends JPanel implements IParametersPanel {
+public class OscillationGUI extends JPanel implements ParametersPanel {
     private static final long serialVersionUID = -1558821473401798087L;
 
     private JSpinner numOfAgents, sdExperiences, sdOpinions, fracGood, fracBad,

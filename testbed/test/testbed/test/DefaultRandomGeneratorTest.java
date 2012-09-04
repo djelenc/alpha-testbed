@@ -15,12 +15,12 @@ import testbed.deceptionmodel.Complementary;
 import testbed.deceptionmodel.RandomDeception;
 import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IRandomGenerator;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.RandomGenerator;
 
 public class DefaultRandomGeneratorTest {
 
-    IRandomGenerator rnd;
+    RandomGenerator rnd;
 
     @Before
     public void setUp() {
@@ -70,7 +70,7 @@ public class DefaultRandomGeneratorTest {
 
     @Test
     public void randomTest() {
-	TreeMap<IDeceptionModel, Double> distr = new TreeMap<IDeceptionModel, Double>(
+	TreeMap<DeceptionModel, Double> distr = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	distr.put(new Truthful(), 0.4);
 	distr.put(new Silent(), 0.3);
@@ -79,29 +79,29 @@ public class DefaultRandomGeneratorTest {
 
 	int iterations = 30000;
 
-	TreeMap<IDeceptionModel, Double> emp = new TreeMap<IDeceptionModel, Double>(
+	TreeMap<DeceptionModel, Double> emp = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 
 	for (int i = 0; i < iterations; i++) {
-	    IDeceptionModel dm = rnd.fromWeights(distr);
+	    DeceptionModel dm = rnd.fromWeights(distr);
 	    emp.put(dm, (emp.get(dm) == null ? 1d : emp.get(dm) + 1));
 	}
 
-	for (Map.Entry<IDeceptionModel, Double> e : emp.entrySet()) {
+	for (Map.Entry<DeceptionModel, Double> e : emp.entrySet()) {
 	    emp.put(e.getKey(), (e.getValue() == null ? 0d : e.getValue()
 		    / iterations));
 	}
 
-	for (Map.Entry<IDeceptionModel, Double> e : distr.entrySet()) {
+	for (Map.Entry<DeceptionModel, Double> e : distr.entrySet()) {
 	    Assert.assertEquals(e.getValue(), emp.get(e.getKey()), 0.01);
 	}
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void defaultImplementationInvalidProbability() {
-	IRandomGenerator rnd1 = new DefaultRandomGenerator(1);
+	RandomGenerator rnd1 = new DefaultRandomGenerator(1);
 
-	TreeMap<IDeceptionModel, Double> distr = new TreeMap<IDeceptionModel, Double>(
+	TreeMap<DeceptionModel, Double> distr = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	distr.put(new Truthful(), -0.4);
 	distr.put(new Silent(), 0.3);
@@ -112,9 +112,9 @@ public class DefaultRandomGeneratorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void defaultImplementationInvalidPmf() {
-	IRandomGenerator rnd1 = new DefaultRandomGenerator(1);
+	RandomGenerator rnd1 = new DefaultRandomGenerator(1);
 
-	TreeMap<IDeceptionModel, Double> distr = new TreeMap<IDeceptionModel, Double>(
+	TreeMap<DeceptionModel, Double> distr = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	distr.put(new Truthful(), 0.4);
 	distr.put(new Silent(), 0.3);
@@ -125,10 +125,10 @@ public class DefaultRandomGeneratorTest {
 
     @Test
     public void defaultImplementation() {
-	IRandomGenerator rnd1 = new DefaultRandomGenerator(1);
-	IRandomGenerator rnd2 = new DefaultRandomGenerator(1);
+	RandomGenerator rnd1 = new DefaultRandomGenerator(1);
+	RandomGenerator rnd2 = new DefaultRandomGenerator(1);
 
-	TreeMap<IDeceptionModel, Double> distr = new TreeMap<IDeceptionModel, Double>(
+	TreeMap<DeceptionModel, Double> distr = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	distr.put(new Truthful(), 0.4);
 	distr.put(new Silent(), 0.3);

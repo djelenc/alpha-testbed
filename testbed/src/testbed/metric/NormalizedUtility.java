@@ -2,9 +2,9 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.IUtilityMetric;
+import testbed.interfaces.UtilityMetric;
 
-public class NormalizedUtility extends AbstractMetric implements IUtilityMetric {
+public class NormalizedUtility extends AbstractMetric implements UtilityMetric {
 
     @Override
     public double evaluate(Map<Integer, Double> capabilities, int agent) {

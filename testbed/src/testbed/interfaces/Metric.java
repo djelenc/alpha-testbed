@@ -2,12 +2,12 @@ package testbed.interfaces;
 
 /**
  * A parent interface for metrics. This interface provides a basis for the
- * {@link IRankingMetric} and the {@link IUtilityMetric}.
+ * {@link RankingMetric} and the {@link UtilityMetric}.
  * 
  * @author David
  * 
  */
-public interface IMetric {
+public interface Metric {
 
     /**
      * Initializes the metric with optional parameters.
@@ -18,13 +18,13 @@ public interface IMetric {
     public void initialize(Object... params);
 
     /**
-     * Returns {@link IParametersPanel} instance, which defines GUI for setting
+     * Returns {@link ParametersPanel} instance, which defines GUI for setting
      * parameters for this metric.
      * 
      * If the metric needs no parameters, this method should return null.
      * 
-     * @return Instance of the {@link IParametersPanel} or null if parameters
+     * @return Instance of the {@link ParametersPanel} or null if parameters
      *         are not needed.
      */
-    public IParametersPanel getParametersPanel();
+    public ParametersPanel getParametersPanel();
 }

@@ -3,7 +3,7 @@ package testbed.interfaces;
 import java.util.Map;
 import java.util.Set;
 
-public interface ITrustModel<T extends Comparable<T>> {
+public interface TrustModel<T extends Comparable<T>> {
 
     /**
      * Sets the random number generator. In order to produce repeatable results,
@@ -12,7 +12,7 @@ public interface ITrustModel<T extends Comparable<T>> {
      * @param generator
      *            Generator to be set
      */
-    public void setRandomGenerator(IRandomGenerator generator);
+    public void setRandomGenerator(RandomGenerator generator);
 
     /**
      * Initializes the trust model with an optional array of varargs Objects.
@@ -67,7 +67,7 @@ public interface ITrustModel<T extends Comparable<T>> {
     public Map<Integer, T> getTrust(int service);
 
     /**
-     * Returns an {@link IParametersPanel} instance, which is responsible for
+     * Returns an {@link ParametersPanel} instance, which is responsible for
      * generating a graphical user interface for setting trust model's
      * parameters.
      * 
@@ -76,5 +76,5 @@ public interface ITrustModel<T extends Comparable<T>> {
      * 
      * @return
      */
-    public IParametersPanel getParametersPanel();
+    public ParametersPanel getParametersPanel();
 }

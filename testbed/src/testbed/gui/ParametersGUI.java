@@ -2,7 +2,7 @@ package testbed.gui;
 
 import java.util.Arrays;
 
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParametersPanel;
 
 public class ParametersGUI {
     public static final String MAIN = "main";
@@ -95,7 +95,7 @@ public class ParametersGUI {
     }
 
     private Object[] getParameters(String str) {
-	final IParametersPanel ppanel = wizard.getModel()
+	final ParametersPanel ppanel = wizard.getModel()
 		.getPanelDescriptor(str).getIParametersPanel();
 	if (null == ppanel) {
 	    return EMPTY;

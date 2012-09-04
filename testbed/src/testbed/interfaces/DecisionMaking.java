@@ -11,7 +11,7 @@ import java.util.Set;
  * @author David
  * 
  */
-public interface IDecisionMaking {
+public interface DecisionMaking {
 
     /**
      * This method should return a map that defines partner agents, with which

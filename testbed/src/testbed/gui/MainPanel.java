@@ -20,18 +20,18 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import testbed.common.ClassLoaderUtils;
-import testbed.interfaces.IDecisionMaking;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IPartnerSelection;
-import testbed.interfaces.IRankingMetric;
-import testbed.interfaces.IScenario;
-import testbed.interfaces.ITrustModel;
-import testbed.interfaces.IUtilityMetric;
+import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.PartnerSelection;
+import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Scenario;
+import testbed.interfaces.TrustModel;
+import testbed.interfaces.UtilityMetric;
 
-public class MainPanel extends JPanel implements IParametersPanel {
+public class MainPanel extends JPanel implements ParametersPanel {
     private static final long serialVersionUID = -1187728078314667265L;
 
-    private List<ITrustModel<?>> allTrustModels;
+    private List<TrustModel<?>> allTrustModels;
 
     private ClassLoader cl;
     private Observer observer;
@@ -96,9 +96,9 @@ public class MainPanel extends JPanel implements IParametersPanel {
 		getUtilityMetric(), getBatchRunDuration() };
     }
 
-    private IUtilityMetric getUtilityMetric() {
+    private UtilityMetric getUtilityMetric() {
 	if (utilityMetric.isEnabled()) {
-	    return (IUtilityMetric) utilityMetric.getSelectedItem();
+	    return (UtilityMetric) utilityMetric.getSelectedItem();
 	} else {
 	    return null;
 	}
@@ -111,9 +111,9 @@ public class MainPanel extends JPanel implements IParametersPanel {
     private void populateTrustModels(boolean decisionMaking) {
 	trustModel.removeAllItems();
 
-	for (ITrustModel<?> tm : allTrustModels) {
-	    if (tm instanceof IDecisionMaking && decisionMaking
-		    || !(tm instanceof IDecisionMaking) && !decisionMaking) {
+	for (TrustModel<?> tm : allTrustModels) {
+	    if (tm instanceof DecisionMaking && decisionMaking
+		    || !(tm instanceof DecisionMaking) && !decisionMaking) {
 		trustModel.addItem(tm);
 	    }
 	}
@@ -134,7 +134,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	GridBagConstraints c = new GridBagConstraints();
 
 	// Scenarios
-	for (IScenario scn : ClassLoaderUtils.lookUp(IScenario.class, cl))
+	for (Scenario scn : ClassLoaderUtils.lookUp(Scenario.class, cl))
 	    scenario.addItem(scn);
 
 	// scenario.setRenderer(renderer);
@@ -142,7 +142,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	scenario.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		populateTrustModels(scenario.getSelectedItem() instanceof IPartnerSelection);
+		populateTrustModels(scenario.getSelectedItem() instanceof PartnerSelection);
 	    }
 	});
 
@@ -159,7 +159,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	panel.add(scenario, c);
 
 	// Trust models
-	populateTrustModels(scenario.getSelectedItem() instanceof IPartnerSelection);
+	populateTrustModels(scenario.getSelectedItem() instanceof PartnerSelection);
 	trustModel.addActionListener(listener);
 
 	c.gridx = 0;
@@ -175,7 +175,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	panel.add(trustModel, c);
 
 	// Ranking metric
-	for (IRankingMetric mtr : ClassLoaderUtils.lookUp(IRankingMetric.class,
+	for (RankingMetric mtr : ClassLoaderUtils.lookUp(RankingMetric.class,
 		cl)) {
 	    rankingMetric.addItem(mtr);
 	}
@@ -195,7 +195,7 @@ public class MainPanel extends JPanel implements IParametersPanel {
 	panel.add(rankingMetric, c);
 
 	// Utility metric
-	for (IUtilityMetric m : ClassLoaderUtils.lookUp(IUtilityMetric.class,
+	for (UtilityMetric m : ClassLoaderUtils.lookUp(UtilityMetric.class,
 		cl)) {
 	    utilityMetric.addItem(m);
 	}
@@ -246,14 +246,14 @@ public class MainPanel extends JPanel implements IParametersPanel {
     }
 
     public void validateParameters() {
-	final ITrustModel<?> tm = (ITrustModel<?>) trustModel.getSelectedItem();
-	final IScenario scn = (IScenario) scenario.getSelectedItem();
-	final IRankingMetric rm = (IRankingMetric) rankingMetric
+	final TrustModel<?> tm = (TrustModel<?>) trustModel.getSelectedItem();
+	final Scenario scn = (Scenario) scenario.getSelectedItem();
+	final RankingMetric rm = (RankingMetric) rankingMetric
 		.getSelectedItem();
-	final IUtilityMetric um = (IUtilityMetric) utilityMetric
+	final UtilityMetric um = (UtilityMetric) utilityMetric
 		.getSelectedItem();
 
-	final boolean enabled = scn instanceof IPartnerSelection;
+	final boolean enabled = scn instanceof PartnerSelection;
 	utilityMetric.setEnabled(enabled);
 	umLabel.setEnabled(enabled);
 

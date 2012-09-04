@@ -14,7 +14,7 @@ import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
-import testbed.interfaces.IDeceptionModel;
+import testbed.interfaces.DeceptionModel;
 import testbed.scenario.Oscillation;
 
 public class OscillationScenarioTest {
@@ -39,7 +39,7 @@ public class OscillationScenarioTest {
 	for (int i = 0; i < 6; i++)
 	    all.add(i);
 
-	IDeceptionModel[][] models = new IDeceptionModel[all.size()][all.size()];
+	DeceptionModel[][] models = new DeceptionModel[all.size()][all.size()];
 
 	scenario.assignAgentsToGroups(all, good, bad, fracGood, fracBad);
 	scenario.assignCapabilities(all, good, bad, capabilities);

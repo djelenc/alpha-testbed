@@ -3,7 +3,7 @@ package testbed.interfaces;
 import java.awt.Component;
 import java.util.Observer;
 
-public interface IParametersPanel {
+public interface ParametersPanel {
 
     /**
      * Initializes the parameters panel.

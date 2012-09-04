@@ -1,8 +1,8 @@
 package testbed.deceptionmodel;
 
-import testbed.interfaces.IDeceptionModel;
+import testbed.interfaces.DeceptionModel;
 
-public class Truthful extends AbstractDeceptionModel implements IDeceptionModel {
+public class Truthful extends AbstractDeceptionModel implements DeceptionModel {
 
     @Override
     public double calculate(double value) {

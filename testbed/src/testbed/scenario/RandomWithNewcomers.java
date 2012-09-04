@@ -2,9 +2,9 @@ package testbed.scenario;
 
 import testbed.common.Utils;
 import testbed.deceptionmodel.Complementary;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParametersPanel;
 
 /**
  * Very similar to the {@link Random}, but this scenario features entering of
@@ -30,8 +30,8 @@ public class RandomWithNewcomers extends Random {
 
     protected static final String INTERVAL_EX = "The change interval must be a positive integer, but was %d.";
     protected static final String NEW_NUM_EX = "The number of newcomers must be a positive integer, but was %d.";
-    protected static final IDeceptionModel LIAR = new Complementary();
-    protected final static ICondition<Integer> VAL_NEW_NUM, VAL_INTERVAL;
+    protected static final DeceptionModel LIAR = new Complementary();
+    protected final static ParameterCondition<Integer> VAL_NEW_NUM, VAL_INTERVAL;
 
     /** Time between changes */
     protected int changeInterval;
@@ -40,7 +40,7 @@ public class RandomWithNewcomers extends Random {
     protected int newcomersNumber;
 
     static {
-	VAL_NEW_NUM = new ICondition<Integer>() {
+	VAL_NEW_NUM = new ParameterCondition<Integer>() {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
@@ -49,7 +49,7 @@ public class RandomWithNewcomers extends Random {
 	    }
 	};
 
-	VAL_INTERVAL = new ICondition<Integer>() {
+	VAL_INTERVAL = new ParameterCondition<Integer>() {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
@@ -70,7 +70,7 @@ public class RandomWithNewcomers extends Random {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new RandomWithNewcomersGUI();
     }
 

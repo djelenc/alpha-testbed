@@ -1,16 +1,16 @@
 package testbed.trustmodel;
 
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IRandomGenerator;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.TrustModel;
 
 public abstract class AbstractTrustModel<T extends Comparable<T>> implements
-	ITrustModel<T> {
+	TrustModel<T> {
 
-    protected IRandomGenerator generator;
+    protected RandomGenerator generator;
 
     @Override
-    public void setRandomGenerator(IRandomGenerator generator) {
+    public void setRandomGenerator(RandomGenerator generator) {
 	this.generator = generator;
     }
 
@@ -20,7 +20,7 @@ public abstract class AbstractTrustModel<T extends Comparable<T>> implements
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return null;
     }
 }

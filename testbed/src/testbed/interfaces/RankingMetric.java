@@ -8,7 +8,7 @@ import java.util.Map;
  * @author David
  * 
  */
-public interface IRankingMetric extends IMetric {
+public interface RankingMetric extends Metric {
 
     /**
      * Evaluates given rankings against given capabilities.

@@ -15,9 +15,9 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import testbed.gui.WizardPanelDescriptor;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParametersPanel;
 
-public class EigenTrustGUI extends JPanel implements IParametersPanel {
+public class EigenTrustGUI extends JPanel implements ParametersPanel {
 
     private static final long serialVersionUID = -1558821473401798087L;
 

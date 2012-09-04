@@ -12,8 +12,8 @@ import org.apache.commons.math.distribution.BetaDistributionImpl;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -57,7 +57,7 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	experiences = new LinkedHashMap<Integer, ArrayList<Experience>>();
 	opinions = new Opinion[0][0];
 
-	final ICondition<Double> valLambda = new ICondition<Double>() {
+	final ParameterCondition<Double> valLambda = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -68,7 +68,7 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	    }
 	};
 
-	final ICondition<Double> valFactor = new ICondition<Double>() {
+	final ParameterCondition<Double> valFactor = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 1 || var > 50)
@@ -79,7 +79,7 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	    }
 	};
 
-	final ICondition<Double> valQ = new ICondition<Double>() {
+	final ParameterCondition<Double> valQ = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var <= 0 || var >= 0.5)
@@ -314,7 +314,7 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new BRSWithFilteringGUI();
     }
 

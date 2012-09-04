@@ -6,9 +6,9 @@ import java.util.Set;
 
 import testbed.common.PartnerSelectionTemplates;
 import testbed.common.Utils;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IDecisionMaking;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.ParametersPanel;
 
 /**
  * Trust model on the basis of the {@link EigenTrust} trust model that supports
@@ -26,20 +26,20 @@ import testbed.interfaces.IParametersPanel;
  * 
  */
 public class EigenTrustWithDecisionMaking extends EigenTrust implements
-	IDecisionMaking {
+	DecisionMaking {
 
-    protected static final ICondition<Double> VAL_THRESHOLD;
-    protected static final ICondition<Boolean> VAL_PROCEDURE;
+    protected static final ParameterCondition<Double> VAL_THRESHOLD;
+    protected static final ParameterCondition<Boolean> VAL_PROCEDURE;
 
     static {
-	VAL_PROCEDURE = new ICondition<Boolean>() {
+	VAL_PROCEDURE = new ParameterCondition<Boolean>() {
 	    @Override
 	    public void eval(Boolean var) throws IllegalArgumentException {
 
 	    }
 	};
 
-	VAL_THRESHOLD = new ICondition<Double>() {
+	VAL_THRESHOLD = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) throws IllegalArgumentException {
 		if (var < 0 || var > 1)
@@ -125,7 +125,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new EigenTrustWithDecisionMakingGUI();
     }
 }

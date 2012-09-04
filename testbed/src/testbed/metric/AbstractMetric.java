@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 import testbed.common.Tuple;
-import testbed.interfaces.IMetric;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.Metric;
+import testbed.interfaces.ParametersPanel;
 
-public abstract class AbstractMetric implements IMetric {
+public abstract class AbstractMetric implements Metric {
 
     @Override
     public void initialize(Object... params) {
@@ -22,7 +22,7 @@ public abstract class AbstractMetric implements IMetric {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return null;
     }
 

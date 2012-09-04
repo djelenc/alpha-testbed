@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.TrustModel;
 
 public class ClassLoaderUtils {
 
@@ -53,12 +53,12 @@ public class ClassLoaderUtils {
      * @param classLoader
      * @return
      */
-    public static <T extends Comparable<T>> List<ITrustModel<?>> lookUpTrustModels(
+    public static <T extends Comparable<T>> List<TrustModel<?>> lookUpTrustModels(
 	    ClassLoader classLoader) {
 
-	List<ITrustModel<?>> result = new ArrayList<ITrustModel<?>>();
+	List<TrustModel<?>> result = new ArrayList<TrustModel<?>>();
 
-	for (ITrustModel<?> impl : ServiceLoader.load(ITrustModel.class,
+	for (TrustModel<?> impl : ServiceLoader.load(TrustModel.class,
 		classLoader)) {
 	    result.add(impl);
 	}

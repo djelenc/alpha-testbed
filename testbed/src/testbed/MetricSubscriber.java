@@ -12,7 +12,7 @@ package testbed;
  * @author David
  * 
  */
-public interface IMetricSubscriber {
+public interface MetricSubscriber {
 
     /**
      * This method is called at the end of each time step to notify the

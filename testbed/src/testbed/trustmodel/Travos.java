@@ -10,8 +10,8 @@ import org.apache.commons.math.distribution.BetaDistributionImpl;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -48,10 +48,10 @@ import testbed.interfaces.Opinion;
  * 
  */
 public class Travos extends AbstractTrustModel<Double> {
-    protected static final ICondition<Double> VAL_MULTPLIER, VAL_THRESHOLD;
+    protected static final ParameterCondition<Double> VAL_MULTPLIER, VAL_THRESHOLD;
 
     static {
-	VAL_MULTPLIER = new ICondition<Double>() {
+	VAL_MULTPLIER = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 1 || var > 50)
@@ -62,7 +62,7 @@ public class Travos extends AbstractTrustModel<Double> {
 	    }
 	};
 
-	VAL_THRESHOLD = new ICondition<Double>() {
+	VAL_THRESHOLD = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -418,7 +418,7 @@ public class Travos extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new TravosGUI();
     }
 

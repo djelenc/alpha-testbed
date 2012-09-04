@@ -14,10 +14,10 @@ import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.RandomDeception;
 import testbed.deceptionmodel.Silent;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IScenario;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.Scenario;
 import testbed.interfaces.Opinion;
 
 /**
@@ -29,11 +29,11 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class RandomMultiService extends AbstractScenario implements IScenario {
+public class RandomMultiService extends AbstractScenario implements Scenario {
     protected int time;
 
     protected Map<Integer, Double> capabilities;
-    protected Map<Integer, IDeceptionModel> deceptionModels;
+    protected Map<Integer, DeceptionModel> deceptionModels;
     protected Set<Integer> agents, services;
 
     protected double sd_i, sd_o, posExCoef, negExCoef;
@@ -44,11 +44,11 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
     @Override
     public void initialize(Object... parameters) {
 	capabilities = new LinkedHashMap<Integer, Double>();
-	deceptionModels = new LinkedHashMap<Integer, IDeceptionModel>();
+	deceptionModels = new LinkedHashMap<Integer, DeceptionModel>();
 	agents = new LinkedHashSet<Integer>();
 	services = new LinkedHashSet<Integer>();
 
-	ICondition<Integer> validatorSize = new ICondition<Integer>() {
+	ParameterCondition<Integer> validatorSize = new ParameterCondition<Integer>() {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
@@ -62,7 +62,7 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
 	int numAgents = Utils.extractParameter(validatorSize, 0, parameters);
 	int numServices = Utils.extractParameter(validatorSize, 1, parameters);
 
-	ICondition<Double> validator = new ICondition<Double>() {
+	ParameterCondition<Double> validator = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
@@ -77,15 +77,15 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
 	sd_o = Utils.extractParameter(validator, 3, parameters);
 
 	// PMF for assigning deception models
-	TreeMap<IDeceptionModel, Double> dmPMF = new TreeMap<IDeceptionModel, Double>(
+	TreeMap<DeceptionModel, Double> dmPMF = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	dmPMF.putAll(Utils.extractParameter(
-		new ICondition<Map<IDeceptionModel, Double>>() {
+		new ParameterCondition<Map<DeceptionModel, Double>>() {
 		    @Override
-		    public void eval(Map<IDeceptionModel, Double> var) {
+		    public void eval(Map<DeceptionModel, Double> var) {
 			double sum = 0;
 
-			for (Map.Entry<IDeceptionModel, Double> pair : var
+			for (Map.Entry<DeceptionModel, Double> pair : var
 				.entrySet()) {
 			    sum += pair.getValue();
 			}
@@ -103,7 +103,7 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
 	    services.add(i);
 	}
 
-	final ICondition<Double> validatorExagg = new ICondition<Double>() {
+	final ParameterCondition<Double> validatorExagg = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -135,7 +135,7 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
 		// assign capability
 		capabilities.put(key, generator.nextDoubleFromTo(0, 1));
 
-		final IDeceptionModel model = generator.fromWeights(dmPMF);
+		final DeceptionModel model = generator.fromWeights(dmPMF);
 
 		if (model instanceof PositiveExaggeration) {
 		    model.initialize(posExCoef);
@@ -158,7 +158,7 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
 	Set<Opinion> opinions = new HashSet<Opinion>();
 
 	Opinion opinion = null;
-	IDeceptionModel deceptionModel = null;
+	DeceptionModel deceptionModel = null;
 	double cap, itd;
 	int key1, key2;
 
@@ -255,7 +255,7 @@ public class RandomMultiService extends AbstractScenario implements IScenario {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new RandomMultiServiceGUI();
     }
 

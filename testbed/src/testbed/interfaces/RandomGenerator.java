@@ -9,7 +9,7 @@ import java.util.TreeMap;
  * @author David
  * 
  */
-public interface IRandomGenerator {
+public interface RandomGenerator {
 
     /**
      * Generates a random number between [0, 1] using a truncated normal

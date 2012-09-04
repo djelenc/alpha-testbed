@@ -8,7 +8,7 @@ import java.util.Map;
  * of this interface.
  * 
  */
-public interface IPartnerSelection {
+public interface PartnerSelection {
 
     /**
      * Sets the next interaction partners for the given services.

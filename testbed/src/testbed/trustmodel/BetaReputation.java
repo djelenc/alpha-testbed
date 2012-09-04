@@ -7,8 +7,8 @@ import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -25,7 +25,7 @@ import testbed.interfaces.Opinion;
 public class BetaReputation extends AbstractTrustModel<Double> {
 
     protected static final String EX_FF = "The forgetting factor must be a between 0 and 1 inclusively, but was %.2f";
-    protected static final ICondition<Double> VAL_FF;
+    protected static final ParameterCondition<Double> VAL_FF;
 
     protected int time = 0;
 
@@ -38,7 +38,7 @@ public class BetaReputation extends AbstractTrustModel<Double> {
     public Opinion[][] opinions = null;
 
     static {
-	VAL_FF = new ICondition<Double>() {
+	VAL_FF = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -254,7 +254,7 @@ public class BetaReputation extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new BetaReputationGUI();
     }
 

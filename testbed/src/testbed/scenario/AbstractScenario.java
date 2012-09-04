@@ -1,12 +1,12 @@
 package testbed.scenario;
 
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IRandomGenerator;
-import testbed.interfaces.IScenario;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.Scenario;
 
-public abstract class AbstractScenario implements IScenario {
+public abstract class AbstractScenario implements Scenario {
 
-    protected IRandomGenerator generator;
+    protected RandomGenerator generator;
 
     @Override
     public String toString() {
@@ -14,12 +14,12 @@ public abstract class AbstractScenario implements IScenario {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return null;
     }
 
     @Override
-    public void setRandomGenerator(IRandomGenerator generator) {
+    public void setRandomGenerator(RandomGenerator generator) {
 	this.generator = generator;
     }
 }

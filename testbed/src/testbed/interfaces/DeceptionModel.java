@@ -1,6 +1,6 @@
 package testbed.interfaces;
 
-public interface IDeceptionModel {
+public interface DeceptionModel {
 
     public void initialize(Object... params);
 

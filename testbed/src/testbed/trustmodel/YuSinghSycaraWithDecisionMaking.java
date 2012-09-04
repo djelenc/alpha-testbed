@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.common.PartnerSelectionTemplates;
-import testbed.interfaces.IDecisionMaking;
+import testbed.interfaces.DecisionMaking;
 
 /**
  * Trust model on the basis of the {@link YuSinghSycara} that supports selection
@@ -19,7 +19,7 @@ import testbed.interfaces.IDecisionMaking;
  * 
  */
 public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
-	IDecisionMaking {
+	DecisionMaking {
 
     protected int time;
 

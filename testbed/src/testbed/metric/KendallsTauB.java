@@ -3,7 +3,7 @@ package testbed.metric;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import testbed.interfaces.IRankingMetric;
+import testbed.interfaces.RankingMetric;
 
 /**
  * Kendall's Tau-b metric
@@ -11,7 +11,7 @@ import testbed.interfaces.IRankingMetric;
  * @author David
  * 
  */
-public class KendallsTauB extends AbstractMetric implements IRankingMetric {
+public class KendallsTauB extends AbstractMetric implements RankingMetric {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,

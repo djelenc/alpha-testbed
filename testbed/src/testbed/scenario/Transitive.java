@@ -13,10 +13,10 @@ import testbed.deceptionmodel.Complementary;
 import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IScenario;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.Scenario;
 import testbed.interfaces.Opinion;
 
 /**
@@ -47,13 +47,13 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class Transitive extends AbstractScenario implements IScenario {
+public class Transitive extends AbstractScenario implements Scenario {
 
-    protected static final ICondition<Integer> VAL_SIZE;
-    protected static final ICondition<Double> VAL_SD, VAL_DENS;
+    protected static final ParameterCondition<Integer> VAL_SIZE;
+    protected static final ParameterCondition<Double> VAL_SD, VAL_DENS;
 
     static {
-	VAL_SIZE = new ICondition<Integer>() {
+	VAL_SIZE = new ParameterCondition<Integer>() {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
@@ -64,7 +64,7 @@ public class Transitive extends AbstractScenario implements IScenario {
 	    }
 	};
 
-	VAL_DENS = new ICondition<Double>() {
+	VAL_DENS = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -75,7 +75,7 @@ public class Transitive extends AbstractScenario implements IScenario {
 	    }
 	};
 
-	VAL_SD = new ICondition<Double>() {
+	VAL_SD = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
@@ -97,7 +97,7 @@ public class Transitive extends AbstractScenario implements IScenario {
     protected Map<Integer, Double> capabilities;
 
     // Deception models
-    protected IDeceptionModel[][] dms;
+    protected DeceptionModel[][] dms;
 
     protected int time;
     protected double sd_i, sd_o;
@@ -194,14 +194,14 @@ public class Transitive extends AbstractScenario implements IScenario {
      *            Percentage of all possible opinions that will be generated
      * @return
      */
-    public IDeceptionModel[][] assignDeceptionModels(Set<Integer> agents,
+    public DeceptionModel[][] assignDeceptionModels(Set<Integer> agents,
 	    Map<Integer, Double> capabilities, double opinionDensity) {
 
-	final IDeceptionModel[][] dms = new IDeceptionModel[agents.size()][agents
+	final DeceptionModel[][] dms = new DeceptionModel[agents.size()][agents
 		.size()];
-	final IDeceptionModel truthful = new Truthful();
-	final IDeceptionModel liar = new Complementary();
-	final IDeceptionModel silent = new Silent();
+	final DeceptionModel truthful = new Truthful();
+	final DeceptionModel liar = new Complementary();
+	final DeceptionModel silent = new Silent();
 
 	for (int i = 0; i < dms.length; i++) {
 	    final double cap = capabilities.get(i);
@@ -243,15 +243,15 @@ public class Transitive extends AbstractScenario implements IScenario {
      * @param opinionDensity
      * @return
      */
-    public IDeceptionModel[][] assignDeceptionModelsTenative(
+    public DeceptionModel[][] assignDeceptionModelsTenative(
 	    Set<Integer> agents, Map<Integer, Double> capabilities,
 	    double opinionDensity) {
 
-	IDeceptionModel[][] dms = new IDeceptionModel[agents.size()][agents
+	DeceptionModel[][] dms = new DeceptionModel[agents.size()][agents
 		.size()];
-	final IDeceptionModel truthful = new Truthful();
-	final IDeceptionModel liar = new Complementary();
-	final IDeceptionModel silent = new Silent();
+	final DeceptionModel truthful = new Truthful();
+	final DeceptionModel liar = new Complementary();
+	final DeceptionModel silent = new Silent();
 	double cap;
 	long numTruthful;
 	int assignedTruthful = 0;
@@ -315,7 +315,7 @@ public class Transitive extends AbstractScenario implements IScenario {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new TransitiveGUI();
     }
 

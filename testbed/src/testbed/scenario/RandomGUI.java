@@ -28,8 +28,8 @@ import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.gui.WizardPanelDescriptor;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParametersPanel;
 
 /**
  * Builds a GUI for the {@link Random} scenario.
@@ -37,10 +37,10 @@ import testbed.interfaces.IParametersPanel;
  * @author David
  * 
  */
-public class RandomGUI extends JPanel implements IParametersPanel {
+public class RandomGUI extends JPanel implements ParametersPanel {
     protected static final long serialVersionUID = -155882645839798087L;
 
-    protected Map<IDeceptionModel, JSpinner> dmsPMF;
+    protected Map<DeceptionModel, JSpinner> dmsPMF;
     protected JSpinner numOfAgents, sdExperiences, sdOpinions, posExCoef,
 	    negExCoef, interDens;
 
@@ -51,7 +51,7 @@ public class RandomGUI extends JPanel implements IParametersPanel {
     public void initialize(Observer o, Object... params) {
 	this.observer = o;
 	this.cl = (ClassLoader) params[0];
-	this.dmsPMF = new HashMap<IDeceptionModel, JSpinner>();
+	this.dmsPMF = new HashMap<DeceptionModel, JSpinner>();
 
 	JPanel contentPanel = getContentPanel();
 	contentPanel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
@@ -201,8 +201,8 @@ public class RandomGUI extends JPanel implements IParametersPanel {
 	JSpinner tf = null;
 
 	// Distribution of deception models
-	for (IDeceptionModel dm : ClassLoaderUtils.lookUp(
-		IDeceptionModel.class, cl)) {
+	for (DeceptionModel dm : ClassLoaderUtils.lookUp(
+		DeceptionModel.class, cl)) {
 	    lbl = new JLabel(dm + ":  ");
 	    c.fill = GridBagConstraints.NONE;
 	    c.anchor = GridBagConstraints.LINE_END;
@@ -290,12 +290,12 @@ public class RandomGUI extends JPanel implements IParametersPanel {
      * 
      * @return
      */
-    protected Map<IDeceptionModel, Double> getDeceptionModelsPMF() {
-	Map<IDeceptionModel, Double> pmf = new HashMap<IDeceptionModel, Double>();
+    protected Map<DeceptionModel, Double> getDeceptionModelsPMF() {
+	Map<DeceptionModel, Double> pmf = new HashMap<DeceptionModel, Double>();
 
 	double val = 0;
 
-	for (Entry<IDeceptionModel, JSpinner> t : dmsPMF.entrySet()) {
+	for (Entry<DeceptionModel, JSpinner> t : dmsPMF.entrySet()) {
 	    val = Double.parseDouble(String.valueOf(t.getValue().getValue()));
 
 	    if (val > 0)
@@ -324,7 +324,7 @@ public class RandomGUI extends JPanel implements IParametersPanel {
 	boolean valid = true;
 
 	try {
-	    for (Entry<IDeceptionModel, JSpinner> t : dmsPMF.entrySet())
+	    for (Entry<DeceptionModel, JSpinner> t : dmsPMF.entrySet())
 		sum += Double.parseDouble(String.valueOf(t.getValue()
 			.getValue()));
 	} catch (Exception e) {

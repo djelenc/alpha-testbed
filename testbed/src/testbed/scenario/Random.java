@@ -18,10 +18,10 @@ import testbed.deceptionmodel.RandomDeception;
 import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IScenario;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.Scenario;
 import testbed.interfaces.Opinion;
 
 /**
@@ -50,7 +50,7 @@ import testbed.interfaces.Opinion;
  * <li>0: (int) number of agents
  * <li>1: (double) standard deviation for generating experiences
  * <li>2: (double) standard deviation for generation opinions
- * <li>3: (Map<{@link IDeceptionModel}, Double>) distribution of deception
+ * <li>3: (Map<{@link DeceptionModel}, Double>) distribution of deception
  * models
  * <li>4: (double) positive exaggeration coefficient
  * <li>5: (double) negative exaggeration coefficient
@@ -61,7 +61,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class Random extends AbstractScenario implements IScenario {
+public class Random extends AbstractScenario implements Scenario {
     protected static final String DENS_EX = "The density must be between 0 and 1 inclusively, but was %.2f";
     protected static final String DM_EX = "Could not get deception model for agent %d (%d total agents) from %s";
     protected static final String TOTAL_PROB_EX = "The sum of probabilities must be %.2f, but was %.2f.";
@@ -69,14 +69,14 @@ public class Random extends AbstractScenario implements IScenario {
     protected static final String ST_DEV_EX = "The standard deviation must be a non-negative double, but was %.2f";
     protected static final String AGENT_NUM_EX = "The number of agents and services must be positive integer, but was %d";
 
-    protected final static ICondition<Integer> VAL_SIZE;
-    protected final static ICondition<Double> VAL_SD, VAL_EXAGG, VAL_DENS;
-    protected final static ICondition<Map<IDeceptionModel, Double>> VAL_PROB;
+    protected final static ParameterCondition<Integer> VAL_SIZE;
+    protected final static ParameterCondition<Double> VAL_SD, VAL_EXAGG, VAL_DENS;
+    protected final static ParameterCondition<Map<DeceptionModel, Double>> VAL_PROB;
 
     protected static final Set<Integer> SERVICES = new HashSet<Integer>();
 
     static {
-	VAL_SIZE = new ICondition<Integer>() {
+	VAL_SIZE = new ParameterCondition<Integer>() {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
@@ -85,7 +85,7 @@ public class Random extends AbstractScenario implements IScenario {
 	    }
 	};
 
-	VAL_SD = new ICondition<Double>() {
+	VAL_SD = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
@@ -94,7 +94,7 @@ public class Random extends AbstractScenario implements IScenario {
 	    }
 	};
 
-	VAL_EXAGG = new ICondition<Double>() {
+	VAL_EXAGG = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -103,12 +103,12 @@ public class Random extends AbstractScenario implements IScenario {
 	    }
 	};
 
-	VAL_PROB = new ICondition<Map<IDeceptionModel, Double>>() {
+	VAL_PROB = new ParameterCondition<Map<DeceptionModel, Double>>() {
 	    @Override
-	    public void eval(Map<IDeceptionModel, Double> var) {
+	    public void eval(Map<DeceptionModel, Double> var) {
 		double sum = 0;
 
-		for (Map.Entry<IDeceptionModel, Double> pair : var.entrySet()) {
+		for (Map.Entry<DeceptionModel, Double> pair : var.entrySet()) {
 		    sum += pair.getValue();
 		}
 
@@ -118,7 +118,7 @@ public class Random extends AbstractScenario implements IScenario {
 	    }
 	};
 
-	VAL_DENS = new ICondition<Double>() {
+	VAL_DENS = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -133,7 +133,7 @@ public class Random extends AbstractScenario implements IScenario {
     protected int time;
 
     protected Map<Integer, Double> capabilities;
-    protected Map<Integer, IDeceptionModel> deceptionModels;
+    protected Map<Integer, DeceptionModel> deceptionModels;
     protected Set<Integer> agents;
 
     protected double sd_i, sd_o, posExCoef, negExCoef, interDens;
@@ -144,7 +144,7 @@ public class Random extends AbstractScenario implements IScenario {
     @Override
     public void initialize(Object... parameters) {
 	capabilities = new LinkedHashMap<Integer, Double>();
-	deceptionModels = new LinkedHashMap<Integer, IDeceptionModel>();
+	deceptionModels = new LinkedHashMap<Integer, DeceptionModel>();
 	agents = new LinkedHashSet<Integer>();
 	partners = new ArrayList<Integer>();
 	time = 0;
@@ -156,7 +156,7 @@ public class Random extends AbstractScenario implements IScenario {
 
 	// PMF for assigning deception models.
 	// We must use TreeMap to ensure deterministic iteration over it
-	TreeMap<IDeceptionModel, Double> dmPMF = new TreeMap<IDeceptionModel, Double>(
+	TreeMap<DeceptionModel, Double> dmPMF = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 
 	dmPMF.putAll(Utils.extractParameter(VAL_PROB, 3, parameters));
@@ -165,7 +165,7 @@ public class Random extends AbstractScenario implements IScenario {
 	negExCoef = Utils.extractParameter(VAL_EXAGG, 5, parameters);
 
 	// initialize deception models
-	for (Map.Entry<IDeceptionModel, Double> dm : dmPMF.entrySet()) {
+	for (Map.Entry<DeceptionModel, Double> dm : dmPMF.entrySet()) {
 	    if (dm.getKey() instanceof PositiveExaggeration) {
 		dm.getKey().initialize(posExCoef);
 	    } else if (dm.getKey() instanceof NegativeExaggeration) {
@@ -205,20 +205,20 @@ public class Random extends AbstractScenario implements IScenario {
      *            The probability mass function of deception models
      * @return
      */
-    public IDeceptionModel getDM(int agent, int numAgents,
-	    TreeMap<IDeceptionModel, Double> dmPMF) {
-	TreeMap<IDeceptionModel, Integer> cumulative = new TreeMap<IDeceptionModel, Integer>(
+    public DeceptionModel getDM(int agent, int numAgents,
+	    TreeMap<DeceptionModel, Double> dmPMF) {
+	TreeMap<DeceptionModel, Integer> cumulative = new TreeMap<DeceptionModel, Integer>(
 		new LexiographicComparator());
-	IDeceptionModel dm;
+	DeceptionModel dm;
 	float previous = 0;
 
-	for (Entry<IDeceptionModel, Double> d : dmPMF.entrySet()) {
+	for (Entry<DeceptionModel, Double> d : dmPMF.entrySet()) {
 	    previous += d.getValue();
 	    dm = d.getKey();
 	    cumulative.put(dm, Math.round(previous * numAgents));
 	}
 
-	for (Entry<IDeceptionModel, Integer> d : cumulative.entrySet()) {
+	for (Entry<DeceptionModel, Integer> d : cumulative.entrySet()) {
 	    if (agent < d.getValue()) {
 		return d.getKey();
 	    }
@@ -233,7 +233,7 @@ public class Random extends AbstractScenario implements IScenario {
 	Set<Opinion> opinions = new HashSet<Opinion>();
 
 	Opinion opinion = null;
-	IDeceptionModel deceptionModel = null;
+	DeceptionModel deceptionModel = null;
 	double cap, itd;
 
 	for (int agent1 : agents) {
@@ -303,7 +303,7 @@ public class Random extends AbstractScenario implements IScenario {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new RandomGUI();
     }
 
