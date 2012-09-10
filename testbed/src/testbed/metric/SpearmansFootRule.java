@@ -18,12 +18,12 @@ public class SpearmansFootRule extends AbstractMetric implements RankingMetric {
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> rankings,
 	    Map<Integer, Double> capabilities) {
-	final Map<Integer, Number> data = fractionalRanking(rankings);
-	final Map<Integer, Number> truth = fractionalRanking(capabilities);
+	final Map<Integer, Double> data = fractionalRanking(rankings);
+	final Map<Integer, Double> truth = fractionalRanking(capabilities);
 
 	double squaredSum = 0;
 
-	for (Map.Entry<Integer, Number> e : data.entrySet()) {
+	for (Map.Entry<Integer, Double> e : data.entrySet()) {
 	    final int agent = e.getKey();
 	    final double dataRank = e.getValue().doubleValue();
 	    final double truthRank = truth.get(agent).doubleValue();

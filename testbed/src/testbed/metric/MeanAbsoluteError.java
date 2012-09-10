@@ -42,9 +42,9 @@ public class MeanAbsoluteError extends AbstractMetric implements RankingMetric {
 		throw UP;
 
 	    final Double capability = capabilities.get(e.getKey());
-	    final double difference = capability - trust;
+	    final double error = Math.abs(capability - trust);
 
-	    sumOfErrors += Math.abs(difference);
+	    sumOfErrors += error;
 	}
 
 	return sumOfErrors / capabilities.size();

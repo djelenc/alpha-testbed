@@ -97,7 +97,7 @@ public abstract class AbstractMetric implements Metric {
      * @return A map of rankings, where keys represent agents and mapped values
      *         their rankings.
      */
-    public <T extends Comparable<T>> Map<Integer, Number> standardRankings(
+    public <T extends Comparable<T>> Map<Integer, Number> standardRanking(
 	    Map<Integer, T> estimations) {
 	final PriorityQueue<Tuple<Integer, T>> pq = new PriorityQueue<Tuple<Integer, T>>(
 		100, Collections.reverseOrder());
@@ -197,17 +197,17 @@ public abstract class AbstractMetric implements Metric {
      * @return A map of rankings, where keys represent agents and mapped values
      *         their rankings.
      */
-    public <T extends Comparable<T>> Map<Integer, Number> fractionalRanking(
+    public <T extends Comparable<T>> Map<Integer, Double> fractionalRanking(
 	    Map<Integer, T> estimations) {
 
-	final Map<Integer, Number> standard = standardRankings(estimations);
+	final Map<Integer, Number> standard = standardRanking(estimations);
 	final Map<Integer, Number> modified = modifiedRanking(estimations);
 
-	final Map<Integer, Number> rankings = new LinkedHashMap<Integer, Number>();
+	final Map<Integer, Double> rankings = new LinkedHashMap<Integer, Double>();
 
 	for (Map.Entry<Integer, Number> e : standard.entrySet()) {
-	    final int agent = e.getKey();
-	    final Number rank = (e.getValue().doubleValue() + modified.get(
+	    final Integer agent = e.getKey();
+	    final Double rank = (e.getValue().doubleValue() + modified.get(
 		    agent).doubleValue()) / 2d;
 	    rankings.put(agent, rank);
 	}
