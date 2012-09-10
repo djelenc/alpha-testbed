@@ -5,29 +5,20 @@ import java.util.Map;
 import testbed.interfaces.RankingMetric;
 
 /**
- * Euclidean difference between calculated trust values and capabilities.
+ * Mean Absolute Error (MAE) between calculated trust values and capabilities.
  * 
  * <p>
- * The metric calculates the Euclidean distance between the actual capabilities
- * and the calculated trust values. The trust values have to be expressed in
- * floating point numbers from [0, 1].
+ * The metric calculates the the mean absolute error between the actual
+ * capabilities and the calculated trust values. The trust values have to be
+ * expressed in floating point numbers from [0, 1].
  * 
  * <p>
- * This metric is different from other metrics in several aspects:
- * <ul>
- * <li>It requires that trust is expressed in floating point numbers between 0
- * and 1, inclusively.
- * <li>It has a minimum value, but no maximum value.
- * <li>It is inverted -- small values mean better results. Consequently, the
- * minimum value also represents the perfect score (a trust model that would
- * compute trust values that are exactly the same as the actual capabilities
- * would achieve the score of 0.)
- * </ul>
+ * The metric is inverted -- smaller values mean better results.
  * 
  * @author David
  * 
  */
-public class Euclidean extends AbstractMetric implements RankingMetric {
+public class MeanAbsoluteError extends AbstractMetric implements RankingMetric {
     private static final String INCOMPATIBLE_METRIC = "Metric requires that trust is computed in floating point numbers from [0, 1].";
     private static final IllegalArgumentException UP = new IllegalArgumentException(
 	    INCOMPATIBLE_METRIC);
@@ -39,7 +30,7 @@ public class Euclidean extends AbstractMetric implements RankingMetric {
 	    return Double.POSITIVE_INFINITY;
 	}
 
-	double sumofSquares = 0;
+	double sumOfErrors = 0;
 
 	for (Map.Entry<Integer, T> e : rankings.entrySet()) {
 	    if (!(e.getValue() instanceof Number))
@@ -53,14 +44,14 @@ public class Euclidean extends AbstractMetric implements RankingMetric {
 	    final Double capability = capabilities.get(e.getKey());
 	    final double difference = capability - trust;
 
-	    sumofSquares += difference * difference;
+	    sumOfErrors += Math.abs(difference);
 	}
 
-	return Math.sqrt(sumofSquares);
+	return sumOfErrors / capabilities.size();
     }
 
     @Override
     public String toString() {
-	return "Euclidean difference";
+	return "Mean Absolute Error";
     }
 }

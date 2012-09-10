@@ -1,5 +1,6 @@
 testbed.metric.KendallsTauB
 testbed.metric.SpearmansFootRule
+testbed.metric.MeanAbsoluteError
 testbed.metric.Euclidean
 testbed.metric.Accuracy
 testbed.metric.AccuracyTopHalf
