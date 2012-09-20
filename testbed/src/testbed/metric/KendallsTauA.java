@@ -6,12 +6,12 @@ import java.util.Map.Entry;
 import testbed.interfaces.RankingMetric;
 
 /**
- * Kendall's Tau-b metric
+ * Kendall's Tau-a metric
  * 
  * @author David
  * 
  */
-public class KendallsTauB extends AbstractMetric implements RankingMetric {
+public class KendallsTauA extends AbstractMetric implements RankingMetric {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,
@@ -22,7 +22,7 @@ public class KendallsTauB extends AbstractMetric implements RankingMetric {
 	    return 1;
 	}
 
-	int concordant = 0, discordant = 0, tiedRanks = 0, tiedCapabilities = 0;
+	int concordant = 0, discordant = 0;
 
 	for (Entry<Integer, T> rank1 : trust.entrySet()) {
 	    for (Entry<Integer, T> rank2 : trust.entrySet()) {
@@ -39,26 +39,19 @@ public class KendallsTauB extends AbstractMetric implements RankingMetric {
 			concordant++;
 		    } else if (rankDiff * capDiff < 0) {
 			discordant++;
-		    } else {
-			if (rankDiff == 0)
-			    tiedRanks++;
-
-			if (capDiff == 0)
-			    tiedCapabilities++;
 		    }
 		}
 	    }
 	}
 
 	final double n = trust.size() * (trust.size() - 1d) / 2d;
-	final double metric = (concordant - discordant)
-		/ Math.sqrt((n - tiedRanks) * (n - tiedCapabilities));
+	final double metric = (concordant - discordant) / n;
 
 	return (metric + 1d) / 2d;
     }
 
     @Override
     public String toString() {
-	return "Kendall's tau-b";
+	return "Kendall's Tau-A";
     }
 }

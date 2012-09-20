@@ -1,13 +1,11 @@
 package testbed.test;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import testbed.interfaces.Metric;
@@ -16,6 +14,7 @@ import testbed.interfaces.UtilityMetric;
 import testbed.metric.Accuracy;
 import testbed.metric.Coverage;
 import testbed.metric.CumulativeNormalizedUtility;
+import testbed.metric.KendallsTauA;
 import testbed.metric.KendallsTauB;
 import testbed.metric.SpearmansFootRule;
 
@@ -43,11 +42,11 @@ public class MetricsTest {
 	cpbs.put(4, 0.7);
     }
 
-    @Ignore
     @Test
     public void pairwiseInversionsWithTies() {
 	RankingMetric acc = new Accuracy();
 	RankingMetric ktb = new KendallsTauB();
+	RankingMetric kta = new KendallsTauA();
 	RankingMetric sfr = new SpearmansFootRule();
 
 	cpbs.clear();
@@ -56,10 +55,6 @@ public class MetricsTest {
 	cpbs.put(3, 3d);
 
 	Map<Integer, Integer> trust = new LinkedHashMap<Integer, Integer>();
-
-	ArrayList<Double> listAcc = new ArrayList<Double>();
-	ArrayList<Double> listKtb = new ArrayList<Double>();
-	ArrayList<Double> listSfr = new ArrayList<Double>();
 
 	for (int i = 1; i <= 3; i++) {
 	    for (int j = 1; j <= 3; j++) {
@@ -70,23 +65,16 @@ public class MetricsTest {
 
 		    final double m_acc = acc.evaluate(trust, cpbs);
 		    final double m_ktb = ktb.evaluate(trust, cpbs);
+		    final double m_kta = kta.evaluate(trust, cpbs);
 		    final double m_sfr = sfr.evaluate(trust, cpbs);
 
-		    if (i != j || j != k) {
-			listAcc.add(m_acc);
-			listKtb.add(m_ktb);
-			listSfr.add(m_sfr);
-		    }
-
-		    System.out.printf("123:%d%d%d -> Acc: %.2f, KTB: %.2f\n",
-			    i, j, k, m_acc, m_ktb, m_sfr);
+		    if (Math.abs(m_kta - m_acc) > 0.0001)
+			System.out
+				.printf("123:%d%d%d -> Acc: %.2f, KTA: %.2f, KTB: %.2f, SFR: %.2f\n",
+					i, j, k, m_acc, m_kta, m_ktb, m_sfr);
 		}
 	    }
 	}
-
-	System.out.println(listAcc);
-	System.out.println(listKtb);
-	System.out.println(listSfr);
     }
 
     @Test
