@@ -33,7 +33,7 @@ public class SpearmansFootRule extends AbstractMetric implements RankingMetric {
 
 	final int n = data.size();
 
-	return (2d - 6 * squaredSum / n / (n * n - 1d)) / 2d;
+	return 1d - 3d * squaredSum / n / (n * n - 1d);
     }
 
     @Override

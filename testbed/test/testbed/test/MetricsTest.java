@@ -1,11 +1,13 @@
 package testbed.test;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import testbed.interfaces.Metric;
@@ -15,6 +17,7 @@ import testbed.metric.Accuracy;
 import testbed.metric.Coverage;
 import testbed.metric.CumulativeNormalizedUtility;
 import testbed.metric.KendallsTauB;
+import testbed.metric.SpearmansFootRule;
 
 public class MetricsTest {
 
@@ -38,6 +41,110 @@ public class MetricsTest {
 	cpbs.put(2, 0.9);
 	cpbs.put(3, 0.8);
 	cpbs.put(4, 0.7);
+    }
+
+    @Ignore
+    @Test
+    public void pairwiseInversionsWithTies() {
+	RankingMetric acc = new Accuracy();
+	RankingMetric ktb = new KendallsTauB();
+	RankingMetric sfr = new SpearmansFootRule();
+
+	cpbs.clear();
+	cpbs.put(1, 1d);
+	cpbs.put(2, 2d);
+	cpbs.put(3, 3d);
+
+	Map<Integer, Integer> trust = new LinkedHashMap<Integer, Integer>();
+
+	ArrayList<Double> listAcc = new ArrayList<Double>();
+	ArrayList<Double> listKtb = new ArrayList<Double>();
+	ArrayList<Double> listSfr = new ArrayList<Double>();
+
+	for (int i = 1; i <= 3; i++) {
+	    for (int j = 1; j <= 3; j++) {
+		for (int k = 1; k <= 3; k++) {
+		    trust.put(1, i);
+		    trust.put(2, j);
+		    trust.put(3, k);
+
+		    final double m_acc = acc.evaluate(trust, cpbs);
+		    final double m_ktb = ktb.evaluate(trust, cpbs);
+		    final double m_sfr = sfr.evaluate(trust, cpbs);
+
+		    if (i != j || j != k) {
+			listAcc.add(m_acc);
+			listKtb.add(m_ktb);
+			listSfr.add(m_sfr);
+		    }
+
+		    System.out.printf("123:%d%d%d -> Acc: %.2f, KTB: %.2f\n",
+			    i, j, k, m_acc, m_ktb, m_sfr);
+		}
+	    }
+	}
+
+	System.out.println(listAcc);
+	System.out.println(listKtb);
+	System.out.println(listSfr);
+    }
+
+    @Test
+    public void pairwiseInversionsNoTies() {
+	RankingMetric acc = new Accuracy();
+	RankingMetric ktb = new KendallsTauB();
+
+	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+
+	cpbs.clear();
+
+	trust.clear();
+	trust.put(1, 0.1);
+	trust.put(2, 0.2);
+	trust.put(3, 0.3);
+
+	cpbs.clear();
+	cpbs.put(1, 0.00);
+	cpbs.put(2, 0.25);
+	cpbs.put(3, 0.50);
+
+	Assert.assertEquals(acc.evaluate(trust, cpbs),
+		ktb.evaluate(trust, cpbs), 0.001);
+
+	trust.clear();
+	trust.put(1, 0.1);
+	trust.put(3, 0.2);
+	trust.put(2, 0.3);
+	Assert.assertEquals(acc.evaluate(trust, cpbs),
+		ktb.evaluate(trust, cpbs), 0.001);
+
+	trust.clear();
+	trust.put(2, 0.1);
+	trust.put(1, 0.2);
+	trust.put(3, 0.3);
+	Assert.assertEquals(acc.evaluate(trust, cpbs),
+		ktb.evaluate(trust, cpbs), 0.001);
+
+	trust.clear();
+	trust.put(2, 0.1);
+	trust.put(3, 0.2);
+	trust.put(1, 0.3);
+	Assert.assertEquals(acc.evaluate(trust, cpbs),
+		ktb.evaluate(trust, cpbs), 0.001);
+
+	trust.clear();
+	trust.put(3, 0.1);
+	trust.put(1, 0.2);
+	trust.put(2, 0.3);
+	Assert.assertEquals(acc.evaluate(trust, cpbs),
+		ktb.evaluate(trust, cpbs), 0.001);
+
+	trust.clear();
+	trust.put(3, 0.1);
+	trust.put(2, 0.2);
+	trust.put(1, 0.3);
+	Assert.assertEquals(acc.evaluate(trust, cpbs),
+		ktb.evaluate(trust, cpbs), 0.001);
     }
 
     @Test
