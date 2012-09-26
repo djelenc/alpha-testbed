@@ -6,6 +6,7 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import testbed.interfaces.Metric;
@@ -40,6 +41,74 @@ public class MetricsTest {
 	cpbs.put(2, 0.9);
 	cpbs.put(3, 0.8);
 	cpbs.put(4, 0.7);
+    }
+
+    @Ignore
+    @Test
+    public void paperWalkThroughScenario() {
+	RankingMetric kta = new KendallsTauA();
+	UtilityMetric cnu = new CumulativeNormalizedUtility();
+	cnu.initialize();
+	kta.initialize();
+
+	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+
+	cpbs.clear();
+	cpbs.put(1, 0.10);
+	cpbs.put(2, 0.25);
+	cpbs.put(3, 0.50);
+	cpbs.put(4, 0.70);
+	cpbs.put(5, 1.0);
+
+	// start
+	trust.put(1, 0.5);
+	trust.put(2, 0.5);
+	trust.put(3, 0.5);
+	trust.put(4, 0.5);
+	trust.put(5, 0.5);
+
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		0d);
+
+	// time 1
+	trust.put(1, 1.1 / 3d);
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		cnu.evaluate(cpbs, 1));
+
+	// time 2
+	trust.put(2, 1.25 / 3d);
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		cnu.evaluate(cpbs, 2));
+
+	// time 3
+	trust.put(3, 1.5 / 3d);
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		cnu.evaluate(cpbs, 3));
+
+	// time 4
+	trust.put(4, 1.75 / 3d);
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		cnu.evaluate(cpbs, 4));
+
+	// time 5
+	trust.put(5, 2d / 3d);
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		cnu.evaluate(cpbs, 5));
+
+	// time 6
+	trust.put(5, 3d / 4d);
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		cnu.evaluate(cpbs, 5));
+
+	// time 7
+	trust.put(5, 4d / 5d);
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		cnu.evaluate(cpbs, 5));
+
+	// time 8
+	trust.put(5, 5d / 6d);
+	System.out.printf("KTA: %.2f, CNU: %.2f\n", kta.evaluate(trust, cpbs),
+		cnu.evaluate(cpbs, 5));
     }
 
     @Test
