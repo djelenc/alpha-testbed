@@ -19,7 +19,7 @@ public class TravosTMTest {
     @Before
     public void setUp() {
 	tm = new Travos();
-	tm.initialize(5d, 0.95, 0.2);
+	tm.initialize(1d, 1d, 0.95, 0.2);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class TravosTMTest {
     public void walkthroughScenario() {
 	Set<Experience> experiences = new LinkedHashSet<Experience>();
 	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
-	Travos.FACTOR = 1;
+	Travos.OP_FACTOR = 1;
 
 	experiences.clear();
 	opinions.clear();

@@ -86,7 +86,8 @@ public class Travos extends AbstractTrustModel<Double> {
 
     public static double ERROR = 0.2;
     public static double THRESHOLD = 0.95;
-    public static double FACTOR = 5;
+    public static double EXP_FACTOR = 5;
+    public static double OP_FACTOR = 5;
 
     protected static final BetaDistribution BETA = new BetaDistributionImpl(1,
 	    1);
@@ -97,9 +98,10 @@ public class Travos extends AbstractTrustModel<Double> {
 	observations = new LinkedHashMap<Integer, BRSPair[]>();
 	opinions = new Opinion[0][0];
 
-	FACTOR = Utils.extractParameter(VAL_MULTPLIER, 0, params);
-	THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 1, params);
-	ERROR = Utils.extractParameter(VAL_THRESHOLD, 2, params);
+	EXP_FACTOR = Utils.extractParameter(VAL_MULTPLIER, 0, params);
+	OP_FACTOR = Utils.extractParameter(VAL_MULTPLIER, 1, params);
+	THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 2, params);
+	ERROR = Utils.extractParameter(VAL_THRESHOLD, 3, params);
     }
 
     @Override
@@ -111,8 +113,8 @@ public class Travos extends AbstractTrustModel<Double> {
 	for (Experience e : exps) {
 	    BRSPair p = experiences.get(e.agent);
 
-	    final double r = Math.round(FACTOR * e.outcome);
-	    final double s = FACTOR - r;
+	    final double r = Math.round(EXP_FACTOR * e.outcome);
+	    final double s = EXP_FACTOR - r;
 
 	    if (p == null) {
 		p = new BRSPair(r, s);
@@ -130,9 +132,9 @@ public class Travos extends AbstractTrustModel<Double> {
 		    final BRSPair[] obs = observations.get(agent);
 
 		    // determine the bin
-		    final double op_r = Math.round(FACTOR
+		    final double op_r = Math.round(OP_FACTOR
 			    * opinions[agent][e.agent].internalTrustDegree);
-		    final double op_s = FACTOR - op_r;
+		    final double op_s = OP_FACTOR - op_r;
 
 		    final int bin = determineBin(op_r, op_s);
 
@@ -252,9 +254,9 @@ public class Travos extends AbstractTrustModel<Double> {
 		    if (null != o) {
 			agentExists = true;
 			// compute (m, n) from the opinion
-			final double m = Math.round(FACTOR
+			final double m = Math.round(OP_FACTOR
 				* o.internalTrustDegree);
-			final double n = FACTOR - m;
+			final double n = OP_FACTOR - m;
 
 			// determine the bin of this opinion
 			final int bin = determineBin(m, n);
