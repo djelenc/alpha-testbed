@@ -10,7 +10,7 @@ import java.util.Map;
  * @author David
  * 
  */
-public class AccuracyTopHalf extends Accuracy {
+public class KTABottomHalf extends Accuracy {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,
@@ -31,7 +31,7 @@ public class AccuracyTopHalf extends Accuracy {
 		    final Double c1 = capabilities.get(trust1.getKey());
 		    final Double c2 = capabilities.get(trust2.getKey());
 
-		    if (c1 > 0.5 || c2 > 0.5) {
+		    if (c1 <= 0.5 && c2 <= 0.5) {
 			result += evaluatePair(r1, r2, c1, c2);
 			cmpCount += 1;
 		    }
@@ -44,7 +44,7 @@ public class AccuracyTopHalf extends Accuracy {
 
     @Override
     public String toString() {
-	return "Accuracy(0.5)";
+	return "Kendall's Tau-A (<0.5)";
     }
 
 }
