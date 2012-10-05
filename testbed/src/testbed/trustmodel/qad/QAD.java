@@ -1,6 +1,5 @@
 package testbed.trustmodel.qad;
 
-import static testbed.trustmodel.qad.Omega.fromNumeric;
 import static testbed.trustmodel.qad.Omega.normalizedNumeric;
 
 import java.util.Map;
@@ -8,11 +7,11 @@ import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.TrustModel;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.AbstractTrustModel;
 
 /**
  * Qualitative assessment dynamics
@@ -20,7 +19,7 @@ import testbed.trustmodel.AbstractTrustModel;
  * @author David
  * 
  */
-public class QAD extends AbstractTrustModel implements ITrustModel {
+public class QAD implements TrustModel<Omega> {
     // matrix for other agents
     public Omega[][] op;
 
@@ -30,12 +29,18 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
     // operator
     public Operator operator;
 
+    // temporary storage for opinions and experiences
+    private Set<Opinion> opinions;
+    private Set<Experience> experiences;
+
+    protected RandomGenerator generator;
+
     @Override
     public void initialize(Object... params) {
 	op = new Omega[0][0];
 	row = new Omega[0];
 
-	final ICondition<Operator> validator = new ICondition<Operator>() {
+	final ParameterCondition<Operator> validator = new ParameterCondition<Operator>() {
 	    @Override
 	    public void eval(Operator var) {
 
@@ -43,36 +48,45 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
 	};
 
 	operator = Utils.extractParameter(validator, 0, params);
+
+	experiences = null;
+	opinions = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> opinions) {
-	expandArray(exps, opinions);
+    public void processExperiences(Set<Experience> experiences) {
+	this.experiences = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.opinions = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
+	expandArray(experiences, opinions);
 
 	for (Opinion o : opinions)
 	    op[o.agent1][o.agent2] = normalizedNumeric(o.internalTrustDegree);
 
-	for (Experience e : exps)
+	for (Experience e : experiences)
 	    row[e.agent] = normalizedNumeric(e.outcome);
     }
 
-    public Map<Integer, Double> compute(int service) {
-	Map<Integer, Double> newTrust = operator.compute(row, op);
+    @Override
+    public Map<Integer, Omega> getTrust(int service) {
+	Map<Integer, Omega> newTrust = operator.compute(row, op);
 
 	// now update Alpha's row
-	for (Map.Entry<Integer, Double> e : newTrust.entrySet())
-	    row[e.getKey()] = fromNumeric(e.getValue());
+	for (Map.Entry<Integer, Omega> e : newTrust.entrySet())
+	    row[e.getKey()] = e.getValue();
 
 	return newTrust;
     }
 
     @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute(service));
-    }
-
-    @Override
-    public String getName() {
+    public String toString() {
 	return "QAD";
     }
 
@@ -107,7 +121,12 @@ public class QAD extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new QADGUI();
+    }
+
+    @Override
+    public void setRandomGenerator(RandomGenerator generator) {
+	this.generator = generator;
     }
 }

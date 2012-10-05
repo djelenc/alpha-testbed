@@ -2,17 +2,17 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.IMetric;
+import testbed.interfaces.RankingMetric;
 
-public class Coverage extends AbstractMetric implements IMetric {
+public class Coverage extends AbstractMetric implements RankingMetric {
 
     @Override
-    public double evaluate(Map<Integer, Integer> rankings,
+    public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,
 	    Map<Integer, Double> capabilities) {
-	if (rankings.size() == 0) {
+	if (trust.size() == 0) {
 	    return 0;
 	} else {
-	    return ((double) rankings.size()) / capabilities.size();
+	    return ((double) trust.size()) / capabilities.size();
 	}
     }
 }

@@ -14,17 +14,16 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-
 import testbed.gui.WizardPanelDescriptor;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParametersPanel;
 
-public class EigenTrustGUI extends JPanel implements IParametersPanel {
+public class EigenTrustGUI extends JPanel implements ParametersPanel {
 
     private static final long serialVersionUID = -1558821473401798087L;
 
-    private JSpinner weight, expMltpl, opMltpl;
+    protected JSpinner weight, expMltpl, opMltpl;
 
-    private Observer observer;
+    protected Observer observer;
 
     @Override
     public void initialize(Observer o, Object... params) {
@@ -69,15 +68,15 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
 		getOpinionMultiplier() };
     }
 
-    private double getOpinionMultiplier() {
+    protected double getOpinionMultiplier() {
 	return Double.parseDouble(String.valueOf(opMltpl.getValue()));
     }
 
-    private double getExperienceMultiplier() {
+    protected double getExperienceMultiplier() {
 	return Double.parseDouble(String.valueOf(expMltpl.getValue()));
     }
 
-    private double getWeight() {
+    protected double getWeight() {
 	return Double.parseDouble(String.valueOf(weight.getValue()));
     }
 
@@ -86,7 +85,7 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
      * 
      * @return The panel with created elements
      */
-    private JPanel getContentPanel() {
+    protected JPanel getContentPanel() {
 	JPanel panel = new JPanel();
 
 	panel.setLayout(new GridBagLayout());
@@ -122,7 +121,7 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	expMltpl = new JSpinner(new SpinnerNumberModel(5, 1, 50, 1));
+	expMltpl = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
 	((JSpinner.DefaultEditor) expMltpl.getEditor()).getTextField()
 		.setColumns(3);
 	expMltpl.setToolTipText("Multiplier that converts a contionouos interaction outcome from [0, 1] "
@@ -161,10 +160,8 @@ public class EigenTrustGUI extends JPanel implements IParametersPanel {
      * This method invokes the observer's update method. (Observer should be set
      * to a {@link WizardPanelDescriptor} instance.)
      */
-    private void validateParameters() {
-	boolean valid = true;
-
-	observer.update(null, valid);
+    protected void validateParameters() {
+	observer.update(null, true);
     }
 
 }

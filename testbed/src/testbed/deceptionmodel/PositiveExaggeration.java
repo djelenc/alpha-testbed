@@ -1,9 +1,9 @@
 package testbed.deceptionmodel;
 
-import testbed.interfaces.IDeceptionModel;
+import testbed.interfaces.DeceptionModel;
 
 public class PositiveExaggeration extends ExaggerationModel implements
-	IDeceptionModel {
+	DeceptionModel {
 
     @Override
     public double calculate(double value) {
@@ -14,7 +14,7 @@ public class PositiveExaggeration extends ExaggerationModel implements
     }
 
     @Override
-    public String getName() {
+    public String toString() {
 	return "Positive exaggeration";
     }
 }

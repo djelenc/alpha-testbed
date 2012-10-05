@@ -13,8 +13,8 @@ import java.util.Map;
 public enum Operator {
     EXTREME_OPTIMIST, EXTREME_PESSIMIST, CENTRALIST, NON_CENTRALIST, MODERATE_OPTIMIST, MODERATE_PESSIMIST, STABLE;
 
-    public Map<Integer, Double> compute(Omega[] exp, Omega[][] op) {
-	Map<Integer, Double> trust = new HashMap<Integer, Double>();
+    public Map<Integer, Omega> compute(Omega[] exp, Omega[][] op) {
+	Map<Integer, Omega> trust = new HashMap<Integer, Omega>();
 
 	switch (this) {
 	case EXTREME_OPTIMIST:
@@ -53,7 +53,7 @@ public enum Operator {
      * @param trust
      */
     public void extremePessimistic(Omega[] exp, Omega[][] op,
-	    Map<Integer, Double> trust) {
+	    Map<Integer, Omega> trust) {
 	for (int agent2 = 0; agent2 < op.length; agent2++) {
 	    Omega result = null;
 
@@ -82,7 +82,7 @@ public enum Operator {
 	    }
 
 	    if (null != result)
-		trust.put(agent2, result.numeric);
+		trust.put(agent2, result);
 	}
     }
 
@@ -94,7 +94,7 @@ public enum Operator {
      * @param trust
      */
     public void extremeOptimist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Double> trust) {
+	    Map<Integer, Omega> trust) {
 	for (int agent2 = 0; agent2 < op.length; agent2++) {
 	    Omega result = null;
 
@@ -123,7 +123,7 @@ public enum Operator {
 	    }
 
 	    if (null != result)
-		trust.put(agent2, result.numeric);
+		trust.put(agent2, result);
 	}
     }
 
@@ -134,8 +134,7 @@ public enum Operator {
      * @param op
      * @param trust
      */
-    public void centralist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Double> trust) {
+    public void centralist(Omega[] exp, Omega[][] op, Map<Integer, Omega> trust) {
 	for (int agent2 = 0; agent2 < op.length; agent2++) {
 	    double sum = 0;
 	    int count = 0;
@@ -163,7 +162,7 @@ public enum Operator {
 		    result = Omega.fromNumeric(Math.ceil(avg));
 		}
 
-		trust.put(agent2, result.numeric);
+		trust.put(agent2, result);
 	    }
 	}
     }
@@ -176,7 +175,7 @@ public enum Operator {
      * @param trust
      */
     public void nonCentralist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Double> trust) {
+	    Map<Integer, Omega> trust) {
 	for (int agent2 = 0; agent2 < op.length; agent2++) {
 	    double sum = 0;
 	    int count = 0;
@@ -204,7 +203,7 @@ public enum Operator {
 		    result = Omega.fromNumeric(Math.floor(avg));
 		}
 
-		trust.put(agent2, result.numeric);
+		trust.put(agent2, result);
 	    }
 	}
     }
@@ -217,7 +216,7 @@ public enum Operator {
      * @param trust
      */
     public void moderateOptimist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Double> trust) {
+	    Map<Integer, Omega> trust) {
 	for (int agent2 = 0; agent2 < op.length; agent2++) {
 	    double sum = 0;
 	    int count = 0;
@@ -249,9 +248,9 @@ public enum Operator {
 		}
 
 		if (result.numeric <= previous.numeric) {
-		    trust.put(agent2, previous.numeric);
+		    trust.put(agent2, previous);
 		} else {
-		    trust.put(agent2, previous.numeric + 1);
+		    trust.put(agent2, Omega.fromNumeric(previous.numeric + 1d));
 		}
 	    }
 	}
@@ -265,7 +264,7 @@ public enum Operator {
      * @param trust
      */
     public void moderatePessimist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Double> trust) {
+	    Map<Integer, Omega> trust) {
 	for (int agent2 = 0; agent2 < op.length; agent2++) {
 	    double sum = 0;
 	    int count = 0;
@@ -297,9 +296,9 @@ public enum Operator {
 		}
 
 		if (result.numeric >= previous.numeric) {
-		    trust.put(agent2, previous.numeric);
+		    trust.put(agent2, previous);
 		} else {
-		    trust.put(agent2, previous.numeric - 1);
+		    trust.put(agent2, Omega.fromNumeric(previous.numeric - 1));
 		}
 	    }
 	}
@@ -312,13 +311,12 @@ public enum Operator {
      * @param op
      * @param trust
      */
-    public void stable(Omega[] exp, Omega[][] op,
-	    Map<Integer, Double> trust) {
+    public void stable(Omega[] exp, Omega[][] op, Map<Integer, Omega> trust) {
 	for (int agent2 = 0; agent2 < op.length; agent2++) {
 	    final Omega value = exp[agent2];
 
 	    if (null != value)
-		trust.put(agent2, value.numeric);
+		trust.put(agent2, value);
 	}
     }
 }

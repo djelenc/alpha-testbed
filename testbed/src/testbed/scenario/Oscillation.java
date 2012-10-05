@@ -14,9 +14,9 @@ import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -29,14 +29,15 @@ public class Oscillation extends AbstractScenario {
 
     // set of services -- only 1 service
     protected static final Set<Integer> SERVICES = new HashSet<Integer>();
-    protected static final IDeceptionModel SILENT = new Silent();
-    protected static final IDeceptionModel TRUTHFUL = new Truthful();
-    protected static final IDeceptionModel POS_EXAGG = new PositiveExaggeration();
-    protected static final IDeceptionModel NEG_EXAGG = new NegativeExaggeration();
+    protected static final DeceptionModel SILENT = new Silent();
+    protected static final DeceptionModel TRUTHFUL = new Truthful();
+    protected static final DeceptionModel POS_EXAGG = new PositiveExaggeration();
+    protected static final DeceptionModel NEG_EXAGG = new NegativeExaggeration();
 
     // input parameter validators
-    protected static final ICondition<Integer> VAL_SIZE, VAL_CHANGE_INT;
-    protected static final ICondition<Double> VAL_SD, VAL_FRAC;
+    protected static final ParameterCondition<Integer> VAL_SIZE,
+	    VAL_CHANGE_INT;
+    protected static final ParameterCondition<Double> VAL_SD, VAL_FRAC;
 
     // time
     protected int time;
@@ -48,7 +49,7 @@ public class Oscillation extends AbstractScenario {
     protected Map<Integer, Double> capabilities;
 
     // deception models
-    protected IDeceptionModel[][] models;
+    protected DeceptionModel[][] models;
 
     // total number of agents
     protected int numAgents;
@@ -69,7 +70,7 @@ public class Oscillation extends AbstractScenario {
 	POS_EXAGG.initialize(0.5);
 	NEG_EXAGG.initialize(0.5);
 
-	VAL_SIZE = new ICondition<Integer>() {
+	VAL_SIZE = new ParameterCondition<Integer>() {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
@@ -79,7 +80,7 @@ public class Oscillation extends AbstractScenario {
 	    }
 	};
 
-	VAL_SD = new ICondition<Double>() {
+	VAL_SD = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
@@ -89,7 +90,7 @@ public class Oscillation extends AbstractScenario {
 	    }
 	};
 
-	VAL_CHANGE_INT = new ICondition<Integer>() {
+	VAL_CHANGE_INT = new ParameterCondition<Integer>() {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 0 || var > 1000)
@@ -99,7 +100,7 @@ public class Oscillation extends AbstractScenario {
 	    }
 	};
 
-	VAL_FRAC = new ICondition<Double>() {
+	VAL_FRAC = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -147,7 +148,7 @@ public class Oscillation extends AbstractScenario {
 	assignCapabilities(agents, good, bad, capabilities);
 
 	// assign deception models
-	models = new IDeceptionModel[agents.size()][agents.size()];
+	models = new DeceptionModel[agents.size()][agents.size()];
 	assignDeceptionModels(agents, good, bad, models);
 
 	// reset time
@@ -167,7 +168,7 @@ public class Oscillation extends AbstractScenario {
      *            2D array of deception models -- gets mutated
      */
     public void assignDeceptionModels(List<Integer> agents, List<Integer> good,
-	    List<Integer> bad, IDeceptionModel[][] models) {
+	    List<Integer> bad, DeceptionModel[][] models) {
 	boolean neutralReporter, neutralAgent, goodReporter, goodAgent, badReporter, badAgent;
 
 	for (int reporter : agents) {
@@ -229,11 +230,11 @@ public class Oscillation extends AbstractScenario {
 	List<Integer> newBad = new ArrayList<Integer>(good);
 
 	for (int agent : newGood) {
-	    capabilities.put(agent, Utils.randomUnif(0.5, 1));
+	    capabilities.put(agent, generator.nextDoubleFromTo(0.5, 1));
 	}
 
 	for (int agent : newBad) {
-	    capabilities.put(agent, Utils.randomUnif(0, 0.5));
+	    capabilities.put(agent, generator.nextDoubleFromTo(0, 0.5));
 	}
 
 	good.clear();
@@ -258,11 +259,11 @@ public class Oscillation extends AbstractScenario {
 	    List<Integer> bad, Map<Integer, Double> capabilities) {
 	for (int agent : agents) {
 	    if (good.contains(agent)) {
-		capabilities.put(agent, Utils.randomUnif(0.5, 1));
+		capabilities.put(agent, generator.nextDoubleFromTo(0.5, 1));
 	    } else if (bad.contains(agent)) {
-		capabilities.put(agent, Utils.randomUnif(0, 0.5));
+		capabilities.put(agent, generator.nextDoubleFromTo(0, 0.5));
 	    } else {
-		capabilities.put(agent, Utils.randomUnif(0, 1));
+		capabilities.put(agent, generator.nextDoubleFromTo(0, 1));
 	    }
 	}
     }
@@ -295,7 +296,7 @@ public class Oscillation extends AbstractScenario {
 	// define good
 	for (int i = 0; i < numGood; i++) {
 	    do {
-		agent = Utils.randomUnifIndex(0, allAgents.size() - 1);
+		agent = generator.nextIntFromTo(0, allAgents.size() - 1);
 	    } while (good.contains(agent));
 
 	    good.add(agent);
@@ -304,7 +305,7 @@ public class Oscillation extends AbstractScenario {
 	// define bad
 	for (int i = 0; i < numBad; i++) {
 	    do {
-		agent = Utils.randomUnifIndex(0, allAgents.size() - 1);
+		agent = generator.nextIntFromTo(0, allAgents.size() - 1);
 	    } while (good.contains(agent) || bad.contains(agent));
 
 	    bad.add(agent);
@@ -335,11 +336,11 @@ public class Oscillation extends AbstractScenario {
 	for (int reporter : agents) {
 	    for (int agent : agents) {
 		if (reporter != agent) {
-		    final IDeceptionModel dm = models[reporter][agent];
+		    final DeceptionModel dm = models[reporter][agent];
 
 		    if (!(dm instanceof Silent)) {
 			final double cap = capabilities.get(agent);
-			double itd = Utils.randomTND(cap, sd_o);
+			double itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = dm.calculate(itd);
 
 			Opinion o = new Opinion(reporter, agent, 0, time, itd);
@@ -356,13 +357,13 @@ public class Oscillation extends AbstractScenario {
     public Set<Experience> generateExperiences() {
 	Set<Experience> experiences = new HashSet<Experience>();
 	// random agent
-	final int agent = Utils.randomUnifIndex(0, agents.size() - 1);
+	final int agent = generator.nextIntFromTo(0, agents.size() - 1);
 
 	// get its capability
 	final double cap = capabilities.get(agent);
 
 	// generate interaction outcome
-	final double outcome = Utils.randomTND(cap, sd_i);
+	final double outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
 	// create experience tuple and add it to the set
 	experiences.add(new Experience(agent, 0, time, outcome));
@@ -381,7 +382,7 @@ public class Oscillation extends AbstractScenario {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new OscillationGUI();
     }
 }

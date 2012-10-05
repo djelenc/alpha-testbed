@@ -2,15 +2,19 @@ package testbed.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IScenario;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Scenario;
+import testbed.interfaces.TrustModel;
+import testbed.interfaces.UtilityMetric;
 
 /**
  * A base descriptor class used to reference a Component panel for the Wizard,
@@ -19,7 +23,7 @@ import testbed.interfaces.ITrustModel;
 public class WizardPanelDescriptor implements Observer {
 
     private static final String DEFAULT_IDENTIFIER = "DefaultIdentifier";
-    private static final String TITLE = "<html><h1>%s</h1></html>";
+    private static final String TITLE = "<html><h2>%s</h2></html>";
 
     /**
      * Identifier returned by getNextPanelDescriptor() to indicate that this is
@@ -35,7 +39,7 @@ public class WizardPanelDescriptor implements Observer {
     private Object backPanelDescriptor = null;
 
     private Component panel;
-    private IParametersPanel paramsPanel;
+    private ParametersPanel paramsPanel;
     private String name = String.format(TITLE, "Unnamed");
 
     /**
@@ -64,8 +68,7 @@ public class WizardPanelDescriptor implements Observer {
      *            A class which extends java.awt.Component that will be inserted
      *            as a panel into the wizard dialog.
      */
-    public WizardPanelDescriptor(Object id, IParametersPanel params,
-	    String title) {
+    public WizardPanelDescriptor(Object id, ParametersPanel params, String title) {
 	identifier = id;
 	paramsPanel = params;
 	name = String.format(TITLE, title);
@@ -81,11 +84,11 @@ public class WizardPanelDescriptor implements Observer {
 	return panel;
     }
 
-    public final IParametersPanel getIParametersPanel() {
+    public final ParametersPanel getIParametersPanel() {
 	return paramsPanel;
     }
 
-    public final void setIParamsPanel(IParametersPanel params, String title) {
+    public final void setIParamsPanel(ParametersPanel params, String title) {
 	paramsPanel = params;
 	name = String.format(TITLE, title);
 	panel = createPanel((params == null ? null : params.getComponent()));
@@ -232,15 +235,16 @@ public class WizardPanelDescriptor implements Observer {
 
 	if (null == elements) {
 	    final JPanel e = new JPanel();
-	    e.setLayout(new BorderLayout());
+	    e.setLayout(new FlowLayout());
 	    final JLabel label = new JLabel(
 		    "<html><p align='center'>No parameters required.</p></html>");
 
-	    e.add(label, BorderLayout.CENTER);
+	    e.add(label);
 	    elements = e;
 	}
 
-	panel.add(elements, BorderLayout.CENTER);
+	// to make it scrollable
+	panel.add(new JScrollPane(elements), BorderLayout.CENTER);
 
 	return panel;
     }
@@ -248,75 +252,84 @@ public class WizardPanelDescriptor implements Observer {
     @Override
     public void update(Observable o, Object arg) {
 	if (arg instanceof Boolean) {
-	    /*
-	     * enable/disable next/finish button
-	     */
-	    wizard.setNextFinishButtonEnabled((Boolean) arg);
-	} else if (arg instanceof IScenario) {
-	    /*
-	     * set scenario parameters panel
-	     */
-	    final IParametersPanel current = wizard.getModel()
-		    .getPanelDescriptor(ParametersGUI.SCENARIO)
-		    .getIParametersPanel();
+	    // next/finish button
 
-	    final IScenario scenario = (IScenario) arg;
-	    final IParametersPanel novel = scenario.getParametersPanel();
+	    final boolean isThisWPD = wizard.getModel()
+		    .getCurrentPanelDescriptor().equals(this);
 
-	    // do not change if the new value is the same as old value
+	    if (isThisWPD) {
+		final boolean flag = (Boolean) arg;
+		wizard.setBackButtonEnabled(flag);
+		wizard.setNextFinishButtonEnabled(flag);
+	    }
+	} else {
+	    final Object id;
+	    final String title;
+	    final ParametersPanel current, novel;
+
+	    if (arg instanceof Scenario) {
+		final Scenario scn = (Scenario) arg;
+		id = ParametersGUI.SCENARIO;
+		title = String.format("Scenario: %s", scn);
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = scn.getParametersPanel();
+	    } else if (arg instanceof TrustModel) {
+		final TrustModel<?> tm = (TrustModel<?>) arg;
+		id = ParametersGUI.MODELS;
+		title = String.format("Trust model: %s", tm);
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = tm.getParametersPanel();
+	    } else if (arg instanceof RankingMetric) {
+		final RankingMetric rm = (RankingMetric) arg;
+		id = ParametersGUI.RANK_METRIC;
+		title = String.format("Ranking metric: %s", rm);
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = rm.getParametersPanel();
+	    } else if (arg instanceof UtilityMetric) {
+		final UtilityMetric um = (UtilityMetric) arg;
+		id = ParametersGUI.UTILITY_METRIC;
+		title = String.format("Utility metric: %s", um);
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = um.getParametersPanel();
+	    } else {
+		return;
+	    }
+
+	    // if new selection is the same as old selection
 	    if (null != current && null != novel
 		    && current.getClass() == novel.getClass()) {
 		return;
 	    }
 
-	    // get ParametersPanel
-	    final IParametersPanel params = scenario.getParametersPanel();
-
 	    // create new WPD
-	    final WizardPanelDescriptor wpd = new WizardPanelDescriptor(
-		    ParametersGUI.SCENARIO, params, scenario.getName());
+	    final WizardPanelDescriptor wpd = new WizardPanelDescriptor(id,
+		    novel, title);
 
-	    // register WPD
+	    // register new WPD
 	    wizard.registerWizardPanel(wpd);
 
 	    // initialize WPD
-	    if (null != params)
-		params.initialize(wpd, wizard.getClassLoader());
+	    if (null != novel)
+		novel.initialize(wpd, wizard.getClassLoader());
 
-	    // set next / previous buttons
-	    wpd.setBack(ParametersGUI.MAIN);
-	    wpd.setNext(ParametersGUI.MODELS);
-	} else if (arg instanceof ITrustModel) {
-	    /*
-	     * set trust model parameters panel
-	     */
-
-	    final IParametersPanel current = wizard.getModel()
-		    .getPanelDescriptor(ParametersGUI.MODELS)
-		    .getIParametersPanel();
-
-	    final ITrustModel model = (ITrustModel) arg;
-	    final IParametersPanel novel = model.getParametersPanel();
-
-	    // make change only if the value changed
-	    if (null != current && null != novel
-		    && current.getClass() == novel.getClass()) {
-		return;
+	    // set next/previous
+	    if (arg instanceof Scenario) {
+		wpd.setBack(ParametersGUI.MAIN);
+		wpd.setNext(ParametersGUI.MODELS);
+	    } else if (arg instanceof TrustModel) {
+		wpd.setBack(ParametersGUI.SCENARIO);
+		wpd.setNext(ParametersGUI.RANK_METRIC);
+	    } else if (arg instanceof RankingMetric) {
+		wpd.setBack(ParametersGUI.MODELS);
+	    } else {
+		wizard.getModel().getPanelDescriptor(ParametersGUI.RANK_METRIC)
+			.setNext(ParametersGUI.UTILITY_METRIC);
+		wpd.setBack(ParametersGUI.RANK_METRIC);
 	    }
-
-	    // get ParametersPanel
-	    final IParametersPanel params = model.getParametersPanel();
-
-	    // create, register and initialize new WPD
-	    final WizardPanelDescriptor wpd = new WizardPanelDescriptor(
-		    ParametersGUI.MODELS, params, model.getName());
-	    wizard.registerWizardPanel(wpd);
-
-	    if (null != params)
-		params.initialize(wpd, wizard.getClassLoader());
-
-	    wpd.setBack(ParametersGUI.SCENARIO);
-	    // wpd.setNext(ParametersGUI.MODELS);
 	}
     }
 }

@@ -10,9 +10,8 @@ import org.apache.commons.math.distribution.BetaDistributionImpl;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -25,15 +24,15 @@ import testbed.interfaces.Opinion;
  * Autonomous Agents and Multi-Agent Systems 12, 2 (March 2006), 183-198.</a>
  * 
  * <p>
- * TODO: An issue. TRAVOS requires two specific data formats: a) binary
- * interactions outcomes and b) exchanged opinions in the form of 2-dimensional
- * vector of natural numbers. I solved this by:
+ * <b>Additional comment.</b> TRAVOS requires two specific data formats: a)
+ * binary interactions outcomes and b) exchanged opinions in the form of
+ * 2-dimensional vector of natural numbers. I solved this by:
  * <ul>
  * <li>Scaling interaction outcomes by a FACTOR and then computing a pair (m, n)
  * from this scaled number. This can be explained as if an interaction consists
  * of several sub-interactions all of which have a binary outcome and the final
  * outcome is a pair of successful and unsuccessful interactions (it is
- * basically a mapping: [0, 1] -> N × N)
+ * basically a mapping: [0, 1] &rarr; N &times; N)
  * <li>Scaling internalTrustDegrees from opinions by the same FACTOR and
  * computing the pair in the same way as interaction outcomes. This gives all
  * opinions the same weight (m + n = FACTOR). The FACTOR also needs to be large
@@ -48,7 +47,33 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class Travos extends AbstractTrustModel implements ITrustModel {
+public class Travos extends AbstractTrustModel<Double> {
+    protected static final ParameterCondition<Double> VAL_MULTPLIER,
+	    VAL_THRESHOLD;
+
+    static {
+	VAL_MULTPLIER = new ParameterCondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 1 || var > 50)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
+				    var));
+	    }
+	};
+
+	VAL_THRESHOLD = new ParameterCondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The threshold/error must be a between 0 and 1 inclusively, but was %.2f",
+				    var));
+	    }
+	};
+    }
 
     // experiences
     public Map<Integer, BRSPair> experiences = null;
@@ -61,9 +86,11 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
 
     public static double ERROR = 0.2;
     public static double THRESHOLD = 0.95;
-    public static double FACTOR = 5;
+    public static double EXP_FACTOR = 5;
+    public static double OP_FACTOR = 5;
 
-    private static final BetaDistribution BETA = new BetaDistributionImpl(1, 1);
+    protected static final BetaDistribution BETA = new BetaDistributionImpl(1,
+	    1);
 
     @Override
     public void initialize(Object... params) {
@@ -71,48 +98,23 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
 	observations = new LinkedHashMap<Integer, BRSPair[]>();
 	opinions = new Opinion[0][0];
 
-	final ICondition<Double> validator1 = new ICondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 1 || var > 50)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
-				    var));
-	    }
-	};
-
-	final ICondition<Double> validator2 = new ICondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The threshold/error must be a between 0 and 1 inclusively, but was %.2f",
-				    var));
-	    }
-	};
-
-	FACTOR = Utils.extractParameter(validator1, 0, params);
-	THRESHOLD = Utils.extractParameter(validator2, 1, params);
-	ERROR = Utils.extractParameter(validator2, 2, params);
+	EXP_FACTOR = Utils.extractParameter(VAL_MULTPLIER, 0, params);
+	OP_FACTOR = Utils.extractParameter(VAL_MULTPLIER, 1, params);
+	THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 2, params);
+	ERROR = Utils.extractParameter(VAL_THRESHOLD, 3, params);
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
+    public void processExperiences(Set<Experience> exps) {
 	// expand data structures
-	expandArrays(exps, ops);
-
-	// store opinions
-	for (Opinion o : ops)
-	    opinions[o.agent1][o.agent2] = o;
+	expandExperiences(exps);
 
 	// store experiences
 	for (Experience e : exps) {
 	    BRSPair p = experiences.get(e.agent);
 
-	    final double r = Math.round(FACTOR * e.outcome);
-	    final double s = FACTOR - r;
+	    final double r = Math.round(EXP_FACTOR * e.outcome);
+	    final double s = EXP_FACTOR - r;
 
 	    if (p == null) {
 		p = new BRSPair(r, s);
@@ -130,9 +132,9 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
 		    final BRSPair[] obs = observations.get(agent);
 
 		    // determine the bin
-		    final double op_r = Math.round(FACTOR
+		    final double op_r = Math.round(OP_FACTOR
 			    * opinions[agent][e.agent].internalTrustDegree);
-		    final double op_s = FACTOR - op_r;
+		    final double op_s = OP_FACTOR - op_r;
 
 		    final int bin = determineBin(op_r, op_s);
 
@@ -142,6 +144,21 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
 		}
 	    }
 	}
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> ops) {
+	// expand data structures
+	expandOpinions(ops);
+
+	// store opinions
+	for (Opinion o : ops)
+	    opinions[o.agent1][o.agent2] = o;
+    }
+
+    @Override
+    public void calculateTrust() {
+	// weird.
     }
 
     /**
@@ -194,12 +211,8 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
 	}
     }
 
-    /**
-     * Computes the trust values as defined by the model.
-     * 
-     * @return The map of agents and their respective trust values.
-     */
-    public Map<Integer, Double> compute() {
+    @Override
+    public Map<Integer, Double> getTrust(int service) {
 	// trust evaluations
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
@@ -241,9 +254,9 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
 		    if (null != o) {
 			agentExists = true;
 			// compute (m, n) from the opinion
-			final double m = Math.round(FACTOR
+			final double m = Math.round(OP_FACTOR
 				* o.internalTrustDegree);
-			final double n = FACTOR - m;
+			final double n = OP_FACTOR - m;
 
 			// determine the bin of this opinion
 			final int bin = determineBin(m, n);
@@ -343,49 +356,72 @@ public class Travos extends AbstractTrustModel implements ITrustModel {
     }
 
     /**
-     * Expands the supporting data structures.
+     * Expands the supporting array that holds opinions to appropriate lengths.
      * 
-     * @param exp
-     *            Set of experiences
      * @param ops
-     *            Set of opinions
+     *            Set of opinion tuples
      */
-    private void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
-	final int limit = opinions.length - 1;
-	int max = limit;
+    protected void expandOpinions(Set<Opinion> ops) {
+	int max = opinions.length - 1;
+	final int limit = max;
 
-	for (Experience e : exp)
-	    if (e.agent > max)
-		max = e.agent;
-
-	for (Opinion o : ops)
-	    if (o.agent2 > max || o.agent1 > max)
+	for (Opinion o : ops) {
+	    if (o.agent2 > max || o.agent1 > max) {
 		max = Math.max(o.agent1, o.agent2);
+	    }
+	}
 
 	if (max > limit) {
-	    for (int agent = 0; agent <= max; agent++)
-		if (!observations.containsKey(agent))
-		    observations.put(agent, new BRSPair[] { new BRSPair(),
-			    new BRSPair(), new BRSPair(), new BRSPair(),
-			    new BRSPair() });
-
-	    // copy opinions
-	    Opinion[][] newOp = new Opinion[max + 1][max + 1];
-	    for (int i = 0; i < opinions.length; i++)
-		System.arraycopy(opinions[i], 0, newOp[i], 0,
-			opinions[i].length);
-
-	    opinions = newOp;
+	    expandArrays(max);
 	}
     }
 
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute());
+    /**
+     * Expands the supporting array that holds experiences to appropriate
+     * lengths.
+     * 
+     * @param experience
+     *            Set of experience tuples
+     */
+    protected void expandExperiences(Set<Experience> experience) {
+	int max = opinions.length - 1;
+	final int limit = max;
+
+	for (Experience e : experience)
+	    if (e.agent > max)
+		max = e.agent;
+
+	if (max > limit) {
+	    expandArrays(max);
+	}
+    }
+
+    /**
+     * Expands the supporting data structures.
+     * 
+     * @param max
+     *            The next limit of the data structures
+     */
+    protected void expandArrays(int max) {
+	for (int agent = 0; agent <= max; agent++) {
+	    if (!observations.containsKey(agent)) {
+		observations.put(agent, new BRSPair[] { new BRSPair(),
+			new BRSPair(), new BRSPair(), new BRSPair(),
+			new BRSPair() });
+	    }
+	}
+
+	// copy opinions
+	Opinion[][] newOp = new Opinion[max + 1][max + 1];
+	for (int i = 0; i < opinions.length; i++) {
+	    System.arraycopy(opinions[i], 0, newOp[i], 0, opinions[i].length);
+	}
+
+	opinions = newOp;
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new TravosGUI();
     }
 

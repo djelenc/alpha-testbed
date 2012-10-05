@@ -7,25 +7,27 @@ import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Opinion;
 
 /**
  * Beta reputation system
  * 
  * <p>
- * As presented in <a href='http://aisel.aisnet.org/bled2002/41'>﻿Audun Jøsang
+ * As presented in <a href="http://aisel.aisnet.org/bled2002/41">﻿Audun Jøsang
  * and Roslan Ismail. The beta reputation system. Proceedings of the 15th Bled
  * Electronic Commerce Conference (Vol. 160), 2002.</a>
  * 
  * @author David
  * 
  */
-public class BetaReputation extends AbstractTrustModel implements ITrustModel {
+public class BetaReputation extends AbstractTrustModel<Double> {
 
-    private int time = 0;
+    protected static final String EX_FF = "The forgetting factor must be a between 0 and 1 inclusively, but was %.2f";
+    protected static final ParameterCondition<Double> VAL_FF;
+
+    protected int time = 0;
 
     // aging factors for experiences and opinions
     public double lambdaEx = 0.9;
@@ -35,25 +37,24 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
 
     public Opinion[][] opinions = null;
 
+    static {
+	VAL_FF = new ParameterCondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(
+			    String.format(EX_FF, var));
+	    }
+	};
+    }
+
     @Override
     public void initialize(Object... params) {
 	time = 0;
 	experiences = new LinkedHashMap<Integer, ArrayList<Experience>>();
 	opinions = new Opinion[0][0];
-
-	final ICondition<Double> validator = new ICondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The forgetting factor must be a between 0 and 1 inclusively, but was %.2f",
-				    var));
-	    }
-	};
-
-	lambdaEx = Utils.extractParameter(validator, 0, params);
-	lambdaOp = Utils.extractParameter(validator, 1, params);
+	lambdaEx = Utils.extractParameter(VAL_FF, 0, params);
+	lambdaOp = Utils.extractParameter(VAL_FF, 1, params);
     }
 
     @Override
@@ -62,11 +63,9 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
-	// make room for new values
-	expandArrays(exps, ops);
+    public void processExperiences(Set<Experience> exps) {
+	expandArrays(exps, null);
 
-	// store experiences
 	for (Experience e : exps) {
 	    ArrayList<Experience> list = experiences.get(e.agent);
 
@@ -78,13 +77,22 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
 		list.add(e);
 	    }
 	}
+    }
 
-	// store opinions
+    @Override
+    public void processOpinions(Set<Opinion> ops) {
+	expandArrays(null, ops);
+
 	for (Opinion o : ops)
 	    opinions[o.agent1][o.agent2] = o;
     }
 
-    public Map<Integer, BRSPair> compute() {
+    @Override
+    public void calculateTrust() {
+	// and whistle.
+    }
+
+    public Map<Integer, BRSPair> computePairs() {
 	final Map<Integer, BRSPair> experienceTrust = computeExperiences();
 	final Map<Integer, BRSPair> opinionTrust = computeOpinions(experienceTrust);
 
@@ -118,17 +126,19 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	final Map<Integer, Double> ev = new LinkedHashMap<Integer, Double>();
-	final Map<Integer, BRSPair> trust = compute();
+    public Map<Integer, Double> getTrust(int service) {
+	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+	final Map<Integer, BRSPair> pairs = computePairs();
 
-	for (Map.Entry<Integer, BRSPair> entry : trust.entrySet()) {
+	for (Map.Entry<Integer, BRSPair> entry : pairs.entrySet()) {
 	    final double r = entry.getValue().R;
 	    final double s = entry.getValue().S;
-	    ev.put(entry.getKey(), (r + 1) / (r + s + 2));
+	    final int agent = entry.getKey();
+
+	    trust.put(agent, (r + 1) / (r + s + 2));
 	}
 
-	return super.constructRankingsFromEstimations(ev);
+	return trust;
     }
 
     /**
@@ -213,22 +223,24 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
      * Expands the supporting data structures, which contain data of past
      * interactions and received opinions.
      * 
-     * @param exp
+     * @param exps
      *            Set of experiences
      * @param ops
      *            Set of opinions
      */
-    private void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
+    protected void expandArrays(Set<Experience> exps, Set<Opinion> ops) {
 	final int limit = opinions.length - 1;
 	int max = limit;
 
-	for (Experience e : exp)
-	    if (e.agent > max)
-		max = e.agent;
+	if (null != exps)
+	    for (Experience e : exps)
+		if (e.agent > max)
+		    max = e.agent;
 
-	for (Opinion o : ops)
-	    if (o.agent2 > max || o.agent1 > max)
-		max = Math.max(o.agent1, o.agent2);
+	if (null != ops)
+	    for (Opinion o : ops)
+		if (o.agent2 > max || o.agent1 > max)
+		    max = Math.max(o.agent1, o.agent2);
 
 	if (max > limit) {
 	    // copy opinions
@@ -242,7 +254,12 @@ public class BetaReputation extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new BetaReputationGUI();
+    }
+
+    @Override
+    public String toString() {
+	return "Beta reputation system";
     }
 }

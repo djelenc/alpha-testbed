@@ -5,10 +5,23 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
-public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
+/**
+ * Trust model of Yu, Singh and Sycara
+ * 
+ * 
+ * <p>
+ * As proposed in <a href=
+ * "http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1368412&isnumber=29953"
+ * > Bin Yu, Munidar P. Singh, Katia Sycara, Developing trust in large-scale
+ * peer-to-peer systems, Multi-Agent Security and Survivability, 2004 IEEE First
+ * Symposium on, 2004</a>
+ * 
+ * @author David
+ * 
+ */
+public class YuSinghSycara extends AbstractTrustModel<Double> {
 
     // discount factor for liars
     public static final double BETA = 0.5;
@@ -27,14 +40,9 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
-	expandArrays(exps, ops);
+    public void processExperiences(Set<Experience> exps) {
+	expandArrays(exps, null);
 
-	// store opinions
-	for (Opinion o : ops)
-	    opinions[o.agent1][o.agent2] = o;
-
-	// store new experiences
 	for (Experience e : exps) {
 	    double[] history = local.get(e.agent);
 
@@ -59,10 +67,22 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
 		}
 	    }
 	}
-
     }
 
-    public Map<Integer, Double> compute() {
+    @Override
+    public void processOpinions(Set<Opinion> ops) {
+	expandArrays(null, ops);
+
+	for (Opinion o : ops)
+	    opinions[o.agent1][o.agent2] = o;
+    }
+
+    @Override
+    public void calculateTrust() {
+	// weirdly empty.
+    }
+
+    public Map<Integer, Double> getTrust(int service) {
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
@@ -116,11 +136,6 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
     }
 
     @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute());
-    }
-
-    @Override
     public void setCurrentTime(int time) {
 
     }
@@ -134,17 +149,19 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
      * @param ops
      *            Set of opinions
      */
-    private void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
+    protected void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
 	final int limit = opinions.length - 1;
 	int max = limit;
 
-	for (Experience e : exp)
-	    if (e.agent > max)
-		max = e.agent;
+	if (null != exp)
+	    for (Experience e : exp)
+		if (e.agent > max)
+		    max = e.agent;
 
-	for (Opinion o : ops)
-	    if (o.agent2 > max || o.agent1 > max)
-		max = Math.max(o.agent1, o.agent2);
+	if (null != ops)
+	    for (Opinion o : ops)
+		if (o.agent2 > max || o.agent1 > max)
+		    max = Math.max(o.agent1, o.agent2);
 
 	if (max > limit) {
 	    // copy opinions
@@ -165,5 +182,10 @@ public class YuSinghSycara extends AbstractTrustModel implements ITrustModel {
 	    System.arraycopy(credibility, 0, newWeights, 0, credibility.length);
 	    credibility = newWeights;
 	}
+    }
+
+    @Override
+    public String toString() {
+	return "Yu, Singh, Sycara";
     }
 }

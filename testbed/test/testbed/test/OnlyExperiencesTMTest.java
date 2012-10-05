@@ -24,28 +24,36 @@ public class OnlyExperiencesTMTest {
 	Set<Experience> experiences = new LinkedHashSet<Experience>();
 
 	experiences.add(new Experience(0, 0, 0, 0.9));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 
 	experiences.add(new Experience(1, 1, 0, 0.8));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 
 	experiences.add(new Experience(2, 1, 0, 0.7));
 	experiences.add(new Experience(3, 1, 0, 0.6));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 
 	experiences.add(new Experience(10, 1, 0, 0.1));
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 	experiences.clear();
 
-	Map<Integer, Integer> ranks = tm.getRankings(0);
+	Map<Integer, Double> trust = tm.getTrust(0);
 
-	Assert.assertEquals(1, (int) ranks.get(0));
-	Assert.assertEquals(2, (int) ranks.get(1));
-	Assert.assertEquals(3, (int) ranks.get(2));
-	Assert.assertEquals(4, (int) ranks.get(3));
-	Assert.assertEquals(5, (int) ranks.get(10));
+	Assert.assertEquals(0.9, trust.get(0), 0.001);
+	Assert.assertEquals(0.8, trust.get(1), 0.001);
+	Assert.assertEquals(0.7, trust.get(2), 0.001);
+	Assert.assertEquals(0.6, trust.get(3), 0.001);
+	Assert.assertEquals(0.1, trust.get(10), 0.001);
     }
 }

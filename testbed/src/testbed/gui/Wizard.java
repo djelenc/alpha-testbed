@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -29,6 +31,9 @@ import javax.swing.border.EmptyBorder;
  * determines at runtime what its next and previous panel will be.
  */
 public class Wizard extends WindowAdapter implements PropertyChangeListener {
+
+    public static final int WINDOW_HEIGHT = 450;
+    public static final int WINDOW_WIDTH = 600;
 
     /**
      * Indicates that the 'Finish' button was pressed to close the dialog.
@@ -99,7 +104,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      */
     public Wizard(Dialog owner) {
 	wizardModel = new WizardModel();
-	wizardDialog = new JDialog(owner);
+	wizardDialog = new ResizedJDialog(owner);
 	initComponents();
     }
 
@@ -113,7 +118,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      */
     public Wizard(Frame owner) {
 	wizardModel = new WizardModel();
-	wizardDialog = new JDialog(owner);
+	wizardDialog = new ResizedJDialog(owner);
 	initComponents();
     }
 
@@ -185,7 +190,6 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      *         the RETURN_CODE constants at the beginning of the class.
      */
     public int showModalDialog() {
-
 	wizardDialog.setModal(true);
 	wizardDialog.pack();
 	wizardDialog.setVisible(true);
@@ -411,13 +415,20 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      */
 
     private void initComponents() {
-
 	wizardModel.addPropertyChangeListener(this);
 	wizardController = new WizardController(this);
 
 	wizardDialog.getContentPane().setLayout(new BorderLayout());
 	wizardDialog.addWindowListener(this);
+
 	wizardDialog.setLocationRelativeTo(wizardDialog.getParent());
+
+	final Point p = wizardDialog.getLocation();
+
+	p.x -= wizardDialog.getPreferredSize().width / 2;
+	p.y -= wizardDialog.getPreferredSize().height / 2;
+
+	wizardDialog.setLocation(p);
 
 	// Create the outer wizard panel, which is responsible for three
 	// buttons:
@@ -436,8 +447,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
 	cardLayout = new CardLayout();
 	cardPanel.setLayout(cardLayout);
 
-	backButton = new JButton();// new
-				   // ImageIcon("com/nexes/wizard/backIcon.gif"));
+	backButton = new JButton();
 	nextButton = new JButton();
 	cancelButton = new JButton();
 
@@ -494,5 +504,27 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
 
     public void setClassLoader(ClassLoader classLoader) {
 	this.classLoader = classLoader;
+    }
+}
+
+class ResizedJDialog extends JDialog {
+    private static final long serialVersionUID = -1669472012562835519L;
+
+    public ResizedJDialog(Dialog owner) {
+	super(owner);
+    }
+
+    public ResizedJDialog(Frame owner) {
+	super(owner);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+	return new Dimension(Wizard.WINDOW_WIDTH, Wizard.WINDOW_HEIGHT);
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+	return getPreferredSize();
     }
 }

@@ -1,36 +1,45 @@
 package testbed.metric;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
-import testbed.interfaces.IMetric;
+import testbed.interfaces.RankingMetric;
 
-public class Accuracy extends AbstractMetric implements IMetric {
+public class Accuracy extends AbstractMetric implements RankingMetric {
 
     @Override
-    public double evaluate(Map<Integer, Integer> rankings,
+    public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,
 	    Map<Integer, Double> capabilities) {
-	if (rankings.size() == 0) {
+	if (trust.size() == 0) {
 	    return 0;
-	} else if (rankings.size() == 1) {
+	} else if (trust.size() == 1) {
 	    return 1;
 	}
 
 	int result = 0;
-	for (Map.Entry<Integer, Integer> rank1 : rankings.entrySet()) {
-	    for (Map.Entry<Integer, Integer> rank2 : rankings.entrySet()) {
-		if (!rank1.equals(rank2)) {
-		    result += evaluatePair(rank1.getValue(), rank2.getValue(),
-			    capabilities.get(rank1.getKey()),
-			    capabilities.get(rank2.getKey()));
+	for (Entry<Integer, T> trust1 : trust.entrySet()) {
+	    for (Entry<Integer, T> trust2 : trust.entrySet()) {
+		if (!trust1.equals(trust2)) {
+		    final T t1 = trust1.getValue();
+		    final T t2 = trust2.getValue();
+		    final Double c1 = capabilities.get(trust1.getKey());
+		    final Double c2 = capabilities.get(trust2.getKey());
+
+		    result += evaluatePair(t1, t2, c1, c2);
 		}
 	    }
 	}
 
-	return ((double) result) / (rankings.size() * (rankings.size() - 1));
+	return ((double) result) / (trust.size() * (trust.size() - 1));
     }
 
-    public final int evaluatePair(int r1, int r2, double c1, double c2) {
-	if ((r1 <= r2 && c1 >= c2) || (r1 > r2 && c1 < c2)) {
+    public final <T extends Comparable<T>> int evaluatePair(T t1, T t2,
+	    Double c1, Double c2) {
+
+	final int rankDiff = t1.compareTo(t2);
+	final int capDiff = (Math.abs(c1 - c2) < 0.00001 ? 0 : c1.compareTo(c2));
+
+	if ((rankDiff >= 0 && capDiff >= 0) || (rankDiff < 0 && capDiff < 0)) {
 	    return 1;
 	} else {
 	    return 0;

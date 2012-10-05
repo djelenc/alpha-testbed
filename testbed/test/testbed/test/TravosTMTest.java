@@ -19,7 +19,7 @@ public class TravosTMTest {
     @Before
     public void setUp() {
 	tm = new Travos();
-	tm.initialize(5d, 0.95, 0.2);
+	tm.initialize(1d, 1d, 0.95, 0.2);
     }
 
     @Test
@@ -45,15 +45,17 @@ public class TravosTMTest {
 	opinions.add(new Opinion(2, 1, 0, 0, 1.0));
 	opinions.add(new Opinion(3, 1, 0, 0, 0.5));
 
-	tm.calculateTrust(experiences, opinions);
-	tm.compute();
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
+	tm.getTrust(0);
     }
 
     @Test
     public void walkthroughScenario() {
 	Set<Experience> experiences = new LinkedHashSet<Experience>();
 	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
-	Travos.FACTOR = 1;
+	Travos.OP_FACTOR = 1;
 
 	experiences.clear();
 	opinions.clear();
@@ -76,8 +78,10 @@ public class TravosTMTest {
 	for (int i = 0; i < 29; i++)
 	    experiences.add(new Experience(7, 0, 0, (i < 18 ? 1 : 0)));
 
-	tm.calculateTrust(experiences, opinions);
-	Map<Integer, Double> trust = tm.compute();
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
+	Map<Integer, Double> trust = tm.getTrust(0);
 
 	Assert.assertEquals(0.7500, trust.get(2), 0.001);
 	Assert.assertEquals(0.1579, trust.get(3), 0.001);
@@ -93,7 +97,9 @@ public class TravosTMTest {
 	opinions.add(new Opinion(9, 6, 0, 0, 4 / 5d));
 	opinions.add(new Opinion(10, 6, 0, 0, 1d));
 
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
 
 	tm.observations.get(8)[1].R = 11;
 	tm.observations.get(8)[1].S = 4;
@@ -102,6 +108,6 @@ public class TravosTMTest {
 	tm.observations.get(10)[3].R = 18;
 	tm.observations.get(10)[3].S = 8;
 
-	Assert.assertEquals(0.8349, tm.compute().get(6), 0.001);
+	Assert.assertEquals(0.8349, tm.getTrust(0).get(6), 0.001);
     }
 }

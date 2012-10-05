@@ -8,11 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.TrustModel;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.AbstractTrustModel;
 
-public class QTM extends AbstractTrustModel implements ITrustModel {
+public class QTM implements TrustModel<Omega> {
 
     public static final int HISTORY_LENGTH = 10;
 
@@ -21,15 +22,31 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
     public QADOp[][] opinions = null;
     public double[] credibility = null;
 
+    // temporary storage for opinions and experiences
+    private Set<Opinion> ops;
+    private Set<Experience> exps;
+
     @Override
     public void initialize(Object... params) {
 	local = new LinkedHashMap<Integer, QADExp[]>();
 	opinions = new QADOp[0][0];
 	credibility = new double[0];
+	ops = null;
+	exps = null;
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.exps = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.ops = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	expandArrays(exps, ops);
 
 	// store opinions
@@ -127,8 +144,9 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
 	return null;
     }
 
-    public Map<Integer, Double> compute() {
-	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+    @Override
+    public Map<Integer, Omega> getTrust(int service) {
+	Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
 	    double localRating = 0;
@@ -170,15 +188,10 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
 	    final double score = Math.round(weight * localRating + (1 - weight)
 		    * reputation);
 
-	    trust.put(agent, score);
+	    trust.put(agent, Omega.fromNumeric(score));
 	}
 
 	return trust;
-    }
-
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return constructRankingsFromEstimations(compute());
     }
 
     @Override
@@ -275,5 +288,22 @@ public class QTM extends AbstractTrustModel implements ITrustModel {
 	}
 
 	return trust;
+    }
+
+    protected RandomGenerator generator;
+
+    @Override
+    public void setRandomGenerator(RandomGenerator generator) {
+	this.generator = generator;
+    }
+
+    @Override
+    public ParametersPanel getParametersPanel() {
+	return null;
+    }
+
+    @Override
+    public String toString() {
+	return "Qualitative model";
     }
 }

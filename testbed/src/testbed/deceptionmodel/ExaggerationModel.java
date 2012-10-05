@@ -1,17 +1,17 @@
 package testbed.deceptionmodel;
 
 import testbed.common.Utils;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IDeceptionModel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.DeceptionModel;
 
 public abstract class ExaggerationModel extends AbstractDeceptionModel
-	implements IDeceptionModel {
+	implements DeceptionModel {
 
     protected double kappa = Double.NaN;
 
     @Override
     public void initialize(Object... params) {
-	ICondition<Double> validator = new ICondition<Double>() {
+	ParameterCondition<Double> validator = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var > 1 || var < 0) {
@@ -26,6 +26,6 @@ public abstract class ExaggerationModel extends AbstractDeceptionModel
 
     protected void kappaUnsetError() throws IllegalArgumentException {
 	throw new IllegalArgumentException(String.format(
-		"Kappa was not set for the deception model %s", getName()));
+		"Kappa was not set for the deception model %s", this));
     }
 }

@@ -9,27 +9,26 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import testbed.common.ClassLoaderUtils;
-import testbed.interfaces.IDeceptionModel;
-import testbed.interfaces.IMetric;
-import testbed.interfaces.IScenario;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Scenario;
+import testbed.interfaces.TrustModel;
 
 public class ClassLoadersTest {
 
     @Test
-    public void testLookUp() {
-
+    public <T extends Comparable<T>> void testLookUp() {
 	ClassLoader classLoader = Thread.currentThread()
 		.getContextClassLoader();
 
-	List<IScenario> generators = ClassLoaderUtils.lookUp(IScenario.class,
+	List<Scenario> generators = ClassLoaderUtils.lookUp(Scenario.class,
 		classLoader);
-	List<IMetric> metrics = ClassLoaderUtils.lookUp(IMetric.class,
-		classLoader);
-	List<ITrustModel> trustModels = ClassLoaderUtils.lookUp(
-		ITrustModel.class, classLoader);
-	List<IDeceptionModel> deceptionModels = ClassLoaderUtils.lookUp(
-		IDeceptionModel.class, classLoader);
+	List<RankingMetric> metrics = ClassLoaderUtils.lookUp(
+		RankingMetric.class, classLoader);
+	List<TrustModel<?>> trustModels = ClassLoaderUtils
+		.lookUpTrustModels(classLoader);
+	List<DeceptionModel> deceptionModels = ClassLoaderUtils.lookUp(
+		DeceptionModel.class, classLoader);
 
 	Assert.assertFalse(generators.isEmpty());
 	Assert.assertFalse(metrics.isEmpty());
@@ -45,8 +44,8 @@ public class ClassLoadersTest {
 	ClassLoaderUtils.addURL(
 		new File("c:/testlib/some.jar").toURI().toURL(), cl);
 
-	for (IMetric dg : ServiceLoader.load(IMetric.class)) {
-	    System.out.println(dg.getName());
+	for (RankingMetric dg : ServiceLoader.load(RankingMetric.class)) {
+	    System.out.println(dg);
 	}
     }
 
@@ -57,41 +56,34 @@ public class ClassLoadersTest {
 	// ensure the folder/jar exists before running
 	ClassLoaderUtils.addDirToClasspath(new File("c:/testlib"), cl);
 
-	for (IMetric dg : ServiceLoader.load(IMetric.class)) {
-	    System.out.println(dg.getName());
+	for (RankingMetric dg : ServiceLoader.load(RankingMetric.class)) {
+	    System.out.println(dg);
 	}
     }
 
     @Test
     public void testServiceLoaderIDataGenerator() {
-	ServiceLoader<IScenario> all = ServiceLoader.load(IScenario.class);
+	ServiceLoader<Scenario> all = ServiceLoader.load(Scenario.class);
 
 	Assert.assertTrue(all.iterator().hasNext());
-	Assert.assertTrue(all.iterator().next() instanceof IScenario);
+	Assert.assertTrue(all.iterator().next() instanceof Scenario);
     }
 
     @Test
     public void testServiceLoaderIMetric() {
-	ServiceLoader<IMetric> all = ServiceLoader.load(IMetric.class);
+	ServiceLoader<RankingMetric> all = ServiceLoader
+		.load(RankingMetric.class);
 
 	Assert.assertTrue(all.iterator().hasNext());
-	Assert.assertTrue(all.iterator().next() instanceof IMetric);
-    }
-
-    @Test
-    public void testServiceLoaderITrustModel() {
-	ServiceLoader<ITrustModel> all = ServiceLoader.load(ITrustModel.class);
-
-	Assert.assertTrue(all.iterator().hasNext());
-	Assert.assertTrue(all.iterator().next() instanceof ITrustModel);
+	Assert.assertTrue(all.iterator().next() instanceof RankingMetric);
     }
 
     @Test
     public void testServiceLoaderIDeceptionModel() {
-	ServiceLoader<IDeceptionModel> all = ServiceLoader
-		.load(IDeceptionModel.class);
+	ServiceLoader<DeceptionModel> all = ServiceLoader
+		.load(DeceptionModel.class);
 
 	Assert.assertTrue(all.iterator().hasNext());
-	Assert.assertTrue(all.iterator().next() instanceof IDeceptionModel);
+	Assert.assertTrue(all.iterator().next() instanceof DeceptionModel);
     }
 }

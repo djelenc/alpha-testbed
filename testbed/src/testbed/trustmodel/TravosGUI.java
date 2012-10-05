@@ -16,13 +16,13 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import testbed.gui.WizardPanelDescriptor;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParametersPanel;
 
-public class TravosGUI extends JPanel implements IParametersPanel {
+public class TravosGUI extends JPanel implements ParametersPanel {
 
     private static final long serialVersionUID = -1558821473401798087L;
 
-    private JSpinner multiplier, threshold, error;
+    private JSpinner expMultiplier, opMultiplier, threshold, error;
 
     private Observer observer;
 
@@ -65,7 +65,8 @@ public class TravosGUI extends JPanel implements IParametersPanel {
 
     @Override
     public Object[] getParameters() {
-	return new Object[] { getMultiplier(), getThreshold(), getError() };
+	return new Object[] { getExperienceMultiplier(),
+		getOpinionMultiplier(), getThreshold(), getError() };
     }
 
     private double getError() {
@@ -76,8 +77,12 @@ public class TravosGUI extends JPanel implements IParametersPanel {
 	return Double.parseDouble(String.valueOf(threshold.getValue()));
     }
 
-    private double getMultiplier() {
-	return Double.parseDouble(String.valueOf(multiplier.getValue()));
+    private double getExperienceMultiplier() {
+	return Double.parseDouble(String.valueOf(expMultiplier.getValue()));
+    }
+
+    private double getOpinionMultiplier() {
+	return Double.parseDouble(String.valueOf(opMultiplier.getValue()));
     }
 
     /**
@@ -96,24 +101,43 @@ public class TravosGUI extends JPanel implements IParametersPanel {
 	JLabel lbl;
 	c.gridwidth = 1;
 
-	// multiplier
-	lbl = new JLabel("Multiplier:  ");
+	// experience multiplier
+	lbl = new JLabel("Experience multiplier:  ");
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	multiplier = new JSpinner(new SpinnerNumberModel(5, 1, 10, 1));
-	((JSpinner.DefaultEditor) multiplier.getEditor()).getTextField()
+	expMultiplier = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
+	((JSpinner.DefaultEditor) expMultiplier.getEditor()).getTextField()
 		.setColumns(3);
-	multiplier
+	expMultiplier
 		.setToolTipText("Multiplier that converts a contionouos interaction outcome from [0, 1] "
 			+ "to a discreete value.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
-	panel.add(multiplier, c);
+	panel.add(expMultiplier, c);
+
+	// opinion multiplier
+	lbl = new JLabel("Opinion multiplier:  ");
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	c.gridx = 0;
+	c.gridy = i;
+	panel.add(lbl, c);
+	opMultiplier = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
+	((JSpinner.DefaultEditor) opMultiplier.getEditor()).getTextField()
+		.setColumns(3);
+	opMultiplier
+		.setToolTipText("Multiplier that converts a contionouos interaction outcome from [0, 1] "
+			+ "to a discreete value.");
+	c.gridx = 1;
+	c.gridy = i++;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_START;
+	panel.add(opMultiplier, c);
 
 	// threshold
 	lbl = new JLabel("Confidence threshold:  ");

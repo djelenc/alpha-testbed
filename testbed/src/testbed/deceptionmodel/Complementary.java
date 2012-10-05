@@ -1,9 +1,9 @@
 package testbed.deceptionmodel;
 
-import testbed.interfaces.IDeceptionModel;
+import testbed.interfaces.DeceptionModel;
 
 public class Complementary extends AbstractDeceptionModel implements
-	IDeceptionModel {
+	DeceptionModel {
 
     @Override
     public double calculate(double value) {

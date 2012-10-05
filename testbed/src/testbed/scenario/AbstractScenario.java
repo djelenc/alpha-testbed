@@ -1,22 +1,25 @@
 package testbed.scenario;
 
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.IScenario;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RandomGenerator;
+import testbed.interfaces.Scenario;
 
-public abstract class AbstractScenario implements IScenario {
+public abstract class AbstractScenario implements Scenario {
+
+    protected RandomGenerator generator;
 
     @Override
-    public String getName() {
+    public String toString() {
 	return getClass().getSimpleName();
     }
 
     @Override
-    public String toString() {
-	return getName();
+    public ParametersPanel getParametersPanel() {
+	return null;
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
-	return null;
+    public void setRandomGenerator(RandomGenerator generator) {
+	this.generator = generator;
     }
 }

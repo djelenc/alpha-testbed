@@ -1,7 +1,7 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
   <name>TestbedMetrics</name>
   <type>NON_AGGREGATE</type>
-  <sourceType>testbed.repast.MetricHolder</sourceType>
+  <sourceType>testbed.repast.RepastMetricAgent</sourceType>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
   <inclRandomSeed>false</inclRandomSeed>
@@ -17,7 +17,7 @@
       <string>Metric</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Metric</id>
-        <className>testbed.repast.MetricHolder</className>
+        <className>testbed.repast.RepastMetricAgent</className>
         <methodName>getMetric</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
@@ -25,7 +25,7 @@
       <string>Name</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Name</id>
-        <className>testbed.repast.MetricHolder</className>
+        <className>testbed.repast.RepastMetricAgent</className>
         <methodName>toString</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
@@ -33,7 +33,7 @@
       <string>TrustModel</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>TrustModel</id>
-        <className>testbed.repast.MetricHolder</className>
+        <className>testbed.repast.RepastMetricAgent</className>
         <methodName>getModel</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
@@ -41,7 +41,7 @@
       <string>Scenario</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Scenario</id>
-        <className>testbed.repast.MetricHolder</className>
+        <className>testbed.repast.RepastMetricAgent</className>
         <methodName>getScenario</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>

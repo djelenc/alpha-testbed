@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.ITrustModel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -16,51 +15,57 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class OnlyOpinions extends AbstractTrustModel implements ITrustModel {
-    private Map<Integer, Double> trust;
-
+public class OnlyOpinions extends AbstractTrustModel<Double> {
     // opinions
     private double[][] op;
 
     @Override
     public void initialize(Object... params) {
 	op = new double[0][0];
-	trust = new LinkedHashMap<Integer, Double>();
     }
 
     @Override
-    public void calculateTrust(Set<Experience> experience, Set<Opinion> opinions) {
-	trust.clear();
+    public void processExperiences(Set<Experience> experiences) {
 
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
 	expandArray(opinions);
 
 	for (Opinion o : opinions)
 	    op[o.agent1][o.agent2] = o.internalTrustDegree;
+    }
 
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
+    @Override
+    public void calculateTrust() {
+	// pass
+    }
+
+    @Override
+    public Map<Integer, Double> getTrust(int service) {
+	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+
+	for (int agent = 0; agent < op.length; agent++) {
 	    double sum = 0;
 	    int count = 0;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		if (!Double.isNaN(op[agent1][agent2])) {
-		    sum += op[agent1][agent2];
+	    for (int reporter = 0; reporter < op.length; reporter++) {
+		if (!Double.isNaN(op[reporter][agent])) {
+		    sum += op[reporter][agent];
 		    count += 1;
 		}
 	    }
 
 	    if (count > 0)
-		trust.put(agent2, sum / count);
+		trust.put(agent, sum / count);
 	}
 
+	return trust;
     }
 
     @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return super.constructRankingsFromEstimations(trust);
-    }
-
-    @Override
-    public String getName() {
+    public String toString() {
 	return "Opinions only";
     }
 

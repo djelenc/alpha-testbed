@@ -67,7 +67,10 @@ public class QTMTest {
 	opinions.add(new Opinion(1, 3, 0, 0, 1d));
 	opinions.add(new Opinion(2, 3, 0, 0, 0d));
 
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
+
 	experiences.clear();
 	opinions.clear();
 	double[] expected = new double[] { 1.2, 1.2, 0.6, 1.0d };
@@ -86,7 +89,10 @@ public class QTMTest {
 	opinions.add(new Opinion(1, 3, 0, 0, 0d));
 	opinions.add(new Opinion(2, 3, 0, 0, 0d));
 
-	tm.calculateTrust(experiences, opinions);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
+
 	experiences.clear();
 	opinions.clear();
 	double[] expected = new double[] { 1d, 1d, 1d, 1d };

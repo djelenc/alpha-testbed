@@ -1,0 +1,17 @@
+testbed.trustmodel.AbdulRahmanHailes
+testbed.trustmodel.AbdulRahmanHailesWithDecisionMaking
+testbed.trustmodel.BetaReputation
+testbed.trustmodel.BetaReputationWithDecisionMaking
+testbed.trustmodel.BRSWithFiltering
+testbed.trustmodel.EigenTrust
+testbed.trustmodel.EigenTrustWithDecisionMaking
+testbed.trustmodel.Travos
+testbed.trustmodel.TravosWithDecisionMaking
+testbed.trustmodel.YuSinghSycara
+testbed.trustmodel.YuSinghSycaraWithDecisionMaking
+testbed.trustmodel.qad.QAD
+testbed.trustmodel.qad.QTM
+testbed.trustmodel.OnlyExperiences
+testbed.trustmodel.OnlyOpinions
+testbed.trustmodel.Simple
+testbed.trustmodel.SimpleWithDecisionMaking

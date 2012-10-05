@@ -2,16 +2,18 @@ package testbed.gui;
 
 import java.util.Arrays;
 
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParametersPanel;
 
 public class ParametersGUI {
     public static final String MAIN = "main";
-    public static final String METRICS = "metrics";
+    public static final String RANK_METRIC = "rank_metric";
+    public static final String UTILITY_METRIC = "utility_metric";
     public static final String SCENARIO = "scenario";
-    public static final String MODELS = "models";
+    public static final String MODELS = "model";
 
     private static final Object[] EMPTY = new Object[0];
 
+    private MainPanel mainPanel;
     private Wizard wizard;
     private WizardPanelDescriptor mainWpd;
 
@@ -20,34 +22,53 @@ public class ParametersGUI {
 	wizard.getDialog().setTitle("Evaluation setup");
 	wizard.setClassLoader(cl);
 
-	final IParametersPanel main;
-	final WizardPanelDescriptor scenarioWpd, metricsWpd;
+	final WizardPanelDescriptor scenarioWpd, modelWpd, rankingMetricWpd, utilityMetricWpd;
 
-	main = new MainPanel();
-	mainWpd = new WizardPanelDescriptor(MAIN, main, "General parameters");
+	mainPanel = new MainPanel();
+	mainWpd = new WizardPanelDescriptor(MAIN, mainPanel,
+		"General parameters");
 
 	scenarioWpd = new WizardPanelDescriptor(SCENARIO);
-	metricsWpd = new WizardPanelDescriptor(MODELS);
+	modelWpd = new WizardPanelDescriptor(MODELS);
+	rankingMetricWpd = new WizardPanelDescriptor(RANK_METRIC);
+	utilityMetricWpd = new WizardPanelDescriptor(UTILITY_METRIC);
 
 	wizard.registerWizardPanel(mainWpd);
 	wizard.registerWizardPanel(scenarioWpd);
-	wizard.registerWizardPanel(metricsWpd);
+	wizard.registerWizardPanel(modelWpd);
+	wizard.registerWizardPanel(rankingMetricWpd);
+	wizard.registerWizardPanel(utilityMetricWpd);
 
 	mainWpd.setNext(scenarioWpd.getID());
 	scenarioWpd.setBack(mainWpd.getID());
-	scenarioWpd.setNext(metricsWpd.getID());
-	metricsWpd.setBack(scenarioWpd.getID());
+	scenarioWpd.setNext(modelWpd.getID());
+	modelWpd.setBack(scenarioWpd.getID());
+	modelWpd.setNext(rankingMetricWpd.getID());
+	rankingMetricWpd.setBack(modelWpd.getID());
+	rankingMetricWpd.setNext(utilityMetricWpd.getID());
+	utilityMetricWpd.setBack(rankingMetricWpd.getID());
 
-	main.initialize(mainWpd, cl);
+	mainPanel.initialize(mainWpd, cl);
 	wizard.setCurrentPanel(mainWpd.getID());
     }
 
-    // sets the wizard to the starting panel
-    // while preserving the selected values
+    public void setBatchRun(boolean batch) {
+	mainPanel.setBatchRun(batch);
+    }
+
+    /**
+     * Sets the wizard to the starting panel, while preserving the selected
+     * values
+     */
     public void refresh() {
 	wizard.setCurrentPanel(mainWpd.getID());
     }
 
+    /**
+     * Shows the modal dialog (blocks the application).
+     * 
+     * @return The answer code (0 = OK, 1 = Cancel)
+     */
     public int showDialog() {
 	return wizard.showModalDialog();
     }
@@ -61,8 +82,12 @@ public class ParametersGUI {
 	return getParameters(SCENARIO);
     }
 
-    public Object[] getMetricsParameters() {
-	throw new UnsupportedOperationException("Not implemented yet!");
+    public Object[] getRankMetricParameters() {
+	return getParameters(RANK_METRIC);
+    }
+
+    public Object[] getUtilityMetricParameters() {
+	return getParameters(UTILITY_METRIC);
     }
 
     public Object[] getTrustModelParameters() {
@@ -70,7 +95,7 @@ public class ParametersGUI {
     }
 
     private Object[] getParameters(String str) {
-	final IParametersPanel ppanel = wizard.getModel()
+	final ParametersPanel ppanel = wizard.getModel()
 		.getPanelDescriptor(str).getIParametersPanel();
 	if (null == ppanel) {
 	    return EMPTY;
@@ -91,6 +116,9 @@ public class ParametersGUI {
 		Arrays.toString(sim.getScenarioParameters()));
 	System.out.printf("Trust model parameters: %s\n",
 		Arrays.toString(sim.getTrustModelParameters()));
-	System.exit(0);
+	System.out.printf("Rank metric parameters: %s\n",
+		Arrays.toString(sim.getRankMetricParameters()));
+	System.out.printf("Utility metric parameters: %s\n",
+		Arrays.toString(sim.getUtilityMetricParameters()));
     }
 }

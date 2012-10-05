@@ -15,9 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import testbed.gui.WizardPanelDescriptor;
-import testbed.interfaces.IParametersPanel;
+import testbed.interfaces.ParametersPanel;
 
-public class QADGUI extends JPanel implements IParametersPanel {
+public class QADGUI extends JPanel implements ParametersPanel {
 
     private static final long serialVersionUID = -1558821473401798087L;
 

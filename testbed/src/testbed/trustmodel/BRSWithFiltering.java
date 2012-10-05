@@ -12,9 +12,8 @@ import org.apache.commons.math.distribution.BetaDistributionImpl;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.ICondition;
-import testbed.interfaces.IParametersPanel;
-import testbed.interfaces.ITrustModel;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Opinion;
 
 /**
@@ -26,7 +25,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel {
+public class BRSWithFiltering extends AbstractTrustModel<Double> {
 
     private int time = 0;
 
@@ -48,13 +47,17 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 
     public Opinion[][] opinions = null;
 
+    // temporary storage for experiences and opinions
+    private Set<Experience> exps;
+    private Set<Opinion> ops;
+
     @Override
     public void initialize(Object... params) {
 	time = 0;
 	experiences = new LinkedHashMap<Integer, ArrayList<Experience>>();
 	opinions = new Opinion[0][0];
 
-	final ICondition<Double> valLambda = new ICondition<Double>() {
+	final ParameterCondition<Double> valLambda = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
@@ -65,7 +68,7 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	    }
 	};
 
-	final ICondition<Double> valFactor = new ICondition<Double>() {
+	final ParameterCondition<Double> valFactor = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 1 || var > 50)
@@ -76,7 +79,7 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	    }
 	};
 
-	final ICondition<Double> valQ = new ICondition<Double>() {
+	final ParameterCondition<Double> valQ = new ParameterCondition<Double>() {
 	    @Override
 	    public void eval(Double var) {
 		if (var <= 0 || var >= 0.5)
@@ -91,6 +94,9 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	lambdaOp = Utils.extractParameter(valLambda, 1, params);
 	Q = Utils.extractParameter(valQ, 2, params);
 	FACTOR = Utils.extractParameter(valFactor, 3, params);
+
+	exps = null;
+	ops = null;
     }
 
     @Override
@@ -99,7 +105,17 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
     }
 
     @Override
-    public void calculateTrust(Set<Experience> exps, Set<Opinion> ops) {
+    public void processExperiences(Set<Experience> experiences) {
+	this.exps = experiences;
+    }
+
+    @Override
+    public void processOpinions(Set<Opinion> opinions) {
+	this.ops = opinions;
+    }
+
+    @Override
+    public void calculateTrust() {
 	// make room for new values
 	expandArrays(exps, ops);
 
@@ -121,7 +137,8 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	    opinions[o.agent1][o.agent2] = o;
     }
 
-    public Map<Integer, Double> compute() {
+    @Override
+    public Map<Integer, Double> getTrust(int service) {
 	final Map<Integer, BRSPair> experienceTrust = computeExperiences();
 	final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
@@ -228,11 +245,6 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
 	return reputation;
     }
 
-    @Override
-    public Map<Integer, Integer> getRankings(int service) {
-	return super.constructRankingsFromEstimations(compute());
-    }
-
     /**
      * Returns a map of aggregated experience tuples. Keys represents agents and
      * their values represent an aggregated vector of their past interaction
@@ -302,7 +314,12 @@ public class BRSWithFiltering extends AbstractTrustModel implements ITrustModel 
     }
 
     @Override
-    public IParametersPanel getParametersPanel() {
+    public ParametersPanel getParametersPanel() {
 	return new BRSWithFilteringGUI();
+    }
+
+    @Override
+    public String toString() {
+	return "BRS with filtering";
     }
 }
