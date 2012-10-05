@@ -59,6 +59,6 @@ public class KendallsTauB extends AbstractMetric implements RankingMetric {
 
     @Override
     public String toString() {
-	return "Kendall's tau-b";
+	return "Kendall's Tau-B";
     }
 }

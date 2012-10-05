@@ -25,7 +25,6 @@ import testbed.deceptionmodel.Complementary;
 import testbed.deceptionmodel.ExaggerationModel;
 import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
-import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.gui.WizardPanelDescriptor;
 import testbed.interfaces.DeceptionModel;
@@ -216,10 +215,10 @@ public class RandomGUI extends JPanel implements ParametersPanel {
 	    tf.setToolTipText("The percentage of " + dm + " deception model.");
 	    tf.addChangeListener(listener);
 
-	    if (dm instanceof Truthful || dm instanceof Complementary) {
+	    if (dm instanceof Truthful) {
 		tf.setValue(0.1);
-	    } else if (dm instanceof Silent) {
-		tf.setValue(0.8);
+	    } else if (dm instanceof Complementary) {
+		tf.setValue(0.9);
 	    }
 
 	    c.gridx = 1;

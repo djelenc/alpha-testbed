@@ -1,11 +1,11 @@
 testbed.metric.KendallsTauA
 testbed.metric.KendallsTauB
+testbed.metric.KTATopHalf
+testbed.metric.KTABottomHalf
 testbed.metric.SpearmansFootRule
 testbed.metric.MeanAbsoluteError
 testbed.metric.Euclidean
 testbed.metric.Accuracy
-testbed.metric.KTATopHalf
-testbed.metric.KTABottomHalf
 testbed.metric.AccuracyWithSensitivity
 testbed.metric.WeightedKendallsTau
 testbed.metric.Coverage
