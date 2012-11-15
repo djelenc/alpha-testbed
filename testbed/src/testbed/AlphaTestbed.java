@@ -7,12 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
-import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.Metric;
-import testbed.interfaces.PartnerSelection;
+import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
@@ -102,8 +101,8 @@ import static testbed.EvaluationProtocol.SELECTING_INTERACTION_PARTNERS;
  * In utility mode, the testbed reference to the same instances as in ranking
  * mode (an instance of {@link TrustModel}, {@link Scenario}, and
  * {@link Accuracy}). Besides those, the utility mode also references an
- * implementation of an {@link DecisionMaking} interface (part of a trust model
- * that selects interaction partners), an {@link PartnerSelection} interface
+ * implementation of an {@link SelectingInteractionPartners} interface (part of a trust model
+ * that selects interaction partners), an {@link InteractionPartnerSelection} interface
  * implementation (part of scenario that receives the partner selections and
  * prepares corresponding {@link Experience} tuples) and an instance of a
  * {@link Utility} to evaluate the obtained utility. Because the {@link Utility}
@@ -131,7 +130,7 @@ public class AlphaTestbed {
      * Reference to the decision making capabilities of a trust model -- null in
      * ranking mode
      */
-    protected final DecisionMaking decision;
+    protected final SelectingInteractionPartners decision;
 
     /** Reference to the scenario */
     protected final Scenario scenario;
@@ -140,7 +139,7 @@ public class AlphaTestbed {
      * Reference to the partner selection capability of the scenario -- null in
      * ranking mode
      */
-    protected final PartnerSelection selection;
+    protected final InteractionPartnerSelection selection;
 
     /** Class of ranking metric instances */
     protected final Class<? extends Accuracy> accuracyClass;
@@ -186,12 +185,12 @@ public class AlphaTestbed {
      * {@link Scenario} instance. There are only two valid combinations.
      * <ol>
      * <li>In the first case, the scenario instance implements the
-     * {@link PartnerSelection} interface and the trust model instance
-     * implements the {@link DecisionMaking}. This combination constitutes the
+     * {@link InteractionPartnerSelection} interface and the trust model instance
+     * implements the {@link SelectingInteractionPartners}. This combination constitutes the
      * so called <b>utility mode</b>.
      * <li>In the second case, the scenario instance <b>does not</b> implement
-     * the {@link PartnerSelection} interface, and the trust model instance
-     * <b>does not</b> implement the {@link DecisionMaking} interface. This
+     * the {@link InteractionPartnerSelection} interface, and the trust model instance
+     * <b>does not</b> implement the {@link SelectingInteractionPartners} interface. This
      * combination constitutes the so called <b>ranking mode</b>.
      * </ol>
      * If the given combination of scenario and trust model does not constitute
@@ -230,9 +229,13 @@ public class AlphaTestbed {
 	model = tm;
 	scenario = scn;
 
+	// TODO
+	// Check if the combination is valid for mode B
+	// this includes creating a helper method below
+
 	if (validModeSelectingInteractionPartners(tm, scn)) {
-	    decision = (DecisionMaking) tm;
-	    selection = (PartnerSelection) scn;
+	    decision = (SelectingInteractionPartners) tm;
+	    selection = (InteractionPartnerSelection) scn;
 	    accuracyClass = accuracy.getClass();
 	    accuracyParameters = accParams;
 	    allAccuracyMetrics = new HashMap<Integer, Accuracy>();
@@ -281,12 +284,87 @@ public class AlphaTestbed {
 	    stepWithPartnerSelections(time);
 	    break;
 	case SELECTING_OPINIONS_PROVIDERS:
+	    stepWithInteractionAndOpinionSelections(time);
+	    break;
 	default:
-	    throw new NotImplementedException();
+	    throw new Error("Unreachable code.");
 	}
 
 	// notify all subscribers
 	notifiySubscribers();
+    }
+
+    /**
+     * Performs one step through all phases of the evaluation protocol that
+     * evaluates trust models by allowing them to select interaction partners
+     * and opinion providers.
+     * 
+     * @param time
+     *            Current time
+     */
+    public void stepWithInteractionAndOpinionSelections(int time) {
+	// TODO
+	// 1 convey available agents
+	// 2 convey avaiable services
+	// ask for opinion selections
+	// convey selections to scenario
+
+	// get opinions
+	final Set<Opinion> opinions = scenario.generateOpinions();
+
+	// convey opinions to the trust model
+	model.processOpinions(opinions);
+
+	// get services
+	final Set<Integer> services = scenario.getServices();
+
+	// temporary var for interaction partners
+	final Map<Integer, Integer> partnersTemp = decision
+		.getInteractionPartners(services);
+
+	// Convert Map to a TreeMap to ensure deterministic iteration
+	final Map<Integer, Integer> partners = Utils.orderedMap(partnersTemp);
+
+	// convey partner selection to the scenario
+	selection.setInteractionPartners(partners);
+
+	// generate experiences
+	final Set<Experience> experiences = scenario.generateExperiences();
+
+	// convey experiences
+	model.processExperiences(experiences);
+
+	// calculate trust
+	model.calculateTrust();
+
+	// evaluation
+	for (int service : services) {
+	    final Map<Integer, Double> capabilities;
+
+	    capabilities = scenario.getCapabilities(service);
+
+	    // accuracy
+	    final Accuracy accuracy = getAccuracyInstance(service);
+	    final int accKey = accuracy.getClass().hashCode() ^ service;
+	    final double accValue = accuracy.evaluate(model.getTrust(service),
+		    capabilities);
+
+	    score.put(accKey, accValue);
+
+	    final Integer agent = partners.get(service);
+
+	    // utility -- if partner for this service was selected
+	    if (null != agent) {
+		final Utility utility = getUtilityInstance(service);
+		final int utilKey = utility.getClass().hashCode() ^ service;
+		final double utilValue = utility.evaluate(capabilities, agent);
+
+		score.put(utilKey, utilValue);
+	    }
+
+	    // TODO
+	    // Evaluate opinion cost
+	}
     }
 
     /**
@@ -308,13 +386,13 @@ public class AlphaTestbed {
 
 	// temporary var for interaction partners
 	final Map<Integer, Integer> partnersTemp = decision
-		.getNextInteractionPartners(services);
+		.getInteractionPartners(services);
 
 	// Convert Map to a TreeMap to ensure deterministic iteration
 	final Map<Integer, Integer> partners = Utils.orderedMap(partnersTemp);
 
 	// convey partner selection to the scenario
-	selection.setNextInteractionPartners(partners);
+	selection.setInteractionPartners(partners);
 
 	// generate experiences
 	final Set<Experience> experiences = scenario.generateExperiences();
@@ -436,13 +514,13 @@ public class AlphaTestbed {
      * @param scenario
      *            Instance of a scenario
      * @return True, if and only if the instance of the trust model implements
-     *         the {@link DecisionMaking} interface and the instance of a
-     *         scenario implements the {@link PartnerSelection} interface.
+     *         the {@link SelectingInteractionPartners} interface and the instance of a
+     *         scenario implements the {@link InteractionPartnerSelection} interface.
      */
     protected boolean validModeSelectingInteractionPartners(
 	    TrustModel<?> model, Scenario scenario) {
-	return DecisionMaking.class.isAssignableFrom(model.getClass())
-		&& PartnerSelection.class.isAssignableFrom(scenario.getClass());
+	return SelectingInteractionPartners.class.isAssignableFrom(model.getClass())
+		&& InteractionPartnerSelection.class.isAssignableFrom(scenario.getClass());
     }
 
     /**
@@ -455,14 +533,14 @@ public class AlphaTestbed {
      * @param scenario
      *            Instance of a scenario
      * @return True, if and only if the instance of the trust model does not
-     *         implement the {@link DecisionMaking} interface and the instance
-     *         of a scenario does not implement the {@link PartnerSelection}
+     *         implement the {@link SelectingInteractionPartners} interface and the instance
+     *         of a scenario does not implement the {@link InteractionPartnerSelection}
      *         interface.
      */
     protected boolean validModeNoDecisions(TrustModel<?> model,
 	    Scenario scenario) {
-	return !DecisionMaking.class.isAssignableFrom(model.getClass())
-		&& !PartnerSelection.class
+	return !SelectingInteractionPartners.class.isAssignableFrom(model.getClass())
+		&& !InteractionPartnerSelection.class
 			.isAssignableFrom(scenario.getClass());
     }
 

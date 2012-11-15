@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.common.PartnerSelectionTemplates;
-import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.SelectingInteractionPartners;
 
 /**
  * Trust model on the basis of the {@link YuSinghSycara} that supports selection
@@ -19,7 +19,7 @@ import testbed.interfaces.DecisionMaking;
  * 
  */
 public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
-	DecisionMaking {
+	SelectingInteractionPartners {
 
     protected int time;
 
@@ -38,7 +38,7 @@ public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
     }
 
     @Override
-    public Map<Integer, Integer> getNextInteractionPartners(
+    public Map<Integer, Integer> getInteractionPartners(
 	    Set<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 

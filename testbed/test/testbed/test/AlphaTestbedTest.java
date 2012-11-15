@@ -9,9 +9,9 @@ import org.junit.Test;
 
 import testbed.AlphaTestbed;
 import testbed.interfaces.Experience;
-import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.PartnerSelection;
+import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
@@ -179,18 +179,18 @@ class RankingsScenario implements Scenario {
 }
 
 class PartnerSelectionScenario extends RankingsScenario implements
-	PartnerSelection {
+	InteractionPartnerSelection {
 
     @Override
-    public void setNextInteractionPartners(Map<Integer, Integer> partners) {
+    public void setInteractionPartners(Map<Integer, Integer> partners) {
     }
 
 }
 
 class DecisionMakingTrustModel extends RankingsTrustModel implements
-	DecisionMaking {
+	SelectingInteractionPartners {
     @Override
-    public Map<Integer, Integer> getNextInteractionPartners(
+    public Map<Integer, Integer> getInteractionPartners(
 	    Set<Integer> services) {
 	return null;
     }

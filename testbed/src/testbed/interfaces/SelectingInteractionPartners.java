@@ -4,14 +4,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Interface for implementing the decision making component of trust models. A
- * trust model that wants to select interaction partners, must implement the
- * methods of this interface.
+ * Interface for implementing the decision making component of trust models that
+ * selects interaction partners. A trust model that wants to select interaction
+ * partners, has to implement the methods of this interface.
  * 
  * @author David
  * 
  */
-public interface DecisionMaking {
+public interface SelectingInteractionPartners {
 
     /**
      * This method should return a map that defines partner agents, with which
@@ -31,7 +31,6 @@ public interface DecisionMaking {
      *            Set of available types of services
      * @return A map representing partner selections.
      */
-    public Map<Integer, Integer> getNextInteractionPartners(
-	    Set<Integer> services);
+    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services);
 
 }

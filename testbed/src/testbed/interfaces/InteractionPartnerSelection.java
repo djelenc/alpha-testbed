@@ -8,7 +8,7 @@ import java.util.Map;
  * of this interface.
  * 
  */
-public interface PartnerSelection {
+public interface InteractionPartnerSelection {
 
     /**
      * Sets the next interaction partners for the given services.
@@ -28,5 +28,5 @@ public interface PartnerSelection {
      * @param partners
      *            Map of services and agents
      */
-    public void setNextInteractionPartners(Map<Integer, Integer> partners);
+    public void setInteractionPartners(Map<Integer, Integer> partners);
 }

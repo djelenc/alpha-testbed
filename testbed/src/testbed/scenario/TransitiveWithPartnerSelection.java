@@ -6,7 +6,7 @@ import java.util.Set;
 
 import testbed.interfaces.Experience;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.PartnerSelection;
+import testbed.interfaces.InteractionPartnerSelection;
 
 /**
  * A transitive scenario that allows an agent to select interaction partners.
@@ -15,7 +15,7 @@ import testbed.interfaces.PartnerSelection;
  * 
  */
 public class TransitiveWithPartnerSelection extends Transitive implements
-	PartnerSelection {
+	InteractionPartnerSelection {
 
     private static final String PARTNER_NOT_SET = "No partner set for service %d.";
     private Map<Integer, Integer> partners;
@@ -46,7 +46,7 @@ public class TransitiveWithPartnerSelection extends Transitive implements
     }
 
     @Override
-    public void setNextInteractionPartners(Map<Integer, Integer> partners) {
+    public void setInteractionPartners(Map<Integer, Integer> partners) {
 	this.partners = partners;
     }
 

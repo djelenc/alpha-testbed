@@ -20,9 +20,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import testbed.common.ClassLoaderUtils;
-import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.PartnerSelection;
+import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
@@ -112,8 +112,8 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	trustModel.removeAllItems();
 
 	for (TrustModel<?> tm : allTrustModels) {
-	    if (tm instanceof DecisionMaking && decisionMaking
-		    || !(tm instanceof DecisionMaking) && !decisionMaking) {
+	    if (tm instanceof SelectingInteractionPartners && decisionMaking
+		    || !(tm instanceof SelectingInteractionPartners) && !decisionMaking) {
 		trustModel.addItem(tm);
 	    }
 	}
@@ -142,7 +142,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	scenario.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		populateTrustModels(scenario.getSelectedItem() instanceof PartnerSelection);
+		populateTrustModels(scenario.getSelectedItem() instanceof InteractionPartnerSelection);
 	    }
 	});
 
@@ -159,7 +159,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	panel.add(scenario, c);
 
 	// Trust models
-	populateTrustModels(scenario.getSelectedItem() instanceof PartnerSelection);
+	populateTrustModels(scenario.getSelectedItem() instanceof InteractionPartnerSelection);
 	trustModel.addActionListener(listener);
 
 	c.gridx = 0;
@@ -252,7 +252,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	final Utility um = (Utility) utilityMetric
 		.getSelectedItem();
 
-	final boolean enabled = scn instanceof PartnerSelection;
+	final boolean enabled = scn instanceof InteractionPartnerSelection;
 	utilityMetric.setEnabled(enabled);
 	umLabel.setEnabled(enabled);
 

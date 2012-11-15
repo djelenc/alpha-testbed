@@ -7,7 +7,7 @@ import java.util.Set;
 import testbed.common.PartnerSelectionTemplates;
 import testbed.common.Utils;
 import testbed.interfaces.ParameterCondition;
-import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.ParametersPanel;
 
 /**
@@ -26,7 +26,7 @@ import testbed.interfaces.ParametersPanel;
  * 
  */
 public class EigenTrustWithDecisionMaking extends EigenTrust implements
-	DecisionMaking {
+	SelectingInteractionPartners {
 
     protected static final ParameterCondition<Double> VAL_THRESHOLD;
     protected static final ParameterCondition<Boolean> VAL_PROCEDURE;
@@ -64,7 +64,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
     }
 
     @Override
-    public Map<Integer, Integer> getNextInteractionPartners(
+    public Map<Integer, Integer> getInteractionPartners(
 	    Set<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
