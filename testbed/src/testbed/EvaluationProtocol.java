@@ -1,0 +1,5 @@
+package testbed;
+
+public enum EvaluationProtocol {
+    NO_DECISIONS, SELECTING_INTERACTION_PARTNERS, SELECTING_OPINIONS_PROVIDERS
+}

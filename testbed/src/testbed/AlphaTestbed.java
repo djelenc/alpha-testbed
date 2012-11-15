@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.DecisionMaking;
@@ -17,6 +18,9 @@ import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 import testbed.interfaces.Opinion;
+
+import static testbed.EvaluationProtocol.NO_DECISIONS;
+import static testbed.EvaluationProtocol.SELECTING_INTERACTION_PARTNERS;
 
 /**
  * <h1>The Alpha Testbed</h1>
@@ -63,8 +67,8 @@ import testbed.interfaces.Opinion;
  * 
  * <p>
  * In ranking mode, the testbed holds a reference to instances of a
- * {@link TrustModel}, a {@link Scenario}, and a {@link Accuracy}. Other
- * class members are set to null or ignored.
+ * {@link TrustModel}, a {@link Scenario}, and a {@link Accuracy}. Other class
+ * members are set to null or ignored.
  * 
  * <h2>Utility mode</h2>
  * <p>
@@ -102,12 +106,11 @@ import testbed.interfaces.Opinion;
  * that selects interaction partners), an {@link PartnerSelection} interface
  * implementation (part of scenario that receives the partner selections and
  * prepares corresponding {@link Experience} tuples) and an instance of a
- * {@link Utility} to evaluate the obtained utility. Because the
- * {@link Utility} is stateful (and the state is different for every
- * service), we need to have an instance of such {@link Utility} instance
- * for every possible type of service. The testbed stores all those instances in
- * the map of type {@link Map}<{@link Integer}, {@link Utility}>, because
- * they track state.
+ * {@link Utility} to evaluate the obtained utility. Because the {@link Utility}
+ * is stateful (and the state is different for every service), we need to have
+ * an instance of such {@link Utility} instance for every possible type of
+ * service. The testbed stores all those instances in the map of type
+ * {@link Map}<{@link Integer}, {@link Utility}>, because they track state.
  * 
  * <p>
  * The testbed must be instantiated and run by a simulation platform, such as
@@ -140,29 +143,28 @@ public class AlphaTestbed {
     protected final PartnerSelection selection;
 
     /** Class of ranking metric instances */
-    protected final Class<? extends Accuracy> rankingMetricClass;
+    protected final Class<? extends Accuracy> accuracyClass;
 
     /** Parameters for creating ranking metric instances */
-    protected final Object[] rankingMetricParameters;
+    protected final Object[] accuracyParameters;
 
     /** Class of utility metric instances -- null in ranking mode */
-    protected final Class<? extends Utility> utilityMetricClass;
+    protected final Class<? extends Utility> utilityClass;
 
     /** Parameters for creating utility metric instances */
-    protected final Object[] utilityMetricParameters;
+    protected final Object[] utilityParameters;
 
     /** Temporary map that holds the metric results */
     protected final Map<Integer, Double> score;
 
-    /** Convenience flag to denote the utility mode */
-    protected final boolean utilityMode;
+    /** Type of evaluation protocol */
+    protected final EvaluationProtocol evaluationProtocol;
 
     /** Mapping of services to {@link Accuracy} instance */
-    protected final Map<Integer, Accuracy> allRankingMetrics;
+    protected final Map<Integer, Accuracy> allAccuracyMetrics;
 
     /**
-     * Mapping of services to {@link Utility} instances -- null in ranking
-     * mode
+     * Mapping of services to {@link Utility} instances -- null in ranking mode
      */
     protected final Map<Integer, Utility> allUtilityMetrics;
 
@@ -194,63 +196,60 @@ public class AlphaTestbed {
      * </ol>
      * If the given combination of scenario and trust model does not constitute
      * a valid combination, an {@link IllegalArgumentException} is thrown.
-     * <li>An instance of the {@link Accuracy}. This instance is only used
-     * to infer the type (i.e. class) for the ranking metric. The testbed will
-     * create the actual instance of the {@link Accuracy} that will be used
-     * for evaluation.
-     * <li>The varargs parameter used to initialize a {@link Accuracy}
-     * instance. The testbed uses these parameters when creates and initializes
-     * new instances of the {@link Accuracy}.
-     * <li>An instance of the {@link Utility}. This instance is only used
-     * to infer the type (i.e. class) for the utility metric. The testbed will
-     * create the actual instance of the {@link Utility} that will be used
-     * for evaluation.
-     * <li>The varargs parameter used to initialize a {@link Utility}
-     * instance. The testbed uses these parameters when creates and initializes
-     * new instances of the {@link Utility}.
+     * <li>An instance of the {@link Accuracy}. This instance is only used to
+     * infer the type (i.e. class) for the ranking metric. The testbed will
+     * create the actual instance of the {@link Accuracy} that will be used for
+     * evaluation.
+     * <li>The varargs parameter used to initialize a {@link Accuracy} instance.
+     * The testbed uses these parameters when creates and initializes new
+     * instances of the {@link Accuracy}.
+     * <li>An instance of the {@link Utility}. This instance is only used to
+     * infer the type (i.e. class) for the utility metric. The testbed will
+     * create the actual instance of the {@link Utility} that will be used for
+     * evaluation.
+     * <li>The varargs parameter used to initialize a {@link Utility} instance.
+     * The testbed uses these parameters when creates and initializes new
+     * instances of the {@link Utility}.
      * </ol>
      * 
      * @param scn
      *            A scenario instance
      * @param tm
      *            A trust model instance
-     * @param rankingMetric
+     * @param accuracy
      *            A ranking metric instance
-     * @param rmParams
-     *            A set of varargs arguments to initialize a ranking metric
-     *            instance
-     * @param utilityMetric
+     * @param accParams
+     *            A set of varargs arguments to initialize the utility instance
+     * @param utility
      *            A utility metric instance
-     * @param umParams
-     *            A set of varargs arguments to initialize an utility metric
-     *            instance
+     * @param utilParams
+     *            A set of varargs arguments to initialize an utility instance
      */
-    public AlphaTestbed(Scenario scn, TrustModel<?> tm,
-	    Accuracy rankingMetric, Object[] rmParams,
-	    Utility utilityMetric, Object[] umParams) {
+    public AlphaTestbed(Scenario scn, TrustModel<?> tm, Accuracy accuracy,
+	    Object[] accParams, Utility utility, Object[] utilParams) {
 	model = tm;
 	scenario = scn;
 
-	if (isValidUtilityMode(tm, scn)) {
+	if (validModeSelectingInteractionPartners(tm, scn)) {
 	    decision = (DecisionMaking) tm;
 	    selection = (PartnerSelection) scn;
-	    rankingMetricClass = rankingMetric.getClass();
-	    rankingMetricParameters = rmParams;
-	    allRankingMetrics = new HashMap<Integer, Accuracy>();
-	    utilityMetricClass = utilityMetric.getClass();
-	    utilityMetricParameters = umParams;
+	    accuracyClass = accuracy.getClass();
+	    accuracyParameters = accParams;
+	    allAccuracyMetrics = new HashMap<Integer, Accuracy>();
+	    utilityClass = utility.getClass();
+	    utilityParameters = utilParams;
 	    allUtilityMetrics = new HashMap<Integer, Utility>();
-	    utilityMode = true;
-	} else if (isValidRankingMode(tm, scn)) {
+	    evaluationProtocol = SELECTING_INTERACTION_PARTNERS;
+	} else if (validModeNoDecisions(tm, scn)) {
 	    decision = null;
 	    selection = null;
-	    rankingMetricClass = rankingMetric.getClass();
-	    rankingMetricParameters = rmParams;
-	    allRankingMetrics = new HashMap<Integer, Accuracy>();
-	    utilityMetricClass = null;
-	    utilityMetricParameters = null;
+	    accuracyClass = accuracy.getClass();
+	    accuracyParameters = accParams;
+	    allAccuracyMetrics = new HashMap<Integer, Accuracy>();
+	    utilityClass = null;
+	    utilityParameters = null;
 	    allUtilityMetrics = null;
-	    utilityMode = false;
+	    evaluationProtocol = NO_DECISIONS;
 	} else {
 	    throw new IllegalArgumentException(String.format(INCOMPATIBLE_EX,
 		    tm, scn));
@@ -274,27 +273,48 @@ public class AlphaTestbed {
 	model.setCurrentTime(time);
 	scenario.setCurrentTime(time);
 
+	switch (evaluationProtocol) {
+	case NO_DECISIONS:
+	    stepWithoutDecisions(time);
+	    break;
+	case SELECTING_INTERACTION_PARTNERS:
+	    stepWithPartnerSelections(time);
+	    break;
+	case SELECTING_OPINIONS_PROVIDERS:
+	default:
+	    throw new NotImplementedException();
+	}
+
+	// notify all subscribers
+	notifiySubscribers();
+    }
+
+    /**
+     * Performs one step through all phases of the evaluation protocol that
+     * evaluates trust models by allowing them to select interaction partners.
+     * 
+     * @param time
+     *            Current time
+     */
+    public void stepWithPartnerSelections(int time) {
 	// get opinions
 	final Set<Opinion> opinions = scenario.generateOpinions();
 
-	// convey opinions
+	// convey opinions to the trust model
 	model.processOpinions(opinions);
 
 	// get services
 	final Set<Integer> services = scenario.getServices();
 
-	Map<Integer, Integer> partners = null;
+	// temporary var for interaction partners
+	final Map<Integer, Integer> partnersTemp = decision
+		.getNextInteractionPartners(services);
 
-	if (isUtilityMode()) {
-	    // query trust model for interaction partners
-	    partners = decision.getNextInteractionPartners(services);
+	// Convert Map to a TreeMap to ensure deterministic iteration
+	final Map<Integer, Integer> partners = Utils.orderedMap(partnersTemp);
 
-	    // Convert Map to a TreeMap to ensure deterministic iteration
-	    partners = Utils.orderedMap(partners);
-
-	    // give partner selection to the scenario
-	    selection.setNextInteractionPartners(partners);
-	}
+	// convey partner selection to the scenario
+	selection.setNextInteractionPartners(partners);
 
 	// generate experiences
 	final Set<Experience> experiences = scenario.generateExperiences();
@@ -305,48 +325,80 @@ public class AlphaTestbed {
 	// calculate trust
 	model.calculateTrust();
 
-	// ------------------------------- //
-	// -- Evaluate calculated trust -- //
-	// ------------------------------- //
-
+	// evaluation
 	for (int service : services) {
 	    final Map<Integer, Double> capabilities;
 
 	    capabilities = scenario.getCapabilities(service);
 
-	    // evaluate rankings
-	    final Accuracy rm = getRankingMetricInstance(service);
-	    final int rankMetricKey = rm.getClass().hashCode() ^ service;
-	    final double rankMetricScore = rm.evaluate(model.getTrust(service),
+	    // accuracy
+	    final Accuracy accuracy = getAccuracyInstance(service);
+	    final int accKey = accuracy.getClass().hashCode() ^ service;
+	    final double accValue = accuracy.evaluate(model.getTrust(service),
 		    capabilities);
 
-	    score.put(rankMetricKey, rankMetricScore);
+	    score.put(accKey, accValue);
 
-	    // evaluate utility
-	    if (isUtilityMode()) {
-		final Integer agent = partners.get(service);
+	    final Integer agent = partners.get(service);
 
-		// if partner for this service was selected
-		if (null != agent) {
-		    final Utility um = getUtilityMetricInstance(service);
-		    final int utilityMetricKey;
-		    final double utilityMetricScore;
-		    utilityMetricKey = um.getClass().hashCode() ^ service;
-		    utilityMetricScore = um.evaluate(capabilities, agent);
+	    // utility -- if partner for this service was selected
+	    if (null != agent) {
+		final Utility utility = getUtilityInstance(service);
+		final int utilKey = utility.getClass().hashCode() ^ service;
+		final double utilValue = utility.evaluate(capabilities, agent);
 
-		    score.put(utilityMetricKey, utilityMetricScore);
-		}
+		score.put(utilKey, utilValue);
 	    }
 	}
-
-	// notify all subscribers
-	notifiySubscribers();
     }
 
     /**
-     * Returns the value of the metric for the given service. This method should
-     * be called by all instances of {@link MetricSubscriber} to pull the data
-     * from the test-bed.
+     * Performs one step through all phases of the evaluation protocol that
+     * evaluates trust models by. Interaction partners and opinion providers are
+     * determined by the scenario.
+     * 
+     * @param time
+     *            Current time
+     */
+    public void stepWithoutDecisions(int time) {
+	// get opinions
+	final Set<Opinion> opinions = scenario.generateOpinions();
+
+	// convey opinions
+	model.processOpinions(opinions);
+
+	// get services
+	final Set<Integer> services = scenario.getServices();
+
+	// generate experiences
+	final Set<Experience> experiences = scenario.generateExperiences();
+
+	// convey experiences
+	model.processExperiences(experiences);
+
+	// calculate trust
+	model.calculateTrust();
+
+	// evaluation
+	for (int service : services) {
+	    final Map<Integer, Double> capabilities;
+
+	    capabilities = scenario.getCapabilities(service);
+
+	    // accuracy
+	    final Accuracy accuracy = getAccuracyInstance(service);
+	    final int accKey = accuracy.getClass().hashCode() ^ service;
+	    final double accValue = accuracy.evaluate(model.getTrust(service),
+		    capabilities);
+
+	    score.put(accKey, accValue);
+	}
+    }
+
+    /**
+     * Returns the value of the given metric for the given service. This method
+     * should be called by all instances of {@link MetricSubscriber} to pull the
+     * data from the testbed.
      * 
      * @param service
      *            The type of service
@@ -375,7 +427,9 @@ public class AlphaTestbed {
 
     /**
      * Determines, if the combination of the trust model and the scenario
-     * constitutes a valid mode that measures utility.
+     * constitutes a valid mode where trust model selects interaction partners
+     * while opinion providers are determined by the scenario (so called mode
+     * A).
      * 
      * @param model
      *            Instance of a trust model
@@ -385,14 +439,16 @@ public class AlphaTestbed {
      *         the {@link DecisionMaking} interface and the instance of a
      *         scenario implements the {@link PartnerSelection} interface.
      */
-    protected boolean isValidUtilityMode(TrustModel<?> model, Scenario scenario) {
+    protected boolean validModeSelectingInteractionPartners(
+	    TrustModel<?> model, Scenario scenario) {
 	return DecisionMaking.class.isAssignableFrom(model.getClass())
 		&& PartnerSelection.class.isAssignableFrom(scenario.getClass());
     }
 
     /**
-     * Determines, if the combination of the given trust model and the given
-     * scenario constitutes a valid mode that measures rankings.
+     * Determines, if the combination of the trust model and the scenario
+     * constitutes a valid mode where scenario determines interaction partners
+     * and opinion providers.
      * 
      * @param model
      *            Instance of a trust model
@@ -403,19 +459,11 @@ public class AlphaTestbed {
      *         of a scenario does not implement the {@link PartnerSelection}
      *         interface.
      */
-    protected boolean isValidRankingMode(TrustModel<?> model, Scenario scenario) {
+    protected boolean validModeNoDecisions(TrustModel<?> model,
+	    Scenario scenario) {
 	return !DecisionMaking.class.isAssignableFrom(model.getClass())
 		&& !PartnerSelection.class
 			.isAssignableFrom(scenario.getClass());
-    }
-
-    /**
-     * Returns true, if the test-bed is in the utility mode.
-     * 
-     * @return
-     */
-    public boolean isUtilityMode() {
-	return utilityMode;
     }
 
     /**
@@ -462,18 +510,17 @@ public class AlphaTestbed {
      *            Type of service
      * @return An instance of the metric
      */
-    protected Accuracy getRankingMetricInstance(int service) {
-	Accuracy metric = allRankingMetrics.get(service);
+    protected Accuracy getAccuracyInstance(int service) {
+	Accuracy metric = allAccuracyMetrics.get(service);
 
 	if (null == metric) {
 	    try {
-		metric = rankingMetricClass.newInstance();
-		metric.initialize(rankingMetricParameters);
-		allRankingMetrics.put(service, metric);
+		metric = accuracyClass.newInstance();
+		metric.initialize(accuracyParameters);
+		allAccuracyMetrics.put(service, metric);
 	    } catch (Exception e) {
-		throw new Error(String.format(CREATION_ERROR,
-			rankingMetricClass,
-			Arrays.toString(rankingMetricParameters)));
+		throw new Error(String.format(CREATION_ERROR, accuracyClass,
+			Arrays.toString(accuracyParameters)));
 	    }
 	}
 
@@ -493,21 +540,29 @@ public class AlphaTestbed {
      *            Type of service
      * @return An instance of the metric
      */
-    protected Utility getUtilityMetricInstance(int service) {
+    protected Utility getUtilityInstance(int service) {
 	Utility metric = allUtilityMetrics.get(service);
 
 	if (null == metric) {
 	    try {
-		metric = utilityMetricClass.newInstance();
-		metric.initialize(utilityMetricParameters);
+		metric = utilityClass.newInstance();
+		metric.initialize(utilityParameters);
 		allUtilityMetrics.put(service, metric);
 	    } catch (Exception e) {
-		throw new Error(String.format(CREATION_ERROR,
-			utilityMetricClass,
-			Arrays.toString(utilityMetricParameters)));
+		throw new Error(String.format(CREATION_ERROR, utilityClass,
+			Arrays.toString(utilityParameters)));
 	    }
 	}
 
 	return metric;
+    }
+
+    /**
+     * Returns the evaluation protocol
+     * 
+     * @return
+     */
+    public EvaluationProtocol getEvaluationProtocol() {
+	return evaluationProtocol;
     }
 }

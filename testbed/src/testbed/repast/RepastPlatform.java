@@ -9,6 +9,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import testbed.AlphaTestbed;
+import testbed.EvaluationProtocol;
 import testbed.common.DefaultRandomGenerator;
 import testbed.gui.ExceptionWindowDialog;
 import testbed.gui.ParametersGUI;
@@ -97,7 +98,7 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    for (int service : scenario.getServices()) {
 		context.add(new RepastMetricAgent(service, rm, atb));
 
-		if (atb.isUtilityMode())
+		if (atb.getEvaluationProtocol() == EvaluationProtocol.SELECTING_INTERACTION_PARTNERS)
 		    context.add(new RepastMetricAgent(service, um, atb));
 	    }
 
@@ -117,7 +118,7 @@ public class RepastPlatform extends DefaultContext<Object> implements
 			Arrays.toString(trustModelParams)));
 		msg.append(String.format("Ranking metric: %s\n", rm));
 
-		if (atb.isUtilityMode()) {
+		if (atb.getEvaluationProtocol() == EvaluationProtocol.SELECTING_INTERACTION_PARTNERS) {
 		    msg.append(String.format("Utility metric: %s\n", um));
 		}
 
