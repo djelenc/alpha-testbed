@@ -13,20 +13,20 @@ import testbed.interfaces.DecisionMaking;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.PartnerSelection;
 import testbed.interfaces.RandomGenerator;
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.UtilityMetric;
+import testbed.interfaces.Utility;
 import testbed.interfaces.Opinion;
 
 public class AlphaTestbedTest {
 
-    RankingMetric ranking;
-    UtilityMetric utility;
+    Accuracy ranking;
+    Utility utility;
 
     @Before
     public void setUp() {
-	ranking = new RankingMetric() {
+	ranking = new Accuracy() {
 
 	    @Override
 	    public void initialize(Object... params) {
@@ -44,7 +44,7 @@ public class AlphaTestbedTest {
 	    }
 	};
 
-	utility = new UtilityMetric() {
+	utility = new Utility() {
 
 	    @Override
 	    public void initialize(Object... params) {

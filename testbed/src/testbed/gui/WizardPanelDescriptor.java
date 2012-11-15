@@ -11,10 +11,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.UtilityMetric;
+import testbed.interfaces.Utility;
 
 /**
  * A base descriptor class used to reference a Component panel for the Wizard,
@@ -281,15 +281,15 @@ public class WizardPanelDescriptor implements Observer {
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = tm.getParametersPanel();
-	    } else if (arg instanceof RankingMetric) {
-		final RankingMetric rm = (RankingMetric) arg;
+	    } else if (arg instanceof Accuracy) {
+		final Accuracy rm = (Accuracy) arg;
 		id = ParametersGUI.RANK_METRIC;
 		title = String.format("Ranking metric: %s", rm);
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = rm.getParametersPanel();
-	    } else if (arg instanceof UtilityMetric) {
-		final UtilityMetric um = (UtilityMetric) arg;
+	    } else if (arg instanceof Utility) {
+		final Utility um = (Utility) arg;
 		id = ParametersGUI.UTILITY_METRIC;
 		title = String.format("Utility metric: %s", um);
 		current = wizard.getModel().getPanelDescriptor(id)
@@ -323,7 +323,7 @@ public class WizardPanelDescriptor implements Observer {
 	    } else if (arg instanceof TrustModel) {
 		wpd.setBack(ParametersGUI.SCENARIO);
 		wpd.setNext(ParametersGUI.RANK_METRIC);
-	    } else if (arg instanceof RankingMetric) {
+	    } else if (arg instanceof Accuracy) {
 		wpd.setBack(ParametersGUI.MODELS);
 	    } else {
 		wizard.getModel().getPanelDescriptor(ParametersGUI.RANK_METRIC)

@@ -23,10 +23,10 @@ import testbed.common.ClassLoaderUtils;
 import testbed.interfaces.DecisionMaking;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.PartnerSelection;
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.UtilityMetric;
+import testbed.interfaces.Utility;
 
 public class MainPanel extends JPanel implements ParametersPanel {
     private static final long serialVersionUID = -1187728078314667265L;
@@ -96,9 +96,9 @@ public class MainPanel extends JPanel implements ParametersPanel {
 		getUtilityMetric(), getBatchRunDuration() };
     }
 
-    private UtilityMetric getUtilityMetric() {
+    private Utility getUtilityMetric() {
 	if (utilityMetric.isEnabled()) {
-	    return (UtilityMetric) utilityMetric.getSelectedItem();
+	    return (Utility) utilityMetric.getSelectedItem();
 	} else {
 	    return null;
 	}
@@ -175,7 +175,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	panel.add(trustModel, c);
 
 	// Ranking metric
-	for (RankingMetric mtr : ClassLoaderUtils.lookUp(RankingMetric.class,
+	for (Accuracy mtr : ClassLoaderUtils.lookUp(Accuracy.class,
 		cl)) {
 	    rankingMetric.addItem(mtr);
 	}
@@ -195,7 +195,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	panel.add(rankingMetric, c);
 
 	// Utility metric
-	for (UtilityMetric m : ClassLoaderUtils.lookUp(UtilityMetric.class, cl)) {
+	for (Utility m : ClassLoaderUtils.lookUp(Utility.class, cl)) {
 	    utilityMetric.addItem(m);
 	}
 
@@ -247,9 +247,9 @@ public class MainPanel extends JPanel implements ParametersPanel {
     public void validateParameters() {
 	final TrustModel<?> tm = (TrustModel<?>) trustModel.getSelectedItem();
 	final Scenario scn = (Scenario) scenario.getSelectedItem();
-	final RankingMetric rm = (RankingMetric) rankingMetric
+	final Accuracy rm = (Accuracy) rankingMetric
 		.getSelectedItem();
-	final UtilityMetric um = (UtilityMetric) utilityMetric
+	final Utility um = (Utility) utilityMetric
 		.getSelectedItem();
 
 	final boolean enabled = scn instanceof PartnerSelection;

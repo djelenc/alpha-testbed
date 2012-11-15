@@ -13,10 +13,10 @@ import testbed.common.DefaultRandomGenerator;
 import testbed.gui.ExceptionWindowDialog;
 import testbed.gui.ParametersGUI;
 import testbed.interfaces.RandomGenerator;
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.UtilityMetric;
+import testbed.interfaces.Utility;
 
 public class RepastPlatform extends DefaultContext<Object> implements
 	ContextBuilder<Object> {
@@ -84,10 +84,10 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    trustModel.initialize(trustModelParams);
 
 	    // Set ranking metric
-	    final RankingMetric rm = (RankingMetric) generalParams[2];
+	    final Accuracy rm = (Accuracy) generalParams[2];
 
 	    // set utility metric
-	    final UtilityMetric um = (UtilityMetric) generalParams[3];
+	    final Utility um = (Utility) generalParams[3];
 
 	    // simulator
 	    atb = new AlphaTestbed(scenario, trustModel, rm, rmParams, um,

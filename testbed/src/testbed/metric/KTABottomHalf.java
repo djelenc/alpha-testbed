@@ -10,7 +10,7 @@ import java.util.Map;
  * @author David
  * 
  */
-public class KTABottomHalf extends Accuracy {
+public class KTABottomHalf extends OldAccuracy {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,

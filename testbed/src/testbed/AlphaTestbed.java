@@ -12,10 +12,10 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.DecisionMaking;
 import testbed.interfaces.Metric;
 import testbed.interfaces.PartnerSelection;
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.UtilityMetric;
+import testbed.interfaces.Utility;
 import testbed.interfaces.Opinion;
 
 /**
@@ -63,7 +63,7 @@ import testbed.interfaces.Opinion;
  * 
  * <p>
  * In ranking mode, the testbed holds a reference to instances of a
- * {@link TrustModel}, a {@link Scenario}, and a {@link RankingMetric}. Other
+ * {@link TrustModel}, a {@link Scenario}, and a {@link Accuracy}. Other
  * class members are set to null or ignored.
  * 
  * <h2>Utility mode</h2>
@@ -97,16 +97,16 @@ import testbed.interfaces.Opinion;
  * <p>
  * In utility mode, the testbed reference to the same instances as in ranking
  * mode (an instance of {@link TrustModel}, {@link Scenario}, and
- * {@link RankingMetric}). Besides those, the utility mode also references an
+ * {@link Accuracy}). Besides those, the utility mode also references an
  * implementation of an {@link DecisionMaking} interface (part of a trust model
  * that selects interaction partners), an {@link PartnerSelection} interface
  * implementation (part of scenario that receives the partner selections and
  * prepares corresponding {@link Experience} tuples) and an instance of a
- * {@link UtilityMetric} to evaluate the obtained utility. Because the
- * {@link UtilityMetric} is stateful (and the state is different for every
- * service), we need to have an instance of such {@link UtilityMetric} instance
+ * {@link Utility} to evaluate the obtained utility. Because the
+ * {@link Utility} is stateful (and the state is different for every
+ * service), we need to have an instance of such {@link Utility} instance
  * for every possible type of service. The testbed stores all those instances in
- * the map of type {@link Map}<{@link Integer}, {@link UtilityMetric}>, because
+ * the map of type {@link Map}<{@link Integer}, {@link Utility}>, because
  * they track state.
  * 
  * <p>
@@ -140,13 +140,13 @@ public class AlphaTestbed {
     protected final PartnerSelection selection;
 
     /** Class of ranking metric instances */
-    protected final Class<? extends RankingMetric> rankingMetricClass;
+    protected final Class<? extends Accuracy> rankingMetricClass;
 
     /** Parameters for creating ranking metric instances */
     protected final Object[] rankingMetricParameters;
 
     /** Class of utility metric instances -- null in ranking mode */
-    protected final Class<? extends UtilityMetric> utilityMetricClass;
+    protected final Class<? extends Utility> utilityMetricClass;
 
     /** Parameters for creating utility metric instances */
     protected final Object[] utilityMetricParameters;
@@ -157,14 +157,14 @@ public class AlphaTestbed {
     /** Convenience flag to denote the utility mode */
     protected final boolean utilityMode;
 
-    /** Mapping of services to {@link RankingMetric} instance */
-    protected final Map<Integer, RankingMetric> allRankingMetrics;
+    /** Mapping of services to {@link Accuracy} instance */
+    protected final Map<Integer, Accuracy> allRankingMetrics;
 
     /**
-     * Mapping of services to {@link UtilityMetric} instances -- null in ranking
+     * Mapping of services to {@link Utility} instances -- null in ranking
      * mode
      */
-    protected final Map<Integer, UtilityMetric> allUtilityMetrics;
+    protected final Map<Integer, Utility> allUtilityMetrics;
 
     /** Subscribers to this evaluation run */
     protected final List<MetricSubscriber> subscribers;
@@ -194,20 +194,20 @@ public class AlphaTestbed {
      * </ol>
      * If the given combination of scenario and trust model does not constitute
      * a valid combination, an {@link IllegalArgumentException} is thrown.
-     * <li>An instance of the {@link RankingMetric}. This instance is only used
+     * <li>An instance of the {@link Accuracy}. This instance is only used
      * to infer the type (i.e. class) for the ranking metric. The testbed will
-     * create the actual instance of the {@link RankingMetric} that will be used
+     * create the actual instance of the {@link Accuracy} that will be used
      * for evaluation.
-     * <li>The varargs parameter used to initialize a {@link RankingMetric}
+     * <li>The varargs parameter used to initialize a {@link Accuracy}
      * instance. The testbed uses these parameters when creates and initializes
-     * new instances of the {@link RankingMetric}.
-     * <li>An instance of the {@link UtilityMetric}. This instance is only used
+     * new instances of the {@link Accuracy}.
+     * <li>An instance of the {@link Utility}. This instance is only used
      * to infer the type (i.e. class) for the utility metric. The testbed will
-     * create the actual instance of the {@link UtilityMetric} that will be used
+     * create the actual instance of the {@link Utility} that will be used
      * for evaluation.
-     * <li>The varargs parameter used to initialize a {@link UtilityMetric}
+     * <li>The varargs parameter used to initialize a {@link Utility}
      * instance. The testbed uses these parameters when creates and initializes
-     * new instances of the {@link UtilityMetric}.
+     * new instances of the {@link Utility}.
      * </ol>
      * 
      * @param scn
@@ -226,8 +226,8 @@ public class AlphaTestbed {
      *            instance
      */
     public AlphaTestbed(Scenario scn, TrustModel<?> tm,
-	    RankingMetric rankingMetric, Object[] rmParams,
-	    UtilityMetric utilityMetric, Object[] umParams) {
+	    Accuracy rankingMetric, Object[] rmParams,
+	    Utility utilityMetric, Object[] umParams) {
 	model = tm;
 	scenario = scn;
 
@@ -236,17 +236,17 @@ public class AlphaTestbed {
 	    selection = (PartnerSelection) scn;
 	    rankingMetricClass = rankingMetric.getClass();
 	    rankingMetricParameters = rmParams;
-	    allRankingMetrics = new HashMap<Integer, RankingMetric>();
+	    allRankingMetrics = new HashMap<Integer, Accuracy>();
 	    utilityMetricClass = utilityMetric.getClass();
 	    utilityMetricParameters = umParams;
-	    allUtilityMetrics = new HashMap<Integer, UtilityMetric>();
+	    allUtilityMetrics = new HashMap<Integer, Utility>();
 	    utilityMode = true;
 	} else if (isValidRankingMode(tm, scn)) {
 	    decision = null;
 	    selection = null;
 	    rankingMetricClass = rankingMetric.getClass();
 	    rankingMetricParameters = rmParams;
-	    allRankingMetrics = new HashMap<Integer, RankingMetric>();
+	    allRankingMetrics = new HashMap<Integer, Accuracy>();
 	    utilityMetricClass = null;
 	    utilityMetricParameters = null;
 	    allUtilityMetrics = null;
@@ -315,7 +315,7 @@ public class AlphaTestbed {
 	    capabilities = scenario.getCapabilities(service);
 
 	    // evaluate rankings
-	    final RankingMetric rm = getRankingMetricInstance(service);
+	    final Accuracy rm = getRankingMetricInstance(service);
 	    final int rankMetricKey = rm.getClass().hashCode() ^ service;
 	    final double rankMetricScore = rm.evaluate(model.getTrust(service),
 		    capabilities);
@@ -328,7 +328,7 @@ public class AlphaTestbed {
 
 		// if partner for this service was selected
 		if (null != agent) {
-		    final UtilityMetric um = getUtilityMetricInstance(service);
+		    final Utility um = getUtilityMetricInstance(service);
 		    final int utilityMetricKey;
 		    final double utilityMetricScore;
 		    utilityMetricKey = um.getClass().hashCode() ^ service;
@@ -462,8 +462,8 @@ public class AlphaTestbed {
      *            Type of service
      * @return An instance of the metric
      */
-    protected RankingMetric getRankingMetricInstance(int service) {
-	RankingMetric metric = allRankingMetrics.get(service);
+    protected Accuracy getRankingMetricInstance(int service) {
+	Accuracy metric = allRankingMetrics.get(service);
 
 	if (null == metric) {
 	    try {
@@ -493,8 +493,8 @@ public class AlphaTestbed {
      *            Type of service
      * @return An instance of the metric
      */
-    protected UtilityMetric getUtilityMetricInstance(int service) {
-	UtilityMetric metric = allUtilityMetrics.get(service);
+    protected Utility getUtilityMetricInstance(int service) {
+	Utility metric = allUtilityMetrics.get(service);
 
 	if (null == metric) {
 	    try {

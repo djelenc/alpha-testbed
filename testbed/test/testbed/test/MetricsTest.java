@@ -10,9 +10,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import testbed.interfaces.Metric;
-import testbed.interfaces.RankingMetric;
-import testbed.interfaces.UtilityMetric;
-import testbed.metric.Accuracy;
+import testbed.interfaces.Accuracy;
+import testbed.interfaces.Utility;
+import testbed.metric.OldAccuracy;
 import testbed.metric.Coverage;
 import testbed.metric.CumulativeNormalizedUtility;
 import testbed.metric.KendallsTauA;
@@ -46,8 +46,8 @@ public class MetricsTest {
     @Ignore
     @Test
     public void paperWalkThroughScenario() {
-	RankingMetric kta = new KendallsTauA();
-	UtilityMetric cnu = new CumulativeNormalizedUtility();
+	Accuracy kta = new KendallsTauA();
+	Utility cnu = new CumulativeNormalizedUtility();
 	cnu.initialize();
 	kta.initialize();
 
@@ -113,10 +113,10 @@ public class MetricsTest {
 
     @Test
     public void pairwiseInversionsWithTies() {
-	RankingMetric acc = new Accuracy();
-	RankingMetric ktb = new KendallsTauB();
-	RankingMetric kta = new KendallsTauA();
-	RankingMetric sfr = new SpearmansFootRule();
+	Accuracy acc = new OldAccuracy();
+	Accuracy ktb = new KendallsTauB();
+	Accuracy kta = new KendallsTauA();
+	Accuracy sfr = new SpearmansFootRule();
 
 	cpbs.clear();
 	cpbs.put(1, 1d);
@@ -148,8 +148,8 @@ public class MetricsTest {
 
     @Test
     public void pairwiseInversionsNoTies() {
-	RankingMetric acc = new Accuracy();
-	RankingMetric ktb = new KendallsTauB();
+	Accuracy acc = new OldAccuracy();
+	Accuracy ktb = new KendallsTauB();
 
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
@@ -206,7 +206,7 @@ public class MetricsTest {
 
     @Test
     public void kendallTauB() {
-	RankingMetric taub = new KendallsTauB();
+	Accuracy taub = new KendallsTauB();
 	taub.initialize();
 
 	rnks.clear();
@@ -241,19 +241,19 @@ public class MetricsTest {
     @Test
     public void metricsType() {
 	Metric utility = new CumulativeNormalizedUtility();
-	Metric accuracy = new Accuracy();
+	Metric accuracy = new OldAccuracy();
 	utility.initialize();
 	accuracy.initialize();
 
-	Assert.assertTrue(utility instanceof UtilityMetric);
-	Assert.assertFalse(utility instanceof RankingMetric);
-	Assert.assertTrue(accuracy instanceof RankingMetric);
-	Assert.assertFalse(accuracy instanceof UtilityMetric);
+	Assert.assertTrue(utility instanceof Utility);
+	Assert.assertFalse(utility instanceof Accuracy);
+	Assert.assertTrue(accuracy instanceof Accuracy);
+	Assert.assertFalse(accuracy instanceof Utility);
     }
 
     @Test
     public void normalizedUtility() {
-	UtilityMetric utility = new CumulativeNormalizedUtility();
+	Utility utility = new CumulativeNormalizedUtility();
 
 	utility.initialize();
 
@@ -268,7 +268,7 @@ public class MetricsTest {
 
     @Test
     public void accuracyTheSameRankings() {
-	RankingMetric accuracy = new Accuracy();
+	Accuracy accuracy = new OldAccuracy();
 
 	rnks.put(1, 1);
 	rnks.put(2, 1);
@@ -279,8 +279,8 @@ public class MetricsTest {
 
     @Test
     public void accuracyAllcorrectIncompleteCoverage() {
-	RankingMetric accuracy = new Accuracy();
-	RankingMetric coverage = new Coverage();
+	Accuracy accuracy = new OldAccuracy();
+	Accuracy coverage = new Coverage();
 
 	rnks.remove(3);
 	Assert.assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
@@ -289,8 +289,8 @@ public class MetricsTest {
 
     @Test
     public void accuracy2WrongCoverageFull() {
-	RankingMetric accuracy = new Accuracy();
-	RankingMetric coverage = new Coverage();
+	Accuracy accuracy = new OldAccuracy();
+	Accuracy coverage = new Coverage();
 
 	cpbs.put(4, 0.8);
 	cpbs.put(3, 0.7);
@@ -300,7 +300,7 @@ public class MetricsTest {
 
     @Test
     public void accuracy1Wrong() {
-	RankingMetric accuracy = new Accuracy();
+	Accuracy accuracy = new OldAccuracy();
 
 	cpbs.put(4, 0.8);
 	Assert.assertEquals(11.0 / 12.0, accuracy.evaluate(rnks, cpbs), 0.0001);
@@ -308,13 +308,13 @@ public class MetricsTest {
 
     @Test
     public void accuracyAllCorrect() {
-	RankingMetric accuracy = new Accuracy();
+	Accuracy accuracy = new OldAccuracy();
 	Assert.assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
     }
 
     @Test
     public void evaluatePair() {
-	Accuracy accuracy = new Accuracy();
+	OldAccuracy accuracy = new OldAccuracy();
 
 	Assert.assertEquals(1, accuracy.evaluatePair(1, 1, 0.7, 0.7));
 	Assert.assertEquals(1, accuracy.evaluatePair(2, 1, 0.7, 0.7));

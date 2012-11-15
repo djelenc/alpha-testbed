@@ -2,7 +2,7 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 
 /**
  * Mean Absolute Error (MAE) between calculated trust values and capabilities.
@@ -18,7 +18,7 @@ import testbed.interfaces.RankingMetric;
  * @author David
  * 
  */
-public class MeanAbsoluteError extends AbstractMetric implements RankingMetric {
+public class MeanAbsoluteError extends AbstractMetric implements Accuracy {
     private static final String INCOMPATIBLE_METRIC = "Metric requires that trust is computed in floating point numbers from [0, 1].";
     private static final IllegalArgumentException UP = new IllegalArgumentException(
 	    INCOMPATIBLE_METRIC);

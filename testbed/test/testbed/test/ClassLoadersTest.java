@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import testbed.common.ClassLoaderUtils;
 import testbed.interfaces.DeceptionModel;
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
@@ -23,8 +23,8 @@ public class ClassLoadersTest {
 
 	List<Scenario> generators = ClassLoaderUtils.lookUp(Scenario.class,
 		classLoader);
-	List<RankingMetric> metrics = ClassLoaderUtils.lookUp(
-		RankingMetric.class, classLoader);
+	List<Accuracy> metrics = ClassLoaderUtils.lookUp(Accuracy.class,
+		classLoader);
 	List<TrustModel<?>> trustModels = ClassLoaderUtils
 		.lookUpTrustModels(classLoader);
 	List<DeceptionModel> deceptionModels = ClassLoaderUtils.lookUp(
@@ -44,7 +44,7 @@ public class ClassLoadersTest {
 	ClassLoaderUtils.addURL(
 		new File("c:/testlib/some.jar").toURI().toURL(), cl);
 
-	for (RankingMetric dg : ServiceLoader.load(RankingMetric.class)) {
+	for (Accuracy dg : ServiceLoader.load(Accuracy.class)) {
 	    System.out.println(dg);
 	}
     }
@@ -56,7 +56,7 @@ public class ClassLoadersTest {
 	// ensure the folder/jar exists before running
 	ClassLoaderUtils.addDirToClasspath(new File("c:/testlib"), cl);
 
-	for (RankingMetric dg : ServiceLoader.load(RankingMetric.class)) {
+	for (Accuracy dg : ServiceLoader.load(Accuracy.class)) {
 	    System.out.println(dg);
 	}
     }
@@ -71,11 +71,10 @@ public class ClassLoadersTest {
 
     @Test
     public void testServiceLoaderIMetric() {
-	ServiceLoader<RankingMetric> all = ServiceLoader
-		.load(RankingMetric.class);
+	ServiceLoader<Accuracy> all = ServiceLoader.load(Accuracy.class);
 
 	Assert.assertTrue(all.iterator().hasNext());
-	Assert.assertTrue(all.iterator().next() instanceof RankingMetric);
+	Assert.assertTrue(all.iterator().next() instanceof Accuracy);
     }
 
     @Test

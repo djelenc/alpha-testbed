@@ -8,7 +8,7 @@ import java.util.Map;
  * @author David
  * 
  */
-public interface RankingMetric extends Metric {
+public interface Accuracy extends Metric {
 
     /**
      * Evaluates given rankings against given capabilities.

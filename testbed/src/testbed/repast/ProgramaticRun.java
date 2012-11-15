@@ -4,10 +4,10 @@ import testbed.AlphaTestbed;
 import testbed.MetricSubscriber;
 import testbed.common.DefaultRandomGenerator;
 import testbed.interfaces.Metric;
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
-import testbed.metric.Accuracy;
+import testbed.metric.OldAccuracy;
 import testbed.scenario.Transitive;
 import testbed.trustmodel.YuSinghSycara;
 
@@ -25,7 +25,7 @@ public class ProgramaticRun implements MetricSubscriber {
 
     public ProgramaticRun() {
 	service = 0;
-	metric = new Accuracy();
+	metric = new OldAccuracy();
     }
 
     public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class ProgramaticRun implements MetricSubscriber {
 	scenario.initialize(100, 0.05, 0.1, 1d, 1d);
 
 	// ranking metric
-	RankingMetric rm = new Accuracy();
+	Accuracy rm = new OldAccuracy();
 	rm.initialize();
 
 	// alpha test-bed (utility metric set to null)
