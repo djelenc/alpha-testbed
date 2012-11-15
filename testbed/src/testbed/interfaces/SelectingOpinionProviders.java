@@ -24,4 +24,17 @@ public interface SelectingOpinionProviders {
      */
     public Set<OpinionRequest> getOpinionRequests();
 
+    /**
+     * Returns the set of available agents.
+     * 
+     * @return
+     */
+    public Set<Integer> getAgents();
+
+    /**
+     * Returns the set of available services.
+     * 
+     * @return
+     */
+    public Set<Integer> getServices();
 }

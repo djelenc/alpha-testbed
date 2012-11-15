@@ -18,7 +18,7 @@ public interface Utility extends Metric {
      *            keys and their respective capabilities as values
      * 
      * @param agent
-     *            Agent with who Alpha made an interaction.
+     *            Agent with whom Alpha made an interaction.
      * 
      * @return An evaluation score between 0 and 1, inclusively.
      */

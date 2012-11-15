@@ -305,7 +305,7 @@ public class AlphaTestbed {
     public void stepWithInteractionAndOpinionSelections(int time) {
 	// TODO
 	// 1 convey available agents
-	// 2 convey avaiable services
+	// 2 convey available services
 	// ask for opinion selections
 	// convey selections to scenario
 
