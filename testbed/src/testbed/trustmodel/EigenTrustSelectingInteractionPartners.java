@@ -25,7 +25,7 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class EigenTrustWithDecisionMaking extends EigenTrust implements
+public class EigenTrustSelectingInteractionPartners extends EigenTrust implements
 	SelectingInteractionPartners {
 
     protected static final ParameterCondition<Double> VAL_THRESHOLD;
@@ -126,6 +126,6 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new EigenTrustWithDecisionMakingGUI();
+	return new EigenTrustSelectingInteractionPartnersGUI();
     }
 }

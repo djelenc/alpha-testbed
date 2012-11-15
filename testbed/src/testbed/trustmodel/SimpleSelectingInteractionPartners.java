@@ -14,7 +14,7 @@ import testbed.interfaces.SelectingInteractionPartners;
  * @author David
  * 
  */
-public class SimpleWithDecisionMaking extends Simple implements SelectingInteractionPartners {
+public class SimpleSelectingInteractionPartners extends Simple implements SelectingInteractionPartners {
 
     protected PartnerSelectionTemplates selector;
 

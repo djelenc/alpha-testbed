@@ -18,7 +18,7 @@ import testbed.interfaces.SelectingInteractionPartners;
  * @author David
  * 
  */
-public class BetaReputationWithDecisionMaking extends BetaReputation implements
+public class BetaReputationSelectingInteractionPartners extends BetaReputation implements
 	SelectingInteractionPartners {
 
     protected PartnerSelectionTemplates selector;

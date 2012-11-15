@@ -15,7 +15,7 @@ import testbed.interfaces.InteractionPartnerSelection;
  * @author David
  * 
  */
-public class RandomWithPartnerSelection extends Random implements
+public class RandomInteractionPartnerSelection extends Random implements
 	InteractionPartnerSelection {
 
     private Map<Integer, Integer> partners;
@@ -56,6 +56,6 @@ public class RandomWithPartnerSelection extends Random implements
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new RandomWithPartnerSelectionGUI();
+	return new RandomInteractionPartnerSelectionGUI();
     }
 }

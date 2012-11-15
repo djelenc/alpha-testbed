@@ -5,7 +5,7 @@ import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class RandomWithPartnerSelectionGUI extends RandomGUI {
+public class RandomInteractionPartnerSelectionGUI extends RandomGUI {
     private static final long serialVersionUID = 7248570829649169366L;
 
     @Override

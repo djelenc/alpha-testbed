@@ -8,21 +8,19 @@ import testbed.common.PartnerSelectionTemplates;
 import testbed.interfaces.SelectingInteractionPartners;
 
 /**
- * Trust model on the basis of the {@link YuSinghSycara} that supports selection
+ * Trust model on the basis of the {@link Travos} that supports selection
  * partners for interactions. The selection is probabilistic.
  * 
  * <p>
- * <b>Note that the original proposal contains no such procedure. This is for
- * experimental purposes only.</b>
+ * <b>Note that the original Travos proposal contains no such procedure. This is
+ * for experimental purposes only.</b>
  * 
  * @author David
  * 
  */
-public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
-	SelectingInteractionPartners {
+public class TravosSelectingInteractionPartners extends Travos implements SelectingInteractionPartners {
 
     protected int time;
-
     protected PartnerSelectionTemplates selector;
 
     @Override
@@ -45,9 +43,15 @@ public class YuSinghSycaraWithDecisionMaking extends YuSinghSycara implements
 	for (int service : services) {
 	    final Map<Integer, Double> trust = getTrust(service);
 	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
+
 	    partners.put(service, best);
 	}
 
 	return partners;
+    }
+
+    @Override
+    public String toString() {
+	return "Travos";
     }
 }

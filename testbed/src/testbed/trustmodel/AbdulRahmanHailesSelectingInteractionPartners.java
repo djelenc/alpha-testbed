@@ -19,7 +19,7 @@ import testbed.interfaces.SelectingInteractionPartners;
  * @author David
  * 
  */
-public class AbdulRahmanHailesWithDecisionMaking extends AbdulRahmanHailes
+public class AbdulRahmanHailesSelectingInteractionPartners extends AbdulRahmanHailes
 	implements SelectingInteractionPartners {
 
     protected int time;

@@ -14,7 +14,7 @@ import testbed.interfaces.InteractionPartnerSelection;
  * @author David
  * 
  */
-public class TransitiveWithPartnerSelection extends Transitive implements
+public class TransitiveInteractionPartnerSelection extends Transitive implements
 	InteractionPartnerSelection {
 
     private static final String PARTNER_NOT_SET = "No partner set for service %d.";
@@ -57,6 +57,6 @@ public class TransitiveWithPartnerSelection extends Transitive implements
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new TransitiveWithPartnerSelectionGUI();
+	return new TransitiveInteractionPartnerSelectionGUI();
     }
 }
