@@ -18,8 +18,8 @@ import testbed.interfaces.SelectingInteractionPartners;
  * @author David
  * 
  */
-public class YuSinghSycaraSelectingInteractionPartners extends YuSinghSycara implements
-	SelectingInteractionPartners {
+public class YuSinghSycaraSelectingInteractionPartners extends YuSinghSycara
+	implements SelectingInteractionPartners {
 
     protected int time;
 
@@ -38,8 +38,7 @@ public class YuSinghSycaraSelectingInteractionPartners extends YuSinghSycara imp
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(
-	    Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {

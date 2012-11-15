@@ -21,6 +21,7 @@ import testbed.trustmodel.YuSinghSycara;
 public class ProgramaticRunExample implements MetricSubscriber {
 
     private final int service;
+
     private final Metric metric;
 
     public ProgramaticRunExample(Metric m) {
@@ -45,7 +46,7 @@ public class ProgramaticRunExample implements MetricSubscriber {
 
 	// alpha test-bed (utility metric set to null)
 	final AlphaTestbed atb = new AlphaTestbed(scenario, model, accuracy,
-		null, null, null);
+		null, null, null, null, null);
 
 	atb.subscribe(new ProgramaticRunExample(accuracy));
 

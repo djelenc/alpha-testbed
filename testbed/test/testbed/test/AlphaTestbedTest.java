@@ -22,6 +22,7 @@ import testbed.interfaces.Opinion;
 public class AlphaTestbedTest {
 
     Accuracy ranking;
+
     Utility utility;
 
     @Before
@@ -66,28 +67,28 @@ public class AlphaTestbedTest {
     public void testRankingMode() {
 	TrustModel<?> tm = new RankingsTrustModel();
 	Scenario scn = new RankingsScenario();
-	new AlphaTestbed(scn, tm, ranking, null, utility, null);
+	new AlphaTestbed(scn, tm, ranking, null, utility, null, null, null);
     }
 
     @Test
     public void testUtilityMode() {
 	TrustModel<?> tm = new DecisionMakingTrustModel();
 	Scenario scn = new PartnerSelectionScenario();
-	new AlphaTestbed(scn, tm, ranking, null, utility, null);
+	new AlphaTestbed(scn, tm, ranking, null, utility, null, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void decisionMakingTrustModelOnRankingsScenario() {
 	TrustModel<?> tm = new DecisionMakingTrustModel();
 	Scenario scn = new RankingsScenario();
-	new AlphaTestbed(scn, tm, ranking, null, utility, null);
+	new AlphaTestbed(scn, tm, ranking, null, utility, null, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void rankingsTrustModelOnPartnerSelectionScenario() {
 	TrustModel<?> tm = new RankingsTrustModel();
 	Scenario scn = new PartnerSelectionScenario();
-	new AlphaTestbed(scn, tm, ranking, null, utility, null);
+	new AlphaTestbed(scn, tm, ranking, null, utility, null, null, null);
     }
 
 }
@@ -190,8 +191,7 @@ class PartnerSelectionScenario extends RankingsScenario implements
 class DecisionMakingTrustModel extends RankingsTrustModel implements
 	SelectingInteractionPartners {
     @Override
-    public Map<Integer, Integer> getInteractionPartners(
-	    Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services) {
 	return null;
     }
 }

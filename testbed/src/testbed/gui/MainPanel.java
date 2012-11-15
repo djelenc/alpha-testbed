@@ -113,7 +113,8 @@ public class MainPanel extends JPanel implements ParametersPanel {
 
 	for (TrustModel<?> tm : allTrustModels) {
 	    if (tm instanceof SelectingInteractionPartners && decisionMaking
-		    || !(tm instanceof SelectingInteractionPartners) && !decisionMaking) {
+		    || !(tm instanceof SelectingInteractionPartners)
+		    && !decisionMaking) {
 		trustModel.addItem(tm);
 	    }
 	}
@@ -175,8 +176,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	panel.add(trustModel, c);
 
 	// Ranking metric
-	for (Accuracy mtr : ClassLoaderUtils.lookUp(Accuracy.class,
-		cl)) {
+	for (Accuracy mtr : ClassLoaderUtils.lookUp(Accuracy.class, cl)) {
 	    rankingMetric.addItem(mtr);
 	}
 
@@ -247,10 +247,8 @@ public class MainPanel extends JPanel implements ParametersPanel {
     public void validateParameters() {
 	final TrustModel<?> tm = (TrustModel<?>) trustModel.getSelectedItem();
 	final Scenario scn = (Scenario) scenario.getSelectedItem();
-	final Accuracy rm = (Accuracy) rankingMetric
-		.getSelectedItem();
-	final Utility um = (Utility) utilityMetric
-		.getSelectedItem();
+	final Accuracy rm = (Accuracy) rankingMetric.getSelectedItem();
+	final Utility um = (Utility) utilityMetric.getSelectedItem();
 
 	final boolean enabled = scn instanceof InteractionPartnerSelection;
 	utilityMetric.setEnabled(enabled);

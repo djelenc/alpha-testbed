@@ -25,8 +25,8 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class EigenTrustSelectingInteractionPartners extends EigenTrust implements
-	SelectingInteractionPartners {
+public class EigenTrustSelectingInteractionPartners extends EigenTrust
+	implements SelectingInteractionPartners {
 
     protected static final ParameterCondition<Double> VAL_THRESHOLD;
     protected static final ParameterCondition<Boolean> VAL_PROCEDURE;
@@ -64,8 +64,7 @@ public class EigenTrustSelectingInteractionPartners extends EigenTrust implement
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(
-	    Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {

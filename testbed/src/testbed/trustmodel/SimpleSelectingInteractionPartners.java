@@ -14,7 +14,8 @@ import testbed.interfaces.SelectingInteractionPartners;
  * @author David
  * 
  */
-public class SimpleSelectingInteractionPartners extends Simple implements SelectingInteractionPartners {
+public class SimpleSelectingInteractionPartners extends Simple implements
+	SelectingInteractionPartners {
 
     protected PartnerSelectionTemplates selector;
 
@@ -25,8 +26,7 @@ public class SimpleSelectingInteractionPartners extends Simple implements Select
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(
-	    Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {

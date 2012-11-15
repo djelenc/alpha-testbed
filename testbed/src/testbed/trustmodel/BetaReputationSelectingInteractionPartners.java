@@ -18,8 +18,8 @@ import testbed.interfaces.SelectingInteractionPartners;
  * @author David
  * 
  */
-public class BetaReputationSelectingInteractionPartners extends BetaReputation implements
-	SelectingInteractionPartners {
+public class BetaReputationSelectingInteractionPartners extends BetaReputation
+	implements SelectingInteractionPartners {
 
     protected PartnerSelectionTemplates selector;
 
@@ -30,8 +30,7 @@ public class BetaReputationSelectingInteractionPartners extends BetaReputation i
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(
-	    Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {

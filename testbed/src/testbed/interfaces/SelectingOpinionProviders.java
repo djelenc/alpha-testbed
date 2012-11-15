@@ -25,16 +25,16 @@ public interface SelectingOpinionProviders {
     public Set<OpinionRequest> getOpinionRequests();
 
     /**
-     * Returns the set of available agents.
+     * Conveys the set of available agents to the trust model.
      * 
-     * @return
+     * @param agents
      */
-    public Set<Integer> getAgents();
+    public void setAgents(Set<Integer> agents);
 
     /**
-     * Returns the set of available services.
+     * Conveys the set of available services to the trust model.
      * 
-     * @return
+     * @param services
      */
-    public Set<Integer> getServices();
+    public void setServices(Set<Integer> services);
 }

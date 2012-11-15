@@ -90,9 +90,9 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    // set utility metric
 	    final Utility um = (Utility) generalParams[3];
 
-	    // simulator
+	    // FIXME: simulator
 	    atb = new AlphaTestbed(scenario, trustModel, rm, rmParams, um,
-		    umParams);
+		    umParams, null, null);
 
 	    // Create metrics for the Metric holder class
 	    for (int service : scenario.getServices()) {

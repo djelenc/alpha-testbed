@@ -14,8 +14,7 @@ import testbed.interfaces.Accuracy;
  * @author David
  * 
  */
-public class WeightedKendallsTau extends AbstractMetric implements
-	Accuracy {
+public class WeightedKendallsTau extends AbstractMetric implements Accuracy {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> rankings,

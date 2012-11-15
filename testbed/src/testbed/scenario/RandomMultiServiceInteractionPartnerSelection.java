@@ -14,8 +14,8 @@ import testbed.interfaces.InteractionPartnerSelection;
  * @author David
  * 
  */
-public class RandomMultiServiceInteractionPartnerSelection extends RandomMultiService
-	implements InteractionPartnerSelection {
+public class RandomMultiServiceInteractionPartnerSelection extends
+	RandomMultiService implements InteractionPartnerSelection {
 
     protected Map<Integer, Integer> partners = null;
 
