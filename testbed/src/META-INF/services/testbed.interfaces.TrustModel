@@ -15,3 +15,4 @@ testbed.trustmodel.OnlyExperiences
 testbed.trustmodel.OnlyOpinions
 testbed.trustmodel.Simple
 testbed.trustmodel.SimpleSelectingInteractionPartners
+testbed.trustmodel.SimpleSelectingOpinionProviders

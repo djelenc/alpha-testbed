@@ -130,13 +130,13 @@ public class AlphaTestbed {
     protected static final String METRIC_QUERY_EX = "Invalid query for metric '%s' and service '%d'.";
 
     /** Reference to the trust model */
-    protected final TrustModel<?> model;
+    protected final TrustModel<?> trustModel;
 
     /** TM's interaction partner selection mechanism */
-    protected final SelectingInteractionPartners tmInteractionSelection;
+    protected final SelectingInteractionPartners tmSelectingInteractions;
 
     /** TM's opinion provider selection mechanism */
-    protected final SelectingOpinionProviders tmOpinionSelection;
+    protected final SelectingOpinionProviders tmSelectingOpinions;
 
     /** Scenario */
     protected final Scenario scenario;
@@ -245,13 +245,13 @@ public class AlphaTestbed {
     public AlphaTestbed(Scenario scn, TrustModel<?> tm, Accuracy accuracy,
 	    Object[] accParams, Utility utility, Object[] utilParams,
 	    OpinionCost opinionCost, Object[] ocParams) {
-	model = tm;
+	trustModel = tm;
 	scenario = scn;
 
 	if (validModeSelectingOpinionProviders(tm, scn)) {
-	    tmInteractionSelection = (SelectingInteractionPartners) tm;
+	    tmSelectingInteractions = (SelectingInteractionPartners) tm;
 	    scnInteractionSelection = (InteractionPartnerSelection) scn;
-	    tmOpinionSelection = (SelectingOpinionProviders) tm;
+	    tmSelectingOpinions = (SelectingOpinionProviders) tm;
 	    scnOpinionSelection = (OpinionProviderSelection) scn;
 	    accuracyClass = accuracy.getClass();
 	    accuracyParameters = accParams;
@@ -264,9 +264,9 @@ public class AlphaTestbed {
 	    opinionCostMetrics = new HashMap<Integer, OpinionCost>();
 	    evaluationProtocol = SELECTING_OPINIONS_PROVIDERS;
 	} else if (validModeSelectingInteractionPartners(tm, scn)) {
-	    tmInteractionSelection = (SelectingInteractionPartners) tm;
+	    tmSelectingInteractions = (SelectingInteractionPartners) tm;
 	    scnInteractionSelection = (InteractionPartnerSelection) scn;
-	    tmOpinionSelection = null;
+	    tmSelectingOpinions = null;
 	    scnOpinionSelection = null;
 	    accuracyClass = accuracy.getClass();
 	    accuracyParameters = accParams;
@@ -279,9 +279,9 @@ public class AlphaTestbed {
 	    opinionCostMetrics = null;
 	    evaluationProtocol = SELECTING_INTERACTION_PARTNERS;
 	} else if (validModeNoDecisions(tm, scn)) {
-	    tmInteractionSelection = null;
+	    tmSelectingInteractions = null;
 	    scnInteractionSelection = null;
-	    tmOpinionSelection = null;
+	    tmSelectingOpinions = null;
 	    scnOpinionSelection = null;
 	    accuracyClass = accuracy.getClass();
 	    accuracyParameters = accParams;
@@ -313,7 +313,7 @@ public class AlphaTestbed {
      */
     public void step(int time) {
 	// notify components of the current time
-	model.setCurrentTime(time);
+	trustModel.setCurrentTime(time);
 	scenario.setCurrentTime(time);
 
 	switch (evaluationProtocol) {
@@ -337,7 +337,7 @@ public class AlphaTestbed {
     /**
      * Performs one step through all phases of the evaluation protocol that
      * evaluates trust models by allowing them to select interaction partners
-     * and opinion providers.
+     * and opinion providers (mode B).
      * 
      * @param time
      *            Current time
@@ -347,17 +347,17 @@ public class AlphaTestbed {
 	final Set<Integer> agents = scenario.getAgents();
 
 	// convey agents to TM
-	tmOpinionSelection.setAgents(agents);
+	tmSelectingOpinions.setAgents(agents);
 
 	// get services
 	final Set<Integer> services = scenario.getServices();
 
 	// convey available services to TM
-	tmOpinionSelection.setServices(services);
+	tmSelectingOpinions.setServices(services);
 
 	// get opinion requests
-	final Set<OpinionRequest> opinionRequests = tmOpinionSelection
-		.getOpinionRequests();
+	final Set<OpinionRequest> opinionRequests;
+	opinionRequests = tmSelectingOpinions.getOpinionRequests();
 
 	// convey opinion requests to scenario
 	scnOpinionSelection.setOpinionRequests(opinionRequests);
@@ -366,11 +366,11 @@ public class AlphaTestbed {
 	final Set<Opinion> opinions = scenario.generateOpinions();
 
 	// convey opinions to the trust model
-	model.processOpinions(opinions);
+	trustModel.processOpinions(opinions);
 
 	// get interaction partners from TM
-	final Map<Integer, Integer> itTemp = tmInteractionSelection
-		.getInteractionPartners(services);
+	final Map<Integer, Integer> itTemp;
+	itTemp = tmSelectingInteractions.getInteractionPartners(services);
 
 	// Convert Map to a TreeMap to ensure deterministic iteration
 	final Map<Integer, Integer> partners = Utils.orderedMap(itTemp);
@@ -382,22 +382,21 @@ public class AlphaTestbed {
 	final Set<Experience> experiences = scenario.generateExperiences();
 
 	// convey experiences
-	model.processExperiences(experiences);
+	trustModel.processExperiences(experiences);
 
 	// calculate trust
-	model.calculateTrust();
+	trustModel.calculateTrust();
 
 	// evaluation
 	for (int service : services) {
 	    final Map<Integer, Double> capabilities;
-
 	    capabilities = scenario.getCapabilities(service);
 
 	    // accuracy
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
-	    final double accValue = accuracy.evaluate(model.getTrust(service),
-		    capabilities);
+	    final double accValue = accuracy.evaluate(
+		    trustModel.getTrust(service), capabilities);
 
 	    score.put(accKey, accValue);
 
@@ -412,12 +411,11 @@ public class AlphaTestbed {
 		score.put(utilKey, utilValue);
 	    }
 
-	    // TODO: Evaluate opinion cost
-
+	    // opinion cost
 	    final OpinionCost opinionCost = getOpinionCostInstance(service);
 	    final int ocKey = opinionCost.getClass().hashCode() ^ service;
-	    final double ocValue = opinionCost.evaluate(agents, services,
-		    opinionRequests);
+	    final double ocValue;
+	    ocValue = opinionCost.evaluate(agents, services, opinionRequests);
 
 	    score.put(ocKey, ocValue);
 	}
@@ -425,7 +423,8 @@ public class AlphaTestbed {
 
     /**
      * Performs one step through all phases of the evaluation protocol that
-     * evaluates trust models by allowing them to select interaction partners.
+     * evaluates trust models by allowing them to select interaction partners
+     * (opinion providers are determined by the scenario -- mode A).
      * 
      * @param time
      *            Current time
@@ -435,17 +434,17 @@ public class AlphaTestbed {
 	final Set<Opinion> opinions = scenario.generateOpinions();
 
 	// convey opinions to the trust model
-	model.processOpinions(opinions);
+	trustModel.processOpinions(opinions);
 
 	// get services
 	final Set<Integer> services = scenario.getServices();
 
 	// temporary var for interaction partners
-	final Map<Integer, Integer> partnersTemp = tmInteractionSelection
-		.getInteractionPartners(services);
+	final Map<Integer, Integer> ipTemp;
+	ipTemp = tmSelectingInteractions.getInteractionPartners(services);
 
 	// Convert Map to a TreeMap to ensure deterministic iteration
-	final Map<Integer, Integer> partners = Utils.orderedMap(partnersTemp);
+	final Map<Integer, Integer> partners = Utils.orderedMap(ipTemp);
 
 	// convey partner selection to the scenario
 	scnInteractionSelection.setInteractionPartners(partners);
@@ -454,10 +453,10 @@ public class AlphaTestbed {
 	final Set<Experience> experiences = scenario.generateExperiences();
 
 	// convey experiences
-	model.processExperiences(experiences);
+	trustModel.processExperiences(experiences);
 
 	// calculate trust
-	model.calculateTrust();
+	trustModel.calculateTrust();
 
 	// evaluation
 	for (int service : services) {
@@ -468,8 +467,8 @@ public class AlphaTestbed {
 	    // accuracy
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
-	    final double accValue = accuracy.evaluate(model.getTrust(service),
-		    capabilities);
+	    final double accValue = accuracy.evaluate(
+		    trustModel.getTrust(service), capabilities);
 
 	    score.put(accKey, accValue);
 
@@ -488,8 +487,9 @@ public class AlphaTestbed {
 
     /**
      * Performs one step through all phases of the evaluation protocol that
-     * evaluates trust models by. Interaction partners and opinion providers are
-     * determined by the scenario.
+     * evaluates trust models that have no decision making capabilities
+     * (interaction partners and opinion providers are determined by the
+     * scenario).
      * 
      * @param time
      *            Current time
@@ -499,7 +499,7 @@ public class AlphaTestbed {
 	final Set<Opinion> opinions = scenario.generateOpinions();
 
 	// convey opinions
-	model.processOpinions(opinions);
+	trustModel.processOpinions(opinions);
 
 	// get services
 	final Set<Integer> services = scenario.getServices();
@@ -508,10 +508,10 @@ public class AlphaTestbed {
 	final Set<Experience> experiences = scenario.generateExperiences();
 
 	// convey experiences
-	model.processExperiences(experiences);
+	trustModel.processExperiences(experiences);
 
 	// calculate trust
-	model.calculateTrust();
+	trustModel.calculateTrust();
 
 	// evaluation
 	for (int service : services) {
@@ -522,8 +522,8 @@ public class AlphaTestbed {
 	    // accuracy
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
-	    final double accValue = accuracy.evaluate(model.getTrust(service),
-		    capabilities);
+	    final double accValue = accuracy.evaluate(
+		    trustModel.getTrust(service), capabilities);
 
 	    score.put(accKey, accValue);
 	}
@@ -552,7 +552,7 @@ public class AlphaTestbed {
     }
 
     public TrustModel<?> getModel() {
-	return model;
+	return trustModel;
     }
 
     public Scenario getScenario() {

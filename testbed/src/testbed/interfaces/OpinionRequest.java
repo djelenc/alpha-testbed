@@ -6,7 +6,7 @@ package testbed.interfaces;
  * @author David
  * 
  */
-public class OpinionRequest {
+public class OpinionRequest implements Comparable<OpinionRequest> {
     /** Agent that will provide opinion */
     public final int agent1;
 
@@ -26,5 +26,20 @@ public class OpinionRequest {
     public String toString() {
 	return String.format("OpinionRequest<%d, %d, %d>", agent1, agent2,
 		service);
+    }
+
+    @Override
+    public int compareTo(OpinionRequest that) {
+	final int cmp1 = this.agent1 - that.agent1;
+	final int cmp2 = this.agent2 - that.agent2;
+	final int cmp3 = this.service - that.service;
+
+	if (cmp1 != 0) {
+	    return cmp1;
+	} else if (cmp2 != 0) {
+	    return cmp2;
+	} else {
+	    return cmp3;
+	}
     }
 }
