@@ -20,13 +20,15 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import testbed.common.ClassLoaderUtils;
-import testbed.interfaces.SelectingInteractionPartners;
-import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.Accuracy;
+import testbed.interfaces.InteractionPartnerSelection;
+import testbed.interfaces.OpinionCost;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Scenario;
+import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
+import testbed.metric.DefaultOpinionCost;
 
 public class MainPanel extends JPanel implements ParametersPanel {
     private static final long serialVersionUID = -1187728078314667265L;
@@ -93,7 +95,13 @@ public class MainPanel extends JPanel implements ParametersPanel {
     public Object[] getParameters() {
 	return new Object[] { scenario.getSelectedItem(),
 		trustModel.getSelectedItem(), rankingMetric.getSelectedItem(),
-		getUtilityMetric(), getBatchRunDuration() };
+		getUtilityMetric(), getOpinionCostMetric(),
+		getBatchRunDuration() };
+    }
+
+    private OpinionCost getOpinionCostMetric() {
+	// FIXME: add missing logic
+	return new DefaultOpinionCost();
     }
 
     private Utility getUtilityMetric() {

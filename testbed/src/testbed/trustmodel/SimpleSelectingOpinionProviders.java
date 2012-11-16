@@ -16,19 +16,26 @@ import testbed.interfaces.SelectingOpinionProviders;
 public class SimpleSelectingOpinionProviders extends
 	SimpleSelectingInteractionPartners implements SelectingOpinionProviders {
 
-    protected Set<Integer> agents, services;
+    protected Set<Integer> agents;
+
+    @Override
+    public void initialize(Object... params) {
+	super.initialize(params);
+    }
 
     @Override
     public Set<OpinionRequest> getOpinionRequests() {
 	final Set<OpinionRequest> opinionRequests = new HashSet<OpinionRequest>();
 
-	for (int agent1 : agents) {
-	    for (int agent2 : agents) {
-		for (int service : services) {
-		    if (agent1 != agent2) {
-			opinionRequests.add(new OpinionRequest(agent1, agent2,
-				service));
+	for (int target : agents) {
+	    // ask only if there are less than 3 experiences
+	    if (exCnt[target] < 3) {
+		for (int source : agents) {
+		    if (target != source) {
+			opinionRequests.add(new OpinionRequest(source, target,
+				0));
 		    }
+
 		}
 	    }
 	}
@@ -39,12 +46,26 @@ public class SimpleSelectingOpinionProviders extends
     @Override
     public void setAgents(Set<Integer> agents) {
 	this.agents = agents;
+	int max = Integer.MIN_VALUE;
 
+	for (int ag : agents) {
+	    if (max < ag)
+		max = ag;
+	}
+
+	if (max > exSum.length - 1) {
+	    expandArrays(max);
+	}
     }
 
     @Override
     public void setServices(Set<Integer> services) {
-	this.services = services;
+
+    }
+
+    @Override
+    public String toString() {
+	return "Simple with opinion selection";
     }
 
 }

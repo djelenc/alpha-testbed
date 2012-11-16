@@ -58,4 +58,9 @@ public class TransitiveOpinionProviderSelection extends
 	return opinions;
     }
 
+    @Override
+    public String toString() {
+	return "Transitive with opinion selection";
+    }
+
 }

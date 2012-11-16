@@ -13,6 +13,7 @@ import testbed.EvaluationProtocol;
 import testbed.common.DefaultRandomGenerator;
 import testbed.gui.ExceptionWindowDialog;
 import testbed.gui.ParametersGUI;
+import testbed.interfaces.OpinionCost;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
@@ -90,9 +91,12 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    // set utility metric
 	    final Utility um = (Utility) generalParams[3];
 
+	    // set opinion cost metric
+	    final OpinionCost oc = (OpinionCost) generalParams[4];
+
 	    // FIXME: simulator
 	    atb = new AlphaTestbed(scenario, trustModel, rm, rmParams, um,
-		    umParams, null, null);
+		    umParams, oc, null);
 
 	    // Create metrics for the Metric holder class
 	    for (int service : scenario.getServices()) {
@@ -100,11 +104,16 @@ public class RepastPlatform extends DefaultContext<Object> implements
 
 		if (atb.getEvaluationProtocol() == EvaluationProtocol.SELECTING_INTERACTION_PARTNERS)
 		    context.add(new RepastMetricAgent(service, um, atb));
+
+		if (atb.getEvaluationProtocol() == EvaluationProtocol.SELECTING_OPINIONS_PROVIDERS) {
+		    context.add(new RepastMetricAgent(service, um, atb));
+		    context.add(new RepastMetricAgent(service, oc, atb));
+		}
 	    }
 
 	    // for batch runs
 	    if (isBatch) {
-		final int duration = (Integer) generalParams[4];
+		final int duration = (Integer) generalParams[5];
 		RunEnvironment.getInstance().endAt(duration);
 
 		final StringBuffer msg = new StringBuffer();
