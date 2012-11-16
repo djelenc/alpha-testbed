@@ -7,3 +7,4 @@ testbed.scenario.Oscillation
 testbed.scenario.Transitive
 testbed.scenario.TransitiveWithChanges
 testbed.scenario.TransitiveInteractionPartnerSelection
+testbed.scenario.TransitiveOpinionProviderSelection

@@ -17,8 +17,8 @@ import testbed.interfaces.InteractionPartnerSelection;
 public class TransitiveInteractionPartnerSelection extends Transitive implements
 	InteractionPartnerSelection {
 
-    private static final String PARTNER_NOT_SET = "No partner set for service %d.";
-    private Map<Integer, Integer> partners;
+    protected static final String PARTNER_NOT_SET = "No partner set for service %d.";
+    protected Map<Integer, Integer> partners;
 
     @Override
     public Set<Experience> generateExperiences() {
