@@ -120,8 +120,6 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 	this.numAgentsLarger = numAgents >= numServices;
 	this.pivot = (numAgentsLarger ? numAgents : numServices);
 
-	int key = 0;
-
 	// generate agents
 	for (int i = 0; i < numAgents; i++) {
 	    // add agent to set
@@ -129,12 +127,14 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 
 	    for (int j = 0; j < numServices; j++) {
 		// calculate key for Map
-		key = (numAgentsLarger ? pivot * i + j : pivot * j + i);
+		final int key = (numAgentsLarger ? pivot * i + j : pivot * j
+			+ i);
 
 		// assign capability
 		capabilities.put(key, generator.nextDoubleFromTo(0, 1));
 
-		final DeceptionModel model = generator.fromWeights(dmPMF);
+		// assign deception models
+		DeceptionModel model = generator.fromWeights(dmPMF);
 
 		if (model instanceof PositiveExaggeration) {
 		    model.initialize(posExCoef);
@@ -142,11 +142,12 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 		    model.initialize(negExCoef);
 		} else if (model instanceof RandomDeception) {
 		    model.initialize(generator);
+		} else if (model instanceof Silent) {
+		    model = null;
 		} else {
 		    model.initialize();
 		}
 
-		// assign deception model
 		deceptionModels.put(key, model);
 	    }
 	}
@@ -156,37 +157,33 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
     public List<Opinion> generateOpinions() {
 	List<Opinion> opinions = new ArrayList<Opinion>();
 
-	Opinion opinion = null;
-	DeceptionModel deceptionModel = null;
-	double cap, itd;
-	int key1, key2;
-
 	for (int agent1 : agents) {
 	    for (int agent2 : agents) {
 		for (int service : services) {
 		    // calculate key1
-		    key1 = (numAgentsLarger ? pivot * agent1 + service : pivot
-			    * service + agent1);
+		    final int key1 = (numAgentsLarger ? pivot * agent1
+			    + service : pivot * service + agent1);
 
 		    // get deception model
-		    deceptionModel = deceptionModels.get(key1);
+		    final DeceptionModel deceptionModel = deceptionModels
+			    .get(key1);
 
-		    // if DM is not Silent, generate opinion
-		    if (!(deceptionModel instanceof Silent)) {
+		    // generate opinion if DM is not Silent
+		    if (deceptionModel != null) {
 			// calculate key2
-			key2 = (numAgentsLarger ? pivot * agent2 + service
-				: pivot * service + agent2);
+			final int key2 = (numAgentsLarger ? pivot * agent2
+				+ service : pivot * service + agent2);
 
 			// get capability
-			cap = capabilities.get(key2);
+			final double cap = capabilities.get(key2);
 
 			// generate internal trust degree
-			itd = generator.nextDoubleFromUnitTND(cap, sd_o);
+			double itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = deceptionModel.calculate(itd);
 
 			// create opinion tuple and add it to list
-			opinion = new Opinion(agent1, agent2, service, time,
-				itd);
+			final Opinion opinion = new Opinion(agent1, agent2,
+				service, time, itd);
 			opinions.add(opinion);
 		    }
 		}

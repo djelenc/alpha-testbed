@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import testbed.common.LexiographicComparator;
 import testbed.deceptionmodel.Complementary;
+import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.RandomDeception;
-import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.ExampleGenerator;
 import testbed.interfaces.DeceptionModel;
@@ -59,7 +59,9 @@ public class ExampleGeneratorTest {
 	TreeMap<DeceptionModel, Double> distr = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	distr.put(new Truthful(), 0.4);
-	distr.put(new Silent(), 0.3);
+	DeceptionModel pos = new PositiveExaggeration();
+	pos.initialize(0.25);
+	distr.put(pos, 0.3);
 	distr.put(new Complementary(), 0.2);
 	distr.put(new RandomDeception(), 0.1);
 
@@ -90,9 +92,10 @@ public class ExampleGeneratorTest {
 	TreeMap<DeceptionModel, Double> distr = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	distr.put(new Truthful(), -0.4);
-	distr.put(new Silent(), 0.3);
+	DeceptionModel pos = new PositiveExaggeration();
+	pos.initialize(0.25);
+	distr.put(pos, 0.3);
 	distr.put(new Complementary(), 0.2);
-
 	rnd1.fromWeights(distr);
     }
 
@@ -103,7 +106,9 @@ public class ExampleGeneratorTest {
 	TreeMap<DeceptionModel, Double> distr = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	distr.put(new Truthful(), 0.4);
-	distr.put(new Silent(), 0.3);
+	DeceptionModel pos = new PositiveExaggeration();
+	pos.initialize(0.25);
+	distr.put(pos, 0.3);
 	distr.put(new Complementary(), 0.2);
 
 	rnd1.fromWeights(distr);
@@ -117,7 +122,9 @@ public class ExampleGeneratorTest {
 	TreeMap<DeceptionModel, Double> distr = new TreeMap<DeceptionModel, Double>(
 		new LexiographicComparator());
 	distr.put(new Truthful(), 0.4);
-	distr.put(new Silent(), 0.3);
+	DeceptionModel pos = new PositiveExaggeration();
+	pos.initialize(0.25);
+	distr.put(pos, 0.3);
 	distr.put(new Complementary(), 0.2);
 	distr.put(new RandomDeception(), 0.1);
 

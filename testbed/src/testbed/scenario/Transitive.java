@@ -8,7 +8,6 @@ import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.deceptionmodel.Complementary;
-import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
 import testbed.interfaces.Experience;
@@ -147,7 +146,7 @@ public class Transitive extends AbstractScenario implements Scenario {
 
 	for (int a1 : agents) {
 	    for (int a2 : agents) {
-		if (!(dms[a1][a2] instanceof Silent)) {
+		if (dms[a1][a2] != null) {
 		    // get capability
 		    cap = capabilities.get(a2);
 
@@ -202,7 +201,7 @@ public class Transitive extends AbstractScenario implements Scenario {
 		.size()];
 	final DeceptionModel truthful = new Truthful();
 	final DeceptionModel liar = new Complementary();
-	final DeceptionModel silent = new Silent();
+	final DeceptionModel silent = null;
 
 	for (int i = 0; i < dms.length; i++) {
 	    final double cap = capabilities.get(i);
@@ -252,7 +251,7 @@ public class Transitive extends AbstractScenario implements Scenario {
 		.size()];
 	final DeceptionModel truthful = new Truthful();
 	final DeceptionModel liar = new Complementary();
-	final DeceptionModel silent = new Silent();
+	final DeceptionModel silent = null;
 	double cap;
 	long numTruthful;
 	int assignedTruthful = 0;

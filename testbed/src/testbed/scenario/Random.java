@@ -70,7 +70,7 @@ public class Random extends AbstractScenario implements Scenario {
 	    VAL_DENS;
     protected final static ParameterCondition<Map<DeceptionModel, Double>> VAL_PROB;
 
-    protected static final List<Integer> SERVICES = new ArrayList<Integer>();
+    protected static final List<Integer> SERVICES;
 
     static {
 	VAL_SIZE = new ParameterCondition<Integer>() {
@@ -124,6 +124,7 @@ public class Random extends AbstractScenario implements Scenario {
 	    }
 	};
 
+	SERVICES = new ArrayList<Integer>();
 	SERVICES.add(0);
     }
 
@@ -163,14 +164,16 @@ public class Random extends AbstractScenario implements Scenario {
 
 	// initialize deception models
 	for (Map.Entry<DeceptionModel, Double> dm : dmPMF.entrySet()) {
-	    if (dm.getKey() instanceof PositiveExaggeration) {
-		dm.getKey().initialize(posExCoef);
-	    } else if (dm.getKey() instanceof NegativeExaggeration) {
-		dm.getKey().initialize(negExCoef);
-	    } else if (dm.getKey() instanceof RandomDeception) {
-		dm.getKey().initialize(generator);
-	    } else {
-		dm.getKey().initialize();
+	    final DeceptionModel model = dm.getKey();
+
+	    if (model instanceof PositiveExaggeration) {
+		model.initialize(posExCoef);
+	    } else if (model instanceof NegativeExaggeration) {
+		model.initialize(negExCoef);
+	    } else if (model instanceof RandomDeception) {
+		model.initialize(generator);
+	    } else if (!(model instanceof Silent)) {
+		model.initialize();
 	    }
 	}
 
@@ -206,18 +209,21 @@ public class Random extends AbstractScenario implements Scenario {
 	    TreeMap<DeceptionModel, Double> dmPMF) {
 	TreeMap<DeceptionModel, Integer> cumulative = new TreeMap<DeceptionModel, Integer>(
 		new LexiographicComparator());
-	DeceptionModel dm;
 	float previous = 0;
 
 	for (Entry<DeceptionModel, Double> d : dmPMF.entrySet()) {
 	    previous += d.getValue();
-	    dm = d.getKey();
+	    final DeceptionModel dm = d.getKey();
 	    cumulative.put(dm, Math.round(previous * numAgents));
 	}
 
 	for (Entry<DeceptionModel, Integer> d : cumulative.entrySet()) {
 	    if (agent < d.getValue()) {
-		return d.getKey();
+		if (d.getKey() instanceof Silent) {
+		    return null;
+		} else {
+		    return d.getKey();
+		}
 	    }
 	}
 
@@ -240,7 +246,7 @@ public class Random extends AbstractScenario implements Scenario {
 		    deceptionModel = deceptionModels.get(agent1);
 
 		    // if DM is not Silent, generate opinion
-		    if (!(deceptionModel instanceof Silent)) {
+		    if (deceptionModel != null) {
 			// get capability
 			cap = capabilities.get(agent2);
 

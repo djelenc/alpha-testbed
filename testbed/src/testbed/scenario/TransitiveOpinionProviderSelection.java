@@ -3,7 +3,6 @@ package testbed.scenario;
 import java.util.ArrayList;
 import java.util.List;
 
-import testbed.deceptionmodel.Silent;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.OpinionProviderSelection;
 import testbed.interfaces.OpinionRequest;
@@ -42,7 +41,7 @@ public class TransitiveOpinionProviderSelection extends
 	    // NOTE: because the scenario has only 1 service, the service
 	    // component is ignored
 
-	    if (!(dms[agent1][agent2] instanceof Silent)) {
+	    if (dms[agent1][agent2] != null) {
 		final double cap = capabilities.get(agent2);
 
 		double itd = generator.nextDoubleFromUnitTND(cap, sd_o);

@@ -8,7 +8,6 @@ import java.util.Map;
 import testbed.common.Utils;
 import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
-import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
 import testbed.interfaces.Experience;
@@ -26,7 +25,6 @@ public class Oscillation extends AbstractScenario {
 
     // set of services -- only 1 service
     protected static final List<Integer> SERVICES = new ArrayList<Integer>();
-    protected static final DeceptionModel SILENT = new Silent();
     protected static final DeceptionModel TRUTHFUL = new Truthful();
     protected static final DeceptionModel POS_EXAGG = new PositiveExaggeration();
     protected static final DeceptionModel NEG_EXAGG = new NegativeExaggeration();
@@ -62,7 +60,6 @@ public class Oscillation extends AbstractScenario {
 
     static {
 	SERVICES.add(0);
-	SILENT.initialize();
 	TRUTHFUL.initialize();
 	POS_EXAGG.initialize(0.5);
 	NEG_EXAGG.initialize(0.5);
@@ -181,7 +178,7 @@ public class Oscillation extends AbstractScenario {
 		    if (neutralReporter && neutralAgent) {
 			models[reporter][agent] = TRUTHFUL;
 		    } else if (neutralReporter && !neutralAgent) {
-			models[reporter][agent] = SILENT;
+			models[reporter][agent] = null;
 		    } else if (badReporter && !neutralAgent) {
 			models[reporter][agent] = POS_EXAGG;
 		    } else if (badReporter && neutralAgent) {
@@ -335,7 +332,7 @@ public class Oscillation extends AbstractScenario {
 		if (reporter != agent) {
 		    final DeceptionModel dm = models[reporter][agent];
 
-		    if (!(dm instanceof Silent)) {
+		    if (dm != null) {
 			final double cap = capabilities.get(agent);
 			double itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = dm.calculate(itd);
