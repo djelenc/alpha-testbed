@@ -1,30 +1,29 @@
 package testbed;
 
+import static testbed.EvaluationProtocol.NO_DECISIONS;
+import static testbed.EvaluationProtocol.SELECTING_INTERACTION_PARTNERS;
+import static testbed.EvaluationProtocol.SELECTING_OPINIONS_PROVIDERS;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.common.Utils;
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.Experience;
+import testbed.interfaces.InteractionPartnerSelection;
+import testbed.interfaces.Metric;
+import testbed.interfaces.Opinion;
 import testbed.interfaces.OpinionCost;
 import testbed.interfaces.OpinionProviderSelection;
 import testbed.interfaces.OpinionRequest;
-import testbed.interfaces.SelectingInteractionPartners;
-import testbed.interfaces.Metric;
-import testbed.interfaces.InteractionPartnerSelection;
-import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
+import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.SelectingOpinionProviders;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
-import testbed.interfaces.Opinion;
-
-import static testbed.EvaluationProtocol.NO_DECISIONS;
-import static testbed.EvaluationProtocol.SELECTING_INTERACTION_PARTNERS;
-import static testbed.EvaluationProtocol.SELECTING_OPINIONS_PROVIDERS;
 
 /**
  * <h1>The Alpha Testbed</h1>
@@ -344,26 +343,26 @@ public class AlphaTestbed {
      */
     public void stepWithInteractionAndOpinionSelections(int time) {
 	// get agents
-	final Set<Integer> agents = scenario.getAgents();
+	final List<Integer> agents = scenario.getAgents();
 
 	// convey agents to TM
 	tmSelectingOpinions.setAgents(agents);
 
 	// get services
-	final Set<Integer> services = scenario.getServices();
+	final List<Integer> services = scenario.getServices();
 
 	// convey available services to TM
 	tmSelectingOpinions.setServices(services);
 
 	// get opinion requests
-	final Set<OpinionRequest> opReqs;
-	opReqs = Utils.ordered(tmSelectingOpinions.getOpinionRequests());
+	final List<OpinionRequest> opReqs;
+	opReqs = tmSelectingOpinions.getOpinionRequests();
 
 	// convey opinion requests to scenario
 	scnOpinionSelection.setOpinionRequests(opReqs);
 
 	// get opinions
-	final Set<Opinion> opinions = scenario.generateOpinions();
+	final List<Opinion> opinions = scenario.generateOpinions();
 
 	// convey opinions to the trust model
 	trustModel.processOpinions(opinions);
@@ -378,7 +377,7 @@ public class AlphaTestbed {
 	scnInteractionSelection.setInteractionPartners(partners);
 
 	// generate experiences
-	final Set<Experience> experiences = scenario.generateExperiences();
+	final List<Experience> experiences = scenario.generateExperiences();
 
 	// convey experiences
 	trustModel.processExperiences(experiences);
@@ -430,26 +429,25 @@ public class AlphaTestbed {
      */
     public void stepWithPartnerSelections(int time) {
 	// get opinions
-	final Set<Opinion> opinions = scenario.generateOpinions();
+	final List<Opinion> opinions = scenario.generateOpinions();
 
 	// convey opinions to the trust model
 	trustModel.processOpinions(opinions);
 
 	// get services
-	final Set<Integer> services = scenario.getServices();
+	final List<Integer> services = scenario.getServices();
 
-	// temporary var for interaction partners
-	final Map<Integer, Integer> ipTemp;
-	ipTemp = tmSelectingInteractions.getInteractionPartners(services);
-
+	// Get interaction partners in a map
 	// Convert Map to a TreeMap to ensure deterministic iteration
-	final Map<Integer, Integer> partners = Utils.ordered(ipTemp);
+	final Map<Integer, Integer> partners = Utils
+		.ordered(tmSelectingInteractions
+			.getInteractionPartners(services));
 
 	// convey partner selection to the scenario
 	scnInteractionSelection.setInteractionPartners(partners);
 
 	// generate experiences
-	final Set<Experience> experiences = scenario.generateExperiences();
+	final List<Experience> experiences = scenario.generateExperiences();
 
 	// convey experiences
 	trustModel.processExperiences(experiences);
@@ -495,16 +493,16 @@ public class AlphaTestbed {
      */
     public void stepWithoutDecisions(int time) {
 	// get opinions
-	final Set<Opinion> opinions = scenario.generateOpinions();
+	final List<Opinion> opinions = scenario.generateOpinions();
 
 	// convey opinions
 	trustModel.processOpinions(opinions);
 
 	// get services
-	final Set<Integer> services = scenario.getServices();
+	final List<Integer> services = scenario.getServices();
 
 	// generate experiences
-	final Set<Experience> experiences = scenario.generateExperiences();
+	final List<Experience> experiences = scenario.generateExperiences();
 
 	// convey experiences
 	trustModel.processExperiences(experiences);

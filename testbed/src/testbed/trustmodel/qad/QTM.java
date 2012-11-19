@@ -4,14 +4,14 @@ import static java.lang.String.format;
 import static testbed.trustmodel.qad.Omega.normalizedNumeric;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.Opinion;
 
 public class QTM implements TrustModel<Omega> {
 
@@ -23,8 +23,8 @@ public class QTM implements TrustModel<Omega> {
     public double[] credibility = null;
 
     // temporary storage for opinions and experiences
-    private Set<Opinion> ops;
-    private Set<Experience> exps;
+    private List<Opinion> ops;
+    private List<Experience> exps;
 
     @Override
     public void initialize(Object... params) {
@@ -36,12 +36,12 @@ public class QTM implements TrustModel<Omega> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> experiences) {
+    public void processExperiences(List<Experience> experiences) {
 	this.exps = experiences;
     }
 
     @Override
-    public void processOpinions(Set<Opinion> opinions) {
+    public void processOpinions(List<Opinion> opinions) {
 	this.ops = opinions;
     }
 
@@ -208,7 +208,7 @@ public class QTM implements TrustModel<Omega> {
      * @param ops
      *            Set of opinions
      */
-    private void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
+    private void expandArrays(List<Experience> exp, List<Opinion> ops) {
 	final int limit = opinions.length - 1;
 	int max = limit;
 

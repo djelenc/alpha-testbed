@@ -1,6 +1,6 @@
 package testbed.interfaces;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Interface for implementing selection of opinion providers in scenarios. A
@@ -19,11 +19,11 @@ public interface OpinionProviderSelection {
      * obtained form the trust model.
      * 
      * <p>
-     * This methoud shold ignor invalid opinion requests, such that request
-     * opinions from non-existent agents or for non-existent services.
+     * This method should ignore invalid opinion requests; requests for opinions
+     * from or about non-existing agents or for non-existing services.
      * 
      * @param opinionRequests
-     *            A set of opinionRequests.
+     *            A list of opinionRequests.
      */
-    public void setOpinionRequests(Set<OpinionRequest> opinionRequests);
+    public void setOpinionRequests(List<OpinionRequest> opinionRequests);
 }

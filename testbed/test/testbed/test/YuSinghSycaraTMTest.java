@@ -1,7 +1,6 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,8 +22,8 @@ public class YuSinghSycaraTMTest {
 
     @Test
     public void testExpandArray() {
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(1, 0, 0, 0.5));
 	opinions.add(new Opinion(0, 1, 0, 0, 0.7));
@@ -52,8 +51,8 @@ public class YuSinghSycaraTMTest {
 
     @Test
     public void testQueueMultipleExperiences() {
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(1, 0, 0, 0.5));
 	experiences.add(new Experience(1, 0, 0, 0.6));
@@ -74,8 +73,8 @@ public class YuSinghSycaraTMTest {
 
     @Test
     public void testQueue() {
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(1, 0, 0, 0.5));
 	tm.processExperiences(experiences);

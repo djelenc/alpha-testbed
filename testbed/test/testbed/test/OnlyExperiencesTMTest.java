@@ -1,8 +1,7 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -20,8 +19,8 @@ public class OnlyExperiencesTMTest {
 	tm.initialize();
 	tm.setCurrentTime(0);
 
-	Set<Opinion> opinions = null;
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
+	ArrayList<Opinion> opinions = null;
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(0, 0, 0, 0.9));
 	tm.processExperiences(experiences);

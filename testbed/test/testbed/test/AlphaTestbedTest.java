@@ -1,23 +1,23 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import testbed.AlphaTestbed;
-import testbed.interfaces.Experience;
-import testbed.interfaces.SelectingInteractionPartners;
-import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.InteractionPartnerSelection;
-import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.Accuracy;
+import testbed.interfaces.Experience;
+import testbed.interfaces.InteractionPartnerSelection;
+import testbed.interfaces.Opinion;
+import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.Scenario;
+import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
-import testbed.interfaces.Opinion;
 
 public class AlphaTestbedTest {
 
@@ -104,11 +104,11 @@ class RankingsTrustModel implements TrustModel<Double> {
     }
 
     @Override
-    public void processOpinions(Set<Opinion> opinions) {
+    public void processOpinions(List<Opinion> opinions) {
     }
 
     @Override
-    public void processExperiences(Set<Experience> experiences) {
+    public void processExperiences(List<Experience> experiences) {
     }
 
     @Override
@@ -148,23 +148,23 @@ class RankingsScenario implements Scenario {
     }
 
     @Override
-    public Set<Opinion> generateOpinions() {
+    public List<Opinion> generateOpinions() {
 	return null;
     }
 
     @Override
-    public Set<Experience> generateExperiences() {
+    public List<Experience> generateExperiences() {
 	return null;
     }
 
     @Override
-    public Set<Integer> getAgents() {
+    public List<Integer> getAgents() {
 	return null;
     }
 
     @Override
-    public Set<Integer> getServices() {
-	return new LinkedHashSet<Integer>();
+    public List<Integer> getServices() {
+	return new ArrayList<Integer>();
     }
 
     @Override
@@ -191,7 +191,7 @@ class PartnerSelectionScenario extends RankingsScenario implements
 class DecisionMakingTrustModel extends RankingsTrustModel implements
 	SelectingInteractionPartners {
     @Override
-    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(List<Integer> services) {
 	return null;
     }
 }

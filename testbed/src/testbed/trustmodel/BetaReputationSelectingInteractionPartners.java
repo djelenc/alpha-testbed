@@ -1,8 +1,8 @@
 package testbed.trustmodel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.common.PartnerSelectionTemplates;
 import testbed.interfaces.SelectingInteractionPartners;
@@ -30,7 +30,7 @@ public class BetaReputationSelectingInteractionPartners extends BetaReputation
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(List<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {

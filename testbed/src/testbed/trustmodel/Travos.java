@@ -1,8 +1,8 @@
 package testbed.trustmodel;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.distribution.BetaDistribution;
@@ -10,9 +10,9 @@ import org.apache.commons.math.distribution.BetaDistributionImpl;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Opinion;
 
 /**
  * TRAVOS trust and reputation model
@@ -105,7 +105,7 @@ public class Travos extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> exps) {
+    public void processExperiences(List<Experience> exps) {
 	// expand data structures
 	expandExperiences(exps);
 
@@ -147,7 +147,7 @@ public class Travos extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processOpinions(Set<Opinion> ops) {
+    public void processOpinions(List<Opinion> ops) {
 	// expand data structures
 	expandOpinions(ops);
 
@@ -361,7 +361,7 @@ public class Travos extends AbstractTrustModel<Double> {
      * @param ops
      *            Set of opinion tuples
      */
-    protected void expandOpinions(Set<Opinion> ops) {
+    protected void expandOpinions(List<Opinion> ops) {
 	int max = opinions.length - 1;
 	final int limit = max;
 
@@ -383,7 +383,7 @@ public class Travos extends AbstractTrustModel<Double> {
      * @param experience
      *            Set of experience tuples
      */
-    protected void expandExperiences(Set<Experience> experience) {
+    protected void expandExperiences(List<Experience> experience) {
 	int max = opinions.length - 1;
 	final int limit = max;
 

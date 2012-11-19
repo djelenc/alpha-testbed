@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.distribution.BetaDistribution;
@@ -12,9 +11,9 @@ import org.apache.commons.math.distribution.BetaDistributionImpl;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Opinion;
 
 /**
  * Beta reputation system with filtering ratings
@@ -48,8 +47,8 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
     public Opinion[][] opinions = null;
 
     // temporary storage for experiences and opinions
-    private Set<Experience> exps;
-    private Set<Opinion> ops;
+    private List<Experience> exps;
+    private List<Opinion> ops;
 
     @Override
     public void initialize(Object... params) {
@@ -105,12 +104,12 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> experiences) {
+    public void processExperiences(List<Experience> experiences) {
 	this.exps = experiences;
     }
 
     @Override
-    public void processOpinions(Set<Opinion> opinions) {
+    public void processOpinions(List<Opinion> opinions) {
 	this.ops = opinions;
     }
 
@@ -290,7 +289,7 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
      * @param ops
      *            Set of opinions
      */
-    private void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
+    private void expandArrays(List<Experience> exp, List<Opinion> ops) {
 	final int limit = opinions.length - 1;
 	int max = limit;
 

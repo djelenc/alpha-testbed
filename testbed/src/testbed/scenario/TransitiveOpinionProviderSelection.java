@@ -1,7 +1,7 @@
 package testbed.scenario;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import testbed.deceptionmodel.Silent;
 import testbed.interfaces.Opinion;
@@ -18,7 +18,7 @@ public class TransitiveOpinionProviderSelection extends
 	TransitiveInteractionPartnerSelection implements
 	OpinionProviderSelection {
 
-    protected Set<OpinionRequest> opinionRequests;
+    protected List<OpinionRequest> opinionRequests;
 
     @Override
     public void initialize(Object... parameters) {
@@ -27,13 +27,13 @@ public class TransitiveOpinionProviderSelection extends
     }
 
     @Override
-    public void setOpinionRequests(Set<OpinionRequest> opinionRequests) {
+    public void setOpinionRequests(List<OpinionRequest> opinionRequests) {
 	this.opinionRequests = opinionRequests;
     }
 
     @Override
-    public Set<Opinion> generateOpinions() {
-	Set<Opinion> opinions = new HashSet<Opinion>();
+    public List<Opinion> generateOpinions() {
+	final List<Opinion> opinions = new ArrayList<Opinion>();
 
 	for (OpinionRequest or : opinionRequests) {
 	    final int agent1 = or.agent1;

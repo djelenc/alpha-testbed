@@ -1,7 +1,7 @@
 package testbed.trustmodel;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import testbed.interfaces.OpinionRequest;
 import testbed.interfaces.SelectingOpinionProviders;
@@ -16,7 +16,7 @@ import testbed.interfaces.SelectingOpinionProviders;
 public class SimpleSelectingOpinionProviders extends
 	SimpleSelectingInteractionPartners implements SelectingOpinionProviders {
 
-    protected Set<Integer> agents;
+    protected List<Integer> agents;
 
     @Override
     public void initialize(Object... params) {
@@ -24,8 +24,8 @@ public class SimpleSelectingOpinionProviders extends
     }
 
     @Override
-    public Set<OpinionRequest> getOpinionRequests() {
-	final Set<OpinionRequest> opinionRequests = new TreeSet<OpinionRequest>();
+    public List<OpinionRequest> getOpinionRequests() {
+	final List<OpinionRequest> opinionRequests = new ArrayList<OpinionRequest>();
 
 	for (int target : agents) {
 	    // ask only if there are less than 3 experiences
@@ -44,7 +44,7 @@ public class SimpleSelectingOpinionProviders extends
     }
 
     @Override
-    public void setAgents(Set<Integer> agents) {
+    public void setAgents(List<Integer> agents) {
 	this.agents = agents;
 	int max = Integer.MIN_VALUE;
 
@@ -59,7 +59,7 @@ public class SimpleSelectingOpinionProviders extends
     }
 
     @Override
-    public void setServices(Set<Integer> services) {
+    public void setServices(List<Integer> services) {
 
     }
 

@@ -1,6 +1,6 @@
 package testbed.interfaces;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Interface for metrics that evaluate the cost of obtaining opinions.
@@ -15,13 +15,13 @@ public interface OpinionCost extends Metric {
      * Evaluates given set of opinion requests.
      * 
      * @param agents
-     *            Set of currently available agents
+     *            List of currently available agents
      * @param services
-     *            Set of available services
+     *            List of available services
      * @param opinionRequests
-     *            Set of requested opinions
+     *            List of requested opinions
      * @return Score
      */
-    public double evaluate(Set<Integer> agents, Set<Integer> services,
-	    Set<OpinionRequest> opinionRequests);
+    public double evaluate(List<Integer> agents, List<Integer> services,
+	    List<OpinionRequest> opinionRequests);
 }

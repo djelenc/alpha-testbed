@@ -1,7 +1,7 @@
 package testbed.interfaces;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Interface for implementing the decision making component of trust models that
@@ -15,7 +15,7 @@ public interface SelectingInteractionPartners {
 
     /**
      * This method should return a map that defines partner agents, with which
-     * Alpha wants to interact in the current time slot.
+     * Alpha wants to interact in the current tick.
      * 
      * <p>
      * Keys in the resulting map must represent services, while values must
@@ -28,9 +28,9 @@ public interface SelectingInteractionPartners {
      * {@link IllegalArgumentException} will be thrown.
      * 
      * @param services
-     *            Set of available types of services
+     *            List of available types of services
      * @return A map representing partner selections.
      */
-    public Map<Integer, Integer> getInteractionPartners(Set<Integer> services);
+    public Map<Integer, Integer> getInteractionPartners(List<Integer> services);
 
 }

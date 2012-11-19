@@ -1,9 +1,7 @@
 package testbed.scenario;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,12 +10,12 @@ import testbed.common.Utils;
 import testbed.deceptionmodel.Complementary;
 import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
-import testbed.interfaces.Experience;
-import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
+import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Scenario;
-import testbed.interfaces.Opinion;
 
 /**
  * Scenario in which the probability of reporting an honest opinion is directly
@@ -51,6 +49,7 @@ public class Transitive extends AbstractScenario implements Scenario {
 
     protected static final ParameterCondition<Integer> VAL_SIZE;
     protected static final ParameterCondition<Double> VAL_SD, VAL_DENS;
+    private static final List<Integer> SERVICES = new ArrayList<Integer>();
 
     static {
 	VAL_SIZE = new ParameterCondition<Integer>() {
@@ -85,10 +84,12 @@ public class Transitive extends AbstractScenario implements Scenario {
 				    var));
 	    }
 	};
+
+	SERVICES.add(0);
     }
 
     // Set of all agents
-    protected Set<Integer> agents;
+    protected List<Integer> agents;
 
     // Set of Alpha's interaction partners (subset of agents)
     protected List<Integer> partners;
@@ -105,7 +106,7 @@ public class Transitive extends AbstractScenario implements Scenario {
 
     @Override
     public void initialize(Object... parameters) {
-	agents = new LinkedHashSet<Integer>();
+	agents = new ArrayList<Integer>();
 	partners = new ArrayList<Integer>();
 	capabilities = new LinkedHashMap<Integer, Double>();
 	dms = null;
@@ -138,8 +139,8 @@ public class Transitive extends AbstractScenario implements Scenario {
     }
 
     @Override
-    public Set<Opinion> generateOpinions() {
-	final Set<Opinion> opinions = new HashSet<Opinion>();
+    public List<Opinion> generateOpinions() {
+	final List<Opinion> opinions = new ArrayList<Opinion>();
 
 	Opinion opinion = null;
 	double cap, itd;
@@ -165,7 +166,7 @@ public class Transitive extends AbstractScenario implements Scenario {
     }
 
     @Override
-    public Set<Experience> generateExperiences() {
+    public List<Experience> generateExperiences() {
 	// get agent to interact with
 	int agent = partners.get(time % partners.size());
 
@@ -176,7 +177,7 @@ public class Transitive extends AbstractScenario implements Scenario {
 	// create experience tuple and add it to list
 	final Experience experience = new Experience(agent, 0, time, outcome);
 
-	final Set<Experience> experiences = new HashSet<Experience>();
+	final List<Experience> experiences = new ArrayList<Experience>();
 	experiences.add(experience);
 
 	return experiences;
@@ -194,7 +195,7 @@ public class Transitive extends AbstractScenario implements Scenario {
      *            Percentage of all possible opinions that will be generated
      * @return
      */
-    public DeceptionModel[][] assignDeceptionModels(Set<Integer> agents,
+    public DeceptionModel[][] assignDeceptionModels(List<Integer> agents,
 	    Map<Integer, Double> capabilities, double opinionDensity) {
 
 	final DeceptionModel[][] dms = new DeceptionModel[agents.size()][agents
@@ -302,16 +303,13 @@ public class Transitive extends AbstractScenario implements Scenario {
     }
 
     @Override
-    public Set<Integer> getAgents() {
+    public List<Integer> getAgents() {
 	return agents;
     }
 
     @Override
-    public Set<Integer> getServices() {
-	final Set<Integer> services = new HashSet<Integer>();
-	services.add(0);
-
-	return services;
+    public List<Integer> getServices() {
+	return SERVICES;
     }
 
     @Override

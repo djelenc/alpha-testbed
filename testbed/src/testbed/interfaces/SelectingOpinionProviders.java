@@ -1,6 +1,6 @@
 package testbed.interfaces;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Interface for implementing the decision making component of trust models that
@@ -13,28 +13,27 @@ import java.util.Set;
 public interface SelectingOpinionProviders {
 
     /**
-     * This method returns a set of opinion requests that will be generated in
+     * This method returns a list of opinion requests that will be generated in
      * current tick.
      * 
      * <p>
-     * If returned set contains invalid request (for invalid agents or services)
-     * such requests are ignored.
+     * Invalid request (for invalid agents or services) are ignored.
      * 
-     * @return A set of opinion requests.
+     * @return A list of opinion requests.
      */
-    public Set<OpinionRequest> getOpinionRequests();
+    public List<OpinionRequest> getOpinionRequests();
 
     /**
-     * Conveys the set of available agents to the trust model.
+     * Conveys the list of available agents to the trust model.
      * 
      * @param agents
      */
-    public void setAgents(Set<Integer> agents);
+    public void setAgents(List<Integer> agents);
 
     /**
-     * Conveys the set of available services to the trust model.
+     * Conveys the list of available services to the trust model.
      * 
      * @param services
      */
-    public void setServices(Set<Integer> services);
+    public void setServices(List<Integer> services);
 }

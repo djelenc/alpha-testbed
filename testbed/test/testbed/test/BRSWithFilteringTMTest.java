@@ -1,8 +1,7 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -16,8 +15,8 @@ public class BRSWithFilteringTMTest {
 
     @Test
     public void testCompute() {
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 	BRSWithFiltering tm = new BRSWithFiltering();
 	int time = 0;
 	tm.initialize(1d, 0d, 0.01, 10d);

@@ -1,7 +1,7 @@
 package testbed.interfaces;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface TrustModel<T extends Comparable<T>> {
 
@@ -33,20 +33,20 @@ public interface TrustModel<T extends Comparable<T>> {
     public void setCurrentTime(int time);
 
     /**
-     * Conveys a set of opinions to the trust model.
+     * Conveys opinions to the trust model.
      * 
      * @param opinions
-     *            Set of opinions
+     *            List of opinions
      */
-    public void processOpinions(Set<Opinion> opinions);
+    public void processOpinions(List<Opinion> opinions);
 
     /**
-     * Conveys a set of experiences to the trust model.
+     * Conveys experiences to the trust model.
      * 
      * @param experiences
-     *            Set of experiences
+     *            List of experiences
      */
-    public void processExperiences(Set<Experience> experiences);
+    public void processExperiences(List<Experience> experiences);
 
     /**
      * Calculates trust towards agents in the system. The calculated trust must

@@ -13,15 +13,15 @@ public interface Accuracy extends Metric {
     /**
      * Evaluates given rankings against given capabilities.
      * 
-     * @param rankings
-     *            A map of rankings, where agents' ID numbers are used for keys
-     *            and their respective ranks as values
+     * @param trustDegrees
+     *            A map of trust values, where keys represent agents and values
+     *            represent their trust degrees
      * @param capabilities
-     *            A map of capabilities, where agents' ID numbers are used for
-     *            keys and their respective capabilities as values
+     *            A map of capabilities, where keys represent agents and values
+     *            represent their capabilities
      * 
      * @return An evaluation score between 0 and 1, inclusively.
      */
-    public <T extends Comparable<T>> double evaluate(Map<Integer, T> rankings,
-	    Map<Integer, Double> capabilities);
+    public <T extends Comparable<T>> double evaluate(
+	    Map<Integer, T> trustDegrees, Map<Integer, Double> capabilities);
 }

@@ -1,7 +1,12 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import static testbed.trustmodel.qad.Omega.D;
+import static testbed.trustmodel.qad.Omega.PD;
+import static testbed.trustmodel.qad.Omega.PT;
+import static testbed.trustmodel.qad.Omega.T;
+import static testbed.trustmodel.qad.Omega.U;
+
+import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,12 +16,6 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 import testbed.trustmodel.qad.Omega;
 import testbed.trustmodel.qad.QTM;
-
-import static testbed.trustmodel.qad.Omega.D;
-import static testbed.trustmodel.qad.Omega.PD;
-import static testbed.trustmodel.qad.Omega.PT;
-import static testbed.trustmodel.qad.Omega.T;
-import static testbed.trustmodel.qad.Omega.U;
 
 public class QTMTest {
 
@@ -59,8 +58,8 @@ public class QTMTest {
 
     @Test
     public void testCredibilityWeights1() {
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(3, 0, 0, 1d));
 	opinions.add(new Opinion(0, 3, 0, 0, 1d));
@@ -81,8 +80,8 @@ public class QTMTest {
 
     @Test
     public void testCredibilityWeights2() {
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(3, 0, 0, 1d));
 	opinions.add(new Opinion(0, 3, 0, 0, 0d));

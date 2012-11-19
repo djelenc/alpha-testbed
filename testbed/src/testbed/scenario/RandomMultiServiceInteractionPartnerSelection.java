@@ -1,8 +1,8 @@
 package testbed.scenario;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.interfaces.Experience;
 import testbed.interfaces.InteractionPartnerSelection;
@@ -26,8 +26,8 @@ public class RandomMultiServiceInteractionPartnerSelection extends
     }
 
     @Override
-    public Set<Experience> generateExperiences() {
-	final Set<Experience> experiences = new HashSet<Experience>();
+    public List<Experience> generateExperiences() {
+	final List<Experience> experiences = new ArrayList<Experience>();
 
 	for (int service : getServices()) {
 	    final Integer agent = partners.get(service);

@@ -1,8 +1,8 @@
 package testbed.trustmodel;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
@@ -40,7 +40,7 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> exps) {
+    public void processExperiences(List<Experience> exps) {
 	expandArrays(exps, null);
 
 	for (Experience e : exps) {
@@ -70,7 +70,7 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processOpinions(Set<Opinion> ops) {
+    public void processOpinions(List<Opinion> ops) {
 	expandArrays(null, ops);
 
 	for (Opinion o : ops)
@@ -149,7 +149,7 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
      * @param ops
      *            Set of opinions
      */
-    protected void expandArrays(Set<Experience> exp, Set<Opinion> ops) {
+    protected void expandArrays(List<Experience> exp, List<Opinion> ops) {
 	final int limit = opinions.length - 1;
 	int max = limit;
 
