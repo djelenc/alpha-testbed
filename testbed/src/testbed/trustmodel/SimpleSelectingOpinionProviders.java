@@ -1,7 +1,7 @@
 package testbed.trustmodel;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import testbed.interfaces.OpinionRequest;
 import testbed.interfaces.SelectingOpinionProviders;
@@ -25,7 +25,7 @@ public class SimpleSelectingOpinionProviders extends
 
     @Override
     public Set<OpinionRequest> getOpinionRequests() {
-	final Set<OpinionRequest> opinionRequests = new HashSet<OpinionRequest>();
+	final Set<OpinionRequest> opinionRequests = new TreeSet<OpinionRequest>();
 
 	for (int target : agents) {
 	    // ask only if there are less than 3 experiences

@@ -356,11 +356,11 @@ public class AlphaTestbed {
 	tmSelectingOpinions.setServices(services);
 
 	// get opinion requests
-	final Set<OpinionRequest> opinionRequests;
-	opinionRequests = tmSelectingOpinions.getOpinionRequests();
+	final Set<OpinionRequest> opReqs;
+	opReqs = Utils.ordered(tmSelectingOpinions.getOpinionRequests());
 
 	// convey opinion requests to scenario
-	scnOpinionSelection.setOpinionRequests(opinionRequests);
+	scnOpinionSelection.setOpinionRequests(opReqs);
 
 	// get opinions
 	final Set<Opinion> opinions = scenario.generateOpinions();
@@ -369,11 +369,10 @@ public class AlphaTestbed {
 	trustModel.processOpinions(opinions);
 
 	// get interaction partners from TM
-	final Map<Integer, Integer> itTemp;
-	itTemp = tmSelectingInteractions.getInteractionPartners(services);
-
 	// Convert Map to a TreeMap to ensure deterministic iteration
-	final Map<Integer, Integer> partners = Utils.orderedMap(itTemp);
+	final Map<Integer, Integer> partners;
+	partners = Utils.ordered(tmSelectingInteractions
+		.getInteractionPartners(services));
 
 	// convey partner selections to scenario
 	scnInteractionSelection.setInteractionPartners(partners);
@@ -415,7 +414,7 @@ public class AlphaTestbed {
 	    final OpinionCost opinionCost = getOpinionCostInstance(service);
 	    final int ocKey = opinionCost.getClass().hashCode() ^ service;
 	    final double ocValue;
-	    ocValue = opinionCost.evaluate(agents, services, opinionRequests);
+	    ocValue = opinionCost.evaluate(agents, services, opReqs);
 
 	    score.put(ocKey, ocValue);
 	}
@@ -444,7 +443,7 @@ public class AlphaTestbed {
 	ipTemp = tmSelectingInteractions.getInteractionPartners(services);
 
 	// Convert Map to a TreeMap to ensure deterministic iteration
-	final Map<Integer, Integer> partners = Utils.orderedMap(ipTemp);
+	final Map<Integer, Integer> partners = Utils.ordered(ipTemp);
 
 	// convey partner selection to the scenario
 	scnInteractionSelection.setInteractionPartners(partners);
