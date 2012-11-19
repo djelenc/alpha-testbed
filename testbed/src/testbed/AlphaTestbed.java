@@ -1,8 +1,8 @@
 package testbed;
 
-import static testbed.EvaluationProtocol.NO_DECISIONS;
-import static testbed.EvaluationProtocol.SELECTING_INTERACTION_PARTNERS;
-import static testbed.EvaluationProtocol.SELECTING_OPINIONS_PROVIDERS;
+import static testbed.EvalEnum.NO_DECISIONS;
+import static testbed.EvalEnum.SELECTING_INTERACTION_PARTNERS;
+import static testbed.EvalEnum.SELECTING_OPINIONS_PROVIDERS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -172,7 +172,7 @@ public class AlphaTestbed {
     protected final Map<Integer, Double> score;
 
     /** Type of evaluation protocol */
-    protected final EvaluationProtocol evaluationProtocol;
+    protected final EvalEnum evaluationProtocol;
 
     /** All accuracy metrics */
     protected final Map<Integer, Accuracy> accuracyMetrics;
@@ -751,7 +751,7 @@ public class AlphaTestbed {
      * 
      * @return
      */
-    public EvaluationProtocol getEvaluationProtocol() {
+    public EvalEnum getEvaluationProtocol() {
 	return evaluationProtocol;
     }
 }
