@@ -1,6 +1,7 @@
 package testbed.repast;
 
 import testbed.AlphaTestbed;
+import testbed.EvaluationProtocol;
 import testbed.MetricSubscriber;
 import testbed.interfaces.Metric;
 
@@ -46,8 +47,7 @@ public class RepastMetricAgent implements MetricSubscriber {
 	testbed.subscribe(this);
     }
 
-    @Override
-    public void update(AlphaTestbed instance) {
+    public void update1(AlphaTestbed instance) {
 	// pulls data from the test-bed
 	currentValue = instance.getMetric(service, metric);
     }
@@ -67,5 +67,10 @@ public class RepastMetricAgent implements MetricSubscriber {
 
     public String getScenario() {
 	return this.scenario;
+    }
+
+    @Override
+    public void update(EvaluationProtocol instance) {
+	currentValue = instance.getResult(service, metric);
     }
 }

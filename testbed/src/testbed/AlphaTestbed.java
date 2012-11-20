@@ -653,7 +653,8 @@ public class AlphaTestbed {
      */
     protected void notifiySubscribers() {
 	for (MetricSubscriber s : subscribers)
-	    s.update(this);
+	    s.update(null);
+	// s.update(this);
     }
 
     /**

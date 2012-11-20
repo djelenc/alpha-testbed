@@ -1,7 +1,11 @@
 package testbed.repast;
 
-import testbed.AlphaTestbed;
+import java.util.HashMap;
+import java.util.Map;
+
+import testbed.EvaluationProtocol;
 import testbed.MetricSubscriber;
+import testbed.NoDecisionsEvaluationProtocol;
 import testbed.common.DefaultRandomGenerator;
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Metric;
@@ -40,23 +44,25 @@ public class ProgramaticRunExample implements MetricSubscriber {
 	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	scenario.initialize(100, 0.05, 0.1, 1d, 1d);
 
-	// ranking metric
+	// metrics
 	Accuracy accuracy = new KendallsTauA();
-	accuracy.initialize();
 
-	// alpha test-bed (utility metric set to null)
-	final AlphaTestbed atb = new AlphaTestbed(scenario, model, accuracy,
-		null, null, null, null, null);
+	Map<Metric, Object[]> metrics = new HashMap<Metric, Object[]>();
+	metrics.put(accuracy, null);
 
-	atb.subscribe(new ProgramaticRunExample(accuracy));
+	EvaluationProtocol ep = new NoDecisionsEvaluationProtocol();
+	ep.initialize(model, scenario, metrics);
 
-	for (int time = 1; time <= 300; time++)
-	    atb.step(time);
+	ep.subscribe(new ProgramaticRunExample(accuracy));
+
+	for (int time = 1; time <= 100; time++) {
+	    ep.step(time);
+	}
     }
 
     @Override
-    public void update(AlphaTestbed instance) {
+    public void update(EvaluationProtocol instance) {
 	System.out.printf("%s (%s): %.2f\n", metric, service,
-		instance.getMetric(service, metric));
+		instance.getResult(service, metric));
     }
 }
