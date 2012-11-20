@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface for implementing the decision making component of trust models that
- * selects interaction partners. A trust model that wants to select interaction
- * partners, has to implement the methods of this interface.
+ * Interface for implementing trust models that select interaction partners.
  * 
  * @author David
  * 

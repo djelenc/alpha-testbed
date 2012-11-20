@@ -13,7 +13,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	YuSinghSycaraTMTest.class, QADTMTest.class, QTMTest.class,
 	OscillationScenarioTest.class, DefaultRandomGeneratorTest.class,
 	ExampleGeneratorTest.class, OpinionRequestTest.class,
-	NoDecisionsEvaluationProtocolTest.class })
+	EvaluationProtocolTests.class })
 public class AllTests {
 
 }

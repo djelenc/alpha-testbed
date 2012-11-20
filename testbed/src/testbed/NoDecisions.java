@@ -16,7 +16,7 @@ import testbed.interfaces.Opinion;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
-public class NoDecisionsEvaluationProtocol extends EvaluationProtocol {
+public class NoDecisions extends EvaluationProtocol {
 
     /** Error message for creating metrics */
     protected static final String CREATION_ERROR;
@@ -49,16 +49,17 @@ public class NoDecisionsEvaluationProtocol extends EvaluationProtocol {
 	    throw new IllegalArgumentException("Invalid trust model.");
 	}
 
+	trustModel = tm;
+
 	if (!validScenarioClasses(scn.getClass())) {
 	    throw new IllegalArgumentException("Invalid scenario.");
 	}
 
+	scenario = scn;
+
 	if (!validMetricClasses(metrics.keySet())) {
 	    throw new IllegalArgumentException("Invalid metrics.");
 	}
-
-	trustModel = tm;
-	scenario = scn;
 
 	for (Entry<? extends Metric, Object[]> e : metrics.entrySet()) {
 	    accuracyClass = (Class<? extends Accuracy>) e.getKey().getClass();
@@ -109,6 +110,19 @@ public class NoDecisionsEvaluationProtocol extends EvaluationProtocol {
 	}
     }
 
+    /**
+     * Returns an instance of the ranking metric for the given service.
+     * 
+     * <p>
+     * Method retrieves the instance from the the map of all ranking metric
+     * instances. If for the given service, the map does not contain a metric
+     * instance, the method creates a new instance, initializes it with
+     * parameters, adds instance to the map and returns the instance.
+     * 
+     * @param service
+     *            Type of service
+     * @return An instance of the metric
+     */
     protected Accuracy getAccuracyInstance(int service) {
 	Accuracy metric = serviceAccuracy.get(service);
 
@@ -127,7 +141,7 @@ public class NoDecisionsEvaluationProtocol extends EvaluationProtocol {
     }
 
     @Override
-    public TrustModel<?> getModel() {
+    public TrustModel<?> getTrustModel() {
 	return trustModel;
     }
 

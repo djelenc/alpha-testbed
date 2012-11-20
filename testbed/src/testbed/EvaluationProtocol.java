@@ -90,7 +90,7 @@ public abstract class EvaluationProtocol {
      * 
      * @return
      */
-    public abstract TrustModel<?> getModel();
+    public abstract TrustModel<?> getTrustModel();
 
     /**
      * Returns the scenario instance.
@@ -129,7 +129,7 @@ public abstract class EvaluationProtocol {
      * @param time
      *            Current time of the evaluation.
      */
-    public void step(int time) {
+    public final void step(int time) {
 	// perform protocol step
 	evaluationlStep(time);
 
@@ -149,7 +149,7 @@ public abstract class EvaluationProtocol {
      *            Map of metrics and their parameters
      * @return True if the combination is valid
      */
-    public boolean validParameters(TrustModel<?> tm, Scenario scn,
+    public final boolean validParameters(TrustModel<?> tm, Scenario scn,
 	    Map<? extends Metric, Object[]> metrics) {
 	return validTrustModelClasses(tm.getClass())
 		&& validScenarioClasses(scn.getClass())
@@ -163,7 +163,7 @@ public abstract class EvaluationProtocol {
      *            Given trust model.
      * @return True on success.
      */
-    protected boolean validTrustModelClasses(Class<?> tm) {
+    protected final boolean validTrustModelClasses(Class<?> tm) {
 	final Set<Class<?>> required = requiredTrustModelClasses();
 
 	for (Class<?> clazz : TRUST_MODELS) {
@@ -186,7 +186,7 @@ public abstract class EvaluationProtocol {
      *            Given scenario.
      * @return true on success.
      */
-    protected boolean validScenarioClasses(Class<?> scn) {
+    protected final boolean validScenarioClasses(Class<?> scn) {
 	final Set<Class<?>> required = requiredScenarioClasses();
 
 	for (Class<?> clazz : SCENARIOS) {
@@ -210,7 +210,8 @@ public abstract class EvaluationProtocol {
      *            Set of given metrics.
      * @return True when metrics are compatible.
      */
-    protected boolean validMetricClasses(Set<? extends Metric> givenMetrics) {
+    protected final boolean validMetricClasses(
+	    Set<? extends Metric> givenMetrics) {
 	final Set<Class<? extends Metric>> requiredMetrics = requiredMetricClasses();
 
 	if (givenMetrics.size() != requiredMetrics.size()) {
@@ -237,7 +238,8 @@ public abstract class EvaluationProtocol {
      *            Set of required metric classes.
      * @return
      */
-    protected boolean containsASubInstance(Class<? extends Metric> metricClass,
+    protected final boolean containsASubInstance(
+	    Class<? extends Metric> metricClass,
 	    Set<Class<? extends Metric>> requiredMetrics) {
 	for (Class<?> clazz : requiredMetrics) {
 	    if (clazz.isAssignableFrom(metricClass)) {
@@ -255,7 +257,7 @@ public abstract class EvaluationProtocol {
      * @param observer
      *            The instance of the subscriber.
      */
-    public void subscribe(MetricSubscriber observer) {
+    public final void subscribe(MetricSubscriber observer) {
 	subscribers.add(observer);
     }
 
@@ -266,7 +268,7 @@ public abstract class EvaluationProtocol {
      * @param subscriber
      *            The instance to be removed.
      */
-    public void remove(MetricSubscriber subscriber) {
+    public final void remove(MetricSubscriber subscriber) {
 	subscribers.remove(subscriber);
     }
 
@@ -274,7 +276,7 @@ public abstract class EvaluationProtocol {
      * Notifies the subscribers that the new data is ready to be pulled from the
      * test-bed.
      */
-    protected void notifiySubscribers() {
+    protected final void notifiySubscribers() {
 	for (MetricSubscriber s : subscribers) {
 	    s.update(this);
 	}
@@ -291,7 +293,7 @@ public abstract class EvaluationProtocol {
      *            The metric
      * @return The evaluation result
      */
-    public double getResult(int service, Metric metric) {
+    public final double getResult(int service, Metric metric) {
 	final Double result;
 	result = results.get(metric.getClass().hashCode() ^ service);
 
