@@ -3,9 +3,7 @@ package testbed.interfaces;
 import java.util.List;
 
 /**
- * Interface for implementing the decision making component of trust models that
- * selects opinion providers. A trust model that decides whom to ask for
- * opinions, has to implement the methods of this interface.
+ * Interface for implementing trust models that selects opinion providers.
  * 
  * @author David
  * 

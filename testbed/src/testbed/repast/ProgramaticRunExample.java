@@ -3,7 +3,7 @@ package testbed.repast;
 import java.util.HashMap;
 import java.util.Map;
 
-import testbed.DecisionsModeA;
+import testbed.DecisionsModeB;
 import testbed.EvaluationProtocol;
 import testbed.MetricSubscriber;
 import testbed.common.DefaultRandomGenerator;
@@ -11,9 +11,10 @@ import testbed.interfaces.Metric;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 import testbed.metric.CumulativeNormalizedUtility;
+import testbed.metric.DefaultOpinionCost;
 import testbed.metric.KendallsTauA;
-import testbed.scenario.TransitiveInteractionPartnerSelection;
-import testbed.trustmodel.YuSinghSycaraSelectingInteractionPartners;
+import testbed.scenario.TransitiveOpinionProviderSelection;
+import testbed.trustmodel.SimpleSelectingOpinionProviders;
 
 /**
  * A class that demonstrates how an evaluation can be run as a simple Java
@@ -35,30 +36,33 @@ public class ProgramaticRunExample implements MetricSubscriber {
 
     public static void main(String[] args) {
 	// trust model
-	TrustModel<?> model = new YuSinghSycaraSelectingInteractionPartners();
+	TrustModel<?> model = new SimpleSelectingOpinionProviders();
 	model.setRandomGenerator(new DefaultRandomGenerator(0));
 	model.initialize();
 
 	// scenario
-	Scenario scenario = new TransitiveInteractionPartnerSelection();
+	Scenario scenario = new TransitiveOpinionProviderSelection();
 	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	scenario.initialize(100, 0.05, 0.1, 1d, 1d);
 
 	// metrics
 	Metric accuracy = new KendallsTauA();
 	Metric utility = new CumulativeNormalizedUtility();
+	Metric opinionCost = new DefaultOpinionCost();
 
 	Map<Metric, Object[]> metrics = new HashMap<Metric, Object[]>();
 	metrics.put(accuracy, null);
 	metrics.put(utility, null);
+	metrics.put(opinionCost, null);
 
-	EvaluationProtocol ep = new DecisionsModeA();
+	EvaluationProtocol ep = new DecisionsModeB();
 	ep.initialize(model, scenario, metrics);
 
 	ep.subscribe(new ProgramaticRunExample(accuracy));
 	ep.subscribe(new ProgramaticRunExample(utility));
+	ep.subscribe(new ProgramaticRunExample(opinionCost));
 
-	for (int time = 1; time <= 100; time++) {
+	for (int time = 1; time <= 500; time++) {
 	    ep.step(time);
 	}
     }
