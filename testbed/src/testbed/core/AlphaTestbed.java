@@ -17,7 +17,10 @@ import testbed.interfaces.Utility;
 
 public class AlphaTestbed {
     /** No suitable protocol error */
-    private static final String NO_PROTOCOL;
+    private static final String NO_PROTOCOL_ERR;
+
+    /** Instantiation error */
+    private static final String INSTATIATION_ERR;
 
     /** Set of available evaluation protocols */
     public static final Set<Class<? extends EvaluationProtocol>> EVALUATION_PROTOCOLS;
@@ -32,14 +35,18 @@ public class AlphaTestbed {
     public static final Set<Class<? extends Metric>> METRICS;
 
     static {
-	NO_PROTOCOL = "Could not find a suitable protocol.";
+	NO_PROTOCOL_ERR = "Could not find a suitable protocol "
+		+ "for trust model %s, scenario %s and metrics %s.";
+
+	INSTATIATION_ERR = "Could not instatiate evaluation protocol "
+		+ "for trust model %s, scenario %s and metrics %s.";
 
 	EVALUATION_PROTOCOLS = new HashSet<Class<? extends EvaluationProtocol>>();
 	TRUST_MODELS = new HashSet<Class<?>>();
 	SCENARIOS = new HashSet<Class<?>>();
 	METRICS = new HashSet<Class<? extends Metric>>();
 
-	// XXX: MODIFY IF NEW ELEMNTS ARE ADDED
+	// XXX: MODIFY IF NEW ELEMENTS ARE ADDED
 
 	// ALL AVAILABLE EVALUATION PROTOCOLS
 	EVALUATION_PROTOCOLS.add(NoDecisions.class);
@@ -88,11 +95,12 @@ public class AlphaTestbed {
 		    return instance;
 		}
 	    } catch (Exception e) {
-		throw new IllegalArgumentException("Instantiation error", e);
+		throw new IllegalArgumentException(String.format(
+			INSTATIATION_ERR, tm, scn, metrics), e);
 	    }
 	}
 
-	throw new IllegalArgumentException(NO_PROTOCOL);
+	throw new IllegalArgumentException(String.format(NO_PROTOCOL_ERR, tm,
+		scn, metrics));
     }
-
 }

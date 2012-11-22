@@ -75,8 +75,9 @@ public class RepastPlatform extends DefaultContext<Object> implements
 	    final Object[] generalParams = gui.getSetupParameters();
 	    final Object[] scenarioParams = gui.getScenarioParameters();
 	    final Object[] trustModelParams = gui.getTrustModelParameters();
-	    final Object[] accParams = gui.getRankMetricParameters();
-	    final Object[] utilParams = gui.getUtilityMetricParameters();
+	    final Object[] accParams = gui.getAccuracyParameters();
+	    final Object[] utilParams = gui.getUtilityParameters();
+	    final Object[] ocParams = gui.getOpinionCostParameters();
 
 	    // set scenario
 	    final Scenario scenario = (Scenario) generalParams[0];
@@ -96,13 +97,19 @@ public class RepastPlatform extends DefaultContext<Object> implements
 
 	    // set opinion cost metric
 	    final OpinionCost oc = (OpinionCost) generalParams[4];
-
 	    final Map<Metric, Object[]> metrics = new HashMap<Metric, Object[]>();
-	    metrics.put(acc, accParams);
-	    metrics.put(util, utilParams);
 
-	    // TODO: Add parameters
-	    metrics.put(oc, null);
+	    // Accuracy
+	    if (acc != null)
+		metrics.put(acc, accParams);
+
+	    // Utility
+	    if (util != null)
+		metrics.put(util, utilParams);
+
+	    // Opinion cost
+	    if (oc != null)
+		metrics.put(oc, ocParams);
 
 	    testbed = AlphaTestbed.getProtocol(trustModel, scenario, metrics);
 
@@ -128,7 +135,7 @@ public class RepastPlatform extends DefaultContext<Object> implements
 		msg.append(String.format("Trust model: %s\n", trustModel));
 		msg.append(String.format("Trust model parameters: %s\n",
 			Arrays.toString(trustModelParams)));
-		msg.append(String.format("Metric: %s\n", metrics.keySet()));
+		msg.append(String.format("Metrics: %s\n", metrics.keySet()));
 		msg.append('\n');
 
 		System.out.println(msg.toString());

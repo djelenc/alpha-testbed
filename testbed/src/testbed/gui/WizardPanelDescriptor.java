@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import testbed.interfaces.OpinionCost;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
@@ -251,9 +252,9 @@ public class WizardPanelDescriptor implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+	// FIXME: Add final page with OC metric
 	if (arg instanceof Boolean) {
 	    // next/finish button
-
 	    final boolean isThisWPD = wizard.getModel()
 		    .getCurrentPanelDescriptor().equals(this);
 
@@ -283,18 +284,25 @@ public class WizardPanelDescriptor implements Observer {
 		novel = tm.getParametersPanel();
 	    } else if (arg instanceof Accuracy) {
 		final Accuracy rm = (Accuracy) arg;
-		id = ParametersGUI.RANK_METRIC;
-		title = String.format("Ranking metric: %s", rm);
+		id = ParametersGUI.ACCURACY_METRIC;
+		title = String.format("Accuracy: %s", rm);
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = rm.getParametersPanel();
 	    } else if (arg instanceof Utility) {
 		final Utility um = (Utility) arg;
 		id = ParametersGUI.UTILITY_METRIC;
-		title = String.format("Utility metric: %s", um);
+		title = String.format("Utility: %s", um);
 		current = wizard.getModel().getPanelDescriptor(id)
 			.getIParametersPanel();
 		novel = um.getParametersPanel();
+	    } else if (arg instanceof OpinionCost) {
+		final OpinionCost ocm = (OpinionCost) arg;
+		id = ParametersGUI.OPINIONCOST_METRIC;
+		title = String.format("Opinion cost: %s", ocm);
+		current = wizard.getModel().getPanelDescriptor(id)
+			.getIParametersPanel();
+		novel = ocm.getParametersPanel();
 	    } else {
 		return;
 	    }
@@ -322,13 +330,31 @@ public class WizardPanelDescriptor implements Observer {
 		wpd.setNext(ParametersGUI.MODELS);
 	    } else if (arg instanceof TrustModel) {
 		wpd.setBack(ParametersGUI.SCENARIO);
-		wpd.setNext(ParametersGUI.RANK_METRIC);
+		wpd.setNext(ParametersGUI.ACCURACY_METRIC);
 	    } else if (arg instanceof Accuracy) {
 		wpd.setBack(ParametersGUI.MODELS);
-	    } else {
-		wizard.getModel().getPanelDescriptor(ParametersGUI.RANK_METRIC)
+	    } else if (arg instanceof Utility) {
+		// ACCURACY -> UTILITY
+		wizard.getModel()
+			.getPanelDescriptor(ParametersGUI.ACCURACY_METRIC)
 			.setNext(ParametersGUI.UTILITY_METRIC);
-		wpd.setBack(ParametersGUI.RANK_METRIC);
+		// ACCURACY <- UTILITY
+		wpd.setBack(ParametersGUI.ACCURACY_METRIC);
+	    } else {
+		/* OPINION COST */
+
+		// ACCURACY -> UTILITY
+		wizard.getModel()
+			.getPanelDescriptor(ParametersGUI.ACCURACY_METRIC)
+			.setNext(ParametersGUI.UTILITY_METRIC);
+
+		// UTILITY -> OPINION COST
+		wizard.getModel()
+			.getPanelDescriptor(ParametersGUI.UTILITY_METRIC)
+			.setNext(ParametersGUI.OPINIONCOST_METRIC);
+
+		// UTILITY <- OPINION COST
+		wpd.setBack(ParametersGUI.UTILITY_METRIC);
 	    }
 	}
     }

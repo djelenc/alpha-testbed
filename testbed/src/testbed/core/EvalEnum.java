@@ -1,5 +1,0 @@
-package testbed.core;
-
-public enum EvalEnum {
-    NO_DECISIONS, SELECTING_INTERACTION_PARTNERS, SELECTING_OPINIONS_PROVIDERS
-}
