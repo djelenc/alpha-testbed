@@ -1,4 +1,4 @@
-package testbed;
+package testbed.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +19,34 @@ import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 
+/**
+ * In this evaluation protocol, the testbed treats the trust model as a
+ * cognitive entity. This means that the trust model is required to select
+ * partners for interactions.
+ * 
+ * <p>
+ * Besides measuring accuracy, the testbed also measures the utility that the
+ * trust model obtains in interactions. The execution flow of the evaluation
+ * protocol is the following:
+ * <ol>
+ * <li>The testbed sets time in the scenario.
+ * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the scenario to generate opinions.
+ * <li>The testbed conveys generated opinions to the trust model.
+ * <li>The testbed instructs the trust model to tell, with whom does agent Alpha
+ * want to interact.
+ * <li>The testbed instructs the scenario to generate experiences tuples for
+ * agents that the trust model requested.
+ * <li>The testbed conveys generated experiences to the trust model.
+ * <li>The testbed instructs the trust model to evaluate trust.
+ * <li>The testbed instructs the trust model to compute rankings of agents.
+ * <li>The testbed evaluates received rankings.
+ * <li>The testbed evaluates the utility which was obtained from interactions.
+ * </ol>
+ * 
+ * @author David
+ * 
+ */
 public class DecisionsModeA extends NoDecisions {
 
     private TrustModel<?> tm;

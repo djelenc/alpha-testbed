@@ -1,4 +1,4 @@
-package testbed;
+package testbed.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +23,36 @@ import testbed.interfaces.SelectingOpinionProviders;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 
+/**
+ * In this evaluation protocol, the trust models select interaction partners and
+ * opinion providers.
+ * 
+ * <p>
+ * Besides measuring accuracy, and utility, the testbed also measures the cost
+ * that was endured in obtaining required opinions. The execution flow of the
+ * evaluation protocol is the following:
+ * <ol>
+ * <li>The testbed sets time in the scenario.
+ * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the trust to determine whom to ask for opinions.
+ * <li>The testbed instructs the scenario to generate requested opinions.
+ * <li>The testbed conveys generated opinions to the trust model.
+ * <li>The testbed instructs the trust model to tell, with whom does agent Alpha
+ * want to interact.
+ * <li>The testbed instructs the scenario to generate experiences tuples for
+ * agents that the trust model requested.
+ * <li>The testbed conveys generated experiences to the trust model.
+ * <li>The testbed instructs the trust model to evaluate trust.
+ * <li>The testbed instructs the trust model to compute rankings of agents.
+ * <li>The testbed evaluates received trust.
+ * <li>The testbed evaluates the utility which was obtained from interactions.
+ * <li>The testbed evaluates the endured cost when fetching opinions.
+ * </ol>
+ * <p>
+ * 
+ * @author David
+ * 
+ */
 public class DecisionsModeB extends DecisionsModeA {
 
     private TrustModel<?> tm;

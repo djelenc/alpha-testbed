@@ -1,56 +1,45 @@
-package testbed;
+package testbed.core;
 
-import java.util.HashSet;
+import static testbed.core.AlphaTestbed.SCENARIOS;
+import static testbed.core.AlphaTestbed.TRUST_MODELS;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import testbed.interfaces.Accuracy;
-import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.Metric;
-import testbed.interfaces.OpinionCost;
-import testbed.interfaces.OpinionProviderSelection;
 import testbed.interfaces.Scenario;
-import testbed.interfaces.SelectingInteractionPartners;
-import testbed.interfaces.SelectingOpinionProviders;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.Utility;
 
+/**
+ * The base class for all evaluation protocols. Evaluation protocols have to be
+ * implemented in classes that extend this class. They have to provide
+ * implementations. that are specific to each evaluation protocol.
+ * 
+ * <p>
+ * The protocol publishes results of the evaluation by using subscribers.
+ * Subscribers are instances of classes that implement the
+ * {@link MetricSubscriber} interface.
+ * 
+ * <p>
+ * The results are published in the following manner. First, the subscribers
+ * have to subscribe to the testbed by using
+ * {@link #subscribe(MetricSubscriber)} method. Second, at the end of each
+ * evaluation step, the testbed notifies all subscribers by invoking their
+ * {@link MetricSubscriber#update(AlphaTestbed)} methods. Finally, the
+ * subscribers are expected to pull the results of the evaluation via the
+ * {@link #getMetric(int, Metric)} method.
+ * 
+ * @author David
+ * 
+ */
 public abstract class EvaluationProtocol {
-
-    /** Set of available trust model interfaces */
-    protected static final Set<Class<?>> TRUST_MODELS;
-
-    /** Set of available scenario interfaces */
-    protected static final Set<Class<?>> SCENARIOS;
-
-    /** Set of available metric interfaces */
-    protected static final Set<Class<?>> METRICS;
 
     /** Error message for invalid result query */
     protected static final String INVALID_QUERY;
 
     static {
 	INVALID_QUERY = "Invalid query for metric '%s' and service '%d'.";
-
-	TRUST_MODELS = new HashSet<Class<?>>();
-	SCENARIOS = new HashSet<Class<?>>();
-	METRICS = new HashSet<Class<?>>();
-
-	// ALL AVAILABLE TRUST MODEL INTERFACES
-	TRUST_MODELS.add(TrustModel.class);
-	TRUST_MODELS.add(SelectingInteractionPartners.class);
-	TRUST_MODELS.add(SelectingOpinionProviders.class);
-
-	// ALL AVAILABLE SCENARIO INTERFACES
-	SCENARIOS.add(Scenario.class);
-	SCENARIOS.add(InteractionPartnerSelection.class);
-	SCENARIOS.add(OpinionProviderSelection.class);
-
-	// ALL AVAILABLE METRIC INTERFACES
-	METRICS.add(Accuracy.class);
-	METRICS.add(Utility.class);
-	METRICS.add(OpinionCost.class);
     }
 
     /**
@@ -116,7 +105,8 @@ public abstract class EvaluationProtocol {
     protected abstract Set<Class<?>> requiredTrustModelClasses();
 
     /**
-     * Returns the set of required metric classes.
+     * Returns the set of required metric classes that have to be given to the
+     * evaluation protocol.
      * 
      * @return
      */

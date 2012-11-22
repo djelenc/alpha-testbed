@@ -3,10 +3,10 @@ package testbed.repast;
 import java.util.HashMap;
 import java.util.Map;
 
-import testbed.DecisionsModeB;
-import testbed.EvaluationProtocol;
-import testbed.MetricSubscriber;
 import testbed.common.DefaultRandomGenerator;
+import testbed.core.AlphaTestbed;
+import testbed.core.EvaluationProtocol;
+import testbed.core.MetricSubscriber;
 import testbed.interfaces.Metric;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
@@ -55,8 +55,8 @@ public class ProgramaticRunExample implements MetricSubscriber {
 	metrics.put(utility, null);
 	metrics.put(opinionCost, null);
 
-	EvaluationProtocol ep = new DecisionsModeB();
-	ep.initialize(model, scenario, metrics);
+	EvaluationProtocol ep = AlphaTestbed.getProtocol(model, scenario,
+		metrics);
 
 	ep.subscribe(new ProgramaticRunExample(accuracy));
 	ep.subscribe(new ProgramaticRunExample(utility));

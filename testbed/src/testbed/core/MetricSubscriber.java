@@ -1,4 +1,4 @@
-package testbed;
+package testbed.core;
 
 /**
  * Interface for metric subscribers.

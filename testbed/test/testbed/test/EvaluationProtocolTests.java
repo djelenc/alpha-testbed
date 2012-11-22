@@ -7,11 +7,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import testbed.DecisionsModeA;
-import testbed.DecisionsModeB;
-import testbed.EvaluationProtocol;
-import testbed.NoDecisions;
 import testbed.common.DefaultRandomGenerator;
+import testbed.core.DecisionsModeA;
+import testbed.core.DecisionsModeB;
+import testbed.core.EvaluationProtocol;
+import testbed.core.NoDecisions;
 import testbed.interfaces.Metric;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;

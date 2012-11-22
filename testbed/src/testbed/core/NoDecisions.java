@@ -1,4 +1,4 @@
-package testbed;
+package testbed.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
