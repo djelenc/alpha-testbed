@@ -19,7 +19,7 @@ public class UtilsTest {
 	map.put(2, 50);
 	map.put(5, 30);
 
-	Map<Integer, Integer> map2 = Utils.orderedMap(map);
+	Map<Integer, Integer> map2 = Utils.ordered(map);
 
 	int prev = Integer.MIN_VALUE;
 

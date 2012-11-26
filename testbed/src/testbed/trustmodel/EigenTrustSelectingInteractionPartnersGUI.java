@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-public class EigenTrustWithDecisionMakingGUI extends EigenTrustGUI {
+public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 
     private static final long serialVersionUID = -9133573313499877710L;
 

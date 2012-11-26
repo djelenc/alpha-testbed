@@ -6,8 +6,8 @@ import static testbed.trustmodel.TD.values;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
@@ -65,7 +65,7 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
     }
 
     @Override
-    public void processOpinions(Set<Opinion> opinions) {
+    public void processOpinions(List<Opinion> opinions) {
 	expandArrays(null, opinions);
 
 	for (Opinion o : opinions)
@@ -74,7 +74,7 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> experiences) {
+    public void processExperiences(List<Experience> experiences) {
 	expandArrays(experiences, null);
 
 	for (Experience e : experiences) {
@@ -323,7 +323,8 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
      * @param experience
      * @param opinions
      */
-    private void expandArrays(Set<Experience> experience, Set<Opinion> opinions) {
+    private void expandArrays(List<Experience> experience,
+	    List<Opinion> opinions) {
 	// Q, R, REC -- same length
 	int maxAgent = Q.length - 1;
 	int maxService = Q[0].length - 1;

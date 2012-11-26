@@ -2,7 +2,9 @@ package testbed.common;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import testbed.interfaces.ParameterCondition;
 
@@ -79,17 +81,40 @@ public class Utils {
     }
 
     /**
-     * Takes a map and converts it to a tree map, thus enforcing a deterministic
-     * iteration through it.
+     * Converts the given map and to a {@link TreeMap} instance, thus enforcing
+     * a deterministic iteration through it. If the given map is already a
+     * {@link TreeMap} instance, the function returns the given map.
      * 
      * @param input
      *            Input map
-     * @return Input map implemented as a tree map
+     * @return Input map implemented as a {@link TreeMap}
      */
-    public static <T, K> Map<T, K> orderedMap(Map<T, K> input) {
-	final Map<T, K> output = new TreeMap<T, K>();
-	output.putAll(input);
+    public static <T, K> Map<T, K> ordered(Map<T, K> input) {
+	if (input instanceof TreeMap) {
+	    return (TreeMap<T, K>) input;
+	} else {
+	    final Map<T, K> output = new TreeMap<T, K>();
+	    output.putAll(input);
+	    return output;
+	}
+    }
 
-	return output;
+    /**
+     * Converts the set and to a {@link TreeSet} instance, thus enforcing a
+     * deterministic iteration through it. If the given set is already a
+     * {@link TreeSet} instance, the function returns the given set.
+     * 
+     * @param input
+     *            Input set
+     * @return Input set implemented as a {@link TreeSet}
+     */
+    public static <T> TreeSet<T> ordered(Set<T> input) {
+	if (input instanceof TreeSet) {
+	    return (TreeSet<T>) input;
+	} else {
+	    final TreeSet<T> output = new TreeSet<T>();
+	    output.addAll(input);
+	    return output;
+	}
     }
 }

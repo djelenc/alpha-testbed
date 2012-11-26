@@ -1,26 +1,28 @@
 package testbed.trustmodel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.common.PartnerSelectionTemplates;
-import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.SelectingInteractionPartners;
 
 /**
- * Trust model on the basis of the {@link Travos} that supports selection
+ * Trust model on the basis of the {@link YuSinghSycara} that supports selection
  * partners for interactions. The selection is probabilistic.
  * 
  * <p>
- * <b>Note that the original Travos proposal contains no such procedure. This is
- * for experimental purposes only.</b>
+ * <b>Note that the original proposal contains no such procedure. This is for
+ * experimental purposes only.</b>
  * 
  * @author David
  * 
  */
-public class TravosWithDecisionMaking extends Travos implements DecisionMaking {
+public class YuSinghSycaraSelectingInteractionPartners extends YuSinghSycara
+	implements SelectingInteractionPartners {
 
     protected int time;
+
     protected PartnerSelectionTemplates selector;
 
     @Override
@@ -36,22 +38,15 @@ public class TravosWithDecisionMaking extends Travos implements DecisionMaking {
     }
 
     @Override
-    public Map<Integer, Integer> getNextInteractionPartners(
-	    Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(List<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = getTrust(service);
 	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
-
 	    partners.put(service, best);
 	}
 
 	return partners;
-    }
-
-    @Override
-    public String toString() {
-	return "Travos";
     }
 }

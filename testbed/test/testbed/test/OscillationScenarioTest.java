@@ -12,7 +12,6 @@ import org.junit.Test;
 import testbed.common.DefaultRandomGenerator;
 import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
-import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
 import testbed.scenario.Oscillation;
@@ -78,9 +77,9 @@ public class OscillationScenarioTest {
 		    } else if (comb.equals("BN")) {
 			Assert.assertTrue(models[i][j] instanceof NegativeExaggeration);
 		    } else if (comb.equals("NG")) {
-			Assert.assertTrue(models[i][j] instanceof Silent);
+			Assert.assertTrue(models[i][j] == null);
 		    } else if (comb.equals("NB")) {
-			Assert.assertTrue(models[i][j] instanceof Silent);
+			Assert.assertTrue(models[i][j] == null);
 		    } else if (comb.equals("NN")) {
 			Assert.assertTrue(models[i][j] instanceof Truthful);
 		    } else {

@@ -1,7 +1,6 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 import junit.framework.Assert;
 
@@ -15,15 +14,15 @@ import testbed.trustmodel.EigenTrust;
 public class EigenTrustTMTest {
 
     private EigenTrust tm;
-    private Set<Integer> agents, services;
-    private Set<Opinion> opinions;
-    private Set<Experience> experiences;
+    private ArrayList<Integer> agents, services;
+    private ArrayList<Opinion> opinions;
+    private ArrayList<Experience> experiences;
 
     @Before
     public void init() {
 	tm = new EigenTrust();
-	agents = new LinkedHashSet<Integer>();
-	services = new LinkedHashSet<Integer>();
+	agents = new ArrayList<Integer>();
+	services = new ArrayList<Integer>();
 	agents.add(0);
 	agents.add(1);
 	agents.add(2);
@@ -41,8 +40,8 @@ public class EigenTrustTMTest {
 
     @Test
     public void testCalculateOpinions() {
-	opinions = new LinkedHashSet<Opinion>();
-	experiences = new LinkedHashSet<Experience>();
+	opinions = new ArrayList<Opinion>();
+	experiences = new ArrayList<Experience>();
 
 	opinions.add(new Opinion(0, 0, 0, 0, 0));
 	opinions.add(new Opinion(1, 0, 0, 0, 2 / 3d));

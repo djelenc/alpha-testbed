@@ -1,13 +1,10 @@
 package testbed.scenario;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import testbed.common.LexiographicComparator;
@@ -17,12 +14,12 @@ import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.RandomDeception;
 import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
-import testbed.interfaces.Experience;
-import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
+import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Scenario;
-import testbed.interfaces.Opinion;
 
 /**
  * A very simple scenario implementation.
@@ -73,7 +70,7 @@ public class Random extends AbstractScenario implements Scenario {
 	    VAL_DENS;
     protected final static ParameterCondition<Map<DeceptionModel, Double>> VAL_PROB;
 
-    protected static final Set<Integer> SERVICES = new HashSet<Integer>();
+    protected static final List<Integer> SERVICES;
 
     static {
 	VAL_SIZE = new ParameterCondition<Integer>() {
@@ -127,6 +124,7 @@ public class Random extends AbstractScenario implements Scenario {
 	    }
 	};
 
+	SERVICES = new ArrayList<Integer>();
 	SERVICES.add(0);
     }
 
@@ -134,7 +132,7 @@ public class Random extends AbstractScenario implements Scenario {
 
     protected Map<Integer, Double> capabilities;
     protected Map<Integer, DeceptionModel> deceptionModels;
-    protected Set<Integer> agents;
+    protected List<Integer> agents;
 
     protected double sd_i, sd_o, posExCoef, negExCoef, interDens;
 
@@ -145,7 +143,7 @@ public class Random extends AbstractScenario implements Scenario {
     public void initialize(Object... parameters) {
 	capabilities = new LinkedHashMap<Integer, Double>();
 	deceptionModels = new LinkedHashMap<Integer, DeceptionModel>();
-	agents = new LinkedHashSet<Integer>();
+	agents = new ArrayList<Integer>();
 	partners = new ArrayList<Integer>();
 	time = 0;
 
@@ -166,14 +164,16 @@ public class Random extends AbstractScenario implements Scenario {
 
 	// initialize deception models
 	for (Map.Entry<DeceptionModel, Double> dm : dmPMF.entrySet()) {
-	    if (dm.getKey() instanceof PositiveExaggeration) {
-		dm.getKey().initialize(posExCoef);
-	    } else if (dm.getKey() instanceof NegativeExaggeration) {
-		dm.getKey().initialize(negExCoef);
-	    } else if (dm.getKey() instanceof RandomDeception) {
-		dm.getKey().initialize(generator);
-	    } else {
-		dm.getKey().initialize();
+	    final DeceptionModel model = dm.getKey();
+
+	    if (model instanceof PositiveExaggeration) {
+		model.initialize(posExCoef);
+	    } else if (model instanceof NegativeExaggeration) {
+		model.initialize(negExCoef);
+	    } else if (model instanceof RandomDeception) {
+		model.initialize(generator);
+	    } else if (!(model instanceof Silent)) {
+		model.initialize();
 	    }
 	}
 
@@ -209,18 +209,21 @@ public class Random extends AbstractScenario implements Scenario {
 	    TreeMap<DeceptionModel, Double> dmPMF) {
 	TreeMap<DeceptionModel, Integer> cumulative = new TreeMap<DeceptionModel, Integer>(
 		new LexiographicComparator());
-	DeceptionModel dm;
 	float previous = 0;
 
 	for (Entry<DeceptionModel, Double> d : dmPMF.entrySet()) {
 	    previous += d.getValue();
-	    dm = d.getKey();
+	    final DeceptionModel dm = d.getKey();
 	    cumulative.put(dm, Math.round(previous * numAgents));
 	}
 
 	for (Entry<DeceptionModel, Integer> d : cumulative.entrySet()) {
 	    if (agent < d.getValue()) {
-		return d.getKey();
+		if (d.getKey() instanceof Silent) {
+		    return null;
+		} else {
+		    return d.getKey();
+		}
 	    }
 	}
 
@@ -229,8 +232,8 @@ public class Random extends AbstractScenario implements Scenario {
     }
 
     @Override
-    public Set<Opinion> generateOpinions() {
-	Set<Opinion> opinions = new HashSet<Opinion>();
+    public List<Opinion> generateOpinions() {
+	List<Opinion> opinions = new ArrayList<Opinion>();
 
 	Opinion opinion = null;
 	DeceptionModel deceptionModel = null;
@@ -243,7 +246,7 @@ public class Random extends AbstractScenario implements Scenario {
 		    deceptionModel = deceptionModels.get(agent1);
 
 		    // if DM is not Silent, generate opinion
-		    if (!(deceptionModel instanceof Silent)) {
+		    if (deceptionModel != null) {
 			// get capability
 			cap = capabilities.get(agent2);
 
@@ -264,8 +267,8 @@ public class Random extends AbstractScenario implements Scenario {
     }
 
     @Override
-    public Set<Experience> generateExperiences() {
-	Set<Experience> experiences = new HashSet<Experience>();
+    public List<Experience> generateExperiences() {
+	List<Experience> experiences = new ArrayList<Experience>();
 
 	Experience experience = null;
 	int agent = -1;
@@ -293,12 +296,12 @@ public class Random extends AbstractScenario implements Scenario {
     }
 
     @Override
-    public Set<Integer> getAgents() {
+    public List<Integer> getAgents() {
 	return agents;
     }
 
     @Override
-    public Set<Integer> getServices() {
+    public List<Integer> getServices() {
 	return SERVICES;
     }
 

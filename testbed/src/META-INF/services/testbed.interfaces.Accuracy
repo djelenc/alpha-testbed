@@ -5,7 +5,7 @@ testbed.metric.KTABottomHalf
 testbed.metric.SpearmansFootRule
 testbed.metric.MeanAbsoluteError
 testbed.metric.Euclidean
-testbed.metric.Accuracy
-testbed.metric.AccuracyWithSensitivity
+testbed.metric.OldAccuracy
+testbed.metric.OldAccuracyWithSensitivity
 testbed.metric.WeightedKendallsTau
 testbed.metric.Coverage

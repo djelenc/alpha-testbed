@@ -1,10 +1,9 @@
 package testbed.scenario;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import testbed.common.LexiographicComparator;
@@ -13,12 +12,12 @@ import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.RandomDeception;
 import testbed.deceptionmodel.Silent;
-import testbed.interfaces.Experience;
-import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
+import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Scenario;
-import testbed.interfaces.Opinion;
 
 /**
  * This scenario implementation differs from {@link Random} in the way that the
@@ -34,7 +33,7 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 
     protected Map<Integer, Double> capabilities;
     protected Map<Integer, DeceptionModel> deceptionModels;
-    protected Set<Integer> agents, services;
+    protected List<Integer> agents, services;
 
     protected double sd_i, sd_o, posExCoef, negExCoef;
 
@@ -45,8 +44,8 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
     public void initialize(Object... parameters) {
 	capabilities = new LinkedHashMap<Integer, Double>();
 	deceptionModels = new LinkedHashMap<Integer, DeceptionModel>();
-	agents = new LinkedHashSet<Integer>();
-	services = new LinkedHashSet<Integer>();
+	agents = new ArrayList<Integer>();
+	services = new ArrayList<Integer>();
 
 	ParameterCondition<Integer> validatorSize = new ParameterCondition<Integer>() {
 	    @Override
@@ -121,8 +120,6 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 	this.numAgentsLarger = numAgents >= numServices;
 	this.pivot = (numAgentsLarger ? numAgents : numServices);
 
-	int key = 0;
-
 	// generate agents
 	for (int i = 0; i < numAgents; i++) {
 	    // add agent to set
@@ -130,12 +127,14 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 
 	    for (int j = 0; j < numServices; j++) {
 		// calculate key for Map
-		key = (numAgentsLarger ? pivot * i + j : pivot * j + i);
+		final int key = (numAgentsLarger ? pivot * i + j : pivot * j
+			+ i);
 
 		// assign capability
 		capabilities.put(key, generator.nextDoubleFromTo(0, 1));
 
-		final DeceptionModel model = generator.fromWeights(dmPMF);
+		// assign deception models
+		DeceptionModel model = generator.fromWeights(dmPMF);
 
 		if (model instanceof PositiveExaggeration) {
 		    model.initialize(posExCoef);
@@ -143,51 +142,48 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 		    model.initialize(negExCoef);
 		} else if (model instanceof RandomDeception) {
 		    model.initialize(generator);
+		} else if (model instanceof Silent) {
+		    model = null;
 		} else {
 		    model.initialize();
 		}
 
-		// assign deception model
 		deceptionModels.put(key, model);
 	    }
 	}
     }
 
     @Override
-    public Set<Opinion> generateOpinions() {
-	Set<Opinion> opinions = new HashSet<Opinion>();
-
-	Opinion opinion = null;
-	DeceptionModel deceptionModel = null;
-	double cap, itd;
-	int key1, key2;
+    public List<Opinion> generateOpinions() {
+	List<Opinion> opinions = new ArrayList<Opinion>();
 
 	for (int agent1 : agents) {
 	    for (int agent2 : agents) {
 		for (int service : services) {
 		    // calculate key1
-		    key1 = (numAgentsLarger ? pivot * agent1 + service : pivot
-			    * service + agent1);
+		    final int key1 = (numAgentsLarger ? pivot * agent1
+			    + service : pivot * service + agent1);
 
 		    // get deception model
-		    deceptionModel = deceptionModels.get(key1);
+		    final DeceptionModel deceptionModel = deceptionModels
+			    .get(key1);
 
-		    // if DM is not Silent, generate opinion
-		    if (!(deceptionModel instanceof Silent)) {
+		    // generate opinion if DM is not Silent
+		    if (deceptionModel != null) {
 			// calculate key2
-			key2 = (numAgentsLarger ? pivot * agent2 + service
-				: pivot * service + agent2);
+			final int key2 = (numAgentsLarger ? pivot * agent2
+				+ service : pivot * service + agent2);
 
 			// get capability
-			cap = capabilities.get(key2);
+			final double cap = capabilities.get(key2);
 
 			// generate internal trust degree
-			itd = generator.nextDoubleFromUnitTND(cap, sd_o);
+			double itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = deceptionModel.calculate(itd);
 
 			// create opinion tuple and add it to list
-			opinion = new Opinion(agent1, agent2, service, time,
-				itd);
+			final Opinion opinion = new Opinion(agent1, agent2,
+				service, time, itd);
 			opinions.add(opinion);
 		    }
 		}
@@ -198,8 +194,8 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
     }
 
     @Override
-    public Set<Experience> generateExperiences() {
-	Set<Experience> experiences = new HashSet<Experience>();
+    public List<Experience> generateExperiences() {
+	List<Experience> experiences = new ArrayList<Experience>();
 
 	Experience experience = null;
 	int agent = -1, key = 0;
@@ -240,12 +236,12 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
     }
 
     @Override
-    public Set<Integer> getAgents() {
+    public List<Integer> getAgents() {
 	return agents;
     }
 
     @Override
-    public Set<Integer> getServices() {
+    public List<Integer> getServices() {
 	return services;
     }
 

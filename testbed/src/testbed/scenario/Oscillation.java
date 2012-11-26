@@ -1,23 +1,19 @@
 package testbed.scenario;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
-import testbed.deceptionmodel.Silent;
 import testbed.deceptionmodel.Truthful;
-import testbed.interfaces.Experience;
-import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.DeceptionModel;
-import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
+import testbed.interfaces.ParameterCondition;
+import testbed.interfaces.ParametersPanel;
 
 /**
  * Oscillation scenario
@@ -28,8 +24,7 @@ import testbed.interfaces.Opinion;
 public class Oscillation extends AbstractScenario {
 
     // set of services -- only 1 service
-    protected static final Set<Integer> SERVICES = new HashSet<Integer>();
-    protected static final DeceptionModel SILENT = new Silent();
+    protected static final List<Integer> SERVICES = new ArrayList<Integer>();
     protected static final DeceptionModel TRUTHFUL = new Truthful();
     protected static final DeceptionModel POS_EXAGG = new PositiveExaggeration();
     protected static final DeceptionModel NEG_EXAGG = new NegativeExaggeration();
@@ -65,7 +60,6 @@ public class Oscillation extends AbstractScenario {
 
     static {
 	SERVICES.add(0);
-	SILENT.initialize();
 	TRUTHFUL.initialize();
 	POS_EXAGG.initialize(0.5);
 	NEG_EXAGG.initialize(0.5);
@@ -184,7 +178,7 @@ public class Oscillation extends AbstractScenario {
 		    if (neutralReporter && neutralAgent) {
 			models[reporter][agent] = TRUTHFUL;
 		    } else if (neutralReporter && !neutralAgent) {
-			models[reporter][agent] = SILENT;
+			models[reporter][agent] = null;
 		    } else if (badReporter && !neutralAgent) {
 			models[reporter][agent] = POS_EXAGG;
 		    } else if (badReporter && neutralAgent) {
@@ -331,14 +325,14 @@ public class Oscillation extends AbstractScenario {
     }
 
     @Override
-    public Set<Opinion> generateOpinions() {
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
+    public List<Opinion> generateOpinions() {
+	List<Opinion> opinions = new ArrayList<Opinion>();
 	for (int reporter : agents) {
 	    for (int agent : agents) {
 		if (reporter != agent) {
 		    final DeceptionModel dm = models[reporter][agent];
 
-		    if (!(dm instanceof Silent)) {
+		    if (dm != null) {
 			final double cap = capabilities.get(agent);
 			double itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = dm.calculate(itd);
@@ -354,8 +348,8 @@ public class Oscillation extends AbstractScenario {
     }
 
     @Override
-    public Set<Experience> generateExperiences() {
-	Set<Experience> experiences = new HashSet<Experience>();
+    public List<Experience> generateExperiences() {
+	List<Experience> experiences = new ArrayList<Experience>();
 	// random agent
 	final int agent = generator.nextIntFromTo(0, agents.size() - 1);
 
@@ -372,12 +366,12 @@ public class Oscillation extends AbstractScenario {
     }
 
     @Override
-    public Set<Integer> getAgents() {
-	return new LinkedHashSet<Integer>(agents);
+    public List<Integer> getAgents() {
+	return agents;
     }
 
     @Override
-    public Set<Integer> getServices() {
+    public List<Integer> getServices() {
 	return SERVICES;
     }
 

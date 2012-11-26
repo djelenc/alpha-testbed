@@ -3,12 +3,11 @@ package testbed.interfaces;
 import java.util.Map;
 
 /**
- * Interface for implementing selection of partners in scenarios. A scenario
- * that would allow Alpha to select interaction partners must implement methods
- * of this interface.
+ * Interface for implementing scenarios that allow selecting interaction
+ * partners.
  * 
  */
-public interface PartnerSelection {
+public interface InteractionPartnerSelection {
 
     /**
      * Sets the next interaction partners for the given services.
@@ -28,5 +27,5 @@ public interface PartnerSelection {
      * @param partners
      *            Map of services and agents
      */
-    public void setNextInteractionPartners(Map<Integer, Integer> partners);
+    public void setInteractionPartners(Map<Integer, Integer> partners);
 }

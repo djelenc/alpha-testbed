@@ -3,9 +3,9 @@ package testbed.metric;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 
-public class Accuracy extends AbstractMetric implements RankingMetric {
+public class OldAccuracy extends AbstractMetric implements Accuracy {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,

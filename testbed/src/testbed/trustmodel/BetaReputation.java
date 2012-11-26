@@ -2,14 +2,14 @@ package testbed.trustmodel;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Opinion;
 
 /**
  * Beta reputation system
@@ -63,7 +63,7 @@ public class BetaReputation extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> exps) {
+    public void processExperiences(List<Experience> exps) {
 	expandArrays(exps, null);
 
 	for (Experience e : exps) {
@@ -80,7 +80,7 @@ public class BetaReputation extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processOpinions(Set<Opinion> ops) {
+    public void processOpinions(List<Opinion> ops) {
 	expandArrays(null, ops);
 
 	for (Opinion o : ops)
@@ -228,7 +228,7 @@ public class BetaReputation extends AbstractTrustModel<Double> {
      * @param ops
      *            Set of opinions
      */
-    protected void expandArrays(Set<Experience> exps, Set<Opinion> ops) {
+    protected void expandArrays(List<Experience> exps, List<Opinion> ops) {
 	final int limit = opinions.length - 1;
 	int max = limit;
 

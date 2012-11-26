@@ -6,7 +6,7 @@ import testbed.common.Utils;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 
-public class AccuracyWithSensitivity extends Accuracy {
+public class OldAccuracyWithSensitivity extends OldAccuracy {
     protected double sensitivity = 0;
 
     @Override
@@ -62,6 +62,6 @@ public class AccuracyWithSensitivity extends Accuracy {
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new AccuracyWithSensitivityGUI();
+	return new OldAccuracyWithSensitivityGUI();
     }
 }

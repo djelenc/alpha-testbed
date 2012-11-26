@@ -1,11 +1,11 @@
 package testbed.scenario;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.interfaces.Experience;
-import testbed.interfaces.PartnerSelection;
+import testbed.interfaces.InteractionPartnerSelection;
 
 /**
  * An extension of the {@link RandomMultiService} scenario, where agent Alpha is
@@ -14,8 +14,8 @@ import testbed.interfaces.PartnerSelection;
  * @author David
  * 
  */
-public class RandomMultiServiceWithPartnerSelection extends RandomMultiService
-	implements PartnerSelection {
+public class RandomMultiServiceInteractionPartnerSelection extends
+	RandomMultiService implements InteractionPartnerSelection {
 
     protected Map<Integer, Integer> partners = null;
 
@@ -26,8 +26,8 @@ public class RandomMultiServiceWithPartnerSelection extends RandomMultiService
     }
 
     @Override
-    public Set<Experience> generateExperiences() {
-	final Set<Experience> experiences = new HashSet<Experience>();
+    public List<Experience> generateExperiences() {
+	final List<Experience> experiences = new ArrayList<Experience>();
 
 	for (int service : getServices()) {
 	    final Integer agent = partners.get(service);
@@ -52,7 +52,7 @@ public class RandomMultiServiceWithPartnerSelection extends RandomMultiService
     }
 
     @Override
-    public void setNextInteractionPartners(Map<Integer, Integer> partners) {
+    public void setInteractionPartners(Map<Integer, Integer> partners) {
 	this.partners = partners;
     }
 

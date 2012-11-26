@@ -20,13 +20,16 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import testbed.common.ClassLoaderUtils;
-import testbed.interfaces.DecisionMaking;
+import testbed.interfaces.Accuracy;
+import testbed.interfaces.InteractionPartnerSelection;
+import testbed.interfaces.OpinionCost;
+import testbed.interfaces.OpinionProviderSelection;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.PartnerSelection;
-import testbed.interfaces.RankingMetric;
 import testbed.interfaces.Scenario;
+import testbed.interfaces.SelectingInteractionPartners;
+import testbed.interfaces.SelectingOpinionProviders;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.UtilityMetric;
+import testbed.interfaces.Utility;
 
 public class MainPanel extends JPanel implements ParametersPanel {
     private static final long serialVersionUID = -1187728078314667265L;
@@ -38,16 +41,18 @@ public class MainPanel extends JPanel implements ParametersPanel {
 
     private JComboBox trustModel = new JComboBox();
     private JComboBox scenario = new JComboBox();
-    private JComboBox rankingMetric = new JComboBox();
-    private JComboBox utilityMetric = new JComboBox();
+    private JComboBox accMetric = new JComboBox();
+    private JComboBox utilMetric = new JComboBox();
+    private JComboBox ocMetric = new JComboBox();
 
     private JSpinner batchRunDuration = new JSpinner(new SpinnerNumberModel(
 	    500, 1, Integer.MAX_VALUE, 100));
 
     private JLabel tmLabel = new JLabel("Trust model:  ");
     private JLabel scnLabel = new JLabel("Scenario:  ");
-    private JLabel rmLabel = new JLabel("Ranking metric:  ");
-    private JLabel umLabel = new JLabel("Utility metric:  ");
+    private JLabel rmLabel = new JLabel("Accuracy:  ");
+    private JLabel utilLabel = new JLabel("Utility:  ");
+    private JLabel ocLabel = new JLabel("Opinion cost:  ");
     private JLabel brdLabel = new JLabel("Batch run duration:  ");
 
     @Override
@@ -92,13 +97,22 @@ public class MainPanel extends JPanel implements ParametersPanel {
     @Override
     public Object[] getParameters() {
 	return new Object[] { scenario.getSelectedItem(),
-		trustModel.getSelectedItem(), rankingMetric.getSelectedItem(),
-		getUtilityMetric(), getBatchRunDuration() };
+		trustModel.getSelectedItem(), accMetric.getSelectedItem(),
+		getUtilityMetric(), getOpinionCostMetric(),
+		getBatchRunDuration() };
     }
 
-    private UtilityMetric getUtilityMetric() {
-	if (utilityMetric.isEnabled()) {
-	    return (UtilityMetric) utilityMetric.getSelectedItem();
+    private OpinionCost getOpinionCostMetric() {
+	if (ocMetric.isEnabled()) {
+	    return (OpinionCost) ocMetric.getSelectedItem();
+	} else {
+	    return null;
+	}
+    }
+
+    private Utility getUtilityMetric() {
+	if (utilMetric.isEnabled()) {
+	    return (Utility) utilMetric.getSelectedItem();
 	} else {
 	    return null;
 	}
@@ -108,12 +122,31 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	return Integer.parseInt(String.valueOf(batchRunDuration.getValue()));
     }
 
-    private void populateTrustModels(boolean decisionMaking) {
+    private boolean[] type(Scenario scn) {
+	final boolean noDecisions = !(scn instanceof InteractionPartnerSelection)
+		&& !(scn instanceof OpinionProviderSelection);
+	final boolean modeA = (scn instanceof InteractionPartnerSelection)
+		&& !(scn instanceof OpinionProviderSelection);
+	final boolean modeB = (scn instanceof InteractionPartnerSelection)
+		&& (scn instanceof OpinionProviderSelection);
+
+	return new boolean[] { noDecisions, modeA, modeB };
+    }
+
+    private void populateTrustModels(boolean noDecisions, boolean modeA,
+	    boolean modeB) {
 	trustModel.removeAllItems();
 
 	for (TrustModel<?> tm : allTrustModels) {
-	    if (tm instanceof DecisionMaking && decisionMaking
-		    || !(tm instanceof DecisionMaking) && !decisionMaking) {
+	    final boolean tmNoDecisions = !(tm instanceof SelectingInteractionPartners)
+		    && !(tm instanceof SelectingOpinionProviders);
+	    final boolean tmModeA = tm instanceof SelectingInteractionPartners
+		    && !(tm instanceof SelectingOpinionProviders);
+	    final boolean tmModeB = tm instanceof SelectingInteractionPartners
+		    && tm instanceof SelectingOpinionProviders;
+
+	    if (modeA && tmModeA || modeB && tmModeB || noDecisions
+		    && tmNoDecisions) {
 		trustModel.addItem(tm);
 	    }
 	}
@@ -142,7 +175,10 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	scenario.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		populateTrustModels(scenario.getSelectedItem() instanceof PartnerSelection);
+		final Scenario scn = (Scenario) scenario.getSelectedItem();
+		final boolean[] type = type(scn);
+
+		populateTrustModels(type[0], type[1], type[2]);
 	    }
 	});
 
@@ -159,7 +195,8 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	panel.add(scenario, c);
 
 	// Trust models
-	populateTrustModels(scenario.getSelectedItem() instanceof PartnerSelection);
+	final boolean[] types = type((Scenario) scenario.getSelectedItem());
+	populateTrustModels(types[0], types[1], types[2]);
 	trustModel.addActionListener(listener);
 
 	c.gridx = 0;
@@ -174,13 +211,12 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	c.fill = GridBagConstraints.HORIZONTAL;
 	panel.add(trustModel, c);
 
-	// Ranking metric
-	for (RankingMetric mtr : ClassLoaderUtils.lookUp(RankingMetric.class,
-		cl)) {
-	    rankingMetric.addItem(mtr);
+	// Accuracy
+	for (Accuracy mtr : ClassLoaderUtils.lookUp(Accuracy.class, cl)) {
+	    accMetric.addItem(mtr);
 	}
 
-	rankingMetric.addActionListener(listener);
+	accMetric.addActionListener(listener);
 
 	c.gridx = 0;
 	c.gridy = 2;
@@ -192,35 +228,54 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	c.gridy = 2;
 	c.anchor = GridBagConstraints.LINE_START;
 	c.fill = GridBagConstraints.HORIZONTAL;
-	panel.add(rankingMetric, c);
+	panel.add(accMetric, c);
 
-	// Utility metric
-	for (UtilityMetric m : ClassLoaderUtils.lookUp(UtilityMetric.class, cl)) {
-	    utilityMetric.addItem(m);
+	// Utility
+	for (Utility m : ClassLoaderUtils.lookUp(Utility.class, cl)) {
+	    utilMetric.addItem(m);
 	}
 
-	utilityMetric.addActionListener(listener);
+	utilMetric.addActionListener(listener);
 
 	c.gridx = 0;
 	c.gridy = 3;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
-	panel.add(umLabel, c);
+	panel.add(utilLabel, c);
 
 	c.gridx = 1;
 	c.gridy = 3;
 	c.anchor = GridBagConstraints.LINE_START;
 	c.fill = GridBagConstraints.HORIZONTAL;
-	panel.add(utilityMetric, c);
+	panel.add(utilMetric, c);
+
+	// Opinion cost
+	for (OpinionCost m : ClassLoaderUtils.lookUp(OpinionCost.class, cl)) {
+	    ocMetric.addItem(m);
+	}
+
+	ocMetric.addActionListener(listener);
+
+	c.gridx = 0;
+	c.gridy = 4;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	panel.add(ocLabel, c);
+
+	c.gridx = 1;
+	c.gridy = 4;
+	c.anchor = GridBagConstraints.LINE_START;
+	c.fill = GridBagConstraints.HORIZONTAL;
+	panel.add(ocMetric, c);
 
 	// empty region
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
-	c.gridy = 4;
+	c.gridy = 5;
 	panel.add(new JLabel(), c);
 	c.gridx = 1;
-	c.gridy = 4;
+	c.gridy = 5;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
 	panel.add(new JLabel("<html><br/>"), c);
@@ -229,14 +284,14 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
-	c.gridy = 5;
+	c.gridy = 6;
 	panel.add(brdLabel, c);
 	((JSpinner.DefaultEditor) batchRunDuration.getEditor()).getTextField()
 		.setColumns(4);
 	batchRunDuration
 		.setToolTipText("The duration of the batch run in ticks.");
 	c.gridx = 1;
-	c.gridy = 5;
+	c.gridy = 6;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
 	panel.add(batchRunDuration, c);
@@ -247,22 +302,31 @@ public class MainPanel extends JPanel implements ParametersPanel {
     public void validateParameters() {
 	final TrustModel<?> tm = (TrustModel<?>) trustModel.getSelectedItem();
 	final Scenario scn = (Scenario) scenario.getSelectedItem();
-	final RankingMetric rm = (RankingMetric) rankingMetric
-		.getSelectedItem();
-	final UtilityMetric um = (UtilityMetric) utilityMetric
-		.getSelectedItem();
+	final Accuracy acc = (Accuracy) accMetric.getSelectedItem();
+	final Utility util = (Utility) utilMetric.getSelectedItem();
+	final OpinionCost opcst = (OpinionCost) ocMetric.getSelectedItem();
 
-	final boolean enabled = scn instanceof PartnerSelection;
-	utilityMetric.setEnabled(enabled);
-	umLabel.setEnabled(enabled);
+	final boolean modeA = (scn instanceof InteractionPartnerSelection)
+		&& !(scn instanceof OpinionProviderSelection);
 
-	observer.update(null, scn);
+	final boolean modeB = (scn instanceof InteractionPartnerSelection)
+		&& (scn instanceof OpinionProviderSelection);
+
+	utilMetric.setEnabled(modeA || modeB);
+	utilLabel.setEnabled(modeA || modeB);
+
+	ocMetric.setEnabled(modeB);
+	ocLabel.setEnabled(modeB);
+
 	observer.update(null, tm);
-	observer.update(null, rm);
+	observer.update(null, scn);
+	observer.update(null, acc);
 
-	if (utilityMetric.isEnabled()) {
-	    observer.update(null, um);
-	}
+	if (utilMetric.isEnabled())
+	    observer.update(null, util);
+
+	if (ocMetric.isEnabled())
+	    observer.update(null, opcst);
     }
 
     public void setBatchRun(boolean batchRun) {

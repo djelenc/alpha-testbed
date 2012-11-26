@@ -1,12 +1,12 @@
 package testbed.scenario;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.interfaces.Experience;
+import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.PartnerSelection;
 
 /**
  * A transitive scenario that allows an agent to select interaction partners.
@@ -14,15 +14,15 @@ import testbed.interfaces.PartnerSelection;
  * @author David
  * 
  */
-public class TransitiveWithPartnerSelection extends Transitive implements
-	PartnerSelection {
+public class TransitiveInteractionPartnerSelection extends Transitive implements
+	InteractionPartnerSelection {
 
-    private static final String PARTNER_NOT_SET = "No partner set for service %d.";
-    private Map<Integer, Integer> partners;
+    protected static final String PARTNER_NOT_SET = "No partner set for service %d.";
+    protected Map<Integer, Integer> partners;
 
     @Override
-    public Set<Experience> generateExperiences() {
-	final Set<Experience> experiences = new HashSet<Experience>();
+    public List<Experience> generateExperiences() {
+	final List<Experience> experiences = new ArrayList<Experience>();
 
 	for (int service : getServices()) {
 	    final Integer agent = partners.get(service);
@@ -46,7 +46,7 @@ public class TransitiveWithPartnerSelection extends Transitive implements
     }
 
     @Override
-    public void setNextInteractionPartners(Map<Integer, Integer> partners) {
+    public void setInteractionPartners(Map<Integer, Integer> partners) {
 	this.partners = partners;
     }
 
@@ -57,6 +57,6 @@ public class TransitiveWithPartnerSelection extends Transitive implements
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new TransitiveWithPartnerSelectionGUI();
+	return new TransitiveInteractionPartnerSelectionGUI();
     }
 }

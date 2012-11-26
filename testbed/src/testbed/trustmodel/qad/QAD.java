@@ -2,16 +2,16 @@ package testbed.trustmodel.qad;
 
 import static testbed.trustmodel.qad.Omega.normalizedNumeric;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.Opinion;
 
 /**
  * Qualitative assessment dynamics
@@ -30,8 +30,8 @@ public class QAD implements TrustModel<Omega> {
     public Operator operator;
 
     // temporary storage for opinions and experiences
-    private Set<Opinion> opinions;
-    private Set<Experience> experiences;
+    private List<Opinion> opinions;
+    private List<Experience> experiences;
 
     protected RandomGenerator generator;
 
@@ -54,12 +54,12 @@ public class QAD implements TrustModel<Omega> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> experiences) {
+    public void processExperiences(List<Experience> experiences) {
 	this.experiences = experiences;
     }
 
     @Override
-    public void processOpinions(Set<Opinion> opinions) {
+    public void processOpinions(List<Opinion> opinions) {
 	this.opinions = opinions;
     }
 
@@ -94,7 +94,8 @@ public class QAD implements TrustModel<Omega> {
     public void setCurrentTime(int time) {
     }
 
-    private void expandArray(Set<Experience> experiences, Set<Opinion> opinions) {
+    private void expandArray(List<Experience> experiences,
+	    List<Opinion> opinions) {
 	int max = Math.max(op.length - 1, row.length - 1);
 
 	for (Experience e : experiences)

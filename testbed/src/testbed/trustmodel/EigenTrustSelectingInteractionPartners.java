@@ -1,14 +1,14 @@
 package testbed.trustmodel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.common.PartnerSelectionTemplates;
 import testbed.common.Utils;
 import testbed.interfaces.ParameterCondition;
-import testbed.interfaces.DecisionMaking;
 import testbed.interfaces.ParametersPanel;
+import testbed.interfaces.SelectingInteractionPartners;
 
 /**
  * Trust model on the basis of the {@link EigenTrust} trust model that supports
@@ -25,8 +25,8 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class EigenTrustWithDecisionMaking extends EigenTrust implements
-	DecisionMaking {
+public class EigenTrustSelectingInteractionPartners extends EigenTrust
+	implements SelectingInteractionPartners {
 
     protected static final ParameterCondition<Double> VAL_THRESHOLD;
     protected static final ParameterCondition<Boolean> VAL_PROCEDURE;
@@ -64,8 +64,7 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
     }
 
     @Override
-    public Map<Integer, Integer> getNextInteractionPartners(
-	    Set<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(List<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
@@ -126,6 +125,6 @@ public class EigenTrustWithDecisionMaking extends EigenTrust implements
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new EigenTrustWithDecisionMakingGUI();
+	return new EigenTrustSelectingInteractionPartnersGUI();
     }
 }

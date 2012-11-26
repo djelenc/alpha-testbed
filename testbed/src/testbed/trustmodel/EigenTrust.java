@@ -1,14 +1,14 @@
 package testbed.trustmodel;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Opinion;
 
 /**
  * EigenTrust model
@@ -104,7 +104,7 @@ public class EigenTrust extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> experiences) {
+    public void processExperiences(List<Experience> experiences) {
 	expandArrays(experiences, null);
 
 	// process experiences
@@ -117,7 +117,7 @@ public class EigenTrust extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processOpinions(Set<Opinion> opinions) {
+    public void processOpinions(List<Opinion> opinions) {
 	expandArrays(null, opinions);
 
 	// process opinions by creating matrix C
@@ -281,8 +281,8 @@ public class EigenTrust extends AbstractTrustModel<Double> {
      * @param opinions
      *            Set of opinions (can be null)
      */
-    protected void expandArrays(Set<Experience> experiences,
-	    Set<Opinion> opinions) {
+    protected void expandArrays(List<Experience> experiences,
+	    List<Opinion> opinions) {
 	final int limit = cntOp.length - 1;
 	int max = limit;
 

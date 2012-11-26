@@ -2,7 +2,7 @@ package testbed.interfaces;
 
 /**
  * A parent interface for metrics. This interface provides a basis for the
- * {@link RankingMetric} and the {@link UtilityMetric}.
+ * {@link Accuracy} and the {@link Utility}.
  * 
  * @author David
  * 

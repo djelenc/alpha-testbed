@@ -1,197 +1,92 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import testbed.AlphaTestbed;
-import testbed.interfaces.Experience;
-import testbed.interfaces.DecisionMaking;
-import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.PartnerSelection;
+import testbed.common.DefaultRandomGenerator;
+import testbed.core.AlphaTestbed;
+import testbed.core.DecisionsModeA;
+import testbed.core.DecisionsModeB;
+import testbed.core.NoDecisions;
+import testbed.interfaces.Metric;
 import testbed.interfaces.RandomGenerator;
-import testbed.interfaces.RankingMetric;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
-import testbed.interfaces.UtilityMetric;
-import testbed.interfaces.Opinion;
+import testbed.metric.CumulativeNormalizedUtility;
+import testbed.metric.DefaultOpinionCost;
+import testbed.metric.KendallsTauA;
+import testbed.scenario.Transitive;
+import testbed.scenario.TransitiveInteractionPartnerSelection;
+import testbed.scenario.TransitiveOpinionProviderSelection;
+import testbed.trustmodel.Simple;
+import testbed.trustmodel.SimpleSelectingInteractionPartners;
+import testbed.trustmodel.SimpleSelectingOpinionProviders;
 
 public class AlphaTestbedTest {
 
-    RankingMetric ranking;
-    UtilityMetric utility;
+    private Map<Metric, Object[]> metrics;
+    private TrustModel<?> tm;
+    private RandomGenerator tmPRG;
+    private Scenario scn;
+    private RandomGenerator scnPRG;
+    private Object[] scnParams = new Object[] { 100, 0.05, 0.1, 1d, 1d };
 
     @Before
-    public void setUp() {
-	ranking = new RankingMetric() {
-
-	    @Override
-	    public void initialize(Object... params) {
-	    }
-
-	    @Override
-	    public ParametersPanel getParametersPanel() {
-		return null;
-	    }
-
-	    @Override
-	    public <T extends Comparable<T>> double evaluate(
-		    Map<Integer, T> rankings, Map<Integer, Double> capabilities) {
-		return 0;
-	    }
-	};
-
-	utility = new UtilityMetric() {
-
-	    @Override
-	    public void initialize(Object... params) {
-	    }
-
-	    @Override
-	    public ParametersPanel getParametersPanel() {
-		return null;
-	    }
-
-	    @Override
-	    public double evaluate(Map<Integer, Double> capabilities, int agent) {
-		return 0;
-	    }
-	};
+    public void setup() {
+	metrics = new HashMap<Metric, Object[]>();
+	metrics.put(new KendallsTauA(), null);
+	tmPRG = new DefaultRandomGenerator(0);
+	scnPRG = new DefaultRandomGenerator(0);
     }
 
     @Test
-    public void testRankingMode() {
-	TrustModel<?> tm = new RankingsTrustModel();
-	Scenario scn = new RankingsScenario();
-	new AlphaTestbed(scn, tm, ranking, null, utility, null);
+    public void testDecisionsModeB() {
+	tm = new SimpleSelectingOpinionProviders();
+	scn = new TransitiveOpinionProviderSelection();
+
+	tm.setRandomGenerator(tmPRG);
+	scn.setRandomGenerator(scnPRG);
+
+	tm.initialize();
+	scn.initialize(scnParams);
+
+	metrics.put(new CumulativeNormalizedUtility(), null);
+	metrics.put(new DefaultOpinionCost(), null);
+
+	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn, metrics) instanceof DecisionsModeB);
     }
 
     @Test
-    public void testUtilityMode() {
-	TrustModel<?> tm = new DecisionMakingTrustModel();
-	Scenario scn = new PartnerSelectionScenario();
-	new AlphaTestbed(scn, tm, ranking, null, utility, null);
+    public void testDecisionsModeA() {
+	tm = new SimpleSelectingInteractionPartners();
+	scn = new TransitiveInteractionPartnerSelection();
+
+	tm.setRandomGenerator(tmPRG);
+	scn.setRandomGenerator(scnPRG);
+
+	tm.initialize();
+	scn.initialize(scnParams);
+
+	metrics.put(new CumulativeNormalizedUtility(), null);
+
+	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn, metrics) instanceof DecisionsModeA);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void decisionMakingTrustModelOnRankingsScenario() {
-	TrustModel<?> tm = new DecisionMakingTrustModel();
-	Scenario scn = new RankingsScenario();
-	new AlphaTestbed(scn, tm, ranking, null, utility, null);
-    }
+    @Test
+    public void testNoDecisions() {
+	tm = new Simple();
+	scn = new Transitive();
 
-    @Test(expected = IllegalArgumentException.class)
-    public void rankingsTrustModelOnPartnerSelectionScenario() {
-	TrustModel<?> tm = new RankingsTrustModel();
-	Scenario scn = new PartnerSelectionScenario();
-	new AlphaTestbed(scn, tm, ranking, null, utility, null);
-    }
+	tm.setRandomGenerator(tmPRG);
+	scn.setRandomGenerator(scnPRG);
 
-}
+	tm.initialize();
+	scn.initialize(scnParams);
 
-class RankingsTrustModel implements TrustModel<Double> {
-
-    @Override
-    public void initialize(Object... params) {
-    }
-
-    @Override
-    public void setCurrentTime(int time) {
-    }
-
-    @Override
-    public void processOpinions(Set<Opinion> opinions) {
-    }
-
-    @Override
-    public void processExperiences(Set<Experience> experiences) {
-    }
-
-    @Override
-    public void calculateTrust() {
-    }
-
-    @Override
-    public ParametersPanel getParametersPanel() {
-	return null;
-    }
-
-    @Override
-    public void setRandomGenerator(RandomGenerator generator) {
-
-    }
-
-    @Override
-    public Map<Integer, Double> getTrust(int service) {
-	return null;
-    }
-
-}
-
-class RankingsScenario implements Scenario {
-
-    @Override
-    public void initialize(Object... parameters) {
-    }
-
-    @Override
-    public void setCurrentTime(int time) {
-    }
-
-    @Override
-    public Map<Integer, Double> getCapabilities(int service) {
-	return null;
-    }
-
-    @Override
-    public Set<Opinion> generateOpinions() {
-	return null;
-    }
-
-    @Override
-    public Set<Experience> generateExperiences() {
-	return null;
-    }
-
-    @Override
-    public Set<Integer> getAgents() {
-	return null;
-    }
-
-    @Override
-    public Set<Integer> getServices() {
-	return new LinkedHashSet<Integer>();
-    }
-
-    @Override
-    public ParametersPanel getParametersPanel() {
-	return null;
-    }
-
-    @Override
-    public void setRandomGenerator(RandomGenerator generator) {
-
-    }
-
-}
-
-class PartnerSelectionScenario extends RankingsScenario implements
-	PartnerSelection {
-
-    @Override
-    public void setNextInteractionPartners(Map<Integer, Integer> partners) {
-    }
-
-}
-
-class DecisionMakingTrustModel extends RankingsTrustModel implements
-	DecisionMaking {
-    @Override
-    public Map<Integer, Integer> getNextInteractionPartners(
-	    Set<Integer> services) {
-	return null;
+	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn, metrics) instanceof NoDecisions);
     }
 }

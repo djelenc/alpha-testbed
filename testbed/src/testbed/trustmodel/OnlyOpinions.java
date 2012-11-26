@@ -1,8 +1,8 @@
 package testbed.trustmodel;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
@@ -25,12 +25,12 @@ public class OnlyOpinions extends AbstractTrustModel<Double> {
     }
 
     @Override
-    public void processExperiences(Set<Experience> experiences) {
+    public void processExperiences(List<Experience> experiences) {
 
     }
 
     @Override
-    public void processOpinions(Set<Opinion> opinions) {
+    public void processOpinions(List<Opinion> opinions) {
 	expandArray(opinions);
 
 	for (Opinion o : opinions)
@@ -73,7 +73,7 @@ public class OnlyOpinions extends AbstractTrustModel<Double> {
     public void setCurrentTime(int time) {
     }
 
-    private void expandArray(Set<Opinion> opinions) {
+    private void expandArray(List<Opinion> opinions) {
 	int max = op.length - 1;
 
 	for (Opinion o : opinions)

@@ -1,7 +1,7 @@
 package testbed.interfaces;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 
@@ -51,28 +51,28 @@ public interface Scenario {
      * 
      * @return
      */
-    public Set<Opinion> generateOpinions();
+    public List<Opinion> generateOpinions();
 
     /**
      * Generates a set of {@link Experience} tuples.
      * 
      * @return
      */
-    public Set<Experience> generateExperiences();
+    public List<Experience> generateExperiences();
 
     /**
      * Returns a set of ID numbers of agents.
      * 
      * @return
      */
-    public Set<Integer> getAgents();
+    public List<Integer> getAgents();
 
     /**
      * Returns a set of service types.
      * 
      * @return
      */
-    public Set<Integer> getServices();
+    public List<Integer> getServices();
 
     /**
      * Returns an {@link ParametersPanel} instance, which is responsible for

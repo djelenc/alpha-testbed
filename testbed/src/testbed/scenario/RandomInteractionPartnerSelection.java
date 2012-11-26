@@ -1,12 +1,12 @@
 package testbed.scenario;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import testbed.interfaces.Experience;
+import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.PartnerSelection;
 
 /**
  * An extension of the {@link Random} scenario, where agent Alpha is required to
@@ -15,14 +15,14 @@ import testbed.interfaces.PartnerSelection;
  * @author David
  * 
  */
-public class RandomWithPartnerSelection extends Random implements
-	PartnerSelection {
+public class RandomInteractionPartnerSelection extends Random implements
+	InteractionPartnerSelection {
 
     private Map<Integer, Integer> partners;
 
     @Override
-    public Set<Experience> generateExperiences() {
-	final Set<Experience> experiences = new HashSet<Experience>();
+    public List<Experience> generateExperiences() {
+	final List<Experience> experiences = new ArrayList<Experience>();
 
 	for (int service : getServices()) {
 	    final Integer agent = partners.get(service);
@@ -45,7 +45,7 @@ public class RandomWithPartnerSelection extends Random implements
     }
 
     @Override
-    public void setNextInteractionPartners(Map<Integer, Integer> partners) {
+    public void setInteractionPartners(Map<Integer, Integer> partners) {
 	this.partners = partners;
     }
 
@@ -56,6 +56,6 @@ public class RandomWithPartnerSelection extends Random implements
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new RandomWithPartnerSelectionGUI();
+	return new RandomInteractionPartnerSelectionGUI();
     }
 }

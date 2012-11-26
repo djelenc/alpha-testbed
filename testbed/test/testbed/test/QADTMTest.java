@@ -1,18 +1,9 @@
 package testbed.test;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import testbed.interfaces.Experience;
-import testbed.interfaces.Opinion;
-import testbed.trustmodel.qad.QAD;
-import testbed.trustmodel.qad.Omega;
-import testbed.trustmodel.qad.Operator;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static testbed.trustmodel.qad.Omega.D;
 import static testbed.trustmodel.qad.Omega.PD;
 import static testbed.trustmodel.qad.Omega.PT;
@@ -27,7 +18,18 @@ import static testbed.trustmodel.qad.Operator.MODERATE_OPTIMIST;
 import static testbed.trustmodel.qad.Operator.MODERATE_PESSIMIST;
 import static testbed.trustmodel.qad.Operator.NON_CENTRALIST;
 import static testbed.trustmodel.qad.Operator.STABLE;
-import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import testbed.interfaces.Experience;
+import testbed.interfaces.Opinion;
+import testbed.trustmodel.qad.Omega;
+import testbed.trustmodel.qad.Operator;
+import testbed.trustmodel.qad.QAD;
 
 public class QADTMTest {
 
@@ -134,8 +136,8 @@ public class QADTMTest {
 	QAD tm = new QAD();
 	tm.initialize(Operator.CENTRALIST);
 
-	Set<Experience> exps = new HashSet<Experience>();
-	Set<Opinion> opinions = new HashSet<Opinion>();
+	ArrayList<Experience> exps = new ArrayList<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 
 	opinions.add(new Opinion(1, 0, 0, 0, 0.1));
 	opinions.add(new Opinion(2, 0, 0, 0, 0.1));

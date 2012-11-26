@@ -12,7 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	BRSWithFilteringTMTest.class, TravosTMTest.class,
 	YuSinghSycaraTMTest.class, QADTMTest.class, QTMTest.class,
 	OscillationScenarioTest.class, DefaultRandomGeneratorTest.class,
-	ExampleGeneratorTest.class })
+	ExampleGeneratorTest.class, OpinionRequestTest.class,
+	EvaluationProtocolTests.class })
 public class AllTests {
 
 }

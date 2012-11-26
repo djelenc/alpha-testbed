@@ -1,8 +1,7 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -35,8 +34,8 @@ public class TravosTMTest {
 
     @Test
     public void basicTravos() {
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 
 	experiences.clear();
 	opinions.clear();
@@ -53,8 +52,8 @@ public class TravosTMTest {
 
     @Test
     public void walkthroughScenario() {
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 	Travos.OP_FACTOR = 1;
 
 	experiences.clear();

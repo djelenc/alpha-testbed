@@ -1,4 +1,4 @@
-package testbed;
+package testbed.core;
 
 /**
  * Interface for metric subscribers.
@@ -7,7 +7,7 @@ package testbed;
  * The instance of the {@link AlphaTestbed} notifies all instances of classes
  * that implement this interface that the evaluation step is complete and that
  * they can retrieve data from the {@link AlphaTestbed} instance using
- * {@link AlphaTestbed#getMetric(int, testbed.interfaces.IMetric)} method.
+ * {@link AlphaTestbed#getResult(int, testbed.interfaces.IMetric)} method.
  * 
  * @author David
  * 
@@ -20,11 +20,13 @@ public interface MetricSubscriber {
      * 
      * <p>
      * The data has to be pulled from the instance (provided in the argument)
-     * using {@link AlphaTestbed#getMetric(int, testbed.interfaces.IMetric)}
+     * using
+     * {@link EvaluationProtocol#getResult(int, testbed.interfaces.Metric)}
      * method.
      * 
      * @param instance
-     *            A test-bed instance that performs the evaluation
+     *            An {@link EvaluationProtocol} instance that performs the
+     *            evaluation
      */
-    public void update(AlphaTestbed instance);
+    public void update(EvaluationProtocol instance);
 }

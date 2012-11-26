@@ -1,19 +1,17 @@
 package testbed.test;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.Assert;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cern.colt.Arrays;
-
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 import testbed.trustmodel.OnlyOpinions;
+import cern.colt.Arrays;
 
 public class OnlyOpinionsTMTest {
 
@@ -37,8 +35,8 @@ public class OnlyOpinionsTMTest {
 	OnlyOpinions tm = new OnlyOpinions();
 	tm.initialize();
 
-	Set<Opinion> opinions = new LinkedHashSet<Opinion>();
-	Set<Experience> experiences = new LinkedHashSet<Experience>();
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	opinions.add(new Opinion(1, 0, 1, 0, 0.7));
 	opinions.add(new Opinion(2, 0, 1, 0, 0.6));

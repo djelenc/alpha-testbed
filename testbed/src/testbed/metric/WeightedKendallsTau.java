@@ -2,7 +2,7 @@ package testbed.metric;
 
 import java.util.Map;
 
-import testbed.interfaces.RankingMetric;
+import testbed.interfaces.Accuracy;
 
 /**
  * Weighted Kendall's Tau
@@ -14,8 +14,7 @@ import testbed.interfaces.RankingMetric;
  * @author David
  * 
  */
-public class WeightedKendallsTau extends AbstractMetric implements
-	RankingMetric {
+public class WeightedKendallsTau extends AbstractMetric implements Accuracy {
 
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> rankings,

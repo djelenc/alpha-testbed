@@ -1,21 +1,25 @@
 package testbed.repast;
 
-import testbed.AlphaTestbed;
-import testbed.MetricSubscriber;
+import testbed.core.EvaluationProtocol;
+import testbed.core.MetricSubscriber;
 import testbed.interfaces.Metric;
 
 /**
- * An utility class to enable a simple plotting and constructing data sets in
- * Repast.
+ * An utility class to enable plotting and constructing data sets in Repast.
  * 
  * <p>
  * Instances of this class are Repast agents. They are used to plot data and to
  * write data to the files. Each agent represents a curve in the graph.
+ * 
+ * <p>
  * Unfortunately, <a href=
  * 'http://sourceforge.net/mailarchive/message.php?msg_id=27474156'>there is no
  * way to manually define the color of each plot</a> -- Repast determines the
- * colors at run-time. {@link RepastMetricAgent} agents also write data Repast
- * data out-putters. Currently, each line has the following pattern:
+ * colors at run-time.
+ * 
+ * <p>
+ * {@link RepastMetricAgent} agents also write data Repast data out-putters.
+ * Currently, each line has the following pattern:
  * 
  * <pre>
  * tick, metric value, metric name, scenario name
@@ -35,21 +39,16 @@ public class RepastMetricAgent implements MetricSubscriber {
 
     private double currentValue = 0;
 
-    public RepastMetricAgent(int service, Metric metric, AlphaTestbed testbed) {
+    public RepastMetricAgent(int service, Metric metric,
+	    EvaluationProtocol evaluation) {
 	this.service = service;
 	this.metric = metric;
 	this.name = String.format("%s[%d]", metric.toString(), service);
-	this.model = testbed.getModel().toString();
-	this.scenario = testbed.getScenario().toString();
+	this.model = evaluation.getTrustModel().toString();
+	this.scenario = evaluation.getScenario().toString();
 
-	// subscribe notifications
-	testbed.subscribe(this);
-    }
-
-    @Override
-    public void update(AlphaTestbed instance) {
-	// pulls data from the test-bed
-	currentValue = instance.getMetric(service, metric);
+	// subscribe to notifications
+	evaluation.subscribe(this);
     }
 
     public double getMetric() {
@@ -67,5 +66,10 @@ public class RepastMetricAgent implements MetricSubscriber {
 
     public String getScenario() {
 	return this.scenario;
+    }
+
+    @Override
+    public void update(EvaluationProtocol instance) {
+	currentValue = instance.getResult(service, metric);
     }
 }
