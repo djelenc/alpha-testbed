@@ -1,3 +1,4 @@
+testbed.trustmodel.qad.QTM
 testbed.trustmodel.AbdulRahmanHailes
 testbed.trustmodel.AbdulRahmanHailesSelectingInteractionPartners
 testbed.trustmodel.BetaReputation
@@ -10,7 +11,6 @@ testbed.trustmodel.TravosSelectingInteractionPartners
 testbed.trustmodel.YuSinghSycara
 testbed.trustmodel.YuSinghSycaraSelectingInteractionPartners
 testbed.trustmodel.qad.QAD
-testbed.trustmodel.qad.QTM
 testbed.trustmodel.OnlyExperiences
 testbed.trustmodel.OnlyOpinions
 testbed.trustmodel.Simple

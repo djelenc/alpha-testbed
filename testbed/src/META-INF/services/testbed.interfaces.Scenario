@@ -1,3 +1,4 @@
+testbed.scenario.TransitiveWithChanges
 testbed.scenario.Random
 testbed.scenario.RandomMultiService
 testbed.scenario.RandomMultiServiceInteractionPartnerSelection
@@ -5,6 +6,5 @@ testbed.scenario.RandomWithNewcomers
 testbed.scenario.RandomInteractionPartnerSelection
 testbed.scenario.Oscillation
 testbed.scenario.Transitive
-testbed.scenario.TransitiveWithChanges
 testbed.scenario.TransitiveInteractionPartnerSelection
 testbed.scenario.TransitiveOpinionProviderSelection

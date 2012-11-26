@@ -27,13 +27,18 @@ public class QTM implements TrustModel<Omega> {
 
     public static final int HISTORY_LENGTH = 10;
 
+    public static final double TF = 0.01;
+
     public Map<Integer, QADExp[]> local = null;
 
     public QADOp[][] opinions = null;
     public double[] credibility = null;
 
+    protected int time;
+
     @Override
     public void initialize(Object... params) {
+	time = 0;
 	local = new LinkedHashMap<Integer, QADExp[]>();
 	opinions = new QADOp[0][0];
 	credibility = new double[0];
@@ -69,15 +74,29 @@ public class QTM implements TrustModel<Omega> {
 		if (null != opinion) {
 		    final Omega actual = normalizedNumeric(e.outcome);
 		    final Omega told = opinion.itd;
-		    final double diff = Math.abs(actual.ordinal()
-			    - told.ordinal());
+		    final int diff = Math
+			    .abs(actual.ordinal() - told.ordinal());
 
 		    // flag whether the opinion was correct
-		    // (when no opinion is given the place remains null)
+		    // (when no opinion is given the this remains null)
 		    correct[reporter] = Math.abs(diff) < 0.0001;
 
 		    // compute discount factor
-		    final double factor = 1 - diff * 0.125;
+		    // final double factor = 1 - diff * 0.125;
+		    final double factor;
+
+		    switch (diff) {
+		    case 0:
+		    case 1:
+			factor = 1d;
+			break;
+		    case 2:
+			factor = 0.75;
+			break;
+		    default:
+			factor = 0.5;
+			break;
+		    }
 
 		    // assign new weight
 		    credibility[reporter] *= factor;
@@ -115,6 +134,131 @@ public class QTM implements TrustModel<Omega> {
 	// none
     }
 
+    @Override
+    public Map<Integer, Omega> getTrust(int service) {
+	Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
+
+	for (int agent = 0; agent < opinions.length; agent++) {
+	    // local experiences and their weight
+	    final double[] experiences = new double[5];
+	    final QADExp[] localExperiences = local.get(agent);
+	    double totalWeight = 0d;
+	    if (null != localExperiences) {
+		for (QADExp exp : localExperiences) {
+		    if (null != exp) {
+			final double discount = Math.exp(-TF
+				* (time - exp.time));
+			totalWeight += discount;
+			experiences[exp.outcome.ordinal()] += discount;
+		    }
+		}
+	    }
+
+	    // reputation of the selected agent
+	    final double[] reputation = new double[5];
+	    for (int witness = 0; witness < opinions.length; witness++) {
+		final QADOp o = opinions[witness][agent];
+
+		if (null != o) {
+		    final double discount = Math.exp(-TF * (time - o.time));
+		    final double weight = Math.sqrt(credibility[witness]
+			    * discount);
+		    reputation[o.itd.ordinal()] += weight;
+		}
+	    }
+
+	    double[] normalizedExp = normalize(experiences);
+
+	    if (null == normalizedExp)
+		normalizedExp = experiences;
+
+	    double[] normalizedRep = normalize(reputation);
+
+	    if (null == normalizedRep)
+		normalizedRep = reputation;
+
+	    // weight of local experiences
+	    // final double weight = Math.tanh(totalWeight);
+	    final double weight = totalWeight / (1 + totalWeight);
+
+	    // common vector
+	    final double[] common = new double[5];
+	    for (int i = 0; i < reputation.length; i++) {
+		common[i] = weight * normalizedExp[i] + (1 - weight)
+			* normalizedRep[i];
+	    }
+
+	    // System.out.println("Time: " + time);
+	    // System.out.println("Agent: " + agent);
+	    // System.out.printf("E %s\n", Arrays.toString(normalizedExp));
+	    // System.out.printf("R %s\n", Arrays.toString(normalizedRep));
+	    // System.out.printf("C %s -- w = %.2f\n", Arrays.toString(common),
+	    // weight);
+	    // System.out.println();
+
+	    final Omega trustDegree = qualtitativeAverage(common);
+
+	    if (null != trustDegree)
+		trust.put(agent, trustDegree);
+	}
+
+	return trust;
+    }
+
+    protected double[] normalize(double[] freq) {
+	final double[] result = new double[freq.length];
+	double sum = 0;
+
+	for (int i = 0; i < freq.length; i++)
+	    sum += freq[i];
+
+	if (Math.abs(sum) < 0.00001)
+	    return null;
+
+	for (int i = 0; i < freq.length; i++)
+	    result[i] = freq[i] / sum;
+
+	return result;
+    }
+
+    protected Omega qualtitativeAverage(double[] freq) {
+	double[] normalized = normalize(freq);
+
+	if (null == normalized)
+	    return null;
+
+	double[] distances = new double[] { distance(normalized, P_D),
+		distance(normalized, P_PD), distance(normalized, P_U),
+		distance(normalized, P_PT), distance(normalized, P_T) };
+
+	int minIndx = 0;
+	double minValue = Double.MAX_VALUE;
+
+	for (int i = 0; i < distances.length; i++) {
+	    if (distances[i] <= minValue) {
+		minIndx = i;
+		minValue = distances[i];
+	    }
+	}
+
+	return Omega.values()[minIndx];
+    }
+
+    protected double distance(double[] vector1, double[] vector2) {
+	double sum = 0;
+
+	for (int i = 0; i < vector2.length; i++) {
+	    sum += (vector1[i] - vector2[i]) * (vector1[i] - vector2[i]);
+	}
+
+	return sum;
+    }
+
+    @Override
+    public void setCurrentTime(int time) {
+	this.time = time;
+    }
+
     public Omega median(Omega[] values) {
 	if (null == values)
 	    throw new IllegalArgumentException(
@@ -146,72 +290,6 @@ public class QTM implements TrustModel<Omega> {
 	}
 
 	return null;
-    }
-
-    @Override
-    public Map<Integer, Omega> getTrust(int service) {
-	Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
-
-	for (int agent = 0; agent < opinions.length; agent++) {
-	    // local experiences and their weight
-	    double localRating = 0;
-	    int countExp = 0;
-
-	    final QADExp[] localExperiences = local.get(agent);
-
-	    if (null != localExperiences) {
-		for (QADExp exp : localExperiences) {
-		    if (null != exp) {
-			countExp += 1;
-			localRating += exp.outcome.numeric;
-		    }
-		}
-	    }
-
-	    if (countExp > 0) {
-		localRating = Math.round(localRating / countExp);
-	    } else {
-		localRating = 0;
-	    }
-
-	    // weight of local experiences
-	    double weight = ((double) countExp) / HISTORY_LENGTH;
-
-	    // reputation of the selected agent
-	    double reputation = 0;
-
-	    // credibility of reputation
-	    double credibilitySum = 0;
-
-	    for (int witness = 0; witness < opinions.length; witness++) {
-		final QADOp o = opinions[witness][agent];
-
-		if (null != o) {
-		    credibilitySum += credibility[witness];
-		    reputation += credibility[witness] * o.itd.numeric;
-		}
-	    }
-
-	    // if all agents have low credibility ignore their opinions
-	    if (0 == Double.compare(credibilitySum, 0d)) {
-		weight = 1;
-	    } else {
-		// normalize reputation
-		reputation = Math.round(reputation / credibilitySum);
-	    }
-
-	    final double score = Math.round(weight * localRating + (1 - weight)
-		    * reputation);
-
-	    trust.put(agent, Omega.fromNumeric(score));
-	}
-
-	return trust;
-    }
-
-    @Override
-    public void setCurrentTime(int time) {
-
     }
 
     /**
@@ -255,55 +333,6 @@ public class QTM implements TrustModel<Omega> {
 	    System.arraycopy(credibility, 0, newWeights, 0, credibility.length);
 	    credibility = newWeights;
 	}
-    }
-
-    public Map<Integer, Double> computeOld() {
-	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
-
-	for (int agent = 0; agent < opinions.length; agent++) {
-	    double localRating = 0;
-	    int countExp = 0;
-
-	    final QADExp[] localExperiences = local.get(agent);
-
-	    if (null != localExperiences) {
-		for (QADExp exp : localExperiences) {
-		    if (null != exp) {
-			countExp += 1;
-			localRating += exp.outcome.numeric;
-		    }
-		}
-	    }
-
-	    localRating = (countExp > 0 ? Math.round(localRating / countExp)
-		    : 0);
-	    final double weight = ((double) countExp) / HISTORY_LENGTH;
-
-	    double reputation = 0;
-	    double credibilitySum = 0;
-
-	    for (int witness = 0; witness < opinions.length; witness++) {
-		final QADOp o = opinions[witness][agent];
-
-		if (null != o) {
-		    credibilitySum += credibility[witness];
-		    reputation += credibility[witness] * o.itd.numeric;
-		}
-	    }
-
-	    if (0 != Double.compare(credibilitySum, 0d)) {
-		reputation = Math.round(reputation / credibilitySum);
-	    } else {
-		reputation = 0;
-	    }
-
-	    final double score = Math.round(weight * localRating + (1 - weight)
-		    * reputation);
-
-	    trust.put(agent, score);
-	}
-
-	return trust;
     }
 
     protected RandomGenerator generator;

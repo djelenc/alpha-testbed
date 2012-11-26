@@ -57,6 +57,25 @@ public class QTMTest {
     }
 
     @Test
+    public void getTrust() {
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
+
+	experiences.add(new Experience(3, 0, 0, 1d));
+	opinions.add(new Opinion(0, 3, 0, 0, 1d));
+	opinions.add(new Opinion(1, 3, 0, 0, 1d));
+	opinions.add(new Opinion(2, 3, 0, 0, 0d));
+
+	tm.processOpinions(opinions);
+	tm.processExperiences(experiences);
+
+	tm.getTrust(0);
+
+	experiences.clear();
+	opinions.clear();
+    }
+
+    @Test
     public void testCredibilityWeights1() {
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
@@ -68,7 +87,6 @@ public class QTMTest {
 
 	tm.processOpinions(opinions);
 	tm.processExperiences(experiences);
-	tm.calculateTrust();
 
 	experiences.clear();
 	opinions.clear();
