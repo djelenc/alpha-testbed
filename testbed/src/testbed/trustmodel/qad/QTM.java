@@ -15,6 +15,16 @@ import testbed.interfaces.TrustModel;
 
 public class QTM implements TrustModel<Omega> {
 
+    public static final double[] P_T, P_PT, P_U, P_PD, P_D;
+
+    static {
+	P_T = new double[] { 0, 0, 0, 0, 1 };
+	P_PT = new double[] { 0, 0, 0, 1, 0 };
+	P_U = new double[] { 0, 0, 1, 0, 0 };
+	P_PD = new double[] { 0, 1, 0, 0, 0 };
+	P_D = new double[] { 1, 0, 0, 0, 0 };
+    }
+
     public static final int HISTORY_LENGTH = 10;
 
     public Map<Integer, QADExp[]> local = null;
@@ -22,36 +32,16 @@ public class QTM implements TrustModel<Omega> {
     public QADOp[][] opinions = null;
     public double[] credibility = null;
 
-    // temporary storage for opinions and experiences
-    private List<Opinion> ops;
-    private List<Experience> exps;
-
     @Override
     public void initialize(Object... params) {
 	local = new LinkedHashMap<Integer, QADExp[]>();
 	opinions = new QADOp[0][0];
 	credibility = new double[0];
-	ops = null;
-	exps = null;
     }
 
     @Override
-    public void processExperiences(List<Experience> experiences) {
-	this.exps = experiences;
-    }
-
-    @Override
-    public void processOpinions(List<Opinion> opinions) {
-	this.ops = opinions;
-    }
-
-    @Override
-    public void calculateTrust() {
-	expandArrays(exps, ops);
-
-	// store opinions
-	for (Opinion o : ops)
-	    opinions[o.agent1][o.agent2] = new QADOp(o);
+    public void processExperiences(List<Experience> exps) {
+	expandArrays(exps, null);
 
 	// store new experiences
 	for (Experience e : exps) {
@@ -66,7 +56,7 @@ public class QTM implements TrustModel<Omega> {
 
 	    history[0] = new QADExp(e);
 
-	    // update credibility of reporters which gave an opinion
+	    // update credibility of reporters that gave opinion about e.agent
 	    final Boolean[] correct = new Boolean[opinions.length];
 	    final double[] previousWeigts = new double[opinions.length];
 
@@ -111,6 +101,20 @@ public class QTM implements TrustModel<Omega> {
 	}
     }
 
+    @Override
+    public void processOpinions(List<Opinion> ops) {
+	expandArrays(null, ops);
+
+	// store opinions
+	for (Opinion o : ops)
+	    opinions[o.agent1][o.agent2] = new QADOp(o);
+    }
+
+    @Override
+    public void calculateTrust() {
+	// none
+    }
+
     public Omega median(Omega[] values) {
 	if (null == values)
 	    throw new IllegalArgumentException(
@@ -149,6 +153,7 @@ public class QTM implements TrustModel<Omega> {
 	Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
+	    // local experiences and their weight
 	    double localRating = 0;
 	    int countExp = 0;
 
@@ -163,11 +168,19 @@ public class QTM implements TrustModel<Omega> {
 		}
 	    }
 
-	    localRating = (countExp > 0 ? Math.round(localRating / countExp)
-		    : 0);
-	    final double weight = ((double) countExp) / HISTORY_LENGTH;
+	    if (countExp > 0) {
+		localRating = Math.round(localRating / countExp);
+	    } else {
+		localRating = 0;
+	    }
 
+	    // weight of local experiences
+	    double weight = ((double) countExp) / HISTORY_LENGTH;
+
+	    // reputation of the selected agent
 	    double reputation = 0;
+
+	    // credibility of reputation
 	    double credibilitySum = 0;
 
 	    for (int witness = 0; witness < opinions.length; witness++) {
@@ -179,10 +192,12 @@ public class QTM implements TrustModel<Omega> {
 		}
 	    }
 
-	    if (0 != Double.compare(credibilitySum, 0d)) {
-		reputation = Math.round(reputation / credibilitySum);
+	    // if all agents have low credibility ignore their opinions
+	    if (0 == Double.compare(credibilitySum, 0d)) {
+		weight = 1;
 	    } else {
-		reputation = 0;
+		// normalize reputation
+		reputation = Math.round(reputation / credibilitySum);
 	    }
 
 	    final double score = Math.round(weight * localRating + (1 - weight)
@@ -212,26 +227,27 @@ public class QTM implements TrustModel<Omega> {
 	final int limit = opinions.length - 1;
 	int max = limit;
 
-	for (Experience e : exp)
-	    if (e.agent > max)
-		max = e.agent;
+	if (null != exp)
+	    for (Experience e : exp)
+		if (e.agent > max)
+		    max = e.agent;
 
-	for (Opinion o : ops)
-	    if (o.agent2 > max || o.agent1 > max)
-		max = Math.max(o.agent1, o.agent2);
+	if (null != ops)
+	    for (Opinion o : ops)
+		if (o.agent2 > max || o.agent1 > max)
+		    max = Math.max(o.agent1, o.agent2);
 
 	if (max > limit) {
 	    // copy opinions
-	    QADOp[][] newOp = new QADOp[max + 1][max + 1];
-
+	    final QADOp[][] newOp = new QADOp[max + 1][max + 1];
 	    for (int i = 0; i < opinions.length; i++)
 		System.arraycopy(opinions[i], 0, newOp[i], 0,
 			opinions[i].length);
 
 	    opinions = newOp;
 
-	    // copy opinion weights
-	    double[] newWeights = new double[max + 1];
+	    // credibility weights
+	    final double[] newWeights = new double[max + 1];
 
 	    for (int i = 0; i < newWeights.length; i++)
 		newWeights[i] = 1d;

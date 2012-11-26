@@ -66,8 +66,8 @@ public class QTMTest {
 	opinions.add(new Opinion(1, 3, 0, 0, 1d));
 	opinions.add(new Opinion(2, 3, 0, 0, 0d));
 
-	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
+	tm.processExperiences(experiences);
 	tm.calculateTrust();
 
 	experiences.clear();
