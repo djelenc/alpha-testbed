@@ -45,6 +45,15 @@ public class QTM implements TrustModel<Omega> {
     }
 
     @Override
+    public void processOpinions(List<Opinion> ops) {
+	expandArrays(null, ops);
+
+	// store opinions
+	for (Opinion o : ops)
+	    opinions[o.agent1][o.agent2] = new QADOp(o);
+    }
+
+    @Override
     public void processExperiences(List<Experience> exps) {
 	expandArrays(exps, null);
 
@@ -79,19 +88,18 @@ public class QTM implements TrustModel<Omega> {
 
 		    // flag whether the opinion was correct
 		    // (when no opinion is given the this remains null)
-		    correct[reporter] = Math.abs(diff) < 0.0001;
+		    // correct[reporter] = diff == 0;
+		    correct[reporter] = diff == 0 || diff == 1;
 
 		    // compute discount factor
 		    // final double factor = 1 - diff * 0.125;
+
 		    final double factor;
 
 		    switch (diff) {
 		    case 0:
 		    case 1:
 			factor = 1d;
-			break;
-		    case 2:
-			factor = 0.75;
 			break;
 		    default:
 			factor = 0.5;
@@ -121,15 +129,6 @@ public class QTM implements TrustModel<Omega> {
     }
 
     @Override
-    public void processOpinions(List<Opinion> ops) {
-	expandArrays(null, ops);
-
-	// store opinions
-	for (Opinion o : ops)
-	    opinions[o.agent1][o.agent2] = new QADOp(o);
-    }
-
-    @Override
     public void calculateTrust() {
 	// none
     }
@@ -156,6 +155,7 @@ public class QTM implements TrustModel<Omega> {
 
 	    // reputation of the selected agent
 	    final double[] reputation = new double[5];
+	    final double[] unfiltered = new double[5];
 	    for (int witness = 0; witness < opinions.length; witness++) {
 		final QADOp o = opinions[witness][agent];
 
@@ -164,6 +164,7 @@ public class QTM implements TrustModel<Omega> {
 		    final double weight = Math.sqrt(credibility[witness]
 			    * discount);
 		    reputation[o.itd.ordinal()] += weight;
+		    unfiltered[o.itd.ordinal()] += 1d;
 		}
 	    }
 
@@ -178,7 +179,6 @@ public class QTM implements TrustModel<Omega> {
 		normalizedRep = reputation;
 
 	    // weight of local experiences
-	    // final double weight = Math.tanh(totalWeight);
 	    final double weight = totalWeight / (1 + totalWeight);
 
 	    // common vector
@@ -196,7 +196,13 @@ public class QTM implements TrustModel<Omega> {
 	    // weight);
 	    // System.out.println();
 
-	    final Omega trustDegree = qualtitativeAverage(common);
+	    final Omega trustDegree;
+	    if (service == 0)
+		trustDegree = qualtitativeAverage(experiences);
+	    else if (service == 1)
+		trustDegree = qualtitativeAverage(reputation);
+	    else
+		trustDegree = qualtitativeAverage(unfiltered);
 
 	    if (null != trustDegree)
 		trust.put(agent, trustDegree);
