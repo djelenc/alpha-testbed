@@ -74,47 +74,4 @@ public class QTMTest {
 	experiences.clear();
 	opinions.clear();
     }
-
-    @Test
-    public void testCredibilityWeights1() {
-	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
-	ArrayList<Experience> experiences = new ArrayList<Experience>();
-
-	experiences.add(new Experience(3, 0, 0, 1d));
-	opinions.add(new Opinion(0, 3, 0, 0, 1d));
-	opinions.add(new Opinion(1, 3, 0, 0, 1d));
-	opinions.add(new Opinion(2, 3, 0, 0, 0d));
-
-	tm.processOpinions(opinions);
-	tm.processExperiences(experiences);
-
-	experiences.clear();
-	opinions.clear();
-	double[] expected = new double[] { 1.2, 1.2, 0.6, 1.0d };
-
-	for (int j = 0; j < expected.length; j++)
-	    Assert.assertEquals(expected[j], tm.credibility[j], 0.001);
-    }
-
-    @Test
-    public void testCredibilityWeights2() {
-	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
-	ArrayList<Experience> experiences = new ArrayList<Experience>();
-
-	experiences.add(new Experience(3, 0, 0, 1d));
-	opinions.add(new Opinion(0, 3, 0, 0, 0d));
-	opinions.add(new Opinion(1, 3, 0, 0, 0d));
-	opinions.add(new Opinion(2, 3, 0, 0, 0d));
-
-	tm.processExperiences(experiences);
-	tm.processOpinions(opinions);
-	tm.calculateTrust();
-
-	experiences.clear();
-	opinions.clear();
-	double[] expected = new double[] { 1d, 1d, 1d, 1d };
-
-	for (int j = 0; j < expected.length; j++)
-	    Assert.assertEquals(expected[j], tm.credibility[j], 0.001);
-    }
 }

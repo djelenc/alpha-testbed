@@ -13,9 +13,13 @@ import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
 
-public class QTM implements TrustModel<Omega> {
+public class QTM implements TrustModel<Double> {
 
-    public static final double[] P_T, P_PT, P_U, P_PD, P_D;
+    protected static final double LOWER_CRED = 0.1;
+    protected static final double FACTOR_CRED = 0.125;
+    protected static final double TF = 0.01;
+
+    protected static final double[] P_T, P_PT, P_U, P_PD, P_D;
 
     static {
 	P_T = new double[] { 0, 0, 0, 0, 1 };
@@ -25,14 +29,12 @@ public class QTM implements TrustModel<Omega> {
 	P_D = new double[] { 1, 0, 0, 0, 0 };
     }
 
-    public static final int HISTORY_LENGTH = 10;
+    protected static final int HISTORY_LENGTH = 10;
 
-    public static final double TF = 0.01;
+    protected Map<Integer, QADExp[]> local = null;
 
-    public Map<Integer, QADExp[]> local = null;
-
-    public QADOp[][] opinions = null;
-    public double[] credibility = null;
+    protected QADOp[][] opinions = null;
+    protected double[] credibility = null;
 
     protected int time;
 
@@ -88,26 +90,17 @@ public class QTM implements TrustModel<Omega> {
 
 		    // flag whether the opinion was correct
 		    // (when no opinion is given the this remains null)
-		    // correct[reporter] = diff == 0;
-		    correct[reporter] = diff == 0 || diff == 1;
+		    correct[reporter] = diff <= 1;
 
 		    // compute discount factor
-		    // final double factor = 1 - diff * 0.125;
-
-		    final double factor;
-
-		    switch (diff) {
-		    case 0:
-		    case 1:
-			factor = 1d;
-			break;
-		    default:
-			factor = 0.5;
-			break;
-		    }
+		    final double factor = 1 - diff * FACTOR_CRED;
 
 		    // assign new weight
 		    credibility[reporter] *= factor;
+
+		    // check credibility for lower bound
+		    if (credibility[reporter] < LOWER_CRED)
+			credibility[reporter] = LOWER_CRED;
 		}
 	    }
 
@@ -130,12 +123,19 @@ public class QTM implements TrustModel<Omega> {
 
     @Override
     public void calculateTrust() {
-	// none
+	/*
+	 * if (time % 100 == 0) { System.out.println();
+	 * System.out.println("Time: " + time);
+	 * 
+	 * for (int i = 0; i < credibility.length; i++) {
+	 * System.out.printf("%d -> %.4f\n", i, credibility[i]); } }
+	 */
     }
 
     @Override
-    public Map<Integer, Omega> getTrust(int service) {
-	Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
+    public Map<Integer, Double> getTrust(int service) {
+	// Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
+	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
 	    // local experiences and their weight
@@ -188,21 +188,19 @@ public class QTM implements TrustModel<Omega> {
 			* normalizedRep[i];
 	    }
 
-	    // System.out.println("Time: " + time);
-	    // System.out.println("Agent: " + agent);
-	    // System.out.printf("E %s\n", Arrays.toString(normalizedExp));
-	    // System.out.printf("R %s\n", Arrays.toString(normalizedRep));
-	    // System.out.printf("C %s -- w = %.2f\n", Arrays.toString(common),
-	    // weight);
-	    // System.out.println();
-
-	    final Omega trustDegree;
-	    if (service == 0)
-		trustDegree = qualtitativeAverage(experiences);
-	    else if (service == 1)
-		trustDegree = qualtitativeAverage(reputation);
-	    else
-		trustDegree = qualtitativeAverage(unfiltered);
+	    final Double trustDegree;
+	    final Omega td;
+	    if (service == 0) {
+		td = qualtitativeAverage(experiences);
+		trustDegree = (td != null ? td.numeric : null);
+	    } else if (service == 1) {
+		td = qualtitativeAverage(reputation);
+		trustDegree = (td != null ? td.numeric : null);
+	    } else {
+		td = qualtitativeAverage(common);
+		trustDegree = (td != null ? td.numeric : null);
+		// trustDegree = credibility[agent];
+	    }
 
 	    if (null != trustDegree)
 		trust.put(agent, trustDegree);
