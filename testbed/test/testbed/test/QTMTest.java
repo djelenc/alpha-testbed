@@ -30,30 +30,30 @@ public class QTMTest {
     @Test
     public void testMedian() {
 	Omega[] values = new Omega[] { U, U, PT, T, U, T, D, T, PD, T };
-	Assert.assertEquals(PT, tm.median(values));
+	Assert.assertEquals(PT, Omega.median(values));
 
 	values = new Omega[] {};
-	Assert.assertNull(tm.median(values));
+	Assert.assertNull(Omega.median(values));
 
 	values = new Omega[] { U, U, PT, T, U, T, D, T, null, null };
-	Assert.assertEquals(PT, tm.median(values));
+	Assert.assertEquals(PT, Omega.median(values));
 
 	values = new Omega[] { null, null };
-	Assert.assertNull(tm.median(values));
+	Assert.assertNull(Omega.median(values));
 
 	values = new Omega[] { U };
-	Assert.assertEquals(U, tm.median(values));
+	Assert.assertEquals(U, Omega.median(values));
 
 	values = new Omega[] { T, D };
-	Assert.assertEquals(T, tm.median(values));
+	Assert.assertEquals(T, Omega.median(values));
 
 	values = new Omega[] { PD, PT, U };
-	Assert.assertEquals(U, tm.median(values));
+	Assert.assertEquals(U, Omega.median(values));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void medianExceptionNullArray() {
-	tm.median(null);
+	Omega.median(null);
     }
 
     @Test

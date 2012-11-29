@@ -241,24 +241,22 @@ public class Random extends AbstractScenario implements Scenario {
 
 	for (int agent1 : agents) {
 	    for (int agent2 : agents) {
-		for (int service : SERVICES) {
-		    // get deception model
-		    deceptionModel = deceptionModels.get(agent1);
 
-		    // if DM is not Silent, generate opinion
-		    if (deceptionModel != null) {
-			// get capability
-			cap = capabilities.get(agent2);
+		// get deception model
+		deceptionModel = deceptionModels.get(agent1);
 
-			// generate internal trust degree
-			itd = generator.nextDoubleFromUnitTND(cap, sd_o);
-			itd = deceptionModel.calculate(itd);
+		// if DM is not Silent, generate opinion
+		if (deceptionModel != null) {
+		    // get capability
+		    cap = capabilities.get(agent2);
 
-			// create opinion tuple and add it to list
-			opinion = new Opinion(agent1, agent2, service, time,
-				itd);
-			opinions.add(opinion);
-		    }
+		    // generate internal trust degree
+		    itd = generator.nextDoubleFromUnitTND(cap, sd_o);
+		    itd = deceptionModel.calculate(itd);
+
+		    // create opinion tuple and add it to list
+		    opinion = new Opinion(agent1, agent2, 0, time, itd);
+		    opinions.add(opinion);
 		}
 	    }
 	}
@@ -274,18 +272,16 @@ public class Random extends AbstractScenario implements Scenario {
 	int agent = -1;
 	double cap, outcome;
 
-	for (int service : SERVICES) {
-	    // get agent to interact with
-	    agent = partners.get(time % partners.size());
+	// get agent to interact with
+	agent = partners.get(time % partners.size());
 
-	    // generate interaction outcome
-	    cap = capabilities.get(agent);
-	    outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
+	// generate interaction outcome
+	cap = capabilities.get(agent);
+	outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
-	    // create experience tuple and add it to list
-	    experience = new Experience(agent, service, time, outcome);
-	    experiences.add(experience);
-	}
+	// create experience tuple and add it to list
+	experience = new Experience(agent, 0, time, outcome);
+	experiences.add(experience);
 
 	return experiences;
     }

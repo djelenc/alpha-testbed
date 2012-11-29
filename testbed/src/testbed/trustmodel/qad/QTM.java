@@ -1,8 +1,5 @@
 package testbed.trustmodel.qad;
 
-import static java.lang.String.format;
-import static testbed.trustmodel.qad.Omega.normalizedNumeric;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +10,9 @@ import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
 
-public class QTM implements TrustModel<Double> {
+public class QTM implements TrustModel<Omega> {
 
-    protected static final double LOWER_CRED = 0.1;
+    protected static final double LOWER_CRED = 0.01;
     protected static final double FACTOR_CRED = 0.125;
     protected static final double TF = 0.01;
 
@@ -83,7 +80,7 @@ public class QTM implements TrustModel<Double> {
 		previousWeigts[reporter] = credibility[reporter];
 
 		if (null != opinion) {
-		    final Omega actual = normalizedNumeric(e.outcome);
+		    final Omega actual = Omega.normalizedNumeric(e.outcome);
 		    final Omega told = opinion.itd;
 		    final int diff = Math
 			    .abs(actual.ordinal() - told.ordinal());
@@ -93,7 +90,8 @@ public class QTM implements TrustModel<Double> {
 		    correct[reporter] = diff <= 1;
 
 		    // compute discount factor
-		    final double factor = 1 - diff * FACTOR_CRED;
+		    // OLD: final double factor = 1 - diff * FACTOR_CRED;
+		    final double factor = (correct[reporter] ? 1d : 0.5);
 
 		    // assign new weight
 		    credibility[reporter] *= factor;
@@ -123,48 +121,42 @@ public class QTM implements TrustModel<Double> {
 
     @Override
     public void calculateTrust() {
-	/*
-	 * if (time % 100 == 0) { System.out.println();
-	 * System.out.println("Time: " + time);
-	 * 
-	 * for (int i = 0; i < credibility.length; i++) {
-	 * System.out.printf("%d -> %.4f\n", i, credibility[i]); } }
-	 */
+
     }
 
     @Override
-    public Map<Integer, Double> getTrust(int service) {
-	// Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
-	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
+    public Map<Integer, Omega> getTrust(int service) {
+	final Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
-	    // local experiences and their weight
+	    // local experiences and their weights
 	    final double[] experiences = new double[5];
 	    final QADExp[] localExperiences = local.get(agent);
 	    double totalWeight = 0d;
+
 	    if (null != localExperiences) {
 		for (QADExp exp : localExperiences) {
 		    if (null != exp) {
-			final double discount = Math.exp(-TF
-				* (time - exp.time));
-			totalWeight += discount;
-			experiences[exp.outcome.ordinal()] += discount;
+			final double weight = Math.exp(-TF * (time - exp.time));
+			totalWeight += weight;
+			experiences[exp.outcome.ordinal()] += weight;
 		    }
 		}
 	    }
 
 	    // reputation of the selected agent
 	    final double[] reputation = new double[5];
-	    final double[] unfiltered = new double[5];
 	    for (int witness = 0; witness < opinions.length; witness++) {
 		final QADOp o = opinions[witness][agent];
 
 		if (null != o) {
-		    final double discount = Math.exp(-TF * (time - o.time));
-		    final double weight = Math.sqrt(credibility[witness]
-			    * discount);
-		    reputation[o.itd.ordinal()] += weight;
-		    unfiltered[o.itd.ordinal()] += 1d;
+		    final double age = Math.exp(-TF * (time - o.time));
+		    final double weight = Math.sqrt(credibility[witness] * age);
+		    // OLD: reputation[o.itd.ordinal()] += weight;
+
+		    if (weight > 1.01) {
+			reputation[o.itd.ordinal()] += 1d;
+		    }
 		}
 	    }
 
@@ -180,6 +172,8 @@ public class QTM implements TrustModel<Double> {
 
 	    // weight of local experiences
 	    final double weight = totalWeight / (1 + totalWeight);
+	    // OLD: final double weight = totalWeight * totalWeight
+	    // / (1 + totalWeight * totalWeight);
 
 	    // common vector
 	    final double[] common = new double[5];
@@ -188,22 +182,11 @@ public class QTM implements TrustModel<Double> {
 			* normalizedRep[i];
 	    }
 
-	    final Double trustDegree;
-	    final Omega td;
-	    if (service == 0) {
-		td = qualtitativeAverage(experiences);
-		trustDegree = (td != null ? td.numeric : null);
-	    } else if (service == 1) {
-		td = qualtitativeAverage(reputation);
-		trustDegree = (td != null ? td.numeric : null);
-	    } else {
-		td = qualtitativeAverage(common);
-		trustDegree = (td != null ? td.numeric : null);
-		// trustDegree = credibility[agent];
-	    }
+	    final Omega td = qualtitativeAverage(common);
 
-	    if (null != trustDegree)
-		trust.put(agent, trustDegree);
+	    if (null != td) {
+		trust.put(agent, td);
+	    }
 	}
 
 	return trust;
@@ -261,39 +244,6 @@ public class QTM implements TrustModel<Double> {
     @Override
     public void setCurrentTime(int time) {
 	this.time = time;
-    }
-
-    public Omega median(Omega[] values) {
-	if (null == values)
-	    throw new IllegalArgumentException(
-		    format("Expected argument type %s, but got %s.",
-			    Omega.class, null));
-
-	if (0 == values.length)
-	    return null;
-
-	final float[] freq = new float[Omega.values().length];
-	int total = 0;
-
-	for (Omega omega : values) {
-	    if (null != omega) {
-		freq[omega.ordinal()]++;
-		total++;
-	    }
-	}
-
-	for (int i = 0; i < freq.length; i++)
-	    freq[i] = freq[i] / total;
-
-	for (int i = 1; i < freq.length; i++)
-	    freq[i] += freq[i - 1];
-
-	for (int i = 0; i < freq.length; i++) {
-	    if (freq[i] > 0.5)
-		return Omega.values()[i];
-	}
-
-	return null;
     }
 
     /**
