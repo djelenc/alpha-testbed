@@ -20,10 +20,10 @@ public class QTM implements TrustModel<Omega> {
 
     static {
 	P_T = new double[] { 0, 0, 0, 0, 1 };
-	P_PT = new double[] { 0, 0, 0, 1, 0 };
-	P_U = new double[] { 0, 0, 1, 0, 0 };
-	P_PD = new double[] { 0, 1, 0, 0, 0 };
-	P_D = new double[] { 1, 0, 0, 0, 0 };
+	P_PT = new double[] { 0, 0, 0, 1, 1 };
+	P_U = new double[] { 0, 0, 1, 1, 1 };
+	P_PD = new double[] { 0, 1, 1, 1, 1 };
+	P_D = new double[] { 1, 1, 1, 1, 1 };
     }
 
     protected static final int HISTORY_LENGTH = 10;
@@ -132,13 +132,13 @@ public class QTM implements TrustModel<Omega> {
 	    // local experiences and their weights
 	    final double[] experiences = new double[5];
 	    final QADExp[] localExperiences = local.get(agent);
-	    double totalWeight = 0d;
+	    double expWeight = 0d;
 
 	    if (null != localExperiences) {
 		for (QADExp exp : localExperiences) {
 		    if (null != exp) {
 			final double weight = Math.exp(-TF * (time - exp.time));
-			totalWeight += weight;
+			expWeight += weight;
 			experiences[exp.outcome.ordinal()] += weight;
 		    }
 		}
@@ -167,22 +167,35 @@ public class QTM implements TrustModel<Omega> {
 
 	    double[] normalizedRep = normalize(reputation);
 
-	    if (null == normalizedRep)
+	    if (null == normalizedRep) {
 		normalizedRep = reputation;
+	    }
 
 	    // weight of local experiences
-	    final double weight = totalWeight / (1 + totalWeight);
-	    // OLD: final double weight = totalWeight * totalWeight
-	    // / (1 + totalWeight * totalWeight);
+	    final double confidence = expWeight / (1 + expWeight);
+
+	    // weight with variance
+	    final double expW = Math.sqrt(confidence * variance(normalizedExp));
 
 	    // common vector
 	    final double[] common = new double[5];
+	    final double[] common2 = new double[5];
 	    for (int i = 0; i < reputation.length; i++) {
-		common[i] = weight * normalizedExp[i] + (1 - weight)
+		common[i] = confidence * normalizedExp[i] + (1 - confidence)
 			* normalizedRep[i];
+
+		common2[i] = (expW * normalizedExp[i] + (1 - confidence)
+			* normalizedRep[i])
+			/ (expW + 1 - confidence);
+
 	    }
 
-	    final Omega td = qualtitativeAverage(common);
+	    final Omega td;
+
+	    if (service == 0)
+		td = qualtitativeAverage(common);
+	    else
+		td = qualtitativeAverage(common2);
 
 	    if (null != td) {
 		trust.put(agent, td);
@@ -192,7 +205,43 @@ public class QTM implements TrustModel<Omega> {
 	return trust;
     }
 
-    protected double[] normalize(double[] freq) {
+    public double variance(double[] freq) {
+	final double[] result = normalize(freq);
+
+	if (null == result)
+	    return 0d;
+
+	// make it cumulative
+	result[1] += result[0];
+	result[2] += result[1];
+	result[3] += result[2];
+	result[4] = 1d;
+
+	double[] distances = new double[] { distance(result, P_D),
+		distance(result, P_PD), distance(result, P_U),
+		distance(result, P_PT), distance(result, P_T) };
+
+	double minValue = Double.MAX_VALUE;
+
+	for (int i = 0; i < distances.length; i++) {
+	    final double dist = Math.sqrt(distances[i]);
+
+	    if (dist <= minValue) {
+		minValue = dist;
+	    }
+	}
+
+	double sum = 0;
+	for (int i = 0; i < distances.length; i++) {
+	    final double dist = Math.sqrt(distances[i]);
+	    sum += (dist - minValue) * (dist - minValue);
+	}
+
+	return Math.min(sum / 5d, 1d);
+	// return sum / 10d;
+    }
+
+    public double[] normalize(double[] freq) {
 	final double[] result = new double[freq.length];
 	double sum = 0;
 
@@ -208,11 +257,17 @@ public class QTM implements TrustModel<Omega> {
 	return result;
     }
 
-    protected Omega qualtitativeAverage(double[] freq) {
+    public Omega qualtitativeAverage(double[] freq) {
 	double[] normalized = normalize(freq);
 
 	if (null == normalized)
 	    return null;
+
+	// make it cumulative
+	normalized[1] += normalized[0];
+	normalized[2] += normalized[1];
+	normalized[3] += normalized[2];
+	normalized[4] = 1d;
 
 	double[] distances = new double[] { distance(normalized, P_D),
 		distance(normalized, P_PD), distance(normalized, P_U),
@@ -231,7 +286,7 @@ public class QTM implements TrustModel<Omega> {
 	return Omega.values()[minIndx];
     }
 
-    protected double distance(double[] vector1, double[] vector2) {
+    public double distance(double[] vector1, double[] vector2) {
 	double sum = 0;
 
 	for (int i = 0; i < vector2.length; i++) {

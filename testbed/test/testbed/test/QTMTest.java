@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import testbed.interfaces.Experience;
@@ -25,6 +26,27 @@ public class QTMTest {
     public void setUp() {
 	tm = new QTM();
 	tm.initialize();
+    }
+
+    @Test
+    public void testQualitativeAverage() {
+	double[] freq = new double[] { 0, 0.1, 0.2, 0.3, 0.4 };
+	Assert.assertEquals(Omega.PT, tm.qualtitativeAverage(freq));
+    }
+
+    @Ignore
+    @Test
+    public void testVariance() {
+	double[] freq;
+	freq = new double[] { 0, 0.1, 0.2, 0.3, 0.4 };
+	System.out.printf("%.4f\n", tm.variance(freq));
+	// Assert.assertEquals(0.43478, tm.variance(freq), 0.001);
+
+	freq = new double[] { 0, 0, 0.5, 0.5, 0 };
+	Assert.assertEquals(0.6, tm.variance(freq), 0.001);
+
+	freq = new double[] { 0, 0, 1, 0, 0 };
+	Assert.assertEquals(1d, tm.variance(freq), 0.001);
     }
 
     @Test
