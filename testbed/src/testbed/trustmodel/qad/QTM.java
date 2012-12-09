@@ -175,7 +175,7 @@ public class QTM implements TrustModel<Omega> {
 	    final double confidence = expWeight / (1 + expWeight);
 
 	    // weight with variance
-	    final double expW = Math.sqrt(confidence * variance(normalizedExp));
+	    final double expW = confidence * (1 - variance(normalizedExp));
 
 	    // common vector
 	    final double[] common = new double[5];
@@ -205,6 +205,15 @@ public class QTM implements TrustModel<Omega> {
 	return trust;
     }
 
+    /**
+     * Returns the variance from the frequencies. The variance is computed by
+     * returning the distance from the most similar stereotype.
+     * 
+     * @param freq
+     *            A vector of frequencies
+     * 
+     * @return Variance
+     */
     public double variance(double[] freq) {
 	final double[] result = normalize(freq);
 
@@ -224,21 +233,68 @@ public class QTM implements TrustModel<Omega> {
 	double minValue = Double.MAX_VALUE;
 
 	for (int i = 0; i < distances.length; i++) {
-	    final double dist = Math.sqrt(distances[i]);
+	    final double dist = distances[i];
 
 	    if (dist <= minValue) {
 		minValue = dist;
 	    }
 	}
 
-	double sum = 0;
-	for (int i = 0; i < distances.length; i++) {
-	    final double dist = Math.sqrt(distances[i]);
-	    sum += (dist - minValue) * (dist - minValue);
+	return minValue;
+    }
+
+    public double variance3(double[] freq) {
+	final double[] result = normalize(freq);
+
+	if (null == result)
+	    return 0d;
+
+	double entropy = 0;
+
+	for (int i = 0; i < result.length; i++) {
+	    if (result[i] > 0d) {
+		entropy += result[i] * Math.log(result[i]) / Math.log(5);
+	    }
 	}
 
-	return Math.min(sum / 5d, 1d);
-	// return sum / 10d;
+	return Math.abs(entropy);
+    }
+
+    public double variance1(double[] freq) {
+	final double[] result = normalize(freq);
+
+	if (null == result)
+	    return 0d;
+
+	// make it cumulative
+	result[1] += result[0];
+	result[2] += result[1];
+	result[3] += result[2];
+	result[4] = 1d;
+
+	double[] distances = new double[] { distance(result, P_D),
+		distance(result, P_PD), distance(result, P_U),
+		distance(result, P_PT), distance(result, P_T) };
+
+	double minValue = Double.MAX_VALUE;
+	for (int i = 0; i < distances.length; i++)
+	    if (distances[i] <= minValue)
+		minValue = distances[i];
+
+	for (int i = 0; i < distances.length; i++)
+	    distances[i] -= minValue;
+
+	final double[] p = normalize(distances);
+
+	double entropy = 0;
+
+	for (int i = 0; i < distances.length; i++) {
+	    if (p[i] > 0d) {
+		entropy += p[i] * Math.log(p[i]) / Math.log(5);
+	    }
+	}
+
+	return -entropy;
     }
 
     public double[] normalize(double[] freq) {
