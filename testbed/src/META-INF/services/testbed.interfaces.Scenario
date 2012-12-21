@@ -1,4 +1,4 @@
-testbed.scenario.TargetedAttacks
+testbed.scenario.TargetedAttack
 testbed.scenario.Random
 testbed.scenario.RandomMultiService
 testbed.scenario.RandomMultiServiceInteractionPartnerSelection

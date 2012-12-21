@@ -18,20 +18,21 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class TargetedAttacks extends AbstractScenario {
+public class TargetedAttack extends AbstractScenario {
 
     // set of services -- only 1 service
     protected static final List<Integer> SERVICES = new ArrayList<Integer>();
 
     // deception models
-    protected static final DeceptionModel HONEST = new Truthful();
-    protected static final DeceptionModel LIAR = new Complementary();
+    protected static final DeceptionModel TRUTHFUL = new Truthful();
+    protected static final DeceptionModel COMPLEMENTARY = new Complementary();
 
     // time
     protected int time;
 
-    // agents
-    protected List<Integer> agents, neutral, attackers, targets;
+    // group of agents
+    protected List<Integer> agents, neutral, attackers, targets,
+	    interactionPartners;
 
     // capabilities
     protected Map<Integer, Double> capabilities;
@@ -40,21 +41,26 @@ public class TargetedAttacks extends AbstractScenario {
     protected DeceptionModel[][] models;
 
     // total number of agents
-    protected int numAgents;
+    protected int numAgents, numPartners, numAttackers, numTargets;
 
     // standard deviations for generating interaction and opinions
     protected double sd_i, sd_o;
 
     static {
 	SERVICES.add(0);
-	HONEST.initialize();
-	LIAR.initialize();
+	TRUTHFUL.initialize();
+	COMPLEMENTARY.initialize();
     }
 
     @Override
     public void initialize(Object... parameters) {
 	// extract parameters
 	numAgents = 50;
+
+	numAttackers = 30;
+	numTargets = 10;
+	numPartners = 20;
+
 	sd_i = 0.10;
 	sd_o = 0.05;
 
@@ -70,7 +76,8 @@ public class TargetedAttacks extends AbstractScenario {
 	targets = new ArrayList<Integer>();
 
 	// assign agents to groups
-	assignAgentsToGroups(agents, neutral, attackers, targets);
+	assignAgentsToGroups(agents, neutral, attackers, targets, numAttackers,
+		numTargets);
 
 	// assign capabilities
 	capabilities = new LinkedHashMap<Integer, Double>();
@@ -92,13 +99,23 @@ public class TargetedAttacks extends AbstractScenario {
 	models = new DeceptionModel[agents.size()][agents.size()];
 	assignDeceptionModels(agents, neutral, attackers, targets, models);
 
+	// determine interaction partners
+	// could be any agent, except attacked ones
+	interactionPartners = new ArrayList<Integer>();
+
+	for (int i = 0; i < numPartners; i++) {
+	    int agent;
+
+	    do {
+		final int index = generator.nextIntFromTo(0, agents.size() - 1);
+		agent = agents.get(index);
+	    } while (targets.contains(agent));
+
+	    interactionPartners.add(agent);
+	}
+
 	// reset time
 	time = 0;
-
-	System.out.printf("N: %s\n", neutral);
-	System.out.printf("T: %s\n", targets);
-	System.out.printf("A: %s\n", attackers);
-	System.out.printf("C: %s\n", capabilities);
     }
 
     public void assignDeceptionModels(List<Integer> agents,
@@ -118,49 +135,68 @@ public class TargetedAttacks extends AbstractScenario {
 
 		    if ((neutralReporter || targetReporter)
 			    && (neutralAgent || targetAgent)) {
-			models[reporter][agent] = HONEST;
-			// with some P, this should be nulls
+
+			models[reporter][agent] = TRUTHFUL;
+			// additionally: make it sparse?
 		    } else if ((neutralReporter || targetReporter)
 			    && attackerAgent) {
 			models[reporter][agent] = null;
 		    } else if (attackerReporter
 			    && (neutralAgent || attackerAgent)) {
-			
-			if (neutralAgent)
-			    models[reporter][agent] = null;
-			else 
-			    models[reporter][agent] = HONEST;
+			// just skip
+
+			// if (attackerAgent)
+			// models[reporter][agent] = TRUTHFUL;
+			// rare?
 		    } else if (attackerReporter && targetAgent) {
-			models[reporter][agent] = LIAR;
+			models[reporter][agent] = COMPLEMENTARY;
 		    } else {
-			throw new IllegalArgumentException(String.format(
-				"Cannot determine deception model for reporter "
-					+ "%d (c=%.2f) and agent %d (c=%.2f)",
-				reporter, capabilities.get(reporter), agent,
-				capabilities.get(agent)));
+			throw new IllegalArgumentException(
+				String.format(
+					"Cannot determine deception model for reporter "
+						+ "%d (c=%.2f) and agent %d (c=%.2f). "
+						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
+						+ "attackerReporter(%s), attackerAgent(%s), "
+						+ "targetReporter(%s), targetAgent(%s).",
+					reporter, capabilities.get(reporter),
+					agent, capabilities.get(agent),
+					neutralReporter, neutralAgent,
+					attackerReporter, attackerAgent,
+					targetReporter, targetAgent));
 		    }
 		}
 	    }
 	}
     }
 
-    public void assignAgentsToGroups(List<Integer> allAgents,
-	    List<Integer> neutral, List<Integer> attackers,
-	    List<Integer> targets) {
-
+    public void assignAgentsToGroups(List<Integer> all, List<Integer> neutral,
+	    List<Integer> attackers, List<Integer> targets, int numAttackers,
+	    int numTargets) {
 	neutral.clear();
 	attackers.clear();
-	targets.clear();
 
-	for (int agent : allAgents) {
-	    if (agent < 25) {
-		neutral.add(agent);
-	    } else if (agent < 40) {
-		attackers.add(agent);
-	    } else {
-		targets.add(agent);
-	    }
-	}
+	final List<Integer> copiedAll = new ArrayList<Integer>(all);
+
+	// create group of attackers
+	int countAttackers = 0;
+	do {
+	    final int index = generator.nextIntFromTo(0, copiedAll.size() - 1);
+	    final int agent = copiedAll.remove(index);
+	    attackers.add(agent);
+	    countAttackers++;
+	} while (countAttackers < numAttackers);
+
+	// create group of targets
+	int countTargets = 0;
+	do {
+	    final int index = generator.nextIntFromTo(0, copiedAll.size() - 1);
+	    final int agent = copiedAll.remove(index);
+	    targets.add(agent);
+	    countTargets++;
+	} while (countTargets < numTargets);
+
+	// put others in the neutral group
+	neutral.addAll(copiedAll);
     }
 
     @Override
@@ -175,7 +211,7 @@ public class TargetedAttacks extends AbstractScenario {
 
     @Override
     public List<Opinion> generateOpinions() {
-	List<Opinion> opinions = new ArrayList<Opinion>();
+	final List<Opinion> opinions = new ArrayList<Opinion>();
 	for (int reporter : agents) {
 	    for (int agent : agents) {
 		if (reporter != agent) {
@@ -198,10 +234,10 @@ public class TargetedAttacks extends AbstractScenario {
 
     @Override
     public List<Experience> generateExperiences() {
-	List<Experience> experiences = new ArrayList<Experience>();
+	final List<Experience> experiences = new ArrayList<Experience>();
 
-	// FIXME: currently all agents from 20 - 29
-	final int agent = (time % 10) + 20;
+	final int agent = interactionPartners.get(time
+		% interactionPartners.size());
 
 	// get its capability
 	final double cap = capabilities.get(agent);
