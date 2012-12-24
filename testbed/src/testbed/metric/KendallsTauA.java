@@ -16,12 +16,6 @@ public class KendallsTauA extends AbstractMetric implements Accuracy {
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,
 	    Map<Integer, Double> capabilities) {
-	if (trust.size() == 0) {
-	    return 0;
-	} else if (trust.size() == 1) {
-	    return 1;
-	}
-
 	int concordant = 0, discordant = 0;
 
 	for (Entry<Integer, Double> cap1 : capabilities.entrySet()) {
