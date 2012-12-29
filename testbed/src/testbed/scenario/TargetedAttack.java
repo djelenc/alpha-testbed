@@ -20,6 +20,12 @@ import testbed.interfaces.ParametersPanel;
  */
 public class TargetedAttack extends AbstractScenario {
 
+    private static final String UNKNOWN_DM = "Cannot determine deception model for reporter "
+	    + "%d (c=%.2f) and agent %d (c=%.2f). "
+	    + "Flags: neutralReporter(%s), neutralAgent(%s), "
+	    + "attackerReporter(%s), attackerAgent(%s), "
+	    + "targetReporter(%s), targetAgent(%s).";
+
     // set of services -- only 1 service
     protected static final List<Integer> SERVICES = new ArrayList<Integer>();
 
@@ -97,7 +103,7 @@ public class TargetedAttack extends AbstractScenario {
 
 	// assign deception models
 	models = new DeceptionModel[agents.size()][agents.size()];
-	assignDeceptionModels(agents, neutral, attackers, targets, models);
+	assignDeceptionModels5(agents, neutral, attackers, targets, models);
 
 	// determine interaction partners
 	// could be any agent, except attacked ones
@@ -109,7 +115,8 @@ public class TargetedAttack extends AbstractScenario {
 	    do {
 		final int index = generator.nextIntFromTo(0, agents.size() - 1);
 		agent = agents.get(index);
-	    } while (targets.contains(agent));
+	    } while (targets.contains(agent)
+		    || interactionPartners.contains(agent));
 
 	    interactionPartners.add(agent);
 	}
@@ -118,52 +125,22 @@ public class TargetedAttack extends AbstractScenario {
 	time = 0;
     }
 
-    public void assignDeceptionModels(List<Integer> agents,
-	    List<Integer> neutral, List<Integer> attackers,
-	    List<Integer> targets, DeceptionModel[][] models) {
-	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent, targetReporter, targetAgent;
-
-	for (int reporter : agents) {
-	    for (int agent : agents) {
-		if (reporter != agent) {
-		    neutralReporter = neutral.contains(reporter);
-		    neutralAgent = neutral.contains(agent);
-		    attackerReporter = attackers.contains(reporter);
-		    attackerAgent = attackers.contains(agent);
-		    targetReporter = targets.contains(reporter);
-		    targetAgent = targets.contains(agent);
-
-		    if ((neutralReporter || targetReporter)
-			    && (neutralAgent || targetAgent)) {
-			models[reporter][agent] = TRUTHFUL;
-		    } else if ((neutralReporter || targetReporter)
-			    && attackerAgent) {
-			models[reporter][agent] = TRUTHFUL;
-		    } else if (attackerReporter
-			    && (neutralAgent || attackerAgent)) {
-			models[reporter][agent] = TRUTHFUL;
-		    } else if (attackerReporter && targetAgent) {
-			models[reporter][agent] = COMPLEMENTARY;
-		    } else {
-			throw new IllegalArgumentException(
-				String.format(
-					"Cannot determine deception model for reporter "
-						+ "%d (c=%.2f) and agent %d (c=%.2f). "
-						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
-						+ "attackerReporter(%s), attackerAgent(%s), "
-						+ "targetReporter(%s), targetAgent(%s).",
-					reporter, capabilities.get(reporter),
-					agent, capabilities.get(agent),
-					neutralReporter, neutralAgent,
-					attackerReporter, attackerAgent,
-					targetReporter, targetAgent));
-		    }
-		}
-	    }
-	}
-    }
-    
-    // same as 1
+    /**
+     * <p>
+     * Neutrals and targets
+     * <ul>
+     * <li>know other targets and neutrals and the give honest opinions about
+     * them
+     * <li>do not know attackers
+     * </ul>
+     * <p>
+     * Attackers
+     * <ul>
+     * <li>know other attackers and give honest opinions about them
+     * <li>lie about targets
+     * <li>do not know neutrals
+     * </ul>
+     */
     public void assignDeceptionModels5(List<Integer> agents,
 	    List<Integer> neutral, List<Integer> attackers,
 	    List<Integer> targets, DeceptionModel[][] models) {
@@ -182,90 +159,39 @@ public class TargetedAttack extends AbstractScenario {
 		    if ((neutralReporter || targetReporter)
 			    && (neutralAgent || targetAgent)) {
 			models[reporter][agent] = TRUTHFUL;
-			// additionally: make it sparse?
 		    } else if ((neutralReporter || targetReporter)
 			    && attackerAgent) {
 			models[reporter][agent] = null;
-			// models[reporter][agent] = TRUTHFUL;
 		    } else if (attackerReporter
 			    && (neutralAgent || attackerAgent)) {
-			// just skip
-
 			if (attackerAgent)
 			    models[reporter][agent] = TRUTHFUL;
-			// rare?
 		    } else if (attackerReporter && targetAgent) {
 			models[reporter][agent] = COMPLEMENTARY;
 		    } else {
-			throw new IllegalArgumentException(
-				String.format(
-					"Cannot determine deception model for reporter "
-						+ "%d (c=%.2f) and agent %d (c=%.2f). "
-						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
-						+ "attackerReporter(%s), attackerAgent(%s), "
-						+ "targetReporter(%s), targetAgent(%s).",
-					reporter, capabilities.get(reporter),
-					agent, capabilities.get(agent),
-					neutralReporter, neutralAgent,
-					attackerReporter, attackerAgent,
-					targetReporter, targetAgent));
+			throw new IllegalArgumentException(String.format(
+				UNKNOWN_DM, reporter,
+				capabilities.get(reporter), agent,
+				capabilities.get(agent), neutralReporter,
+				neutralAgent, attackerReporter, attackerAgent,
+				targetReporter, targetAgent));
 		    }
 		}
 	    }
 	}
     }
 
-    public void assignDeceptionModels4(List<Integer> agents,
-	    List<Integer> neutral, List<Integer> attackers,
-	    List<Integer> targets, DeceptionModel[][] models) {
-	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent, targetReporter, targetAgent;
-
-	for (int reporter : agents) {
-	    for (int agent : agents) {
-		if (reporter != agent) {
-		    neutralReporter = neutral.contains(reporter);
-		    neutralAgent = neutral.contains(agent);
-		    attackerReporter = attackers.contains(reporter);
-		    attackerAgent = attackers.contains(agent);
-		    targetReporter = targets.contains(reporter);
-		    targetAgent = targets.contains(agent);
-
-		    if ((neutralReporter || targetReporter)
-			    && (neutralAgent || targetAgent)) {
-			models[reporter][agent] = TRUTHFUL;
-			// additionally: make it sparse?
-		    } else if ((neutralReporter || targetReporter)
-			    && attackerAgent) {
-			models[reporter][agent] = null;
-			// models[reporter][agent] = TRUTHFUL;
-		    } else if (attackerReporter
-			    && (neutralAgent || attackerAgent)) {
-			// just skip
-
-			// if (attackerAgent)
-			// models[reporter][agent] = TRUTHFUL;
-			// rare?
-		    } else if (attackerReporter && targetAgent) {
-			models[reporter][agent] = COMPLEMENTARY;
-		    } else {
-			throw new IllegalArgumentException(
-				String.format(
-					"Cannot determine deception model for reporter "
-						+ "%d (c=%.2f) and agent %d (c=%.2f). "
-						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
-						+ "attackerReporter(%s), attackerAgent(%s), "
-						+ "targetReporter(%s), targetAgent(%s).",
-					reporter, capabilities.get(reporter),
-					agent, capabilities.get(agent),
-					neutralReporter, neutralAgent,
-					attackerReporter, attackerAgent,
-					targetReporter, targetAgent));
-		    }
-		}
-	    }
-	}
-    }
-
+    /**
+     * <p>
+     * Neutrals and targets know everyone and tell truth about them.
+     * <p>
+     * Attackers
+     * <ul>
+     * <li>know other attackers and give honest opinions about them
+     * <li>lie about targets
+     * <li>do not know neutrals
+     * </ul>
+     */
     public void assignDeceptionModels3(List<Integer> agents,
 	    List<Integer> neutral, List<Integer> attackers,
 	    List<Integer> targets, DeceptionModel[][] models) {
@@ -282,41 +208,40 @@ public class TargetedAttack extends AbstractScenario {
 		    targetAgent = targets.contains(agent);
 
 		    if ((neutralReporter || targetReporter)
-			    && (neutralAgent || targetAgent)) {
-			models[reporter][agent] = TRUTHFUL;
-			// additionally: make it sparse?
-		    } else if ((neutralReporter || targetReporter)
-			    && attackerAgent) {
-			// models[reporter][agent] = null;
+			    && (neutralAgent || targetAgent || attackerAgent)) {
 			models[reporter][agent] = TRUTHFUL;
 		    } else if (attackerReporter
 			    && (neutralAgent || attackerAgent)) {
-			// just skip
-
 			if (attackerAgent)
 			    models[reporter][agent] = TRUTHFUL;
-			// rare?
 		    } else if (attackerReporter && targetAgent) {
 			models[reporter][agent] = COMPLEMENTARY;
 		    } else {
-			throw new IllegalArgumentException(
-				String.format(
-					"Cannot determine deception model for reporter "
-						+ "%d (c=%.2f) and agent %d (c=%.2f). "
-						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
-						+ "attackerReporter(%s), attackerAgent(%s), "
-						+ "targetReporter(%s), targetAgent(%s).",
-					reporter, capabilities.get(reporter),
-					agent, capabilities.get(agent),
-					neutralReporter, neutralAgent,
-					attackerReporter, attackerAgent,
-					targetReporter, targetAgent));
+			throw new IllegalArgumentException(String.format(
+				UNKNOWN_DM, reporter,
+				capabilities.get(reporter), agent,
+				capabilities.get(agent), neutralReporter,
+				neutralAgent, attackerReporter, attackerAgent,
+				targetReporter, targetAgent));
 		    }
 		}
 	    }
 	}
     }
 
+    /**
+     * <p>
+     * Neutrals and targets know everyone and tell truth about them.
+     * <p>
+     * Attackers
+     * <ul>
+     * <li>do not know other attackers nor neutrals
+     * <li>lie about targets
+     * </ul>
+     * 
+     * <p>
+     * Caveat: This works with QTM only when > 1.01
+     */
     public void assignDeceptionModels2(List<Integer> agents,
 	    List<Integer> neutral, List<Integer> attackers,
 	    List<Integer> targets, DeceptionModel[][] models) {
@@ -340,29 +265,31 @@ public class TargetedAttack extends AbstractScenario {
 			models[reporter][agent] = TRUTHFUL;
 		    } else if (attackerReporter
 			    && (neutralAgent || attackerAgent)) {
-			// if (attackerAgent)
 			models[reporter][agent] = null;
 		    } else if (attackerReporter && targetAgent) {
 			models[reporter][agent] = COMPLEMENTARY;
 		    } else {
-			throw new IllegalArgumentException(
-				String.format(
-					"Cannot determine deception model for reporter "
-						+ "%d (c=%.2f) and agent %d (c=%.2f). "
-						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
-						+ "attackerReporter(%s), attackerAgent(%s), "
-						+ "targetReporter(%s), targetAgent(%s).",
-					reporter, capabilities.get(reporter),
-					agent, capabilities.get(agent),
-					neutralReporter, neutralAgent,
-					attackerReporter, attackerAgent,
-					targetReporter, targetAgent));
+			throw new IllegalArgumentException(String.format(
+				UNKNOWN_DM, reporter,
+				capabilities.get(reporter), agent,
+				capabilities.get(agent), neutralReporter,
+				neutralAgent, attackerReporter, attackerAgent,
+				targetReporter, targetAgent));
 		    }
 		}
 	    }
 	}
     }
 
+    /**
+     * <p>
+     * Neutrals and targets know everyone and they give honest opinions about
+     * them.
+     * 
+     * <p>
+     * Attackers know everyone and lie only about targets. For everyone else,
+     * they give honest opinions.
+     */
     public void assignDeceptionModels1(List<Integer> agents,
 	    List<Integer> neutral, List<Integer> attackers,
 	    List<Integer> targets, DeceptionModel[][] models) {
@@ -390,18 +317,12 @@ public class TargetedAttack extends AbstractScenario {
 		    } else if (attackerReporter && targetAgent) {
 			models[reporter][agent] = COMPLEMENTARY;
 		    } else {
-			throw new IllegalArgumentException(
-				String.format(
-					"Cannot determine deception model for reporter "
-						+ "%d (c=%.2f) and agent %d (c=%.2f). "
-						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
-						+ "attackerReporter(%s), attackerAgent(%s), "
-						+ "targetReporter(%s), targetAgent(%s).",
-					reporter, capabilities.get(reporter),
-					agent, capabilities.get(agent),
-					neutralReporter, neutralAgent,
-					attackerReporter, attackerAgent,
-					targetReporter, targetAgent));
+			throw new IllegalArgumentException(String.format(
+				UNKNOWN_DM, reporter,
+				capabilities.get(reporter), agent,
+				capabilities.get(agent), neutralReporter,
+				neutralAgent, attackerReporter, attackerAgent,
+				targetReporter, targetAgent));
 		    }
 		}
 	    }
@@ -441,18 +362,12 @@ public class TargetedAttack extends AbstractScenario {
 		    } else if (attackerReporter && targetAgent) {
 			models[reporter][agent] = COMPLEMENTARY;
 		    } else {
-			throw new IllegalArgumentException(
-				String.format(
-					"Cannot determine deception model for reporter "
-						+ "%d (c=%.2f) and agent %d (c=%.2f). "
-						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
-						+ "attackerReporter(%s), attackerAgent(%s), "
-						+ "targetReporter(%s), targetAgent(%s).",
-					reporter, capabilities.get(reporter),
-					agent, capabilities.get(agent),
-					neutralReporter, neutralAgent,
-					attackerReporter, attackerAgent,
-					targetReporter, targetAgent));
+			throw new IllegalArgumentException(String.format(
+				TargetedAttack.UNKNOWN_DM, reporter,
+				capabilities.get(reporter), agent,
+				capabilities.get(agent), neutralReporter,
+				neutralAgent, attackerReporter, attackerAgent,
+				targetReporter, targetAgent));
 		    }
 		}
 	    }

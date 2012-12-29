@@ -90,7 +90,6 @@ public class QTM implements TrustModel<Omega> {
 		    correct[reporter] = diff <= 1;
 
 		    // compute discount factor
-		    // OLD: final double factor = 1 - diff * FACTOR_CRED;
 		    final double factor = (correct[reporter] ? 1d : 0.5);
 
 		    // assign new weight
@@ -152,9 +151,9 @@ public class QTM implements TrustModel<Omega> {
 		if (null != o) {
 		    final double age = Math.exp(-TF * (time - o.time));
 		    final double weight = Math.sqrt(credibility[witness] * age);
-		    // OLD: reputation[o.itd.ordinal()] += weight;
 
-		    if (weight > 1.01) {
+		    if (weight >= 1d) {
+			// if (weight > 1.01) {
 			reputation[o.itd.ordinal()] += 1d;
 		    }
 		}
@@ -174,28 +173,14 @@ public class QTM implements TrustModel<Omega> {
 	    // weight of local experiences
 	    final double confidence = expWeight / (1 + expWeight);
 
-	    // weight with variance
-	    final double expW = confidence * (1 - variance(normalizedExp));
-
 	    // common vector
 	    final double[] common = new double[5];
-	    final double[] common2 = new double[5];
 	    for (int i = 0; i < reputation.length; i++) {
 		common[i] = confidence * normalizedExp[i] + (1 - confidence)
 			* normalizedRep[i];
-
-		common2[i] = (expW * normalizedExp[i] + (1 - confidence)
-			* normalizedRep[i])
-			/ (expW + 1 - confidence);
-
 	    }
 
-	    final Omega td;
-
-	    if (service == 0)
-		td = qualtitativeAverage(common);
-	    else
-		td = qualtitativeAverage(common2);
+	    final Omega td = qualtitativeAverage(common);
 
 	    if (null != td) {
 		trust.put(agent, td);
@@ -241,60 +226,6 @@ public class QTM implements TrustModel<Omega> {
 	}
 
 	return minValue;
-    }
-
-    public double variance3(double[] freq) {
-	final double[] result = normalize(freq);
-
-	if (null == result)
-	    return 0d;
-
-	double entropy = 0;
-
-	for (int i = 0; i < result.length; i++) {
-	    if (result[i] > 0d) {
-		entropy += result[i] * Math.log(result[i]) / Math.log(5);
-	    }
-	}
-
-	return Math.abs(entropy);
-    }
-
-    public double variance1(double[] freq) {
-	final double[] result = normalize(freq);
-
-	if (null == result)
-	    return 0d;
-
-	// make it cumulative
-	result[1] += result[0];
-	result[2] += result[1];
-	result[3] += result[2];
-	result[4] = 1d;
-
-	double[] distances = new double[] { distance(result, P_D),
-		distance(result, P_PD), distance(result, P_U),
-		distance(result, P_PT), distance(result, P_T) };
-
-	double minValue = Double.MAX_VALUE;
-	for (int i = 0; i < distances.length; i++)
-	    if (distances[i] <= minValue)
-		minValue = distances[i];
-
-	for (int i = 0; i < distances.length; i++)
-	    distances[i] -= minValue;
-
-	final double[] p = normalize(distances);
-
-	double entropy = 0;
-
-	for (int i = 0; i < distances.length; i++) {
-	    if (p[i] > 0d) {
-		entropy += p[i] * Math.log(p[i]) / Math.log(5);
-	    }
-	}
-
-	return -entropy;
     }
 
     public double[] normalize(double[] freq) {

@@ -85,7 +85,6 @@ public class Transitive extends AbstractScenario implements Scenario {
 	};
 
 	SERVICES.add(0);
-	SERVICES.add(1);
     }
 
     // Set of all agents
