@@ -5,11 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import testbed.common.Utils;
 import testbed.deceptionmodel.Complementary;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
+import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 
 /**
@@ -20,11 +22,14 @@ import testbed.interfaces.ParametersPanel;
  */
 public class TargetedAttack extends AbstractScenario {
 
-    private static final String UNKNOWN_DM = "Cannot determine deception model for reporter "
+    protected static final String UNKNOWN_DM = "Cannot determine deception model for reporter "
 	    + "%d (c=%.2f) and agent %d (c=%.2f). "
 	    + "Flags: neutralReporter(%s), neutralAgent(%s), "
 	    + "attackerReporter(%s), attackerAgent(%s), "
 	    + "targetReporter(%s), targetAgent(%s).";
+
+    protected static final ParameterCondition<Integer> VAL_SIZE;
+    protected static final ParameterCondition<Double> VAL_SD, VAL_DENS;
 
     // set of services -- only 1 service
     protected static final List<Integer> SERVICES = new ArrayList<Integer>();
@@ -32,6 +37,8 @@ public class TargetedAttack extends AbstractScenario {
     // deception models
     protected static final DeceptionModel TRUTHFUL = new Truthful();
     protected static final DeceptionModel COMPLEMENTARY = new Complementary();
+
+    protected static final String INVALID_PARAMS = "Invalid parameters agents(%d), attackers(%d), targets(%d), partners(%d)";
 
     // time
     protected int time;
@@ -56,19 +63,58 @@ public class TargetedAttack extends AbstractScenario {
 	SERVICES.add(0);
 	TRUTHFUL.initialize();
 	COMPLEMENTARY.initialize();
+
+	VAL_SIZE = new ParameterCondition<Integer>() {
+	    @Override
+	    public void eval(Integer var) {
+		if (var < 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The number of agents must be non negative integer, but was %d",
+				    var));
+	    }
+	};
+
+	VAL_DENS = new ParameterCondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The density must be between 0 and 1 inclusively, but was %.2f",
+				    var));
+	    }
+	};
+
+	VAL_SD = new ParameterCondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The standard deviation must be a non-negative double, but was %.2f",
+				    var));
+	    }
+	};
     }
 
     @Override
     public void initialize(Object... parameters) {
+	// numAgents = 50; numAttackers = 20; numTargets = 10; numPartners = 10;
+	// sd_i = 0.10; sd_o = 0.05;
+
 	// extract parameters
-	numAgents = 50;
+	numAgents = Utils.extractParameter(VAL_SIZE, 0, parameters);
+	numAttackers = Utils.extractParameter(VAL_SIZE, 1, parameters);
+	numTargets = Utils.extractParameter(VAL_SIZE, 2, parameters);
+	numPartners = Utils.extractParameter(VAL_SIZE, 3, parameters);
+	sd_i = Utils.extractParameter(VAL_SD, 4, parameters);
+	sd_o = Utils.extractParameter(VAL_SD, 5, parameters);
 
-	numAttackers = 20;
-	numTargets = 10;
-	numPartners = 10;
-
-	sd_i = 0.10;
-	sd_o = 0.05;
+	if (numAttackers >= numAgents || numPartners > numAgents - numTargets) {
+	    throw new IllegalArgumentException(String.format(INVALID_PARAMS,
+		    numAgents, numAttackers, numTargets, numPartners));
+	}
 
 	// create agents
 	agents = new ArrayList<Integer>();
@@ -468,6 +514,11 @@ public class TargetedAttack extends AbstractScenario {
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return null;
+	return new TargetedAttackGUI();
+    }
+
+    @Override
+    public String toString() {
+	return "Targeted attack";
     }
 }
