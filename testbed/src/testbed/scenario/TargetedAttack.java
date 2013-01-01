@@ -47,6 +47,8 @@ public class TargetedAttack extends AbstractScenario {
     protected List<Integer> agents, neutral, attackers, targets,
 	    interactionPartners;
 
+    public static List<Integer> TARGETS = null;
+    
     // capabilities
     protected Map<Integer, Double> capabilities;
 
@@ -151,6 +153,9 @@ public class TargetedAttack extends AbstractScenario {
 	models = new DeceptionModel[agents.size()][agents.size()];
 	assignDeceptionModels5(agents, neutral, attackers, targets, models);
 
+	// list addition
+	TARGETS = targets;
+	
 	// determine interaction partners
 	// could be any agent, except attacked ones
 	interactionPartners = new ArrayList<Integer>();
