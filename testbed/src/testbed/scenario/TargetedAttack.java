@@ -151,7 +151,7 @@ public class TargetedAttack extends AbstractScenario {
 
 	// assign deception models
 	models = new DeceptionModel[agents.size()][agents.size()];
-	assignDeceptionModels5(agents, neutral, attackers, targets, models);
+	assignDeceptionModels1(agents, neutral, attackers, targets, models);
 
 	// list addition
 	TARGETS = targets;
