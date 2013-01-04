@@ -14,7 +14,7 @@ public class QTM implements TrustModel<Omega> {
 
     protected static final double LOWER_CRED = 0.01;
     protected static final double FACTOR_CRED = 0.125;
-    protected static final double TF = 0.01;
+    protected static final double TF = 0.1; // 0.01
 
     protected static final double[] P_T, P_PT, P_U, P_PD, P_D;
 
