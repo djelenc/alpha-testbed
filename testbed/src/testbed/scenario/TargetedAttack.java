@@ -141,7 +141,7 @@ public class TargetedAttack extends AbstractScenario {
 	    final double cap;
 
 	    if (targets.contains(agent)) {
-		cap = generator.nextDoubleFromTo(0.9, 1);
+		cap = generator.nextDoubleFromTo(0, 0.1);
 	    } else {
 		cap = generator.nextDoubleFromTo(0, 1);
 	    }
