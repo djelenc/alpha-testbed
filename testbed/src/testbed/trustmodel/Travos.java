@@ -92,6 +92,9 @@ public class Travos extends AbstractTrustModel<Double> {
     protected static final BetaDistribution BETA = new BetaDistributionImpl(1,
 	    1);
 
+    // threshold for a satisfactory interaction
+    private static final Double T = 0.5;
+
     @Override
     public void initialize(Object... params) {
 	experiences = new LinkedHashMap<Integer, BRSPair>();
@@ -113,7 +116,7 @@ public class Travos extends AbstractTrustModel<Double> {
 	for (Experience e : exps) {
 	    BRSPair p = experiences.get(e.agent);
 
-	    final double r = Math.round(EXP_FACTOR * e.outcome);
+	    final double r = (e.outcome >= T ? EXP_FACTOR : 0d);
 	    final double s = EXP_FACTOR - r;
 
 	    if (p == null) {
@@ -131,11 +134,21 @@ public class Travos extends AbstractTrustModel<Double> {
 		if (null != opinions[agent][e.agent]) {
 		    final BRSPair[] obs = observations.get(agent);
 
-		    // determine the bin
-		    final double op_r = Math.round(OP_FACTOR
-			    * opinions[agent][e.agent].internalTrustDegree);
-		    final double op_s = OP_FACTOR - op_r;
+		    final double itd = opinions[agent][e.agent].internalTrustDegree;
 
+		    // TODO: should not be static
+		    final double sd = 0.05;
+		    int op_r = 0, op_s = 0;
+
+		    for (int i = 0; i < OP_FACTOR; i++) {
+			if (generator.nextDoubleFromUnitTND(itd, sd) > T) {
+			    op_r += 1;
+			} else {
+			    op_s += 1;
+			}
+		    }
+
+		    // determine the bin
 		    final int bin = determineBin(op_r, op_s);
 
 		    // store the actual value into bin
