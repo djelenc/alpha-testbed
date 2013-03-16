@@ -89,6 +89,10 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 	};
     }
 
+    // threshold for a satisfactory interaction
+    private static final double T = 0.5;
+    private static final double SD = 0.1;
+
     @Override
     public void initialize(Object... params) {
 	// cumulative number of positive interaction outcomes
@@ -109,7 +113,7 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 
 	// process experiences
 	for (Experience e : experiences) {
-	    final double pos = Math.round(experienceFactor * e.outcome);
+	    final double pos = (e.outcome >= T ? experienceFactor : 0d);
 	    final double neg = experienceFactor - pos;
 
 	    cntExp[e.agent] += Math.max(pos - neg, 0);
@@ -122,9 +126,17 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 
 	// process opinions by creating matrix C
 	for (Opinion o : opinions) {
-	    final double pos = Math
-		    .round(opinionFactor * o.internalTrustDegree);
-	    final double neg = opinionFactor - pos;
+	    final double itd = o.internalTrustDegree;
+
+	    int pos = 0, neg = 0;
+
+	    for (int i = 0; i < opinionFactor; i++) {
+		if (generator.nextDoubleFromUnitTND(itd, SD) > T) {
+		    pos += 1;
+		} else {
+		    neg += 1;
+		}
+	    }
 
 	    cntOp[o.agent2][o.agent1] = (int) Math.max(pos - neg, 0);
 	}
