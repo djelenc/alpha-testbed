@@ -18,7 +18,7 @@ public class TravosTMTest {
     @Before
     public void setUp() {
 	tm = new Travos();
-	tm.initialize(1d, 1d, 0.95, 0.2);
+	tm.initialize(0.5, 10, 0.1, 0.95, 0.2);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class TravosTMTest {
     public void walkthroughScenario() {
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
-	Travos.OP_FACTOR = 1;
+	Travos.OPINION_SAMPLE_NUM = 1;
 
 	experiences.clear();
 	opinions.clear();

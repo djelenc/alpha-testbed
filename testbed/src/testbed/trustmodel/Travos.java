@@ -48,17 +48,16 @@ import testbed.interfaces.ParametersPanel;
  * 
  */
 public class Travos extends AbstractTrustModel<Double> {
-    protected static final ParameterCondition<Double> VAL_MULTPLIER,
-	    VAL_THRESHOLD;
-
+    protected static final ParameterCondition<Double> VAL_THRESHOLD;
+    protected static final ParameterCondition<Integer> VAL_SAMPLE_NUM;
     static {
-	VAL_MULTPLIER = new ParameterCondition<Double>() {
+	VAL_SAMPLE_NUM = new ParameterCondition<Integer>() {
 	    @Override
-	    public void eval(Double var) {
-		if (var < 1 || var > 50)
+	    public void eval(Integer var) {
+		if (var < 1)
 		    throw new IllegalArgumentException(
 			    String.format(
-				    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
+				    "The number of samples must non-negative, but was %.2f",
 				    var));
 	    }
 	};
@@ -84,17 +83,15 @@ public class Travos extends AbstractTrustModel<Double> {
     // observations about opinions
     public Map<Integer, BRSPair[]> observations = null;
 
+    // parameters
+    public static double SATISFACTORY_THRESHOLD = 0.5;
+    public static double OPINION_SAMPLE_NUM = 5;
+    public static double OPINION_SAMPLE_SD = 0.1;
+    public static double CONFIDENCE_THRESHOLD = 0.95;
     public static double ERROR = 0.2;
-    public static double THRESHOLD = 0.95;
-    public static double EXP_FACTOR = 5;
-    public static double OP_FACTOR = 5;
 
     protected static final BetaDistribution BETA = new BetaDistributionImpl(1,
 	    1);
-
-    // threshold for a satisfactory interaction
-    private static final double T = 0.5;
-    private static final double SD = 0.1;
 
     @Override
     public void initialize(Object... params) {
@@ -102,10 +99,12 @@ public class Travos extends AbstractTrustModel<Double> {
 	observations = new LinkedHashMap<Integer, BRSPair[]>();
 	opinions = new Opinion[0][0];
 
-	EXP_FACTOR = Utils.extractParameter(VAL_MULTPLIER, 0, params);
-	OP_FACTOR = Utils.extractParameter(VAL_MULTPLIER, 1, params);
-	THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 2, params);
-	ERROR = Utils.extractParameter(VAL_THRESHOLD, 3, params);
+	SATISFACTORY_THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 0,
+		params);
+	OPINION_SAMPLE_NUM = Utils.extractParameter(VAL_SAMPLE_NUM, 1, params);
+	OPINION_SAMPLE_SD = Utils.extractParameter(VAL_THRESHOLD, 2, params);
+	CONFIDENCE_THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 3, params);
+	ERROR = Utils.extractParameter(VAL_THRESHOLD, 4, params);
     }
 
     @Override
@@ -117,8 +116,8 @@ public class Travos extends AbstractTrustModel<Double> {
 	for (Experience e : exps) {
 	    BRSPair p = experiences.get(e.agent);
 
-	    final double r = (e.outcome >= T ? EXP_FACTOR : 0d);
-	    final double s = EXP_FACTOR - r;
+	    final int r = (e.outcome >= SATISFACTORY_THRESHOLD ? 1 : 0);
+	    final int s = 1 - r;
 
 	    if (p == null) {
 		p = new BRSPair(r, s);
@@ -137,10 +136,12 @@ public class Travos extends AbstractTrustModel<Double> {
 
 		    final double itd = opinions[agent][e.agent].internalTrustDegree;
 
+		    // sample opinions to obtain (r, s) pair
 		    int op_r = 0, op_s = 0;
 
-		    for (int i = 0; i < OP_FACTOR; i++) {
-			if (generator.nextDoubleFromUnitTND(itd, SD) > T) {
+		    for (int i = 0; i < OPINION_SAMPLE_NUM; i++) {
+			if (generator.nextDoubleFromUnitTND(itd,
+				OPINION_SAMPLE_SD) > SATISFACTORY_THRESHOLD) {
 			    op_r += 1;
 			} else {
 			    op_s += 1;
@@ -237,7 +238,7 @@ public class Travos extends AbstractTrustModel<Double> {
 		    + ERROR);
 
 	    // if confidence is high enough this is the final score
-	    if (confidence > THRESHOLD)
+	    if (confidence > CONFIDENCE_THRESHOLD)
 		trust.put(agent, mean);
 	}
 
@@ -266,9 +267,9 @@ public class Travos extends AbstractTrustModel<Double> {
 		    if (null != o) {
 			agentExists = true;
 			// compute (m, n) from the opinion
-			final double m = Math.round(OP_FACTOR
+			final double m = Math.round(OPINION_SAMPLE_NUM
 				* o.internalTrustDegree);
-			final double n = OP_FACTOR - m;
+			final double n = OPINION_SAMPLE_NUM - m;
 
 			// determine the bin of this opinion
 			final int bin = determineBin(m, n);

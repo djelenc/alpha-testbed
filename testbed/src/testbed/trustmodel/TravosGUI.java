@@ -22,7 +22,8 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 
     private static final long serialVersionUID = -1558821473401798087L;
 
-    private JSpinner expMultiplier, opMultiplier, threshold, error;
+    private JSpinner satisfactoryThreshold, opinionSampleNumber,
+	    opinionSampleSD, confidenceThreshold, error;
 
     private Observer observer;
 
@@ -65,24 +66,31 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 
     @Override
     public Object[] getParameters() {
-	return new Object[] { getExperienceMultiplier(),
-		getOpinionMultiplier(), getThreshold(), getError() };
+	return new Object[] { getSatisfactoryThreshold(),
+		getOpinionSampleNumber(), getOpinionSampleSD(),
+		getConfidenceThreshold(), getError() };
     }
 
     private double getError() {
 	return Double.parseDouble(String.valueOf(error.getValue()));
     }
 
-    private double getThreshold() {
-	return Double.parseDouble(String.valueOf(threshold.getValue()));
+    private double getConfidenceThreshold() {
+	return Double
+		.parseDouble(String.valueOf(confidenceThreshold.getValue()));
     }
 
-    private double getExperienceMultiplier() {
-	return Double.parseDouble(String.valueOf(expMultiplier.getValue()));
+    private double getSatisfactoryThreshold() {
+	return Double.parseDouble(String.valueOf(satisfactoryThreshold
+		.getValue()));
     }
 
-    private double getOpinionMultiplier() {
-	return Double.parseDouble(String.valueOf(opMultiplier.getValue()));
+    private int getOpinionSampleNumber() {
+	return Integer.parseInt(String.valueOf(opinionSampleNumber.getValue()));
+    }
+
+    private double getOpinionSampleSD() {
+	return Double.parseDouble(String.valueOf(opinionSampleSD.getValue()));
     }
 
     /**
@@ -101,62 +109,80 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 	JLabel lbl;
 	c.gridwidth = 1;
 
-	// experience multiplier
-	lbl = new JLabel("Experience multiplier:  ");
+	// satisfactory threshold
+	lbl = new JLabel("Satisfactory threshold:  ");
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	expMultiplier = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
-	((JSpinner.DefaultEditor) expMultiplier.getEditor()).getTextField()
-		.setColumns(3);
-	expMultiplier
-		.setToolTipText("Multiplier that converts a contionouos interaction outcome from [0, 1] "
-			+ "to a discreete value.");
+	satisfactoryThreshold = new JSpinner(new SpinnerNumberModel(0.5, 0, 1,
+		0.25));
+	((JSpinner.DefaultEditor) satisfactoryThreshold.getEditor())
+		.getTextField().setColumns(3);
+	satisfactoryThreshold
+		.setToolTipText("A value that determines when the interaction outcome becomes a satisfactory.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
-	panel.add(expMultiplier, c);
+	panel.add(satisfactoryThreshold, c);
 
-	// opinion multiplier
-	lbl = new JLabel("Opinion multiplier:  ");
+	// opinion sample number
+	lbl = new JLabel("Number of opinion samples:  ");
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	opMultiplier = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
-	((JSpinner.DefaultEditor) opMultiplier.getEditor()).getTextField()
-		.setColumns(3);
-	opMultiplier
-		.setToolTipText("Multiplier that converts a contionouos interaction outcome from [0, 1] "
-			+ "to a discreete value.");
+	opinionSampleNumber = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
+	((JSpinner.DefaultEditor) opinionSampleNumber.getEditor())
+		.getTextField().setColumns(3);
+	opinionSampleNumber
+		.setToolTipText("Time the obtained internal opinion will be sampled to obtain an (r, s) tuple.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
-	panel.add(opMultiplier, c);
+	panel.add(opinionSampleNumber, c);
 
-	// threshold
+	// opinion sample standard deviation
+	lbl = new JLabel("SD to sample opinions:  ");
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	c.gridx = 0;
+	c.gridy = i;
+	panel.add(lbl, c);
+	opinionSampleSD = new JSpinner(new SpinnerNumberModel(0.10, 0, 1, 0.05));
+	((JSpinner.DefaultEditor) opinionSampleSD.getEditor()).getTextField()
+		.setColumns(3);
+	opinionSampleSD
+		.setToolTipText("Standard deviation for sampling opinions.");
+	c.gridx = 1;
+	c.gridy = i++;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_START;
+	panel.add(opinionSampleSD, c);
+
+	// confidence threshold
 	lbl = new JLabel("Confidence threshold:  ");
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	threshold = new JSpinner(new SpinnerNumberModel(0.95, 0, 1, 0.05));
-	((JSpinner.DefaultEditor) threshold.getEditor()).getTextField()
-		.setColumns(3);
-	threshold
+	confidenceThreshold = new JSpinner(new SpinnerNumberModel(0.95, 0, 1,
+		0.05));
+	((JSpinner.DefaultEditor) confidenceThreshold.getEditor())
+		.getTextField().setColumns(3);
+	confidenceThreshold
 		.setToolTipText("A threshold that determines the confidence value when the "
 			+ "computed trust suffices and opinions are not required.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
-	panel.add(threshold, c);
+	panel.add(confidenceThreshold, c);
 
 	// error
 	lbl = new JLabel("Confidence error:  ");
