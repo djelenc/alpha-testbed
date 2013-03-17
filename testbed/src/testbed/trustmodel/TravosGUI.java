@@ -71,25 +71,25 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 		getConfidenceThreshold(), getError() };
     }
 
-    private double getError() {
+    protected double getError() {
 	return Double.parseDouble(String.valueOf(error.getValue()));
     }
 
-    private double getConfidenceThreshold() {
+    protected double getConfidenceThreshold() {
 	return Double
 		.parseDouble(String.valueOf(confidenceThreshold.getValue()));
     }
 
-    private double getSatisfactoryThreshold() {
+    protected double getSatisfactoryThreshold() {
 	return Double.parseDouble(String.valueOf(satisfactoryThreshold
 		.getValue()));
     }
 
-    private int getOpinionSampleNumber() {
+    protected int getOpinionSampleNumber() {
 	return Integer.parseInt(String.valueOf(opinionSampleNumber.getValue()));
     }
 
-    private double getOpinionSampleSD() {
+    protected double getOpinionSampleSD() {
 	return Double.parseDouble(String.valueOf(opinionSampleSD.getValue()));
     }
 
@@ -121,7 +121,7 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 	((JSpinner.DefaultEditor) satisfactoryThreshold.getEditor())
 		.getTextField().setColumns(3);
 	satisfactoryThreshold
-		.setToolTipText("A value that determines when the interaction outcome becomes a satisfactory.");
+		.setToolTipText("A threshold that determines when the interaction outcome becomes a satisfactory.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -139,7 +139,7 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 	((JSpinner.DefaultEditor) opinionSampleNumber.getEditor())
 		.getTextField().setColumns(3);
 	opinionSampleNumber
-		.setToolTipText("Time the obtained internal opinion will be sampled to obtain an (r, s) tuple.");
+		.setToolTipText("Number of times the obtained opinion will be sampled to obtain an (r, s) tuple.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;

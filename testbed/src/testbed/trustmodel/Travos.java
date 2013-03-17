@@ -26,23 +26,21 @@ import testbed.interfaces.ParametersPanel;
  * <p>
  * <b>Additional comment.</b> TRAVOS requires two specific data formats: a)
  * binary interactions outcomes and b) exchanged opinions in the form of
- * 2-dimensional vector of natural numbers. I solved this by:
+ * 2-dimensional vector of natural numbers. This is implemented by:
  * <ul>
- * <li>Scaling interaction outcomes by a FACTOR and then computing a pair (m, n)
- * from this scaled number. This can be explained as if an interaction consists
- * of several sub-interactions all of which have a binary outcome and the final
- * outcome is a pair of successful and unsuccessful interactions (it is
- * basically a mapping: [0, 1] &rarr; N &times; N)
- * <li>Scaling internalTrustDegrees from opinions by the same FACTOR and
- * computing the pair in the same way as interaction outcomes. This gives all
- * opinions the same weight (m + n = FACTOR). The FACTOR also needs to be large
- * enough so that an opinion has a chance of falling into every possible bin.
+ * <li>Thresholding interaction outcomes against a threshold given as a
+ * parameter SATISFACTORY_THRESHOLD. If the outcome reaches this threshold the
+ * interaction is considered to be positive, otherwise it is considered to be
+ * negative.
+ * <li>When TRAVOS obtains an opinion, it creates a (r, s) pair by sampling with
+ * truncated normal distribution. The mean is set to the internalTrustDegree
+ * from the obtained opinion, while the standard deviation is given as the
+ * parameter OPINION_SAMPLE_SD. The number of drawn samples is given as the
+ * parameter OPINION_SAMPLE_NUM. This gives all opinions the same weight (r + s
+ * = OPINION_SAMPLE_NUM). The parameter OPINION_SAMPLE_NUM also needs to be
+ * large enough so that an opinion has a chance of falling into every possible
+ * bin.
  * </ul>
- * 
- * <p>
- * An alternative to this would be to program the model exactly as proposed,
- * then put larger values for sd_i and sd_o in scenarios, and finally define a
- * threshold function to determine the binary interaction outcome.
  * 
  * @author David
  * 
@@ -57,7 +55,7 @@ public class Travos extends AbstractTrustModel<Double> {
 		if (var < 1)
 		    throw new IllegalArgumentException(
 			    String.format(
-				    "The number of samples must non-negative, but was %.2f",
+				    "The number of samples must non-negative, but was %d",
 				    var));
 	    }
 	};
@@ -85,7 +83,7 @@ public class Travos extends AbstractTrustModel<Double> {
 
     // parameters
     public static double SATISFACTORY_THRESHOLD = 0.5;
-    public static double OPINION_SAMPLE_NUM = 5;
+    public static double OPINION_SAMPLE_NUM = 10;
     public static double OPINION_SAMPLE_SD = 0.1;
     public static double CONFIDENCE_THRESHOLD = 0.95;
     public static double ERROR = 0.2;

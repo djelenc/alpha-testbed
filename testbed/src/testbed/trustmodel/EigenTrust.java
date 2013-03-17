@@ -17,30 +17,15 @@ import testbed.interfaces.ParametersPanel;
  * Implementation notes
  * <ul>
  * <li>The interactions outcomes are recorded in the <b>cntExp</b> array. Values
- * in this array represent the cumulative number of positive interactions of
- * agent Alpha with this agent -- s<sub>j</sub>. Such numbers are obtained in
- * the following procedure:
- * <ol>
- * <li>Obtain the number of positive interaction outcomes<br/>
- * <br/>
- * <center>pos<sub>i</sub> = Round(factor<sub>experience</sub> &times;
- * interaction_outcome<sub>i</sub>)</center><br/>
- * where factor<sub>experience</sub> is a user specified parameter.
- * <li>Obtain the number of negative interaction outcomes <br/>
- * <center>neg<sub>i</sub> = factor<sub>experience</sub> -
- * pos<sub>i</sub></center><br/>
- * <li>Compute the local trust value:<br/>
- * <center>s<sub>j</sub> = Max(pos<sub>i</sub> - neg<sub>i</sub>, 0)</center>
- * <br/>
- * <li>Add the computed local trust value to its corresponding position in the
- * <b>cntExp</b> array.
- * </ol>
+ * in this array represent the cumulative number of interactions of agent Alpha
+ * with this agent -- s<sub>j</sub>. These numbers are obtained by thresholding
+ * the interaction outcome against SATISFACTORY_THRESHOLD parameter.
  * <li>The pre-trust vector represents Alpha's normalized local experiences. The
  * pre-trust vector is computed by normalizing the values in the cntExp array.
+ * If all values are zero, than the same value (1/N, N being the number of
+ * agents) is given to all agents.
  * <li>Obtained opinions are stored in the cntOp array. This array is used to
- * compute normalized local trust values that constitute the matrix C. The
- * computation is analogous to the computation of values in cntExp array and to
- * the computation of values in the pre-trusted peers vector.
+ * compute normalized local trust values that constitute the matrix C.
  * </ul>
  * 
  * <p>
@@ -53,17 +38,14 @@ import testbed.interfaces.ParametersPanel;
  * 
  */
 public class EigenTrust extends AbstractTrustModel<Double> {
-    private static final ParameterCondition<Double> VAL_WEIGHT, MULT_VAL;
+    private static final ParameterCondition<Double> VAL_WEIGHT;
+    private static final ParameterCondition<Integer> VAL_SAMPLE_NUM;
 
     // holds positive opinions count
     public int[][] cntOp;
 
-    // count positive experiences
+    // count experiences
     public int[] cntExp;
-
-    public double weightFactor = 0.5;
-    public double experienceFactor = 5;
-    public double opinionFactor = 10;
 
     static {
 	VAL_WEIGHT = new ParameterCondition<Double>() {
@@ -72,26 +54,27 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 		if (var < 0 || var > 1)
 		    throw new IllegalArgumentException(
 			    String.format(
-				    "The weight must be a between 0 and 1 inclusively, but was %.2f",
+				    "The weight/SD must be a between 0 and 1 inclusively, but was %.2f",
 				    var));
 	    }
 	};
 
-	MULT_VAL = new ParameterCondition<Double>() {
+	VAL_SAMPLE_NUM = new ParameterCondition<Integer>() {
 	    @Override
-	    public void eval(Double var) {
-		if (var < 1 || var > 50)
+	    public void eval(Integer var) {
+		if (var < 1)
 		    throw new IllegalArgumentException(
 			    String.format(
-				    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
+				    "The number of samples must be non-negative, but was %d",
 				    var));
 	    }
 	};
     }
 
-    // threshold for a satisfactory interaction
-    private static final double T = 0.5;
-    private static final double SD = 0.1;
+    public static double WEIGHT = 0.5;
+    public static double SATISFACTORY_THRESHOLD = 0.5;
+    public static double OPINION_SAMPLE_SD = 0.1;
+    public static double OPINION_SAMPLE_NUM = 10;
 
     @Override
     public void initialize(Object... params) {
@@ -102,9 +85,10 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 	// this number gets rewritten each time a new opinion arrives
 	cntOp = new int[1][1];
 
-	weightFactor = Utils.extractParameter(VAL_WEIGHT, 0, params);
-	experienceFactor = Utils.extractParameter(MULT_VAL, 1, params);
-	opinionFactor = Utils.extractParameter(MULT_VAL, 2, params);
+	WEIGHT = Utils.extractParameter(VAL_WEIGHT, 0, params);
+	SATISFACTORY_THRESHOLD = Utils.extractParameter(VAL_WEIGHT, 1, params);
+	OPINION_SAMPLE_NUM = Utils.extractParameter(VAL_SAMPLE_NUM, 2, params);
+	OPINION_SAMPLE_SD = Utils.extractParameter(VAL_WEIGHT, 3, params);
     }
 
     @Override
@@ -113,10 +97,7 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 
 	// process experiences
 	for (Experience e : experiences) {
-	    final double pos = (e.outcome >= T ? experienceFactor : 0d);
-	    final double neg = experienceFactor - pos;
-
-	    cntExp[e.agent] += Math.max(pos - neg, 0);
+	    cntExp[e.agent] += (e.outcome >= SATISFACTORY_THRESHOLD ? 1 : -1);
 	}
     }
 
@@ -130,8 +111,8 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 
 	    int pos = 0, neg = 0;
 
-	    for (int i = 0; i < opinionFactor; i++) {
-		if (generator.nextDoubleFromUnitTND(itd, SD) > T) {
+	    for (int i = 0; i < OPINION_SAMPLE_NUM; i++) {
+		if (generator.nextDoubleFromUnitTND(itd, OPINION_SAMPLE_SD) > SATISFACTORY_THRESHOLD) {
 		    pos += 1;
 		} else {
 		    neg += 1;
@@ -178,7 +159,7 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 
 	    // t_new = (1 - weight) * t_new + weight * p
 	    for (int i = 0; i < t_old.length; i++)
-		t_new[i] = (1 - weightFactor) * t_new[i] + weightFactor * p[i];
+		t_new[i] = (1 - WEIGHT) * t_new[i] + WEIGHT * p[i];
 
 	} while (!hasConverged(t_new, t_old));
 
@@ -191,11 +172,11 @@ public class EigenTrust extends AbstractTrustModel<Double> {
     }
 
     /**
-     * Returns a pre-trust vector from an array of positive experiences counts.
+     * Returns a pre-trust vector from an array of experiences counts.
      * 
      * @param experienceCount
      *            Array in which indexes represent agents and values represent
-     *            the number of positive experiences with that agents.
+     *            the sum of transactions with that agents.
      * @return Array of doubles representing the pre-trust vector
      */
     public double[] computePretrustVector(final int[] experienceCount) {
@@ -203,14 +184,14 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 	int sumPosExp = 0;
 
 	for (int i = 0; i < experienceCount.length; i++)
-	    sumPosExp += experienceCount[i];
+	    sumPosExp += Math.max(experienceCount[i], 0);
 
 	if (sumPosExp > 0) {
 	    // at least some local experiences exist
 	    final double normalization = sumPosExp;
 
 	    for (int i = 0; i < experienceCount.length; i++)
-		p[i] = experienceCount[i] / normalization;
+		p[i] = Math.max(experienceCount[i], 0) / normalization;
 	} else {
 	    // no local data -- uniform distribution
 	    for (int i = 0; i < experienceCount.length; i++)
