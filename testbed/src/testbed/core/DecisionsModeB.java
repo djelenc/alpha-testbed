@@ -116,6 +116,10 @@ public class DecisionsModeB extends DecisionsModeA {
 
     @Override
     protected void evaluationlStep(int time) {
+	// convey current time
+	tm.setCurrentTime(time);
+	scn.setCurrentTime(time);
+
 	// get agents
 	final List<Integer> agents = scn.getAgents();
 
