@@ -66,6 +66,29 @@ public class PartnerSelectionTemplates {
     }
 
     /**
+     * Selects a random agent, while using assigned trust values as
+     * probabilities.
+     * 
+     * <p>
+     * It is not required that the given map of trust values is a proper PMF
+     * (i.e. the sum of trust values in the given map does not need to be one --
+     * this function will normalize the weights).
+     * 
+     * <p>
+     * The assigned trust values, however, have to be positive numbers.
+     * 
+     * <p>
+     * If the given map of trust values is empty, the function returns null.
+     * 
+     * @param trust
+     *            Given map of trust values
+     * @return The selected agent.
+     */
+    public Integer probabilistic(Map<Integer, Double> trust) {
+	return probabilisticAndPowered(trust, 1d);
+    }
+
+    /**
      * Selects an agent with the highest trust value.
      * 
      * <p>
@@ -75,21 +98,23 @@ public class PartnerSelectionTemplates {
      *            Map of trust values.
      * @return Selected agent.
      */
-    public Integer maximal(Map<Integer, Double> trust) {
-	int bestAgent = Integer.MIN_VALUE;
-	double maxTrust = Double.MIN_VALUE;
+    public <T extends Comparable<T>> Integer maximal(Map<Integer, T> trust) {
+	Integer bestAgent = null;
+	T maxTrust = null;
 
-	for (Map.Entry<Integer, Double> entry : trust.entrySet()) {
-	    if (maxTrust < entry.getValue()) {
-		maxTrust = entry.getValue();
-		bestAgent = entry.getKey();
+	for (Map.Entry<Integer, T> entry : trust.entrySet()) {
+	    final Integer agent = entry.getKey();
+	    final T value = entry.getValue();
+
+	    if (value == null)
+		continue;
+
+	    if (maxTrust == null || value.compareTo(maxTrust) > 0) {
+		maxTrust = value;
+		bestAgent = agent;
 	    }
 	}
 
-	if (bestAgent == Integer.MIN_VALUE) {
-	    return null;
-	} else {
-	    return bestAgent;
-	}
+	return bestAgent;
     }
 }
