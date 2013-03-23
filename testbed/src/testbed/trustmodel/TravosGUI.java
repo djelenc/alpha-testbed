@@ -153,7 +153,7 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	opinionSampleSD = new JSpinner(new SpinnerNumberModel(0.25, 0, 1, 0.05));
+	opinionSampleSD = new JSpinner(new SpinnerNumberModel(0.1, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) opinionSampleSD.getEditor()).getTextField()
 		.setColumns(3);
 	opinionSampleSD

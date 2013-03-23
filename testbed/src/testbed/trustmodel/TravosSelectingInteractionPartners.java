@@ -42,8 +42,8 @@ public class TravosSelectingInteractionPartners extends Travos implements
 
 	for (int service : services) {
 	    final Map<Integer, Double> trust = getTrust(service);
-	    // final Integer best = selector.probabilistic(trust);
-	    final Integer best = selector.maximal(trust);
+	    final Integer best = selector.probabilistic(trust);
+	    // final Integer best = selector.maximal(trust);
 
 	    partners.put(service, best);
 	}

@@ -84,7 +84,7 @@ public class Travos extends AbstractTrustModel<Double> {
     // parameters
     public static double SATISFACTORY_THRESHOLD = 0.5;
     public static double OPINION_SAMPLE_NUM = 10;
-    public static double OPINION_SAMPLE_SD = 0.25;
+    public static double OPINION_SAMPLE_SD = 0.1;
     public static double CONFIDENCE_THRESHOLD = 0.95;
     public static double ERROR = 0.2;
 
