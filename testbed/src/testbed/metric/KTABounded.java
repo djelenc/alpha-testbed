@@ -9,7 +9,7 @@ import testbed.interfaces.ParametersPanel;
 /**
  * 
  * A pair-wise evaluation of the rankings that evaluates only those pairs of
- * agents, in which at least one agent has capability in the given interval.
+ * agents, in which capabilities of both agents fall inside the given interval.
  * 
  * @author David
  * 
@@ -45,16 +45,15 @@ public class KTABounded extends OldAccuracy {
 	    Map<Integer, Double> capabilities) {
 	int result = 0, cmpCount = 0;
 
-	for (Map.Entry<Integer, T> trust1 : trust.entrySet()) {
-	    for (Map.Entry<Integer, T> trust2 : trust.entrySet()) {
-		if (!trust1.equals(trust2)) {
-		    final T r1 = trust1.getValue();
-		    final T r2 = trust2.getValue();
-		    final Double c1 = capabilities.get(trust1.getKey());
-		    final Double c2 = capabilities.get(trust2.getKey());
+	for (Map.Entry<Integer, Double> cap1 : capabilities.entrySet()) {
+	    for (Map.Entry<Integer, Double> cap2 : capabilities.entrySet()) {
+		if (cap1.getKey() < cap2.getKey()) {
+		    final T r1 = trust.get(cap1.getKey());
+		    final T r2 = trust.get(cap2.getKey());
+		    final Double c1 = cap1.getValue();
+		    final Double c2 = cap2.getValue();
 
-		    if ((lower < c1 && c1 < upper)
-			    || (lower < c2 && c2 < upper)) {
+		    if (lower < c1 && c1 < upper && lower < c2 && c2 < upper) {
 			result += evaluatePair(r1, r2, c1, c2);
 			cmpCount += 1;
 		    }
