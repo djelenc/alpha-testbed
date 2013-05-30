@@ -102,9 +102,6 @@ public class TargetedAttack extends AbstractScenario {
 
     @Override
     public void initialize(Object... parameters) {
-	// numAgents = 50; numAttackers = 20; numTargets = 10; numPartners = 10;
-	// sd_i = 0.10; sd_o = 0.05;
-
 	// extract parameters
 	numAgents = Utils.extractParameter(VAL_SIZE, 0, parameters);
 	numAttackers = Utils.extractParameter(VAL_SIZE, 1, parameters);
@@ -151,7 +148,7 @@ public class TargetedAttack extends AbstractScenario {
 
 	// assign deception models
 	models = new DeceptionModel[agents.size()][agents.size()];
-	assignDeceptionModels1(agents, neutral, attackers, targets, models);
+	assignDeceptionModels3(agents, neutral, attackers, targets, models);
 
 	// list addition
 	TARGETS = targets;

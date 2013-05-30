@@ -1,10 +1,10 @@
+testbed.scenario.TargetedAttack
 testbed.scenario.Random
 testbed.scenario.RandomMultiService
 testbed.scenario.RandomMultiServiceInteractionPartnerSelection
 testbed.scenario.RandomWithNewcomers
 testbed.scenario.RandomInteractionPartnerSelection
 testbed.scenario.Oscillation
-testbed.scenario.TargetedAttack
 testbed.scenario.Transitive
 testbed.scenario.TransitiveInteractionPartnerSelection
 testbed.scenario.TransitiveOpinionProviderSelection
