@@ -38,7 +38,8 @@ public class TargetedAttack extends AbstractScenario {
     protected static final DeceptionModel TRUTHFUL = new Truthful();
     protected static final DeceptionModel COMPLEMENTARY = new Complementary();
 
-    protected static final String INVALID_PARAMS = "Invalid parameters agents(%d), attackers(%d), targets(%d), partners(%d)";
+    protected static final String INVALID_PARAMS = "Invalid parameters agents(%d), attackers(%d), "
+	    + "targets(%d), partners(%d)";
 
     // time
     protected int time;
@@ -48,7 +49,7 @@ public class TargetedAttack extends AbstractScenario {
 	    interactionPartners;
 
     public static List<Integer> TARGETS = null;
-    
+
     // capabilities
     protected Map<Integer, Double> capabilities;
 
@@ -148,11 +149,15 @@ public class TargetedAttack extends AbstractScenario {
 
 	// assign deception models
 	models = new DeceptionModel[agents.size()][agents.size()];
-	assignDeceptionModels3(agents, neutral, attackers, targets, models);
+	assignDeceptionModelsSybil(agents, neutral, attackers, targets, models);
+
+	// XXX: debugging
+	System.out.printf("neutrals = %s\ntargets = %s\nattackers = %s\n",
+		neutral, targets, attackers);
 
 	// list addition
 	TARGETS = targets;
-	
+
 	// determine interaction partners
 	// could be any agent, except attacked ones
 	interactionPartners = new ArrayList<Integer>();
@@ -171,6 +176,40 @@ public class TargetedAttack extends AbstractScenario {
 
 	// reset time
 	time = 0;
+    }
+
+    public void assignDeceptionModelsSybil(List<Integer> agents,
+	    List<Integer> neutral, List<Integer> attackers,
+	    List<Integer> targets, DeceptionModel[][] models) {
+	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent, targetReporter, targetAgent;
+
+	for (int reporter : agents) {
+	    for (int agent : agents) {
+		if (reporter != agent) {
+		    neutralReporter = neutral.contains(reporter);
+		    neutralAgent = neutral.contains(agent);
+		    attackerReporter = attackers.contains(reporter);
+		    attackerAgent = attackers.contains(agent);
+		    targetReporter = targets.contains(reporter);
+		    targetAgent = targets.contains(agent);
+
+		    if (neutralReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (neutralReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && attackerAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && targetAgent)
+			models[reporter][agent] = COMPLEMENTARY;
+		    else
+			models[reporter][agent] = null;
+		}
+	    }
+	}
     }
 
     /**

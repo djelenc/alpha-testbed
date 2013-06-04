@@ -132,6 +132,16 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
 	    trust.put(agent, score);
 	}
 
+	/*
+	 * StringBuffer sb = new StringBuffer(); sb.append("credibility = {");
+	 * 
+	 * for (int i = 0; i < credibility.length; i++) {
+	 * sb.append(String.format("%d:%.7f, ", i, credibility[i])); }
+	 * sb.append("}");
+	 * 
+	 * System.out.println(sb.toString());
+	 */
+
 	return trust;
     }
 

@@ -32,8 +32,6 @@ public class QTM implements TrustModel<Omega> {
 
     protected QADOp[][] opinions = null;
     protected double[] credibility = null;
-    protected int[] cntHonest = null;
-    protected int[] cntDishonest = null;
 
     protected int time;
 
@@ -43,8 +41,6 @@ public class QTM implements TrustModel<Omega> {
 	local = new LinkedHashMap<Integer, QADExp[]>();
 	opinions = new QADOp[0][0];
 	credibility = new double[0];
-	cntHonest = new int[0];
-	cntDishonest = new int[0];
     }
 
     @Override
@@ -92,12 +88,6 @@ public class QTM implements TrustModel<Omega> {
 		    // flag whether the opinion was correct
 		    // (when no opinion is given the this remains null)
 		    correct[reporter] = diff <= 1;
-
-		    if (correct[reporter]) {
-			cntHonest[reporter] += 1;
-		    } else {
-			cntDishonest[reporter] += 1;
-		    }
 
 		    // compute discount factor
 		    final double factor = (correct[reporter] ? 1d : 0.5);
@@ -167,9 +157,12 @@ public class QTM implements TrustModel<Omega> {
 		    final double weight = credibility[witness];
 
 		    if (weight >= 1d) {
-			final int freq = Math.max(cntHonest[witness]
-				- cntDishonest[witness], 1);
+			// TODO: now implement Jacard index
+			final double freq = (opinions[agent][witness] == null ? 0.1
+				: 1d);
+
 			reputation[o.itd.ordinal()] += freq;
+
 		    }
 		}
 	    }
@@ -353,16 +346,6 @@ public class QTM implements TrustModel<Omega> {
 
 	    System.arraycopy(credibility, 0, newWeights, 0, credibility.length);
 	    credibility = newWeights;
-
-	    // expand correct and wrong numbers
-	    final int[] newCntHonest = new int[max + 1];
-	    System.arraycopy(cntHonest, 0, newCntHonest, 0, cntHonest.length);
-	    cntHonest = newCntHonest;
-
-	    final int[] newCntDishonest = new int[max + 1];
-	    System.arraycopy(cntDishonest, 0, newCntDishonest, 0,
-		    cntDishonest.length);
-	    cntDishonest = newCntDishonest;
 	}
     }
 
