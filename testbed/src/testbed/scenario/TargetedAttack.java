@@ -48,7 +48,7 @@ public class TargetedAttack extends AbstractScenario {
     protected List<Integer> agents, neutral, attackers, targets,
 	    interactionPartners;
 
-    public static List<Integer> TARGETS = null;
+    public static List<Integer> allTargets = null;
 
     // capabilities
     protected Map<Integer, Double> capabilities;
@@ -156,7 +156,7 @@ public class TargetedAttack extends AbstractScenario {
 		neutral, targets, attackers);
 
 	// list addition
-	TARGETS = targets;
+	allTargets = targets;
 
 	// determine interaction partners
 	// could be any agent, except attacked ones
@@ -200,6 +200,42 @@ public class TargetedAttack extends AbstractScenario {
 		    else if (targetReporter & targetAgent)
 			models[reporter][agent] = TRUTHFUL;
 		    else if (targetReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && attackerAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && targetAgent)
+			models[reporter][agent] = COMPLEMENTARY;
+		    else
+			models[reporter][agent] = null;
+		}
+	    }
+	}
+    }
+
+    public void assignDeceptionModelsSybilHard(List<Integer> agents,
+	    List<Integer> neutral, List<Integer> attackers,
+	    List<Integer> targets, DeceptionModel[][] models) {
+	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent, targetReporter, targetAgent;
+
+	for (int reporter : agents) {
+	    for (int agent : agents) {
+		if (reporter != agent) {
+		    neutralReporter = neutral.contains(reporter);
+		    neutralAgent = neutral.contains(agent);
+		    attackerReporter = attackers.contains(reporter);
+		    attackerAgent = attackers.contains(agent);
+		    targetReporter = targets.contains(reporter);
+		    targetAgent = targets.contains(agent);
+
+		    if (neutralReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (neutralReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter && attackerAgent)
 			models[reporter][agent] = TRUTHFUL;
 		    else if (attackerReporter && attackerAgent)
 			models[reporter][agent] = TRUTHFUL;
@@ -561,5 +597,15 @@ public class TargetedAttack extends AbstractScenario {
     @Override
     public String toString() {
 	return "Targeted attack";
+    }
+
+    public static List<Integer> getTargets() {
+	if (allTargets == null) {
+	    throw new IllegalArgumentException(String.format(
+		    "Scenario %s was not initialized!",
+		    TargetedAttack.class.getCanonicalName()));
+	}
+
+	return allTargets;
     }
 }

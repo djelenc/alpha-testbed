@@ -20,7 +20,7 @@ public class KTAOfTargetedAgents extends AbstractMetric implements Accuracy {
 	    Map<Integer, Double> capabilities) {
 	int concordant = 0, discordant = 0;
 
-	final List<Integer> targets = TargetedAttack.TARGETS;
+	final List<Integer> targets = TargetedAttack.getTargets();
 	double n = 0;
 	
 	for (Entry<Integer, Double> cap1 : capabilities.entrySet()) {

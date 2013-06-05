@@ -145,24 +145,55 @@ public class QTM implements TrustModel<Omega> {
 
 	    // reputation of the selected agent
 	    final double[] reputation = new double[5];
+
 	    for (int witness = 0; witness < opinions.length; witness++) {
 		final QADOp o = opinions[witness][agent];
 
 		if (null != o) {
-		    // TODO: include time discounting
-		    // final double age = Math.exp(-TF *
-		    // (time - o.time));
-		    // final double weight = Math.sqrt(credibility[witness] *
-		    // age);
-		    final double weight = credibility[witness];
+		    if (credibility[witness] >= 1d) {
 
-		    if (weight >= 1d) {
-			// TODO: now implement Jacard index
-			final double freq = (opinions[agent][witness] == null ? 0.1
-				: 1d);
+			// compute connectedness
+			// number of mutual acquaintances
+			int mutual = 0;
 
-			reputation[o.itd.ordinal()] += freq;
+			// number of combined acquaintances
+			int combined = 0;
 
+			for (int i = 0; i < opinions.length; i++) {
+			    // skip mutual opinions
+			    if (i == agent || i == witness)
+				continue;
+
+			    final QADOp o1 = opinions[witness][i];
+			    final QADOp o2 = opinions[agent][i];
+
+			    if (o1 != null && o2 != null) {
+				// agent and witness know this agent
+				mutual += 1;
+				combined += 1;
+			    } else if ((o1 == null && o2 != null)
+				    || (o1 != null && o2 == null)) {
+				// only one of them knows it
+				combined += 1;
+			    } else if (o1 == null && o2 == null) {
+				// neither of them knows this agent
+			    } else {
+				// this should never execute
+				throw new Error("Unreachable code.");
+			    }
+			}
+
+			// TODO: increase connectedness if witness and agents
+			// both know each other
+			final double connectedness, recency, weight;
+			connectedness = (mutual + 0d) / combined;
+			recency = Math.exp(-TF * (time - o.time));
+			weight = Math.min(connectedness, recency);
+
+			reputation[o.itd.ordinal()] += weight;
+
+			// System.out.printf("(%d, %d) -> {%.2f, %.2f}\n",
+			// witness, agent, connectedness, weight);
 		    }
 		}
 	    }
