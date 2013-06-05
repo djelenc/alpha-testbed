@@ -19,7 +19,7 @@ public class TargetedAttackScenarioTest {
     public void setUp() {
 	scenario = new TargetedAttack();
 	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
-	scenario.initialize();
+	scenario.initialize(new Object[] { 100, 60, 20, 20, 0.1, 0.05 });
     }
 
     @Test

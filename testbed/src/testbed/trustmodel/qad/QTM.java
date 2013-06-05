@@ -146,57 +146,66 @@ public class QTM implements TrustModel<Omega> {
 	    // reputation of the selected agent
 	    final double[] reputation = new double[5];
 
+	    // XXX debuh
+	    // StringBuffer sb1 = new StringBuffer();
+
 	    for (int witness = 0; witness < opinions.length; witness++) {
 		final QADOp o = opinions[witness][agent];
 
 		if (null != o) {
-		    if (credibility[witness] >= 1d) {
+		    // if (credibility[witness] >= 1d) {
 
-			// compute connectedness
-			// number of mutual acquaintances
-			int mutual = 0;
+		    // CONNECTEDNESS
+		    // number of mutual acquaintances
+		    int mutual = 0;
 
-			// number of combined acquaintances
-			int combined = 0;
+		    // number of combined acquaintances
+		    int combined = 0;
 
-			for (int i = 0; i < opinions.length; i++) {
-			    // skip mutual opinions
-			    if (i == agent || i == witness)
-				continue;
+		    for (int i = 0; i < opinions.length; i++) {
+			// skip mutual opinions
+			if (i == agent || i == witness)
+			    continue;
 
-			    final QADOp o1 = opinions[witness][i];
-			    final QADOp o2 = opinions[agent][i];
+			final QADOp o1 = opinions[witness][i];
+			final QADOp o2 = opinions[agent][i];
 
-			    if (o1 != null && o2 != null) {
-				// agent and witness know this agent
-				mutual += 1;
-				combined += 1;
-			    } else if ((o1 == null && o2 != null)
-				    || (o1 != null && o2 == null)) {
-				// only one of them knows it
-				combined += 1;
-			    } else if (o1 == null && o2 == null) {
-				// neither of them knows this agent
-			    } else {
-				// this should never execute
-				throw new Error("Unreachable code.");
-			    }
+			if (o1 != null && o2 != null) {
+			    // agent and witness know this agent
+			    mutual += 1;
+			    combined += 1;
+			} else if ((o1 == null && o2 != null)
+				|| (o1 != null && o2 == null)) {
+			    // only one of them knows it
+			    combined += 1;
+			} else if (o1 == null && o2 == null) {
+			    // neither of them knows this agent
+			} else {
+			    // this should never execute
+			    throw new Error("Unreachable code.");
 			}
-
-			// TODO: increase connectedness if witness and agents
-			// both know each other
-			final double connectedness, recency, weight;
-			connectedness = (mutual + 0d) / combined;
-			recency = Math.exp(-TF * (time - o.time));
-			weight = Math.min(connectedness, recency);
-
-			reputation[o.itd.ordinal()] += weight;
-
-			// System.out.printf("(%d, %d) -> {%.2f, %.2f}\n",
-			// witness, agent, connectedness, weight);
 		    }
+
+		    // TODO: increase connectedness if witness and agents
+		    // both know each other
+		    final double connectedness, recency, weight;
+		    connectedness = (mutual + 0d) / combined;
+		    recency = Math.exp(-TF * (time - o.time));
+		    weight = Math.min(Math.min(connectedness, recency),
+			    credibility[witness]);
+
+		    reputation[o.itd.ordinal()] += weight;
+
+		    // sb1.append(String.format("(%d,%d)=%.2f (%d/%d), ",
+		    // witness, agent, weight, mutual, combined));
+
+		    // System.out.printf("(%d,%d)=%.2f,", witness, agent,
+		    // weight);
+		    // }
 		}
 	    }
+
+	    // System.out.println(sb1.toString());
 
 	    double[] normalizedExp = normalize(experiences);
 
@@ -226,15 +235,13 @@ public class QTM implements TrustModel<Omega> {
 	    }
 	}
 
-	/*
-	 * StringBuffer sb = new StringBuffer(); for (int i = 0; i <
-	 * cntHonest.length; i++) { sb.append(String.format("%d->%d, ", i,
-	 * Math.max(cntHonest[i] - cntDishonest[i], 1)));
-	 * 
-	 * }
-	 * 
-	 * System.out.println(sb.toString());
-	 */
+	StringBuffer sb = new StringBuffer();
+
+	for (int i = 0; i < credibility.length; i++) {
+	    sb.append(String.format("%d:%.2f | ", i, credibility[i]));
+	}
+
+	// System.out.println(sb.toString());
 
 	return trust;
     }

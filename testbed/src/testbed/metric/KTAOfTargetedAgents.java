@@ -21,8 +21,9 @@ public class KTAOfTargetedAgents extends AbstractMetric implements Accuracy {
 	int concordant = 0, discordant = 0;
 
 	final List<Integer> targets = TargetedAttack.getTargets();
+	final List<Integer> neutrals = TargetedAttack.getNeutrals();
 	double n = 0;
-	
+
 	for (Entry<Integer, Double> cap1 : capabilities.entrySet()) {
 	    for (Entry<Integer, Double> cap2 : capabilities.entrySet()) {
 		if (cap1.getKey() < cap2.getKey()) {
@@ -30,14 +31,17 @@ public class KTAOfTargetedAgents extends AbstractMetric implements Accuracy {
 		    final Double c2 = cap2.getValue();
 		    final T r1 = trust.get(cap1.getKey());
 		    final T r2 = trust.get(cap2.getKey());
+		    final Integer a1 = cap1.getKey();
+		    final Integer a2 = cap2.getKey();
 
-		    final boolean targeted = targets.contains(cap1.getKey())
-			    || targets.contains(cap2.getKey());
-		    
-		    if (targeted)
+		    final boolean shouldEvaluate = (targets.contains(a1) || targets
+			    .contains(a2))
+			    && (neutrals.contains(a1) || neutrals.contains(a2));
+
+		    if (shouldEvaluate)
 			n++;
-		    
-		    if (r1 != null && r2 != null && targeted) {
+
+		    if (r1 != null && r2 != null && shouldEvaluate) {
 			final int rankDiff = r1.compareTo(r2);
 			final int capDiff = c1.compareTo(c2);
 
