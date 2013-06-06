@@ -6,6 +6,7 @@ import java.util.Map;
 
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
+import testbed.scenario.TargetedAttack;
 
 /**
  * Trust model of Yu, Singh and Sycara
@@ -79,7 +80,7 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
 
     @Override
     public void calculateTrust() {
-	// weirdly empty.
+	// empty
     }
 
     public Map<Integer, Double> getTrust(int service) {
@@ -132,32 +133,26 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
 	    trust.put(agent, score);
 	}
 
-	/*
-	 * StringBuffer sb = new StringBuffer(); sb.append("credibility = {");
-	 * 
-	 * for (int i = 0; i < credibility.length; i++) {
-	 * sb.append(String.format("%d:%.7f, ", i, credibility[i])); }
-	 * sb.append("}");
-	 * 
-	 * System.out.println(sb.toString());
-	 */
+	// debug
 
-	/*
-	 * final List<Integer> neutrals = TargetedAttack.getNeutrals(); final
-	 * List<Integer> targets = TargetedAttack.getTargets();
-	 * 
-	 * double c_a = 0d, c_n = 0d, c_t = 0d;
-	 * 
-	 * for (Integer agent = 0; agent < credibility.length; agent++) { if
-	 * (neutrals.contains(agent)) c_n += c_n + credibility[agent]; else if
-	 * (targets.contains(agent)) c_t += c_t + credibility[agent]; else c_a
-	 * += c_a + credibility[agent]; }
-	 * 
-	 * final double sum = c_a + c_t + c_n;
-	 * 
-	 * System.out.printf("T = %.2f, A = %.2f, N = %.2f\n", c_t / sum, c_a /
-	 * sum, c_n / sum);
-	 */
+	final List<Integer> neutrals = TargetedAttack.getNeutrals();
+	final List<Integer> targets = TargetedAttack.getTargets();
+
+	double c_a = 0d, c_n = 0d, c_t = 0d;
+
+	for (Integer agent = 0; agent < credibility.length; agent++) {
+	    if (neutrals.contains(agent))
+		c_n += credibility[agent];
+	    else if (targets.contains(agent))
+		c_t += credibility[agent];
+	    else
+		c_a += credibility[agent];
+	}
+
+	final double sum = c_a + c_t + c_n;
+
+	System.out.printf("T = %.2f, A = %.2f, N = %.2f\n", c_t / sum, c_a
+		/ sum, c_n / sum);
 
 	return trust;
     }

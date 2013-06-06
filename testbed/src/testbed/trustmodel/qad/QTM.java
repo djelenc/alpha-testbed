@@ -9,11 +9,11 @@ import testbed.interfaces.Opinion;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
+import testbed.scenario.TargetedAttack;
 
 public class QTM implements TrustModel<Omega> {
 
     protected static final double LOWER_CRED = 0.01;
-    protected static final double FACTOR_CRED = 0.125;
     protected static final double TF = 0.1; // 0.01
 
     protected static final double[] P_T, P_PT, P_U, P_PD, P_D;
@@ -32,6 +32,8 @@ public class QTM implements TrustModel<Omega> {
 
     protected QADOp[][] opinions = null;
     protected double[] credibility = null;
+    protected double[] cntCorrect = null;
+    protected double[] cntWrong = null;
 
     protected int time;
 
@@ -41,6 +43,8 @@ public class QTM implements TrustModel<Omega> {
 	local = new LinkedHashMap<Integer, QADExp[]>();
 	opinions = new QADOp[0][0];
 	credibility = new double[0];
+	cntCorrect = new double[0];
+	cntWrong = new double[0];
     }
 
     @Override
@@ -82,12 +86,19 @@ public class QTM implements TrustModel<Omega> {
 		if (null != opinion) {
 		    final Omega actual = Omega.normalizedNumeric(e.outcome);
 		    final Omega told = opinion.itd;
-		    final int diff = Math
-			    .abs(actual.ordinal() - told.ordinal());
+
+		    final int diff;
+		    diff = Math.abs(actual.ordinal() - told.ordinal());
 
 		    // flag whether the opinion was correct
 		    // (when no opinion is given the this remains null)
 		    correct[reporter] = diff <= 1;
+
+		    if (correct[reporter]) {
+			cntCorrect[reporter] += 1;
+		    } else {
+			cntWrong[reporter] += 1;
+		    }
 
 		    // compute discount factor
 		    final double factor = (correct[reporter] ? 1d : 0.5);
@@ -125,6 +136,16 @@ public class QTM implements TrustModel<Omega> {
 
     @Override
     public Map<Integer, Omega> getTrust(int service) {
+	final List<Integer> _neutrals, _attackers, _targets;
+	_neutrals = TargetedAttack.getNeutrals();
+	_attackers = TargetedAttack.getAttackers();
+	_targets = TargetedAttack.getTargets();
+
+	// towards targets
+	double n_z = 0, n_cred = 0, n_credibility = 0, n_conect = 0;
+	double a_z = 0, a_cred = 0, a_credibility = 0, a_conect = 0;
+	double t_z = 0, t_cred = 0, t_credibility = 0, t_conect = 0;
+
 	final Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {
@@ -146,15 +167,10 @@ public class QTM implements TrustModel<Omega> {
 	    // reputation of the selected agent
 	    final double[] reputation = new double[5];
 
-	    // XXX debuh
-	    // StringBuffer sb1 = new StringBuffer();
-
 	    for (int witness = 0; witness < opinions.length; witness++) {
 		final QADOp o = opinions[witness][agent];
 
 		if (null != o) {
-		    // if (credibility[witness] >= 1d) {
-
 		    // CONNECTEDNESS
 		    // number of mutual acquaintances
 		    int mutual = 0;
@@ -186,26 +202,37 @@ public class QTM implements TrustModel<Omega> {
 			}
 		    }
 
-		    // TODO: increase connectedness if witness and agents
-		    // both know each other
-		    final double connectedness, recency, weight;
+		    // TODO: increase connectedness for mutual opinions
+		    final double connectedness, recency, weight, cred, z;
+
+		    // z = (cntCorrect[witness] + 1d)
+		    // / (cntCorrect[witness] + cntWrong[witness] + 2d);
+
+		    z = 1d / (1d + Math.exp(cntWrong[witness]
+			    - cntCorrect[witness]));
+
+		    cred = Math.sqrt(credibility[witness] * z);
+
 		    connectedness = (mutual + 0d) / combined;
+
 		    recency = Math.exp(-TF * (time - o.time));
-		    weight = Math.min(Math.min(connectedness, recency),
-			    credibility[witness]);
+
+		    weight = Math.min(Math.min(connectedness, recency), cred);
 
 		    reputation[o.itd.ordinal()] += weight;
 
-		    // sb1.append(String.format("(%d,%d)=%.2f (%d/%d), ",
-		    // witness, agent, weight, mutual, combined));
+		    // debug
+		    if (_targets.contains(agent)) {
+			if (_targets.contains(witness))
+			    t_conect += connectedness;
+			else if (_attackers.contains(witness))
+			    a_conect += connectedness;
+			else
+			    n_conect += connectedness;
+		    }
 
-		    // System.out.printf("(%d,%d)=%.2f,", witness, agent,
-		    // weight);
-		    // }
 		}
 	    }
-
-	    // System.out.println(sb1.toString());
 
 	    double[] normalizedExp = normalize(experiences);
 
@@ -235,53 +262,52 @@ public class QTM implements TrustModel<Omega> {
 	    }
 	}
 
-	StringBuffer sb = new StringBuffer();
-
+	// debug
 	for (int i = 0; i < credibility.length; i++) {
-	    sb.append(String.format("%d:%.2f | ", i, credibility[i]));
-	}
-
-	// System.out.println(sb.toString());
-
-	return trust;
-    }
-
-    /**
-     * Returns the variance from the frequencies. The variance is computed by
-     * returning the distance from the most similar stereotype.
-     * 
-     * @param freq
-     *            A vector of frequencies
-     * 
-     * @return Variance
-     */
-    public double variance(double[] freq) {
-	final double[] result = normalize(freq);
-
-	if (null == result)
-	    return 0d;
-
-	// make it cumulative
-	result[1] += result[0];
-	result[2] += result[1];
-	result[3] += result[2];
-	result[4] = 1d;
-
-	double[] distances = new double[] { distance(result, P_D),
-		distance(result, P_PD), distance(result, P_U),
-		distance(result, P_PT), distance(result, P_T) };
-
-	double minValue = Double.MAX_VALUE;
-
-	for (int i = 0; i < distances.length; i++) {
-	    final double dist = distances[i];
-
-	    if (dist <= minValue) {
-		minValue = dist;
+	    if (_targets.contains(i)) {
+		t_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
+		t_credibility += credibility[i];
+		t_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+			/ (cntCorrect[i] + cntWrong[i] + 2d));
+	    } else if (_attackers.contains(i)) {
+		a_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
+		a_credibility += credibility[i];
+		a_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+			/ (cntCorrect[i] + cntWrong[i] + 2d));
+	    } else {
+		n_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
+		n_credibility += credibility[i];
+		n_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+			/ (cntCorrect[i] + cntWrong[i] + 2d));
 	    }
 	}
 
-	return minValue;
+	t_z /= _targets.size();
+	t_credibility /= _targets.size();
+	t_cred /= _targets.size();
+	t_conect /= _targets.size() * (_targets.size() - 1);
+
+	a_z /= _attackers.size();
+	a_credibility /= _attackers.size();
+	a_cred /= _attackers.size();
+	a_conect /= _attackers.size() * _targets.size();
+
+	n_z /= _neutrals.size();
+	n_credibility /= _neutrals.size();
+	n_cred /= _neutrals.size();
+	n_conect /= _neutrals.size() * _targets.size();
+
+	System.out.printf("Z:\t\t\tN=%.4f, T=%.4f, A=%.4f\n", n_z, t_z, a_z);
+	System.out.printf("Credibility:\t\tN=%.4f, T=%.4f, A=%.4f\n",
+		n_credibility, t_credibility, a_credibility);
+	System.out.printf("Combined:\t\tN=%.4f, T=%.4f, A=%.4f\n", n_cred,
+		t_cred, a_cred);
+	System.out.printf("Connected(ToTargets):\tN=%.4f, T=%.4f, A=%.4f\n",
+		n_conect, t_conect, a_conect);
+
+	// /debug
+
+	return trust;
     }
 
     public double[] normalize(double[] freq) {
@@ -342,6 +368,11 @@ public class QTM implements TrustModel<Omega> {
     @Override
     public void setCurrentTime(int time) {
 	this.time = time;
+
+	for (int i = 0; i < cntCorrect.length; i++) {
+	    cntCorrect[i] *= Math.exp(-TF);
+	    cntWrong[i] *= Math.exp(-TF);
+	}
     }
 
     /**
@@ -384,6 +415,15 @@ public class QTM implements TrustModel<Omega> {
 
 	    System.arraycopy(credibility, 0, newWeights, 0, credibility.length);
 	    credibility = newWeights;
+
+	    // correct / wrong
+	    final double[] newCntCorrect = new double[max + 1];
+	    System.arraycopy(cntCorrect, 0, newCntCorrect, 0, cntCorrect.length);
+	    cntCorrect = newCntCorrect;
+
+	    final double[] newCntWrong = new double[max + 1];
+	    System.arraycopy(cntWrong, 0, newCntWrong, 0, cntWrong.length);
+	    cntWrong = newCntWrong;
 	}
     }
 
