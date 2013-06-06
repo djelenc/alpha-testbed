@@ -22,6 +22,8 @@ import testbed.interfaces.ParametersPanel;
  */
 public class TargetedAttack extends AbstractScenario {
 
+    private static final String TOO_MANY_IP = "Too many interaction partners. Should be at most %d, but was %d.";
+
     protected static final String UNKNOWN_DM = "Cannot determine deception model for reporter "
 	    + "%d (c=%.2f) and agent %d (c=%.2f). "
 	    + "Flags: neutralReporter(%s), neutralAgent(%s), "
@@ -50,6 +52,7 @@ public class TargetedAttack extends AbstractScenario {
 
     protected static List<Integer> allTargets = null;
     protected static List<Integer> allNeutrals = null;
+    protected static List<Integer> allAttackers = null;
 
     // capabilities
     protected Map<Integer, Double> capabilities;
@@ -158,25 +161,80 @@ public class TargetedAttack extends AbstractScenario {
 	// list addition
 	allTargets = targets;
 	allNeutrals = neutrals;
+	allAttackers = attackers;
 
 	// determine interaction partners
-	// could be any agent, except attacked ones
-	interactionPartners = new ArrayList<Integer>();
-
-	for (int i = 0; i < numPartners; i++) {
-	    int agent;
-
-	    do {
-		final int index = generator.nextIntFromTo(0, agents.size() - 1);
-		agent = agents.get(index);
-	    } while (targets.contains(agent)
-		    || interactionPartners.contains(agent));
-
-	    interactionPartners.add(agent);
-	}
+	interactionPartners = determineInteractionPartners(numPartners,
+		neutrals, attackers);
 
 	// reset time
 	time = 0;
+    }
+
+    public List<Integer> determineInteractionPartnersBalanced(int numPartners,
+	    List<Integer> neutrals, List<Integer> attackers) {
+	if (numPartners > neutrals.size() + attackers.size())
+	    throw new IllegalArgumentException(String.format(TOO_MANY_IP,
+		    neutrals.size() + attackers.size(), numPartners));
+
+	final List<Integer> allNeutrals = new ArrayList<Integer>();
+	allNeutrals.addAll(neutrals);
+	final List<Integer> allAttackers = new ArrayList<Integer>();
+	allAttackers.addAll(attackers);
+
+	final List<Integer> selected = new ArrayList<Integer>();
+
+	for (int i = 0; i < numPartners; i++) {
+	    final int agent, rndIdx;
+
+	    if (!allNeutrals.isEmpty()) {
+		rndIdx = generator.nextIntFromTo(0, allNeutrals.size() - 1);
+		agent = allNeutrals.remove(rndIdx);
+	    } else if (!allAttackers.isEmpty()) {
+		rndIdx = generator.nextIntFromTo(0, allAttackers.size() - 1);
+		agent = allAttackers.remove(rndIdx);
+	    } else {
+		throw new Error("Unreachable code");
+	    }
+
+	    selected.add(agent);
+	}
+
+	return selected;
+    }
+
+    /**
+     * Returns a List of interaction partners that are randomly chosen from the
+     * given lists of neutrals and attackers.
+     * 
+     * @param numPartners
+     *            Number of interaction partners to choose.
+     * @param neutrals
+     *            List of neutral agents
+     * @param attackers
+     *            List of attacking agents
+     * @return List of selected interaction partners
+     */
+    public List<Integer> determineInteractionPartners(int numPartners,
+	    List<Integer> neutrals, List<Integer> attackers) {
+	final List<Integer> potential = new ArrayList<Integer>();
+	potential.addAll(neutrals);
+	potential.addAll(attackers);
+
+	if (numPartners > potential.size())
+	    throw new IllegalArgumentException(String.format(TOO_MANY_IP,
+		    potential.size(), numPartners));
+
+	final List<Integer> selected = new ArrayList<Integer>();
+
+	for (int i = 0; i < numPartners; i++) {
+	    final int max = potential.size() - 1;
+	    final int agent = potential.remove(generator.nextIntFromTo(0, max));
+
+	    selected.add(agent);
+	}
+
+	return selected;
     }
 
     /**
@@ -471,6 +529,16 @@ public class TargetedAttack extends AbstractScenario {
 	}
 
 	return allNeutrals;
+    }
+
+    public static List<Integer> getAttackers() {
+	if (allTargets == null) {
+	    throw new IllegalArgumentException(String.format(
+		    "Scenario %s was not initialized!",
+		    TargetedAttack.class.getCanonicalName()));
+	}
+
+	return allAttackers;
     }
 
     /**

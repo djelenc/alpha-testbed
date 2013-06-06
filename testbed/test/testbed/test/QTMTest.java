@@ -7,7 +7,6 @@ import static testbed.trustmodel.qad.Omega.T;
 import static testbed.trustmodel.qad.Omega.U;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,47 +31,6 @@ public class QTMTest {
     public void testQualitativeAverage() {
 	double[] freq = new double[] { 0, 0.1, 0.2, 0.3, 0.4 };
 	Assert.assertEquals(Omega.PT, tm.qualtitativeAverage(freq));
-    }
-
-    @Test
-    public void testVariance() {
-	// TODO: Find Entropy for ORDINAL DATA
-
-	double[] freq;
-	freq = new double[] { 0, 0.1, 0.2, 0.3, 0.4 };
-	System.out.printf("H(%s) = %.4f\n", Arrays.toString(freq),
-		tm.variance(freq));
-	// Assert.assertEquals(0.43478, tm.variance(freq), 0.001);
-
-	freq = new double[] { 0, 0, 0.5, 0.5, 0 };
-	// Assert.assertEquals(0.6, tm.variance(freq), 0.001);
-	System.out.printf("H(%s) = %.4f\n", Arrays.toString(freq),
-		tm.variance(freq));
-
-	freq = new double[] { 0.5, 0, 0, 0, 0.5 };
-	// Assert.assertEquals(1d, tm.variance(freq), 0.001);
-	System.out.printf("H(%s) = %.4f\n", Arrays.toString(freq),
-		tm.variance(freq));
-
-	freq = new double[] { 0.2, 0.2, 0.2, 0.2, 0.2 };
-	// Assert.assertEquals(1d, tm.variance(freq), 0.001);
-	System.out.printf("H(%s) = %.4f\n", Arrays.toString(freq),
-		tm.variance(freq));
-
-	freq = new double[] { 0, 0, 1, 0, 0 };
-	// Assert.assertEquals(1d, tm.variance(freq), 0.001);
-	System.out.printf("H(%s) = %.4f\n", Arrays.toString(freq),
-		tm.variance(freq));
-	
-	freq = new double[] { 0, 0, 0.9, 0.1, 0 };
-	// Assert.assertEquals(1d, tm.variance(freq), 0.001);
-	System.out.printf("H(%s) = %.4f\n", Arrays.toString(freq),
-		tm.variance(freq));
-	
-	freq = new double[] { 0, 0, 0.5, 0.01, 0.49 };
-	// Assert.assertEquals(1d, tm.variance(freq), 0.001);
-	System.out.printf("H(%s) = %.4f\n", Arrays.toString(freq),
-		tm.variance(freq));
     }
 
     @Test

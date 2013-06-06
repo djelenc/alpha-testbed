@@ -36,7 +36,8 @@ public class KTAOfTargetedAgents extends AbstractMetric implements Accuracy {
 
 		    final boolean shouldEvaluate = (targets.contains(a1) || targets
 			    .contains(a2))
-			    && (neutrals.contains(a1) || neutrals.contains(a2));
+			    && (neutrals.contains(a1) || neutrals.contains(a2))
+			    && !(neutrals.contains(a1) && neutrals.contains(a2));
 
 		    if (shouldEvaluate)
 			n++;
