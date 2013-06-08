@@ -8,8 +8,10 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import testbed.common.DefaultRandomGenerator;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
+import testbed.trustmodel.BRSPair;
 import testbed.trustmodel.Travos;
 
 public class TravosTMTest {
@@ -18,7 +20,8 @@ public class TravosTMTest {
     @Before
     public void setUp() {
 	tm = new Travos();
-	tm.initialize(1d, 1d, 0.95, 0.2);
+	tm.setRandomGenerator(new DefaultRandomGenerator(0));
+	tm.initialize(0.5, 10, 0.1, 0.95, 0.2);
     }
 
     @Test
@@ -52,12 +55,9 @@ public class TravosTMTest {
 
     @Test
     public void walkthroughScenario() {
+	// a walk-through scenario from Teacy's thesis
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
-	Travos.OP_FACTOR = 1;
-
-	experiences.clear();
-	opinions.clear();
 
 	for (int i = 0; i < 22; i++)
 	    experiences.add(new Experience(2, 0, 0, (i < 17 ? 1 : 0)));
@@ -77,9 +77,10 @@ public class TravosTMTest {
 	for (int i = 0; i < 29; i++)
 	    experiences.add(new Experience(7, 0, 0, (i < 18 ? 1 : 0)));
 
-	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
+	tm.processExperiences(experiences);
 	tm.calculateTrust();
+
 	Map<Integer, Double> trust = tm.getTrust(0);
 
 	Assert.assertEquals(0.7500, trust.get(2), 0.001);
@@ -92,9 +93,18 @@ public class TravosTMTest {
 	experiences.clear();
 	opinions.clear();
 
-	opinions.add(new Opinion(8, 6, 0, 0, 15 / 61d));
-	opinions.add(new Opinion(9, 6, 0, 0, 4 / 5d));
-	opinions.add(new Opinion(10, 6, 0, 0, 1d));
+	// just to expand supporting arrays
+	experiences.add(new Experience(10, 0, 0, 1.00));
+	opinions.add(new Opinion(11, 11, 0, 0, 0.5));
+
+	// manually set opinions
+	tm.opinions = new BRSPair[11][11];
+	tm.opinions[8][6] = new BRSPair(15, 46);
+	tm.opinions[9][6] = new BRSPair(4, 1);
+	tm.opinions[10][6] = new BRSPair(3, 0);
+
+	// delete experience with agent 6
+	tm.experiences.remove(6);
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
@@ -107,6 +117,6 @@ public class TravosTMTest {
 	tm.observations.get(10)[3].R = 18;
 	tm.observations.get(10)[3].S = 8;
 
-	Assert.assertEquals(0.8349, tm.getTrust(0).get(6), 0.001);
+	Assert.assertEquals(0.7419, tm.getTrust(0).get(6), 0.001);
     }
 }

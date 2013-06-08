@@ -6,6 +6,6 @@ testbed.scenario.RandomWithNewcomers
 testbed.scenario.RandomInteractionPartnerSelection
 testbed.scenario.Oscillation
 testbed.scenario.Transitive
+testbed.scenario.TransitiveWithChanges
 testbed.scenario.TransitiveInteractionPartnerSelection
 testbed.scenario.TransitiveOpinionProviderSelection
-testbed.scenario.TransitiveWithChanges

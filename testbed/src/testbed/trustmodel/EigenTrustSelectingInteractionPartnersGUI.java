@@ -27,7 +27,10 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
-	c.gridy = 5;
+
+	int offset = panel.getComponentCount() / 2 + 1;
+
+	c.gridy = ++offset;
 	panel.add(lbl, c);
 	selectionProcedure = new JComboBox();
 	selectionProcedure.addItem("Deterministic ");
@@ -41,7 +44,7 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	});
 
 	c.gridx = 1;
-	c.gridy = 5;
+	c.gridy = offset;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
 	panel.add(selectionProcedure, c);
@@ -50,7 +53,7 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
-	c.gridy = 6;
+	c.gridy = ++offset;
 	panel.add(zeroThresholdLabel, c);
 	zeroThreshold = new JSpinner(new SpinnerNumberModel(0.1, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) zeroThreshold.getEditor()).getTextField()
@@ -58,7 +61,7 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	zeroThreshold
 		.setToolTipText("Probability with which a peer with trust value 0 is selected.");
 	c.gridx = 1;
-	c.gridy = 6;
+	c.gridy = offset;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
 	zeroThreshold.setEnabled(isProbabilistic());

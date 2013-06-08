@@ -59,8 +59,10 @@ public class EigenTrustSelectingInteractionPartners extends EigenTrust
     public void initialize(Object... params) {
 	super.initialize(params);
 	selector = new PartnerSelectionTemplates(generator);
-	probSelection = Utils.extractParameter(VAL_PROCEDURE, 3, params);
-	zeroThreshold = Utils.extractParameter(VAL_THRESHOLD, 4, params);
+	probSelection = Utils.extractParameter(VAL_PROCEDURE,
+		params.length - 2, params);
+	zeroThreshold = Utils.extractParameter(VAL_THRESHOLD,
+		params.length - 1, params);
     }
 
     @Override

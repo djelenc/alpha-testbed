@@ -103,6 +103,10 @@ public class DecisionsModeA extends NoDecisions {
 
     @Override
     protected void evaluationlStep(int time) {
+	// convey current time
+	tm.setCurrentTime(time);
+	scn.setCurrentTime(time);
+
 	// get opinions
 	final List<Opinion> opinions = scn.generateOpinions();
 

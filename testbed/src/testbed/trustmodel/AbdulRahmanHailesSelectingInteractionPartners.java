@@ -43,13 +43,15 @@ public class AbdulRahmanHailesSelectingInteractionPartners extends
 
 	for (int service : services) {
 	    final Map<Integer, TD> computedTrust = getTrust(service);
+	    // final Integer best = selector.maximal(computedTrust);
+
 	    final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	    for (int agent : computedTrust.keySet()) {
 		trust.put(agent, computedTrust.get(agent).numeric);
 	    }
 
-	    final Integer best = selector.probabilisticAndPowered(trust, 1d);
+	    final Integer best = selector.probabilistic(trust);
 
 	    // This happens only in the first tick, where no experiences exist
 	    if (null == best) {
