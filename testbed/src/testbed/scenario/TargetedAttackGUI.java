@@ -9,6 +9,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.Observer;
 
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -25,6 +26,7 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
 
     protected JSpinner numOfAgents, numOfTargets, numOfAttackers,
 	    numOfPartners, sdExperiences, sdOpinions;
+    protected JComboBox strategy;
 
     protected Observer observer;
 
@@ -69,7 +71,7 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
     public Object[] getParameters() {
 	return new Object[] { getNumberOfAgents(), getNumberOfAttackers(),
 		getNumberOfTargets(), getNumberOfPartners(),
-		getSdExperiences(), getSdOpinions() };
+		getSdExperiences(), getSdOpinions(), getStrategy() };
     }
 
     protected int getNumberOfTargets() {
@@ -94,6 +96,10 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
 
     protected double getSdOpinions() {
 	return Double.parseDouble(String.valueOf(sdOpinions.getValue()));
+    }
+
+    protected TargetedAttackStrategy getStrategy() {
+	return (TargetedAttackStrategy) strategy.getSelectedItem();
     }
 
     /**
@@ -236,6 +242,27 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
 	panel.add(sdOpinions, c);
+
+	// Strategy
+	lbl = new JLabel("Strategy:  ");
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	c.gridx = 0;
+	c.gridy = i;
+	panel.add(lbl, c);
+	strategy = new JComboBox();
+
+	for (TargetedAttackStrategy s : TargetedAttackStrategy.values())
+	    strategy.addItem(s);
+
+	strategy.setToolTipText("In LEVEL 1 attackers lie about targets; "
+		+ "in LEVEL 2 attackers additionally give honest opinions about other attackers; "
+		+ "in LEVEL 3 also targets give honest opinions about attackers.");
+	c.gridx = 1;
+	c.gridy = i++;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_START;
+	panel.add(strategy, c);
 
 	return panel;
     }

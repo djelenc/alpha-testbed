@@ -32,6 +32,7 @@ public class TargetedAttack extends AbstractScenario {
 
     protected static final ParameterCondition<Integer> VAL_SIZE;
     protected static final ParameterCondition<Double> VAL_SD, VAL_DENS;
+    protected static final ParameterCondition<TargetedAttackStrategy> VAL_STRATEGY;
 
     // set of services -- only 1 service
     protected static final List<Integer> SERVICES = new ArrayList<Integer>();
@@ -65,6 +66,9 @@ public class TargetedAttack extends AbstractScenario {
 
     // standard deviations for generating interaction and opinions
     protected double sd_i, sd_o;
+
+    // strategy
+    protected TargetedAttackStrategy strategy;
 
     static {
 	SERVICES.add(0);
@@ -103,6 +107,13 @@ public class TargetedAttack extends AbstractScenario {
 				    var));
 	    }
 	};
+
+	VAL_STRATEGY = new ParameterCondition<TargetedAttackStrategy>() {
+	    @Override
+	    public void eval(TargetedAttackStrategy var) {
+
+	    }
+	};
     }
 
     @Override
@@ -114,6 +125,7 @@ public class TargetedAttack extends AbstractScenario {
 	numPartners = Utils.extractParameter(VAL_SIZE, 3, parameters);
 	sd_i = Utils.extractParameter(VAL_SD, 4, parameters);
 	sd_o = Utils.extractParameter(VAL_SD, 5, parameters);
+	strategy = Utils.extractParameter(VAL_STRATEGY, 6, parameters);
 
 	if (numAttackers >= numAgents || numPartners > numAgents - numTargets) {
 	    throw new IllegalArgumentException(String.format(INVALID_PARAMS,
@@ -156,7 +168,21 @@ public class TargetedAttack extends AbstractScenario {
 
 	// assign deception models
 	models = new DeceptionModel[agents.size()][agents.size()];
-	assignDeceptionModelsSybil(agents, neutrals, attackers, targets, models);
+
+	switch (strategy) {
+	case LEVEL_1:
+	    assignDeceptionModelsSybilEasy(agents, neutrals, attackers,
+		    targets, models);
+	    break;
+	case LEVEL_2:
+	    assignDeceptionModelsSybil(agents, neutrals, attackers, targets,
+		    models);
+	    break;
+	default:
+	    assignDeceptionModelsSybilHard(agents, neutrals, attackers,
+		    targets, models);
+	    break;
+	}
 
 	// list addition
 	allTargets = targets;

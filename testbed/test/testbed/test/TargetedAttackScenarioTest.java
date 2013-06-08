@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import testbed.common.DefaultRandomGenerator;
 import testbed.scenario.TargetedAttack;
+import testbed.scenario.TargetedAttackStrategy;
 
 public class TargetedAttackScenarioTest {
 
@@ -21,7 +22,8 @@ public class TargetedAttackScenarioTest {
     public void setUp() {
 	scenario = new TargetedAttack();
 	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
-	scenario.initialize(new Object[] { 100, 60, 20, 20, 0.1, 0.05 });
+	scenario.initialize(new Object[] { 100, 60, 20, 20, 0.1, 0.05,
+		TargetedAttackStrategy.LEVEL_1 });
     }
 
     @Test
@@ -44,7 +46,8 @@ public class TargetedAttackScenarioTest {
     @Test
     public void determineInteractionPartners() {
 	final int numPartners = 80;
-	scenario.initialize(new Object[] { 100, 60, 20, numPartners, 0.1, 0.05 });
+	scenario.initialize(new Object[] { 100, 60, 20, numPartners, 0.1, 0.05,
+		TargetedAttackStrategy.LEVEL_1 });
 
 	final Set<Integer> targets = new HashSet<Integer>();
 	final Set<Integer> neutrals = new HashSet<Integer>();
@@ -77,7 +80,8 @@ public class TargetedAttackScenarioTest {
     @Test
     public void determineInteractionPartnersBalanced() {
 	final int numPartners = 5;
-	scenario.initialize(new Object[] { 10, 6, 2, numPartners, 0.1, 0.05 });
+	scenario.initialize(new Object[] { 10, 6, 2, numPartners, 0.1, 0.05,
+		TargetedAttackStrategy.LEVEL_1 });
 
 	final Set<Integer> targets = new HashSet<Integer>();
 	final Set<Integer> neutrals = new HashSet<Integer>();
