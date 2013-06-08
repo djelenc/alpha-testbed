@@ -9,7 +9,6 @@ import testbed.interfaces.Opinion;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
-import testbed.scenario.TargetedAttack;
 
 public class QTM implements TrustModel<Omega> {
 
@@ -136,15 +135,16 @@ public class QTM implements TrustModel<Omega> {
 
     @Override
     public Map<Integer, Omega> getTrust(int service) {
-	final List<Integer> _neutrals, _attackers, _targets;
-	_neutrals = TargetedAttack.getNeutrals();
-	_attackers = TargetedAttack.getAttackers();
-	_targets = TargetedAttack.getTargets();
-
-	// towards targets
-	double n_z = 0, n_cred = 0, n_credibility = 0, n_conect = 0;
-	double a_z = 0, a_cred = 0, a_credibility = 0, a_conect = 0;
-	double t_z = 0, t_cred = 0, t_credibility = 0, t_conect = 0;
+	// final List<Integer> _neutrals, _attackers, _targets;
+	// _neutrals = TargetedAttack.getNeutrals();
+	// _attackers = TargetedAttack.getAttackers();
+	// _targets = TargetedAttack.getTargets();
+	//
+	// // towards targets
+	// double n_z = 0, n_cred = 0, n_credibility = 0, n_conect = 0;
+	// double a_z = 0, a_cred = 0, a_credibility = 0, a_conect = 0;
+	// double t_z = 0, t_cred = 0, t_credibility = 0, t_conect = 0;
+	// int n_cnt = 0, a_cnt = 0, t_cnt = 0;
 
 	final Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
 
@@ -221,15 +221,19 @@ public class QTM implements TrustModel<Omega> {
 
 		    reputation[o.itd.ordinal()] += weight;
 
-		    // debug
-		    if (_targets.contains(agent)) {
-			if (_targets.contains(witness))
-			    t_conect += connectedness;
-			else if (_attackers.contains(witness))
-			    a_conect += connectedness;
-			else
-			    n_conect += connectedness;
-		    }
+		    // // debug
+		    // if (_targets.contains(agent)) {
+		    // if (_targets.contains(witness)) {
+		    // t_conect += connectedness;
+		    // t_cnt++;
+		    // } else if (_attackers.contains(witness)) {
+		    // a_conect += connectedness;
+		    // a_cnt++;
+		    // } else {
+		    // n_conect += connectedness;
+		    // n_cnt++;
+		    // }
+		    // }
 
 		}
 	    }
@@ -263,49 +267,88 @@ public class QTM implements TrustModel<Omega> {
 	}
 
 	// debug
-	for (int i = 0; i < credibility.length; i++) {
-	    if (_targets.contains(i)) {
-		t_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
-		t_credibility += credibility[i];
-		t_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
-			/ (cntCorrect[i] + cntWrong[i] + 2d));
-	    } else if (_attackers.contains(i)) {
-		a_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
-		a_credibility += credibility[i];
-		a_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
-			/ (cntCorrect[i] + cntWrong[i] + 2d));
-	    } else {
-		n_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
-		n_credibility += credibility[i];
-		n_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
-			/ (cntCorrect[i] + cntWrong[i] + 2d));
-	    }
-	}
-
-	t_z /= _targets.size();
-	t_credibility /= _targets.size();
-	t_cred /= _targets.size();
-	t_conect /= _targets.size() * (_targets.size() - 1);
-
-	a_z /= _attackers.size();
-	a_credibility /= _attackers.size();
-	a_cred /= _attackers.size();
-	a_conect /= _attackers.size() * _targets.size();
-
-	n_z /= _neutrals.size();
-	n_credibility /= _neutrals.size();
-	n_cred /= _neutrals.size();
-	n_conect /= _neutrals.size() * _targets.size();
-
-	System.out.printf("Z:\t\t\tN=%.4f, T=%.4f, A=%.4f\n", n_z, t_z, a_z);
-	System.out.printf("Credibility:\t\tN=%.4f, T=%.4f, A=%.4f\n",
-		n_credibility, t_credibility, a_credibility);
-	System.out.printf("Combined:\t\tN=%.4f, T=%.4f, A=%.4f\n", n_cred,
-		t_cred, a_cred);
-	System.out.printf("Connected(ToTargets):\tN=%.4f, T=%.4f, A=%.4f\n",
-		n_conect, t_conect, a_conect);
-
-	// /debug
+	// for (int i = 0; i < credibility.length; i++) {
+	// if (_targets.contains(i)) {
+	// t_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
+	// t_credibility += credibility[i];
+	// t_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+	// / (cntCorrect[i] + cntWrong[i] + 2d));
+	// } else if (_attackers.contains(i)) {
+	// a_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
+	// a_credibility += credibility[i];
+	// a_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+	// / (cntCorrect[i] + cntWrong[i] + 2d));
+	// } else {
+	// n_z += for (int i = 0; i < credibility.length; i++) {
+	// if (_targets.contains(i)) {
+	// t_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
+	// t_credibility += credibility[i];
+	// t_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+	// / (cntCorrect[i] + cntWrong[i] + 2d));
+	// } else if (_attackers.contains(i)) {
+	// a_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
+	// a_credibility += credibility[i];
+	// a_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+	// / (cntCorrect[i] + cntWrong[i] + 2d));
+	// } else {
+	// n_z += 1d / (1d + Math.exp(cntWrong[i] - cntCorrect[i]));
+	// n_credibility += credibility[i];
+	// n_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+	// / (cntCorrect[i] + cntWrong[i] + 2d));
+	// }
+	// }
+	//
+	// t_z /= _targets.size();
+	// t_credibility /= _targets.size();
+	// t_cred /= _targets.size();
+	// t_conect /= t_cnt;
+	//
+	// a_z /= _attackers.size();
+	// a_credibility /= _attackers.size();
+	// a_cred /= _attackers.size();
+	// a_conect /= a_cnt;
+	//
+	// n_z /= _neutrals.size();
+	// n_credibility /= _neutrals.size();
+	// n_cred /= _neutrals.size();
+	// n_conect /= n_cnt;
+	//
+	// System.out.printf("Z:\t\t\tN=%.4f, T=%.4f, A=%.4f\n", n_z, t_z, a_z);
+	// System.out.printf("Credibility:\t\tN=%.4f, T=%.4f, A=%.4f\n",
+	// n_credibility, t_credibility, a_credibility);
+	// System.out.printf("Combined:\t\tN=%.4f, T=%.4f, A=%.4f\n", n_cred,
+	// t_cred, a_cred);
+	// System.out.printf("Connected(ToTargets):\tN=%.4f, T=%.4f, A=%.4f\n",
+	// n_conect, t_conect, a_conect); 1d / (1d + Math.exp(cntWrong[i] -
+	// cntCorrect[i]));
+	// n_credibility += credibility[i];
+	// n_cred += Math.sqrt(credibility[i] * (cntCorrect[i] + 1d)
+	// / (cntCorrect[i] + cntWrong[i] + 2d));
+	// }
+	// }
+	//
+	// t_z /= _targets.size();
+	// t_credibility /= _targets.size();
+	// t_cred /= _targets.size();
+	// t_conect /= t_cnt;
+	//
+	// a_z /= _attackers.size();
+	// a_credibility /= _attackers.size();
+	// a_cred /= _attackers.size();
+	// a_conect /= a_cnt;
+	//
+	// n_z /= _neutrals.size();
+	// n_credibility /= _neutrals.size();
+	// n_cred /= _neutrals.size();
+	// n_conect /= n_cnt;
+	//
+	// System.out.printf("Z:\t\t\tN=%.4f, T=%.4f, A=%.4f\n", n_z, t_z, a_z);
+	// System.out.printf("Credibility:\t\tN=%.4f, T=%.4f, A=%.4f\n",
+	// n_credibility, t_credibility, a_credibility);
+	// System.out.printf("Combined:\t\tN=%.4f, T=%.4f, A=%.4f\n", n_cred,
+	// t_cred, a_cred);
+	// System.out.printf("Connected(ToTargets):\tN=%.4f, T=%.4f, A=%.4f\n",
+	// n_conect, t_conect, a_conect);
 
 	return trust;
     }
