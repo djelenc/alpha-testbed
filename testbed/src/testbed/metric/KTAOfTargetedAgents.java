@@ -8,7 +8,19 @@ import testbed.interfaces.Accuracy;
 import testbed.scenario.TargetedAttack;
 
 /**
- * Kendall's Tau-a metric
+ * Evaluates trust in {@link TargetedAttack} scenario.
+ * 
+ * <p>
+ * It derives from Kendall's Tau-A, except that -- when evaluating pairs of
+ * comparisons -- it skips pairs when one of the agents is the attacker or when
+ * both of agents are neutrals. Therefore this method will throw an
+ * {@link IllegalArgumentException} if not used on the {@link TargetedAttack}
+ * scenario.
+ * 
+ * <p>
+ * The reasoning for skipping those pairs is to narrow the measurement of trust
+ * only on the attacked agents; attackers and neutrals are not attacked at all,
+ * but comparing attacked agents with neutrals is relevant.
  * 
  * @author David
  * 
@@ -20,7 +32,7 @@ public class KTAOfTargetedAgents extends AbstractMetric implements Accuracy {
 	    Map<Integer, Double> capabilities) {
 	int concordant = 0, discordant = 0;
 
-	final List<Integer> targets = TargetedAttack.getTargets();
+	final List<Integer> attackers = TargetedAttack.getAttackers();
 	final List<Integer> neutrals = TargetedAttack.getNeutrals();
 	double n = 0;
 
@@ -34,15 +46,13 @@ public class KTAOfTargetedAgents extends AbstractMetric implements Accuracy {
 		    final Integer a1 = cap1.getKey();
 		    final Integer a2 = cap2.getKey();
 
-		    final boolean shouldEvaluate = (targets.contains(a1) || targets
-			    .contains(a2))
-			    && (neutrals.contains(a1) || neutrals.contains(a2))
-			    && !(neutrals.contains(a1) && neutrals.contains(a2));
+		    if (attackers.contains(a1) || attackers.contains(a2)
+			    || (neutrals.contains(a1) && neutrals.contains(a2)))
+			continue;
 
-		    if (shouldEvaluate)
-			n++;
+		    n++;
 
-		    if (r1 != null && r2 != null && shouldEvaluate) {
+		    if (r1 != null && r2 != null) {
 			final int rankDiff = r1.compareTo(r2);
 			final int capDiff = c1.compareTo(c2);
 
