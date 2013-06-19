@@ -192,18 +192,20 @@ public class QTM implements TrustModel<Omega> {
 		    }
 
 		    // TODO: increase connectedness for mutual opinions
-		    final double connectedness, recency, weight, cred, z;
+		    final double connectedness, recency, weight, providerTrustworthiness, pastAccuracy;
 
-		    z = 1d / (1d + Math.exp(cntWrong[witness]
+		    pastAccuracy = 1d / (1d + Math.exp(cntWrong[witness]
 			    - cntCorrect[witness]));
 
-		    cred = Math.sqrt(credibility[witness] * z);
+		    providerTrustworthiness = Math.sqrt(credibility[witness]
+			    * pastAccuracy);
 
 		    connectedness = (mutual + 0d) / combined;
 
 		    recency = Math.exp(-TF * (time - o.time));
 
-		    weight = Math.min(Math.min(connectedness, recency), cred);
+		    weight = Math.min(Math.min(connectedness, recency),
+			    providerTrustworthiness);
 
 		    reputation[o.itd.ordinal()] += weight;
 		}
