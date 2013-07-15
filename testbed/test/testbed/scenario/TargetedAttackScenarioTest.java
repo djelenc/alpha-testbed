@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.scenario;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.common;
 
 import java.util.HashSet;
 import java.util.Map;

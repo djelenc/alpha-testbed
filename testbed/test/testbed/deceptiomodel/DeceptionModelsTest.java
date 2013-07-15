@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.deceptiomodel;
 
 import org.junit.Assert;
 import org.junit.Test;

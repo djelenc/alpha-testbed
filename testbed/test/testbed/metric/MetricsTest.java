@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.metric;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

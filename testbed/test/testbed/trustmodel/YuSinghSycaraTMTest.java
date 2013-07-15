@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.trustmodel;
 
 import java.util.ArrayList;
 

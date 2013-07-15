@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.core;
 
 import java.util.HashMap;
 import java.util.Map;
