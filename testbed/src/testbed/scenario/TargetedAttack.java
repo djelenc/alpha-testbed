@@ -5,11 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import testbed.common.Utils;
 import testbed.deceptionmodel.Complementary;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
+import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 
 /**
@@ -20,6 +22,18 @@ import testbed.interfaces.ParametersPanel;
  */
 public class TargetedAttack extends AbstractScenario {
 
+    private static final String TOO_MANY_IP = "Too many interaction partners. Should be at most %d, but was %d.";
+
+    protected static final String UNKNOWN_DM = "Cannot determine deception model for reporter "
+	    + "%d (c=%.2f) and agent %d (c=%.2f). "
+	    + "Flags: neutralReporter(%s), neutralAgent(%s), "
+	    + "attackerReporter(%s), attackerAgent(%s), "
+	    + "targetReporter(%s), targetAgent(%s).";
+
+    protected static final ParameterCondition<Integer> VAL_SIZE;
+    protected static final ParameterCondition<Double> VAL_SD, VAL_DENS;
+    protected static final ParameterCondition<TargetedAttackStrategy> VAL_STRATEGY;
+
     // set of services -- only 1 service
     protected static final List<Integer> SERVICES = new ArrayList<Integer>();
 
@@ -27,12 +41,19 @@ public class TargetedAttack extends AbstractScenario {
     protected static final DeceptionModel TRUTHFUL = new Truthful();
     protected static final DeceptionModel COMPLEMENTARY = new Complementary();
 
+    protected static final String INVALID_PARAMS = "Invalid parameters agents(%d), attackers(%d), "
+	    + "targets(%d), partners(%d)";
+
     // time
     protected int time;
 
     // group of agents
-    protected List<Integer> agents, neutral, attackers, targets,
+    protected List<Integer> agents, neutrals, attackers, targets,
 	    interactionPartners;
+
+    protected static List<Integer> allTargets = null;
+    protected static List<Integer> allNeutrals = null;
+    protected static List<Integer> allAttackers = null;
 
     // capabilities
     protected Map<Integer, Double> capabilities;
@@ -46,23 +67,70 @@ public class TargetedAttack extends AbstractScenario {
     // standard deviations for generating interaction and opinions
     protected double sd_i, sd_o;
 
+    // strategy
+    protected TargetedAttackStrategy strategy;
+
     static {
 	SERVICES.add(0);
 	TRUTHFUL.initialize();
 	COMPLEMENTARY.initialize();
+
+	VAL_SIZE = new ParameterCondition<Integer>() {
+	    @Override
+	    public void eval(Integer var) {
+		if (var < 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The number of agents must be non negative integer, but was %d",
+				    var));
+	    }
+	};
+
+	VAL_DENS = new ParameterCondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0 || var > 1)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The density must be between 0 and 1 inclusively, but was %.2f",
+				    var));
+	    }
+	};
+
+	VAL_SD = new ParameterCondition<Double>() {
+	    @Override
+	    public void eval(Double var) {
+		if (var < 0)
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The standard deviation must be a non-negative double, but was %.2f",
+				    var));
+	    }
+	};
+
+	VAL_STRATEGY = new ParameterCondition<TargetedAttackStrategy>() {
+	    @Override
+	    public void eval(TargetedAttackStrategy var) {
+
+	    }
+	};
     }
 
     @Override
     public void initialize(Object... parameters) {
 	// extract parameters
-	numAgents = 50;
+	numAgents = Utils.extractParameter(VAL_SIZE, 0, parameters);
+	numAttackers = Utils.extractParameter(VAL_SIZE, 1, parameters);
+	numTargets = Utils.extractParameter(VAL_SIZE, 2, parameters);
+	numPartners = Utils.extractParameter(VAL_SIZE, 3, parameters);
+	sd_i = Utils.extractParameter(VAL_SD, 4, parameters);
+	sd_o = Utils.extractParameter(VAL_SD, 5, parameters);
+	strategy = Utils.extractParameter(VAL_STRATEGY, 6, parameters);
 
-	numAttackers = 30;
-	numTargets = 10;
-	numPartners = 20;
-
-	sd_i = 0.10;
-	sd_o = 0.05;
+	if (numAttackers >= numAgents || numPartners > numAgents - numTargets) {
+	    throw new IllegalArgumentException(String.format(INVALID_PARAMS,
+		    numAgents, numAttackers, numTargets, numPartners));
+	}
 
 	// create agents
 	agents = new ArrayList<Integer>();
@@ -71,13 +139,16 @@ public class TargetedAttack extends AbstractScenario {
 	    agents.add(agent);
 	}
 
-	neutral = new ArrayList<Integer>();
+	neutrals = new ArrayList<Integer>();
 	attackers = new ArrayList<Integer>();
 	targets = new ArrayList<Integer>();
 
 	// assign agents to groups
-	assignAgentsToGroups(agents, neutral, attackers, targets, numAttackers,
-		numTargets);
+	assignAgentsToGroups(agents, neutrals, attackers, targets,
+		numAttackers, numTargets);
+
+	// System.out.printf("Neutral = %s\nTarget = %s\nAttackers = %s\n",
+	// neutrals, targets, attackers);
 
 	// assign capabilities
 	capabilities = new LinkedHashMap<Integer, Double>();
@@ -87,7 +158,7 @@ public class TargetedAttack extends AbstractScenario {
 	    final double cap;
 
 	    if (targets.contains(agent)) {
-		cap = generator.nextDoubleFromTo(0.9, 1);
+		cap = generator.nextDoubleFromTo(0, 0.1);
 	    } else {
 		cap = generator.nextDoubleFromTo(0, 1);
 	    }
@@ -97,28 +168,139 @@ public class TargetedAttack extends AbstractScenario {
 
 	// assign deception models
 	models = new DeceptionModel[agents.size()][agents.size()];
-	assignDeceptionModels(agents, neutral, attackers, targets, models);
+
+	switch (strategy) {
+	case LEVEL_1:
+	    assignDeceptionModelsSybilEasy(agents, neutrals, attackers,
+		    targets, models);
+	    break;
+	case LEVEL_2:
+	    assignDeceptionModelsSybil(agents, neutrals, attackers, targets,
+		    models);
+	    break;
+	default:
+	    assignDeceptionModelsSybilHard(agents, neutrals, attackers,
+		    targets, models);
+	    break;
+	}
+
+	// list addition
+	allTargets = targets;
+	allNeutrals = neutrals;
+	allAttackers = attackers;
 
 	// determine interaction partners
-	// could be any agent, except attacked ones
-	interactionPartners = new ArrayList<Integer>();
-
-	for (int i = 0; i < numPartners; i++) {
-	    int agent;
-
-	    do {
-		final int index = generator.nextIntFromTo(0, agents.size() - 1);
-		agent = agents.get(index);
-	    } while (targets.contains(agent));
-
-	    interactionPartners.add(agent);
-	}
+	interactionPartners = determineInteractionPartners(numPartners,
+		neutrals, attackers);
 
 	// reset time
 	time = 0;
     }
 
-    public void assignDeceptionModels(List<Integer> agents,
+    /**
+     * Returns a List of interaction partners that are chosen from the given
+     * lists of neutrals and attackers. The methods first selects all neutrals,
+     * and only then starts to assign partners from attackers.
+     * 
+     * @param numPartners
+     *            Number of interaction partners to choose.
+     * @param neutrals
+     *            List of neutral agents
+     * @param attackers
+     *            List of attacking agents
+     * @return List of selected interaction partners
+     */
+    public List<Integer> determineInteractionPartnersPreferNeutrals(
+	    int numPartners, List<Integer> neutrals, List<Integer> attackers) {
+	if (numPartners > neutrals.size() + attackers.size())
+	    throw new IllegalArgumentException(String.format(TOO_MANY_IP,
+		    neutrals.size() + attackers.size(), numPartners));
+
+	final List<Integer> allNeutrals = new ArrayList<Integer>();
+	allNeutrals.addAll(neutrals);
+	final List<Integer> allAttackers = new ArrayList<Integer>();
+	allAttackers.addAll(attackers);
+
+	final List<Integer> selected = new ArrayList<Integer>();
+
+	for (int i = 0; i < numPartners; i++) {
+	    final int agent, rndIdx;
+
+	    if (!allNeutrals.isEmpty()) {
+		rndIdx = generator.nextIntFromTo(0, allNeutrals.size() - 1);
+		agent = allNeutrals.remove(rndIdx);
+	    } else if (!allAttackers.isEmpty()) {
+		rndIdx = generator.nextIntFromTo(0, allAttackers.size() - 1);
+		agent = allAttackers.remove(rndIdx);
+	    } else {
+		throw new Error("Unreachable code");
+	    }
+
+	    selected.add(agent);
+	}
+
+	return selected;
+    }
+
+    /**
+     * Returns a List of interaction partners that are randomly chosen from the
+     * given lists of neutrals and attackers.
+     * 
+     * @param numPartners
+     *            Number of interaction partners to choose.
+     * @param neutrals
+     *            List of neutral agents
+     * @param attackers
+     *            List of attacking agents
+     * @return List of selected interaction partners
+     */
+    public List<Integer> determineInteractionPartners(int numPartners,
+	    List<Integer> neutrals, List<Integer> attackers) {
+	final List<Integer> potential = new ArrayList<Integer>();
+	potential.addAll(neutrals);
+	potential.addAll(attackers);
+
+	if (numPartners > potential.size())
+	    throw new IllegalArgumentException(String.format(TOO_MANY_IP,
+		    potential.size(), numPartners));
+
+	final List<Integer> selected = new ArrayList<Integer>();
+
+	for (int i = 0; i < numPartners; i++) {
+	    final int max = potential.size() - 1;
+	    final int agent = potential.remove(generator.nextIntFromTo(0, max));
+
+	    selected.add(agent);
+	}
+
+	return selected;
+    }
+
+    /**
+     * <p>
+     * Neutrals
+     * <ul>
+     * <li>know other neutrals and the give honest opinions about them
+     * <li>know targets and give honest opinions about them
+     * <li>do not know attackers (have no opinions about them)
+     * </ul>
+     * 
+     * <p>
+     * Targets
+     * <ul>
+     * <li>know other targets and the give honest opinions about them
+     * <li>know neutrals and give honest opinions about them
+     * <li>do not know attackers (have no opinions about them)
+     * </ul>
+     * <p>
+     * Attackers
+     * <ul>
+     * <li>know other attackers and give honest opinions about them
+     * <li>lie about targets
+     * <li>do not know neutrals
+     * </ul>
+     */
+    public void assignDeceptionModelsSybil(List<Integer> agents,
 	    List<Integer> neutral, List<Integer> attackers,
 	    List<Integer> targets, DeceptionModel[][] models) {
 	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent, targetReporter, targetAgent;
@@ -133,37 +315,134 @@ public class TargetedAttack extends AbstractScenario {
 		    targetReporter = targets.contains(reporter);
 		    targetAgent = targets.contains(agent);
 
-		    if ((neutralReporter || targetReporter)
-			    && (neutralAgent || targetAgent)) {
-
+		    if (neutralReporter && neutralAgent)
 			models[reporter][agent] = TRUTHFUL;
-			// additionally: make it sparse?
-		    } else if ((neutralReporter || targetReporter)
-			    && attackerAgent) {
-			models[reporter][agent] = null;
-		    } else if (attackerReporter
-			    && (neutralAgent || attackerAgent)) {
-			// just skip
-
-			// if (attackerAgent)
-			// models[reporter][agent] = TRUTHFUL;
-			// rare?
-		    } else if (attackerReporter && targetAgent) {
+		    else if (neutralReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && attackerAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && targetAgent)
 			models[reporter][agent] = COMPLEMENTARY;
-		    } else {
-			throw new IllegalArgumentException(
-				String.format(
-					"Cannot determine deception model for reporter "
-						+ "%d (c=%.2f) and agent %d (c=%.2f). "
-						+ "Flags: neutralReporter(%s), neutralAgent(%s), "
-						+ "attackerReporter(%s), attackerAgent(%s), "
-						+ "targetReporter(%s), targetAgent(%s).",
-					reporter, capabilities.get(reporter),
-					agent, capabilities.get(agent),
-					neutralReporter, neutralAgent,
-					attackerReporter, attackerAgent,
-					targetReporter, targetAgent));
-		    }
+		    else
+			models[reporter][agent] = null;
+		}
+	    }
+	}
+    }
+
+    /**
+     * <p>
+     * Neutrals
+     * <ul>
+     * <li>know other neutrals and the give honest opinions about them
+     * <li>know targets and give honest opinions about them
+     * <li>do not know attackers (have no opinions about them)
+     * </ul>
+     * 
+     * <p>
+     * Targets
+     * <ul>
+     * <li>know other targets and the give honest opinions about them
+     * <li>know neutrals and give honest opinions about them
+     * <li>know attackers and give honest opinions about them
+     * </ul>
+     * <p>
+     * Attackers
+     * <ul>
+     * <li>know other attackers and give honest opinions about them
+     * <li>lie about targets
+     * <li>do not know neutrals
+     * </ul>
+     */
+    public void assignDeceptionModelsSybilHard(List<Integer> agents,
+	    List<Integer> neutral, List<Integer> attackers,
+	    List<Integer> targets, DeceptionModel[][] models) {
+	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent, targetReporter, targetAgent;
+
+	for (int reporter : agents) {
+	    for (int agent : agents) {
+		if (reporter != agent) {
+		    neutralReporter = neutral.contains(reporter);
+		    neutralAgent = neutral.contains(agent);
+		    attackerReporter = attackers.contains(reporter);
+		    attackerAgent = attackers.contains(agent);
+		    targetReporter = targets.contains(reporter);
+		    targetAgent = targets.contains(agent);
+
+		    if (neutralReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (neutralReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter && attackerAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && attackerAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && targetAgent)
+			models[reporter][agent] = COMPLEMENTARY;
+		    else
+			models[reporter][agent] = null;
+		}
+	    }
+	}
+    }
+
+    /**
+     * <p>
+     * Neutrals
+     * <ul>
+     * <li>know other neutrals and the give honest opinions about them
+     * <li>know targets and give honest opinions about them
+     * <li>do not know attackers (have no opinions about them)
+     * </ul>
+     * 
+     * <p>
+     * Targets
+     * <ul>
+     * <li>know other targets and the give honest opinions about them
+     * <li>know neutrals and give honest opinions about them
+     * <li>do not know attackers (have no opinions about them)
+     * </ul>
+     * <p>
+     * Attackers
+     * <ul>
+     * <li>only give false opinions about targets
+     * <li>do not know neutrals nor other attackers
+     * </ul>
+     */
+    public void assignDeceptionModelsSybilEasy(List<Integer> agents,
+	    List<Integer> neutral, List<Integer> attackers,
+	    List<Integer> targets, DeceptionModel[][] models) {
+	boolean neutralReporter, neutralAgent, attackerReporter, targetReporter, targetAgent;
+
+	for (int reporter : agents) {
+	    for (int agent : agents) {
+		if (reporter != agent) {
+		    neutralReporter = neutral.contains(reporter);
+		    neutralAgent = neutral.contains(agent);
+		    attackerReporter = attackers.contains(reporter);
+		    targetReporter = targets.contains(reporter);
+		    targetAgent = targets.contains(agent);
+
+		    if (neutralReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (neutralReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter & targetAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (targetReporter && neutralAgent)
+			models[reporter][agent] = TRUTHFUL;
+		    else if (attackerReporter && targetAgent)
+			models[reporter][agent] = COMPLEMENTARY;
+		    else
+			models[reporter][agent] = null;
 		}
 	    }
 	}
@@ -222,7 +501,8 @@ public class TargetedAttack extends AbstractScenario {
 			double itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = dm.calculate(itd);
 
-			Opinion o = new Opinion(reporter, agent, 0, time, itd);
+			Opinion o = new Opinion(reporter, agent, 0, time, itd,
+				sd_o);
 			opinions.add(o);
 		    }
 		}
@@ -263,6 +543,41 @@ public class TargetedAttack extends AbstractScenario {
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return null;
+	return new TargetedAttackGUI();
+    }
+
+    @Override
+    public String toString() {
+	return "Targeted attack";
+    }
+
+    public static List<Integer> getTargets() {
+	if (allTargets == null) {
+	    throw new IllegalArgumentException(String.format(
+		    "Scenario %s was not initialized!",
+		    TargetedAttack.class.getCanonicalName()));
+	}
+
+	return allTargets;
+    }
+
+    public static List<Integer> getNeutrals() {
+	if (allTargets == null) {
+	    throw new IllegalArgumentException(String.format(
+		    "Scenario %s was not initialized!",
+		    TargetedAttack.class.getCanonicalName()));
+	}
+
+	return allNeutrals;
+    }
+
+    public static List<Integer> getAttackers() {
+	if (allTargets == null) {
+	    throw new IllegalArgumentException(String.format(
+		    "Scenario %s was not initialized!",
+		    TargetedAttack.class.getCanonicalName()));
+	}
+
+	return allAttackers;
     }
 }

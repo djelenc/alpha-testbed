@@ -9,8 +9,8 @@ testbed.trustmodel.Travos
 testbed.trustmodel.TravosSelectingInteractionPartners
 testbed.trustmodel.YuSinghSycara
 testbed.trustmodel.YuSinghSycaraSelectingInteractionPartners
-testbed.trustmodel.qad.QAD
 testbed.trustmodel.qad.QTM
+testbed.trustmodel.qad.QAD
 testbed.trustmodel.OnlyExperiences
 testbed.trustmodel.OnlyOpinions
 testbed.trustmodel.Simple

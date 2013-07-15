@@ -22,4 +22,10 @@ public class QADExp {
 	this.time = e.time;
 	this.outcome = Omega.normalizedNumeric(e.outcome);
     }
+
+    @Override
+    public String toString() {
+	return String.format("Exp<%d, %d, %d, %s>", agent, service, time,
+		outcome);
+    }
 }

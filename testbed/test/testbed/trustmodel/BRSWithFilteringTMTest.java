@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.trustmodel;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,24 +25,24 @@ public class BRSWithFilteringTMTest {
 	experiences.clear();
 	opinions.clear();
 	experiences.add(new Experience(0, 0, time, 1.0));
-	opinions.add(new Opinion(1, 0, 0, time, 1.0));
-	opinions.add(new Opinion(2, 0, 0, time, 1.0));
-	opinions.add(new Opinion(3, 0, 0, time, 1.0));
-	opinions.add(new Opinion(4, 0, 0, time, 1.0));
-	opinions.add(new Opinion(5, 0, 0, time, 1.0));
-	opinions.add(new Opinion(6, 0, 0, time, 0.0));
-	opinions.add(new Opinion(7, 0, 0, time, 0.0));
-	opinions.add(new Opinion(8, 0, 0, time, 1.0));
+	opinions.add(new Opinion(1, 0, 0, time, 1.0, 0.05));
+	opinions.add(new Opinion(2, 0, 0, time, 1.0, 0.05));
+	opinions.add(new Opinion(3, 0, 0, time, 1.0, 0.05));
+	opinions.add(new Opinion(4, 0, 0, time, 1.0, 0.05));
+	opinions.add(new Opinion(5, 0, 0, time, 1.0, 0.05));
+	opinions.add(new Opinion(6, 0, 0, time, 0.0, 0.05));
+	opinions.add(new Opinion(7, 0, 0, time, 0.0, 0.05));
+	opinions.add(new Opinion(8, 0, 0, time, 1.0, 0.05));
 	experiences.add(new Experience(2, 0, time, 0.75));
 
-	opinions.add(new Opinion(1, 3, 0, time, .60));
-	opinions.add(new Opinion(2, 3, 0, time, .50));
-	opinions.add(new Opinion(3, 3, 0, time, .70));
-	opinions.add(new Opinion(4, 3, 0, time, .40));
-	opinions.add(new Opinion(5, 3, 0, time, .60));
-	opinions.add(new Opinion(6, 3, 0, time, 0.30));
-	opinions.add(new Opinion(7, 3, 0, time, 0.0));
-	opinions.add(new Opinion(8, 3, 0, time, 1.0));
+	opinions.add(new Opinion(1, 3, 0, time, .60, 0.05));
+	opinions.add(new Opinion(2, 3, 0, time, .50, 0.05));
+	opinions.add(new Opinion(3, 3, 0, time, .70, 0.05));
+	opinions.add(new Opinion(4, 3, 0, time, .40, 0.05));
+	opinions.add(new Opinion(5, 3, 0, time, .60, 0.05));
+	opinions.add(new Opinion(6, 3, 0, time, 0.30, 0.05));
+	opinions.add(new Opinion(7, 3, 0, time, 0.0, 0.05));
+	opinions.add(new Opinion(8, 3, 0, time, 1.0, 0.05));
 
 	tm.setCurrentTime(time);
 	tm.processExperiences(experiences);

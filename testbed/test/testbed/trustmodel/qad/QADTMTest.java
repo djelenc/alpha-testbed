@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.trustmodel.qad;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -139,10 +139,10 @@ public class QADTMTest {
 	ArrayList<Experience> exps = new ArrayList<Experience>();
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 
-	opinions.add(new Opinion(1, 0, 0, 0, 0.1));
-	opinions.add(new Opinion(2, 0, 0, 0, 0.1));
-	opinions.add(new Opinion(0, 1, 0, 0, 0.1));
-	opinions.add(new Opinion(1, 0, 0, 0, 0.1));
+	opinions.add(new Opinion(1, 0, 0, 0, 0.1, 0.05));
+	opinions.add(new Opinion(2, 0, 0, 0, 0.1, 0.05));
+	opinions.add(new Opinion(0, 1, 0, 0, 0.1, 0.05));
+	opinions.add(new Opinion(1, 0, 0, 0, 0.1, 0.05));
 	tm.processExperiences(exps);
 	tm.processOpinions(opinions);
 	tm.calculateTrust();

@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.trustmodel;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -38,13 +38,13 @@ public class OnlyOpinionsTMTest {
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
-	opinions.add(new Opinion(1, 0, 1, 0, 0.7));
-	opinions.add(new Opinion(2, 0, 1, 0, 0.6));
-	opinions.add(new Opinion(3, 0, 1, 0, 0.5));
-	opinions.add(new Opinion(2, 1, 1, 0, 0.4));
-	opinions.add(new Opinion(3, 1, 1, 0, 0.3));
-	opinions.add(new Opinion(6, 1, 1, 0, 0.2));
-	opinions.add(new Opinion(6, 5, 1, 0, 1.0));
+	opinions.add(new Opinion(1, 0, 1, 0, 0.7, 0.05));
+	opinions.add(new Opinion(2, 0, 1, 0, 0.6, 0.05));
+	opinions.add(new Opinion(3, 0, 1, 0, 0.5, 0.05));
+	opinions.add(new Opinion(2, 1, 1, 0, 0.4, 0.05));
+	opinions.add(new Opinion(3, 1, 1, 0, 0.3, 0.05));
+	opinions.add(new Opinion(6, 1, 1, 0, 0.2, 0.05));
+	opinions.add(new Opinion(6, 5, 1, 0, 1.0, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
@@ -57,8 +57,8 @@ public class OnlyOpinionsTMTest {
 	Assert.assertEquals(0.3, trust.get(1), 0.001);
 
 	opinions.clear();
-	opinions.add(new Opinion(6, 4, 1, 0, 0.0));
-	opinions.add(new Opinion(6, 5, 1, 0, 0.0));
+	opinions.add(new Opinion(6, 4, 1, 0, 0.0, 0.05));
+	opinions.add(new Opinion(6, 5, 1, 0, 0.0, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);

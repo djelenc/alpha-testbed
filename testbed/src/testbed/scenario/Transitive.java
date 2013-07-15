@@ -155,7 +155,7 @@ public class Transitive extends AbstractScenario implements Scenario {
 		    itd = dms[a1][a2].calculate(itd);
 
 		    // create opinion tuple and add it to list
-		    opinion = new Opinion(a1, a2, 0, time, itd);
+		    opinion = new Opinion(a1, a2, 0, time, itd, sd_o);
 		    opinions.add(opinion);
 		}
 	    }

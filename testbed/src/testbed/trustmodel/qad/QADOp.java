@@ -25,4 +25,10 @@ public class QADOp {
 	this.time = o.time;
 	this.itd = Omega.normalizedNumeric(o.internalTrustDegree);
     }
+
+    @Override
+    public String toString() {
+	return String.format("Opinion<%d, %d, %d, %d, %s>", agent1, agent2,
+		service, time, itd);
+    }
 }

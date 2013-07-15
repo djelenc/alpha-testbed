@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed;
 
 import junit.framework.Assert;
 

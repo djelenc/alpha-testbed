@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.trustmodel.qad;
 
 import static testbed.trustmodel.qad.Omega.D;
 import static testbed.trustmodel.qad.Omega.PD;
@@ -28,73 +28,57 @@ public class QTMTest {
     }
 
     @Test
+    public void testQualitativeAverage() {
+	double[] freq = new double[] { 0, 0.1, 0.2, 0.3, 0.4 };
+	Assert.assertEquals(Omega.PT, tm.qualtitativeAverage(freq));
+    }
+
+    @Test
     public void testMedian() {
 	Omega[] values = new Omega[] { U, U, PT, T, U, T, D, T, PD, T };
-	Assert.assertEquals(PT, tm.median(values));
+	Assert.assertEquals(PT, Omega.median(values));
 
 	values = new Omega[] {};
-	Assert.assertNull(tm.median(values));
+	Assert.assertNull(Omega.median(values));
 
 	values = new Omega[] { U, U, PT, T, U, T, D, T, null, null };
-	Assert.assertEquals(PT, tm.median(values));
+	Assert.assertEquals(PT, Omega.median(values));
 
 	values = new Omega[] { null, null };
-	Assert.assertNull(tm.median(values));
+	Assert.assertNull(Omega.median(values));
 
 	values = new Omega[] { U };
-	Assert.assertEquals(U, tm.median(values));
+	Assert.assertEquals(U, Omega.median(values));
 
 	values = new Omega[] { T, D };
-	Assert.assertEquals(T, tm.median(values));
+	Assert.assertEquals(T, Omega.median(values));
 
 	values = new Omega[] { PD, PT, U };
-	Assert.assertEquals(U, tm.median(values));
+	Assert.assertEquals(U, Omega.median(values));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void medianExceptionNullArray() {
-	tm.median(null);
+	Omega.median(null);
     }
 
     @Test
-    public void testCredibilityWeights1() {
+    public void testCredibilityWeights() {
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(3, 0, 0, 1d));
-	opinions.add(new Opinion(0, 3, 0, 0, 1d));
-	opinions.add(new Opinion(1, 3, 0, 0, 1d));
-	opinions.add(new Opinion(2, 3, 0, 0, 0d));
+	opinions.add(new Opinion(0, 3, 0, 0, 1d, 0.05));
+	opinions.add(new Opinion(1, 3, 0, 0, 1d, 0.05));
+	opinions.add(new Opinion(2, 3, 0, 0, 0d, 0.05));
 
-	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
+	tm.processExperiences(experiences);
 	tm.calculateTrust();
 
 	experiences.clear();
 	opinions.clear();
 	double[] expected = new double[] { 1.2, 1.2, 0.6, 1.0d };
-
-	for (int j = 0; j < expected.length; j++)
-	    Assert.assertEquals(expected[j], tm.credibility[j], 0.001);
-    }
-
-    @Test
-    public void testCredibilityWeights2() {
-	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
-	ArrayList<Experience> experiences = new ArrayList<Experience>();
-
-	experiences.add(new Experience(3, 0, 0, 1d));
-	opinions.add(new Opinion(0, 3, 0, 0, 0d));
-	opinions.add(new Opinion(1, 3, 0, 0, 0d));
-	opinions.add(new Opinion(2, 3, 0, 0, 0d));
-
-	tm.processExperiences(experiences);
-	tm.processOpinions(opinions);
-	tm.calculateTrust();
-
-	experiences.clear();
-	opinions.clear();
-	double[] expected = new double[] { 1d, 1d, 1d, 1d };
 
 	for (int j = 0; j < expected.length; j++)
 	    Assert.assertEquals(expected[j], tm.credibility[j], 0.001);

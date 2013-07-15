@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.trustmodel;
 
 import java.util.ArrayList;
 
@@ -26,9 +26,9 @@ public class YuSinghSycaraTMTest {
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(1, 0, 0, 0.5));
-	opinions.add(new Opinion(0, 1, 0, 0, 0.7));
-	opinions.add(new Opinion(2, 1, 0, 0, 0.7));
-	opinions.add(new Opinion(3, 1, 0, 0, 0.7));
+	opinions.add(new Opinion(0, 1, 0, 0, 0.7, 0.05));
+	opinions.add(new Opinion(2, 1, 0, 0, 0.7, 0.05));
+	opinions.add(new Opinion(3, 1, 0, 0, 0.7, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
@@ -39,7 +39,7 @@ public class YuSinghSycaraTMTest {
 	Assert.assertEquals(4, tm.credibility.length);
 
 	experiences.add(new Experience(1, 0, 0, 0.1));
-	opinions.add(new Opinion(5, 1, 0, 0, 1));
+	opinions.add(new Opinion(5, 1, 0, 0, 1, 0.05));
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
 	tm.calculateTrust();

@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.common;
 
 import java.util.Map;
 import java.util.TreeMap;

@@ -48,7 +48,7 @@ public class TransitiveOpinionProviderSelection extends
 		itd = dms[agent1][agent2].calculate(itd);
 
 		final Opinion opinion;
-		opinion = new Opinion(agent1, agent2, 0, time, itd);
+		opinion = new Opinion(agent1, agent2, 0, time, itd, sd_o);
 
 		opinions.add(opinion);
 	    }
