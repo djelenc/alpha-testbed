@@ -35,8 +35,8 @@ public class BetaReputationTMTest {
 	time = 2;
 	experiences.clear();
 	opinions.clear();
-	opinions.add(new Opinion(1, 0, 0, time, 1.0));
-	opinions.add(new Opinion(2, 0, 0, time, 1.0));
+	opinions.add(new Opinion(1, 0, 0, time, 1.0, 0.05));
+	opinions.add(new Opinion(2, 0, 0, time, 1.0, 0.05));
 
 	tm.setCurrentTime(time);
 	tm.processExperiences(experiences);
@@ -62,7 +62,7 @@ public class BetaReputationTMTest {
 	experiences.clear();
 	opinions.clear();
 	experiences.add(new Experience(2, 0, time, 0.50));
-	opinions.add(new Opinion(2, 3, 0, time, 0.75));
+	opinions.add(new Opinion(2, 3, 0, time, 0.75, 0.05));
 
 	tm.setCurrentTime(time);
 	tm.processExperiences(experiences);
@@ -93,9 +93,9 @@ public class BetaReputationTMTest {
 	BetaReputation tm = new BetaReputation();
 	tm.initialize(1d, 1d);
 
-	opinions.add(new Opinion(0, 1, 0, 0, 0.50));
-	opinions.add(new Opinion(1, 1, 0, 0, 0.75));
-	opinions.add(new Opinion(2, 1, 0, 0, 1.00));
+	opinions.add(new Opinion(0, 1, 0, 0, 0.50, 0.05));
+	opinions.add(new Opinion(1, 1, 0, 0, 0.75, 0.05));
+	opinions.add(new Opinion(2, 1, 0, 0, 1.00, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
@@ -106,9 +106,9 @@ public class BetaReputationTMTest {
 	Assert.assertEquals(1.00, tm.opinions[2][1].internalTrustDegree, 0.001);
 
 	opinions.clear();
-	opinions.add(new Opinion(2, 0, 0, 0, 0.50));
-	opinions.add(new Opinion(2, 1, 0, 0, 0.50));
-	opinions.add(new Opinion(5, 4, 0, 0, 0.50));
+	opinions.add(new Opinion(2, 0, 0, 0, 0.50, 0.05));
+	opinions.add(new Opinion(2, 1, 0, 0, 0.50, 0.05));
+	opinions.add(new Opinion(5, 4, 0, 0, 0.50, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);

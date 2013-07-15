@@ -43,15 +43,15 @@ public class EigenTrustTMTest {
 	opinions = new ArrayList<Opinion>();
 	experiences = new ArrayList<Experience>();
 
-	opinions.add(new Opinion(0, 0, 0, 0, 0));
-	opinions.add(new Opinion(1, 0, 0, 0, 2 / 3d));
-	opinions.add(new Opinion(2, 0, 0, 0, 1 / 8d));
-	opinions.add(new Opinion(0, 1, 0, 0, 1));
-	opinions.add(new Opinion(1, 1, 0, 0, 0));
-	opinions.add(new Opinion(2, 1, 0, 0, 7 / 8d));
-	opinions.add(new Opinion(0, 2, 0, 0, 0));
-	opinions.add(new Opinion(1, 2, 0, 0, 1 / 3d));
-	opinions.add(new Opinion(2, 2, 0, 0, 0));
+	opinions.add(new Opinion(0, 0, 0, 0, 0, 0.05));
+	opinions.add(new Opinion(1, 0, 0, 0, 2 / 3d, 0.05));
+	opinions.add(new Opinion(2, 0, 0, 0, 1 / 8d, 0.05));
+	opinions.add(new Opinion(0, 1, 0, 0, 1, 0.05));
+	opinions.add(new Opinion(1, 1, 0, 0, 0, 0.05));
+	opinions.add(new Opinion(2, 1, 0, 0, 7 / 8d, 0.05));
+	opinions.add(new Opinion(0, 2, 0, 0, 0, 0.05));
+	opinions.add(new Opinion(1, 2, 0, 0, 1 / 3d, 0.05));
+	opinions.add(new Opinion(2, 2, 0, 0, 0, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);

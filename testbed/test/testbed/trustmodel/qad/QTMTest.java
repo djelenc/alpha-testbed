@@ -1,4 +1,4 @@
-package testbed.test;
+package testbed.trustmodel.qad;
 
 import static testbed.trustmodel.qad.Omega.D;
 import static testbed.trustmodel.qad.Omega.PD;
@@ -63,21 +63,24 @@ public class QTMTest {
     }
 
     @Test
-    public void getTrust() {
+    public void testCredibilityWeights() {
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(3, 0, 0, 1d));
-	opinions.add(new Opinion(0, 3, 0, 0, 1d));
-	opinions.add(new Opinion(1, 3, 0, 0, 1d));
-	opinions.add(new Opinion(2, 3, 0, 0, 0d));
+	opinions.add(new Opinion(0, 3, 0, 0, 1d, 0.05));
+	opinions.add(new Opinion(1, 3, 0, 0, 1d, 0.05));
+	opinions.add(new Opinion(2, 3, 0, 0, 0d, 0.05));
 
 	tm.processOpinions(opinions);
 	tm.processExperiences(experiences);
-
-	tm.getTrust(0);
+	tm.calculateTrust();
 
 	experiences.clear();
 	opinions.clear();
+	double[] expected = new double[] { 1.2, 1.2, 0.6, 1.0d };
+
+	for (int j = 0; j < expected.length; j++)
+	    Assert.assertEquals(expected[j], tm.credibility[j], 0.001);
     }
 }
