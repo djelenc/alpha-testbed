@@ -43,9 +43,9 @@ public class TravosTMTest {
 	experiences.clear();
 	opinions.clear();
 	experiences.add(new Experience(1, 0, 0, 0.05));
-	opinions.add(new Opinion(1, 1, 0, 0, 0.0));
-	opinions.add(new Opinion(2, 1, 0, 0, 1.0));
-	opinions.add(new Opinion(3, 1, 0, 0, 0.5));
+	opinions.add(new Opinion(1, 1, 0, 0, 0.0, 0.05));
+	opinions.add(new Opinion(2, 1, 0, 0, 1.0, 0.05));
+	opinions.add(new Opinion(3, 1, 0, 0, 0.5, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
@@ -95,7 +95,7 @@ public class TravosTMTest {
 
 	// just to expand supporting arrays
 	experiences.add(new Experience(10, 0, 0, 1.00));
-	opinions.add(new Opinion(11, 11, 0, 0, 0.5));
+	opinions.add(new Opinion(11, 11, 0, 0, 0.5, 0.05));
 
 	// manually set opinions
 	tm.opinions = new BRSPair[11][11];

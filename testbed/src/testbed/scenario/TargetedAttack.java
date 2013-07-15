@@ -222,7 +222,8 @@ public class TargetedAttack extends AbstractScenario {
 			double itd = generator.nextDoubleFromUnitTND(cap, sd_o);
 			itd = dm.calculate(itd);
 
-			Opinion o = new Opinion(reporter, agent, 0, time, itd);
+			Opinion o = new Opinion(reporter, agent, 0, time, itd,
+				sd_o);
 			opinions.add(o);
 		    }
 		}

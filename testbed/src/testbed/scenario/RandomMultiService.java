@@ -183,7 +183,7 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 
 			// create opinion tuple and add it to list
 			final Opinion opinion = new Opinion(agent1, agent2,
-				service, time, itd);
+				service, time, itd, sd_o);
 			opinions.add(opinion);
 		    }
 		}

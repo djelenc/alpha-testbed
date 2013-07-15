@@ -62,9 +62,9 @@ public class QTMTest {
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(3, 0, 0, 1d));
-	opinions.add(new Opinion(0, 3, 0, 0, 1d));
-	opinions.add(new Opinion(1, 3, 0, 0, 1d));
-	opinions.add(new Opinion(2, 3, 0, 0, 0d));
+	opinions.add(new Opinion(0, 3, 0, 0, 1d, 0.05));
+	opinions.add(new Opinion(1, 3, 0, 0, 1d, 0.05));
+	opinions.add(new Opinion(2, 3, 0, 0, 0d, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
@@ -84,9 +84,9 @@ public class QTMTest {
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
 	experiences.add(new Experience(3, 0, 0, 1d));
-	opinions.add(new Opinion(0, 3, 0, 0, 0d));
-	opinions.add(new Opinion(1, 3, 0, 0, 0d));
-	opinions.add(new Opinion(2, 3, 0, 0, 0d));
+	opinions.add(new Opinion(0, 3, 0, 0, 0d, 0.05));
+	opinions.add(new Opinion(1, 3, 0, 0, 0d, 0.05));
+	opinions.add(new Opinion(2, 3, 0, 0, 0d, 0.05));
 
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);

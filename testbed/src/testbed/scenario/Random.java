@@ -235,28 +235,28 @@ public class Random extends AbstractScenario implements Scenario {
     public List<Opinion> generateOpinions() {
 	List<Opinion> opinions = new ArrayList<Opinion>();
 
-	Opinion opinion = null;
-	DeceptionModel deceptionModel = null;
-	double cap, itd;
-
 	for (int agent1 : agents) {
 	    for (int agent2 : agents) {
 		for (int service : SERVICES) {
 		    // get deception model
-		    deceptionModel = deceptionModels.get(agent1);
+		    final DeceptionModel deceptionModel = deceptionModels
+			    .get(agent1);
 
 		    // if DM is not Silent, generate opinion
 		    if (deceptionModel != null) {
 			// get capability
-			cap = capabilities.get(agent2);
+			final double capability = capabilities.get(agent2);
 
 			// generate internal trust degree
-			itd = generator.nextDoubleFromUnitTND(cap, sd_o);
-			itd = deceptionModel.calculate(itd);
+			final double internalTrustDegree = generator
+				.nextDoubleFromUnitTND(capability, sd_o);
+			final double communicatedInternalTrustDegree = deceptionModel
+				.calculate(internalTrustDegree);
 
 			// create opinion tuple and add it to list
-			opinion = new Opinion(agent1, agent2, service, time,
-				itd);
+			final Opinion opinion = new Opinion(agent1, agent2,
+				service, time, communicatedInternalTrustDegree,
+				sd_o);
 			opinions.add(opinion);
 		    }
 		}
