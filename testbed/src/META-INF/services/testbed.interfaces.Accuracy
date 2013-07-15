@@ -1,9 +1,9 @@
-testbed.metric.KTAOfTargetedAgents
 testbed.metric.KendallsTauA
-testbed.metric.KendallsTauB
-testbed.metric.KTABounded
 testbed.metric.KTABottomHalf
 testbed.metric.KTATopHalf
+testbed.metric.KTAOfTargetedAgents
+testbed.metric.KendallsTauB
+testbed.metric.KTABounded
 testbed.metric.SpearmansFootRule
 testbed.metric.MeanAbsoluteError
 testbed.metric.Euclidean
