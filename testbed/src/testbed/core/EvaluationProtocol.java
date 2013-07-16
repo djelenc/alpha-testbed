@@ -72,7 +72,7 @@ public abstract class EvaluationProtocol {
      * @param time
      *            Current time
      */
-    protected abstract void evaluationlStep(int time);
+    protected abstract void evaluationStep(int time);
 
     /**
      * Returns the trust model instance.
@@ -121,7 +121,7 @@ public abstract class EvaluationProtocol {
      */
     public final void step(int time) {
 	// perform protocol step
-	evaluationlStep(time);
+	evaluationStep(time);
 
 	// notify subscribers
 	notifiySubscribers();

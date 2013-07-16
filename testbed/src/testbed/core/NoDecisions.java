@@ -72,7 +72,7 @@ public class NoDecisions extends EvaluationProtocol {
     }
 
     @Override
-    protected void evaluationlStep(int time) {
+    protected void evaluationStep(int time) {
 	// convey current time
 	trustModel.setCurrentTime(time);
 	scenario.setCurrentTime(time);

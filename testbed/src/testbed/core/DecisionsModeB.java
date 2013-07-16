@@ -115,7 +115,7 @@ public class DecisionsModeB extends DecisionsModeA {
     }
 
     @Override
-    protected void evaluationlStep(int time) {
+    protected void evaluationStep(int time) {
 	// convey current time
 	tm.setCurrentTime(time);
 	scn.setCurrentTime(time);
