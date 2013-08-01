@@ -132,6 +132,14 @@ public class QAD implements TrustModel<Omega> {
     }
 
     @Override
+    public void setAgents(List<Integer> agents) {
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
+    }
+
+    @Override
     public ParametersPanel getParametersPanel() {
 	return new QADGUI();
     }

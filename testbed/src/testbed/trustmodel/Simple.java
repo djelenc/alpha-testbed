@@ -39,8 +39,6 @@ public class Simple extends AbstractTrustModel<Double> {
 
     @Override
     public void processExperiences(List<Experience> experiences) {
-	expandExperiences(experiences);
-
 	for (Experience e : experiences) {
 	    exSum[e.agent] += e.outcome;
 	    exCnt[e.agent] += 1;
@@ -49,8 +47,6 @@ public class Simple extends AbstractTrustModel<Double> {
 
     @Override
     public void processOpinions(List<Opinion> opinions) {
-	expandOpinions(opinions);
-
 	for (Opinion o : opinions) {
 	    op[o.agent1][o.agent2] = o.internalTrustDegree;
 	}
@@ -115,60 +111,44 @@ public class Simple extends AbstractTrustModel<Double> {
 
     }
 
-    /**
-     * Expands the supporting array that hold opinions to appropriate length.
-     * 
-     * @param opinions
-     */
-    protected void expandOpinions(List<Opinion> opinions) {
-	int max = op.length - 1;
+    @Override
+    public void setAgents(List<Integer> agents) {
+	// current size of opinions' data structure
+	int max = Math.max(op.length - 1, exSum.length - 1);
 
-	for (Opinion o : opinions)
-	    if (o.agent2 > max || o.agent1 > max)
-		max = Math.max(o.agent1, o.agent2);
+	// find the maximum ID
+	for (int agent : agents)
+	    if (agent > max)
+		max = agent;
 
+	// resize opinions' array
 	if (max > op.length - 1) {
-	    expandArrays(max);
+	    double[][] newOp = new double[max + 1][max + 1];
+
+	    for (int i = 0; i < newOp.length; i++)
+		for (int j = 0; j < newOp.length; j++)
+		    newOp[i][j] = Double.NaN;
+
+	    for (int i = 0; i < op.length; i++)
+		System.arraycopy(op[i], 0, newOp[i], 0, op.length);
+
+	    op = newOp;
 	}
-    }
 
-    /**
-     * Expands the supporting array that holds experiences to appropriate
-     * lengths.
-     * 
-     * @param experience
-     */
-    protected void expandExperiences(List<Experience> experience) {
-	int max = exSum.length - 1;
-
-	for (Experience e : experience)
-	    if (e.agent > max)
-		max = e.agent;
-
+	// resize experiences' array
 	if (max > exSum.length - 1) {
-	    expandArrays(max);
+	    double[] newExSum = new double[max + 1];
+	    System.arraycopy(exSum, 0, newExSum, 0, exSum.length);
+	    exSum = newExSum;
+
+	    int[] newExCnt = new int[max + 1];
+	    System.arraycopy(exCnt, 0, newExCnt, 0, exCnt.length);
+	    exCnt = newExCnt;
 	}
     }
 
-    protected void expandArrays(int max) {
-	double[] newExSum = new double[max + 1];
-	System.arraycopy(exSum, 0, newExSum, 0, exSum.length);
-	exSum = newExSum;
-
-	int[] newExCnt = new int[max + 1];
-	System.arraycopy(exCnt, 0, newExCnt, 0, exCnt.length);
-	exCnt = newExCnt;
-
-	double[][] newOp = new double[max + 1][max + 1];
-
-	for (int i = 0; i < newOp.length; i++)
-	    for (int j = 0; j < newOp.length; j++)
-		newOp[i][j] = Double.NaN;
-
-	for (int i = 0; i < op.length; i++)
-	    System.arraycopy(op[i], 0, newOp[i], 0, op.length);
-
-	op = newOp;
+    @Override
+    public void setServices(List<Integer> services) {
     }
 
 }

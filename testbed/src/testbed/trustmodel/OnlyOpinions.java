@@ -41,8 +41,6 @@ public class OnlyOpinions extends AbstractTrustModel<Double> {
 
     @Override
     public void processOpinions(List<Opinion> opinions) {
-	expandArray(opinions);
-
 	for (Opinion o : opinions)
 	    op[o.agent1][o.agent2] = o.internalTrustDegree;
     }
@@ -83,12 +81,15 @@ public class OnlyOpinions extends AbstractTrustModel<Double> {
     public void setCurrentTime(int time) {
     }
 
-    private void expandArray(List<Opinion> opinions) {
+    @Override
+    public void setAgents(List<Integer> agents) {
+	// current size of opinions' data structure
 	int max = op.length - 1;
 
-	for (Opinion o : opinions)
-	    if (o.agent2 > max || o.agent1 > max)
-		max = Math.max(o.agent1, o.agent2);
+	// find the maximum ID
+	for (int agent : agents)
+	    if (agent > max)
+		max = agent;
 
 	// resize arrays
 	if (max > op.length - 1) {
@@ -103,5 +104,9 @@ public class OnlyOpinions extends AbstractTrustModel<Double> {
 
 	    op = newOp;
 	}
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
     }
 }

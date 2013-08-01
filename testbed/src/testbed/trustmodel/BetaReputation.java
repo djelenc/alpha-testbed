@@ -272,4 +272,14 @@ public class BetaReputation extends AbstractTrustModel<Double> {
     public String toString() {
 	return "Beta reputation system";
     }
+
+    @Override
+    public void setAgents(List<Integer> agents) {
+
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
+
+    }
 }

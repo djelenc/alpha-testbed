@@ -317,4 +317,12 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 	    cntExp = newPosExp;
 	}
     }
+
+    @Override
+    public void setAgents(List<Integer> agents) {
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
+    }
 }

@@ -40,6 +40,10 @@ import testbed.interfaces.Utility;
  * <ol>
  * <li>The testbed sets time in the scenario.
  * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the scenario to list all available services.
+ * <li>The testbed conveys the list of available services to the trust model.
+ * <li>The testbed instructs the scenario to list all available agents.
+ * <li>The testbed conveys the list of available agents to the trust model.
  * <li>The testbed instructs the scenario to generate opinions.
  * <li>The testbed conveys generated opinions to the trust model.
  * <li>The testbed instructs the trust model to tell, with whom does agent Alpha
@@ -49,8 +53,10 @@ import testbed.interfaces.Utility;
  * <li>The testbed conveys generated experiences to the trust model.
  * <li>The testbed instructs the trust model to evaluate trust.
  * <li>The testbed instructs the trust model to compute rankings of agents.
- * <li>The testbed evaluates received rankings.
- * <li>The testbed evaluates the utility which was obtained from interactions.
+ * <li>The testbed conveys estimated trust to accuracy metric that then
+ * evaluates its accuracy.
+ * <li>The testbed conveys selected interaction partner to the utility metric
+ * that then evaluates the utility in the interaction.
  * </ol>
  * 
  * @author David
@@ -116,14 +122,23 @@ public class DecisionsModeA extends NoDecisions {
 	tm.setCurrentTime(time);
 	scn.setCurrentTime(time);
 
+	// get all services
+	final List<Integer> services = scn.getServices();
+
+	// convey services
+	tm.setServices(services);
+
+	// get all agents
+	final List<Integer> agents = scn.getAgents();
+
+	// convey agents
+	tm.setAgents(agents);
+
 	// get opinions
 	final List<Opinion> opinions = scn.generateOpinions();
 
 	// convey opinions to the trust model
 	tm.processOpinions(opinions);
-
-	// get services
-	final List<Integer> services = scn.getServices();
 
 	// Get interaction partners in a map
 	// Convert Map to a TreeMap to ensure deterministic iteration

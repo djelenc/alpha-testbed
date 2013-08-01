@@ -445,6 +445,14 @@ public class Travos extends AbstractTrustModel<Double> {
     }
 
     @Override
+    public void setAgents(List<Integer> agents) {
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
+    }
+
+    @Override
     public ParametersPanel getParametersPanel() {
 	return new TravosGUI();
     }

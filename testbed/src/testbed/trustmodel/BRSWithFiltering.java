@@ -331,4 +331,14 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
     public String toString() {
 	return "BRS with filtering";
     }
+
+    @Override
+    public void setAgents(List<Integer> agents) {
+
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
+
+    }
 }

@@ -54,26 +54,6 @@ public class SimpleSelectingOpinionProviders extends
     }
 
     @Override
-    public void setAgents(List<Integer> agents) {
-	this.agents = agents;
-	int max = Integer.MIN_VALUE;
-
-	for (int ag : agents) {
-	    if (max < ag)
-		max = ag;
-	}
-
-	if (max > exSum.length - 1) {
-	    expandArrays(max);
-	}
-    }
-
-    @Override
-    public void setServices(List<Integer> services) {
-
-    }
-
-    @Override
     public String toString() {
 	return "Simple with opinion selection";
     }

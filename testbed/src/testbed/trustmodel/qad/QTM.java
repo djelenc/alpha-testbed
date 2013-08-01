@@ -54,6 +54,8 @@ public class QTM implements TrustModel<Omega> {
 
     protected int time;
 
+    protected RandomGenerator generator;
+
     @Override
     public void initialize(Object... params) {
 	time = 0;
@@ -377,7 +379,13 @@ public class QTM implements TrustModel<Omega> {
 	}
     }
 
-    protected RandomGenerator generator;
+    @Override
+    public void setAgents(List<Integer> agents) {
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
+    }
 
     @Override
     public void setRandomGenerator(RandomGenerator generator) {

@@ -24,15 +24,6 @@ import java.util.Map;
 public interface TrustModel<T extends Comparable<T>> {
 
     /**
-     * Sets the random number generator. In order to produce repeatable results,
-     * all random numbers should be generated with this generator.
-     * 
-     * @param generator
-     *            Generator to be set
-     */
-    public void setRandomGenerator(RandomGenerator generator);
-
-    /**
      * Initializes the trust model with an optional array of varargs Objects.
      * Called only once, at the very start of the test run.
      * 
@@ -49,6 +40,20 @@ public interface TrustModel<T extends Comparable<T>> {
      *            Current time
      */
     public void setCurrentTime(int time);
+
+    /**
+     * Conveys the list of available services to the trust model.
+     * 
+     * @param services
+     */
+    public void setServices(List<Integer> services);
+
+    /**
+     * Conveys the list of available agents to the trust model.
+     * 
+     * @param agents
+     */
+    public void setAgents(List<Integer> agents);
 
     /**
      * Conveys opinions to the trust model.
@@ -95,4 +100,13 @@ public interface TrustModel<T extends Comparable<T>> {
      * @return
      */
     public ParametersPanel getParametersPanel();
+
+    /**
+     * Sets the random number generator. In order to produce repeatable results,
+     * all random numbers should be generated with this generator.
+     * 
+     * @param generator
+     *            Generator to be set
+     */
+    public void setRandomGenerator(RandomGenerator generator);
 }

@@ -11,6 +11,7 @@
 package testbed.trustmodel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -48,6 +49,15 @@ public class OnlyOpinionsTMTest {
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 	ArrayList<Experience> experiences = new ArrayList<Experience>();
 
+	final List<Integer> agents = new ArrayList<Integer>();
+	agents.add(0);
+	agents.add(1);
+	agents.add(2);
+	agents.add(3);
+	agents.add(4);
+	agents.add(5);
+	agents.add(6);
+
 	opinions.add(new Opinion(1, 0, 1, 0, 0.7, 0.05));
 	opinions.add(new Opinion(2, 0, 1, 0, 0.6, 0.05));
 	opinions.add(new Opinion(3, 0, 1, 0, 0.5, 0.05));
@@ -56,6 +66,7 @@ public class OnlyOpinionsTMTest {
 	opinions.add(new Opinion(6, 1, 1, 0, 0.2, 0.05));
 	opinions.add(new Opinion(6, 5, 1, 0, 1.0, 0.05));
 
+	tm.setAgents(agents);
 	tm.processExperiences(experiences);
 	tm.processOpinions(opinions);
 	tm.calculateTrust();

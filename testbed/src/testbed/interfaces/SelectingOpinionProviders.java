@@ -31,17 +31,4 @@ public interface SelectingOpinionProviders {
      */
     public List<OpinionRequest> getOpinionRequests();
 
-    /**
-     * Conveys the list of available agents to the trust model.
-     * 
-     * @param agents
-     */
-    public void setAgents(List<Integer> agents);
-
-    /**
-     * Conveys the list of available services to the trust model.
-     * 
-     * @param services
-     */
-    public void setServices(List<Integer> services);
 }

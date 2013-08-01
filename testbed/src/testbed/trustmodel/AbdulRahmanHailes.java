@@ -405,4 +405,14 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
     public String toString() {
 	return "Abdul-Rahman, Hailes";
     }
+
+    @Override
+    public void setAgents(List<Integer> agents) {
+
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
+
+    }
 }

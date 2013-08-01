@@ -36,6 +36,10 @@ import testbed.interfaces.TrustModel;
  * <ol>
  * <li>The testbed sets time in the scenario.
  * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the scenario to list all available services.
+ * <li>The testbed conveys the list of available services to the trust model.
+ * <li>The testbed instructs the scenario to list all available agents.
+ * <li>The testbed conveys the list of available agents to the trust model.
  * <li>The testbed instructs the scenario to generate opinions.
  * <li>The testbed conveys generated opinions to the trust model.
  * <li>The testbed instructs the scenario to generate experiences tuples for
@@ -43,7 +47,8 @@ import testbed.interfaces.TrustModel;
  * <li>The testbed conveys generated experiences to the trust model.
  * <li>The testbed instructs the trust model to evaluate trust.
  * <li>The testbed instructs the trust model to compute rankings of agents.
- * <li>The testbed evaluates received rankings.
+ * <li>The testbed conveys estimated trust to accuracy metric that then
+ * evaluates its accuracy.
  * </ol>
  * 
  * @author David
@@ -109,6 +114,18 @@ public class NoDecisions extends EvaluationProtocol {
 	trustModel.setCurrentTime(time);
 	scenario.setCurrentTime(time);
 
+	// get all services
+	final List<Integer> services = scenario.getServices();
+
+	// convey services
+	trustModel.setServices(services);
+
+	// get all agents
+	final List<Integer> agents = scenario.getAgents();
+
+	// convey agents
+	trustModel.setAgents(agents);
+
 	// get opinions
 	final List<Opinion> opinions = scenario.generateOpinions();
 
@@ -125,7 +142,7 @@ public class NoDecisions extends EvaluationProtocol {
 	trustModel.calculateTrust();
 
 	// evaluation
-	for (int service : scenario.getServices()) {
+	for (int service : services) {
 	    final Map<Integer, Double> capabilities;
 	    capabilities = scenario.getCapabilities(service);
 
