@@ -20,6 +20,14 @@ import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
 
+/**
+ * A Qualitative Trust Model as proposed by Jelenc and Trček. The paper is
+ * currently under review in Journal of Autonomous Agents and Multi-Agent
+ * Systems.
+ * 
+ * @author David
+ * 
+ */
 public class QTM implements TrustModel<Omega> {
 
     protected static final double LOWER_CRED = 0.001;
