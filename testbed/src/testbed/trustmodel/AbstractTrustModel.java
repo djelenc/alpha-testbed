@@ -14,6 +14,15 @@ import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
 
+/**
+ * A template class for implementing {@link TrustModel} interfaces. It provides
+ * default implementations to a couple of basic methods.
+ * 
+ * @author David
+ * 
+ * @param <T>
+ *            The data type in which the trust model conveys trust
+ */
 public abstract class AbstractTrustModel<T extends Comparable<T>> implements
 	TrustModel<T> {
 

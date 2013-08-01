@@ -13,6 +13,14 @@ package testbed.interfaces;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The core interface for implementing trust models.
+ * 
+ * @author David
+ * 
+ * @param <T>
+ *            The data type in which the trust model conveys trust
+ */
 public interface TrustModel<T extends Comparable<T>> {
 
     /**
