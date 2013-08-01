@@ -53,6 +53,23 @@ public class AlphaTestbedTest {
 	scnPRG = new DefaultRandomGenerator(0);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidParameters() {
+	tm = new Simple();
+	scn = new TransitiveOpinionProviderSelection();
+
+	tm.setRandomGenerator(tmPRG);
+	scn.setRandomGenerator(scnPRG);
+
+	tm.initialize();
+	scn.initialize(scnParams);
+
+	metrics.put(new CumulativeNormalizedUtility(), null);
+	metrics.put(new DefaultOpinionCost(), null);
+
+	AlphaTestbed.getProtocol(tm, scn, metrics);
+    }
+
     @Test
     public void testDecisionsModeB() {
 	tm = new SimpleSelectingOpinionProviders();

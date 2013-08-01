@@ -27,14 +27,14 @@ import testbed.interfaces.Utility;
 
 /**
  * The factory class for creating {@link EvaluationProtocol} instances. This
- * class should be modified for additional {@link EvaluationProtocol}
- * implementations.
+ * class should be updated, if one creates an additional
+ * {@link EvaluationProtocol} implementation.
  * 
  * <p>
- * Its only method {@link AlphaTestbed#getProtocol} takes an instance of a
- * {@link TrustModel}, an instance of a {@link Scenario} and a map, where keys
- * are instances of metrics instances and values are their initialization
- * parameters and their initialization parameters.
+ * This class contains only one method: {@link AlphaTestbed#getProtocol}. It
+ * takes an instance of a {@link TrustModel}, an instance of a {@link Scenario}
+ * and a Map where keys represent instances of metrics and values are their
+ * initialization parameters.
  * 
  * <p>
  * The method returns the suitable {@link EvaluationProtocol} instance or an
