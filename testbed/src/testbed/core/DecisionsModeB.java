@@ -34,11 +34,11 @@ import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 
 /**
- * In this evaluation protocol, the trust models select interaction partners and
- * opinion providers.
+ * An evaluation protocol, where a trust model determines both, the opinion
+ * providers and the interaction partners.
  * 
  * <p>
- * Besides measuring accuracy, and utility, the testbed also measures the cost
+ * Besides measuring accuracy and utility, the protocol also measures the cost
  * that was endured in obtaining required opinions. The execution flow of the
  * evaluation protocol is the following:
  * <ol>

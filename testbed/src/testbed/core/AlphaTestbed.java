@@ -25,6 +25,25 @@ import testbed.interfaces.SelectingOpinionProviders;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 
+/**
+ * The factory class for creating {@link EvaluationProtocol} instances. This
+ * class should be modified for additional {@link EvaluationProtocol}
+ * implementations.
+ * 
+ * <p>
+ * Its only method {@link AlphaTestbed#getProtocol} takes an instance of a
+ * {@link TrustModel}, an instance of a {@link Scenario} and a map, where keys
+ * are instances of metrics instances and values are their initialization
+ * parameters and their initialization parameters.
+ * 
+ * <p>
+ * The method returns the suitable {@link EvaluationProtocol} instance or an
+ * {@link IllegalArgumentException} if an invalid combination of parameters is
+ * given.
+ * 
+ * @author David
+ * 
+ */
 public class AlphaTestbed {
     /** No suitable protocol error */
     private static final String NO_PROTOCOL_ERR;
@@ -88,8 +107,7 @@ public class AlphaTestbed {
      * @param scn
      *            Initialized instance of a scenario
      * @param metrics
-     *            Map of Metric <b>classes</b> and their initialization
-     *            parameters.
+     *            Map of Metric instances and their initialization parameters.
      * @return Evaluation protocol instance or {@link IllegalArgumentException}
      *         of no suitable protocol found.
      */

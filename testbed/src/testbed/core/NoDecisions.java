@@ -26,6 +26,28 @@ import testbed.interfaces.Opinion;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
+/**
+ * An evaluation protocol, where a scenario determines both the opinion
+ * providers and the interaction partners.
+ * 
+ * <p>
+ * The evaluation protocol measures the accuracy of the computed trust values.
+ * The execution flow of the evaluation protocol is the following:
+ * <ol>
+ * <li>The testbed sets time in the scenario.
+ * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the scenario to generate opinions.
+ * <li>The testbed conveys generated opinions to the trust model.
+ * <li>The testbed instructs the scenario to generate experiences tuples for
+ * agents that the trust model requested.
+ * <li>The testbed conveys generated experiences to the trust model.
+ * <li>The testbed instructs the trust model to evaluate trust.
+ * <li>The testbed instructs the trust model to compute rankings of agents.
+ * <li>The testbed evaluates received rankings.
+ * </ol>
+ * 
+ * @author David
+ */
 public class NoDecisions extends EvaluationProtocol {
 
     /** Error message for creating metrics */
@@ -93,9 +115,6 @@ public class NoDecisions extends EvaluationProtocol {
 	// convey opinions
 	trustModel.processOpinions(opinions);
 
-	// get services
-	final List<Integer> services = scenario.getServices();
-
 	// generate experiences
 	final List<Experience> experiences = scenario.generateExperiences();
 
@@ -106,7 +125,7 @@ public class NoDecisions extends EvaluationProtocol {
 	trustModel.calculateTrust();
 
 	// evaluation
-	for (int service : services) {
+	for (int service : scenario.getServices()) {
 	    final Map<Integer, Double> capabilities;
 	    capabilities = scenario.getCapabilities(service);
 

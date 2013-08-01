@@ -30,12 +30,11 @@ import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 
 /**
- * In this evaluation protocol, the testbed treats the trust model as a
- * cognitive entity. This means that the trust model is required to select
- * partners for interactions.
+ * An evaluation protocol, where a scenario determines the opinion providers,
+ * while a trust model selects interaction partners.
  * 
  * <p>
- * Besides measuring accuracy, the testbed also measures the utility that the
+ * Besides measuring accuracy, the protocol also measures the utility that the
  * trust model obtains in interactions. The execution flow of the evaluation
  * protocol is the following:
  * <ol>
