@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.core;
 
 import java.util.ArrayList;
@@ -16,6 +26,33 @@ import testbed.interfaces.Opinion;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
+/**
+ * An evaluation protocol, where a scenario determines both the opinion
+ * providers and the interaction partners.
+ * 
+ * <p>
+ * The evaluation protocol measures the accuracy of the computed trust values.
+ * The execution flow of the evaluation protocol is the following:
+ * <ol>
+ * <li>The testbed sets time in the scenario.
+ * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the scenario to list all available services.
+ * <li>The testbed conveys the list of available services to the trust model.
+ * <li>The testbed instructs the scenario to list all available agents.
+ * <li>The testbed conveys the list of available agents to the trust model.
+ * <li>The testbed instructs the scenario to generate opinions.
+ * <li>The testbed conveys generated opinions to the trust model.
+ * <li>The testbed instructs the scenario to generate experiences tuples for
+ * agents that the trust model requested.
+ * <li>The testbed conveys generated experiences to the trust model.
+ * <li>The testbed instructs the trust model to evaluate trust.
+ * <li>The testbed instructs the trust model to compute rankings of agents.
+ * <li>The testbed conveys estimated trust to accuracy metric that then
+ * evaluates its accuracy.
+ * </ol>
+ * 
+ * @author David
+ */
 public class NoDecisions extends EvaluationProtocol {
 
     /** Error message for creating metrics */
@@ -72,19 +109,28 @@ public class NoDecisions extends EvaluationProtocol {
     }
 
     @Override
-    protected void evaluationlStep(int time) {
+    protected void evaluationStep(int time) {
 	// convey current time
 	trustModel.setCurrentTime(time);
 	scenario.setCurrentTime(time);
+
+	// get all services
+	final List<Integer> services = scenario.getServices();
+
+	// convey services
+	trustModel.setServices(services);
+
+	// get all agents
+	final List<Integer> agents = scenario.getAgents();
+
+	// convey agents
+	trustModel.setAgents(agents);
 
 	// get opinions
 	final List<Opinion> opinions = scenario.generateOpinions();
 
 	// convey opinions
 	trustModel.processOpinions(opinions);
-
-	// get services
-	final List<Integer> services = scenario.getServices();
 
 	// generate experiences
 	final List<Experience> experiences = scenario.generateExperiences();

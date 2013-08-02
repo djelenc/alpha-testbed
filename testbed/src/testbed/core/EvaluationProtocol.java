@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.core;
 
 import static testbed.core.AlphaTestbed.SCENARIOS;
@@ -72,7 +82,7 @@ public abstract class EvaluationProtocol {
      * @param time
      *            Current time
      */
-    protected abstract void evaluationlStep(int time);
+    protected abstract void evaluationStep(int time);
 
     /**
      * Returns the trust model instance.
@@ -121,7 +131,7 @@ public abstract class EvaluationProtocol {
      */
     public final void step(int time) {
 	// perform protocol step
-	evaluationlStep(time);
+	evaluationStep(time);
 
 	// notify subscribers
 	notifiySubscribers();

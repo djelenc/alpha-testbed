@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.trustmodel;
 
 import java.util.LinkedHashMap;
@@ -79,7 +89,7 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
 
     @Override
     public void calculateTrust() {
-	// weirdly empty.
+	// empty
     }
 
     public Map<Integer, Double> getTrust(int service) {
@@ -132,6 +142,26 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
 	    trust.put(agent, score);
 	}
 
+	// // debug
+	// final List<Integer> neutrals = TargetedAttack.getNeutrals();
+	// final List<Integer> targets = TargetedAttack.getTargets();
+	//
+	// double c_a = 0d, c_n = 0d, c_t = 0d;
+	//
+	// for (Integer agent = 0; agent < credibility.length; agent++) {
+	// if (neutrals.contains(agent))
+	// c_n += credibility[agent];
+	// else if (targets.contains(agent))
+	// c_t += credibility[agent];
+	// else
+	// c_a += credibility[agent];
+	// }
+	//
+	// final double sum = c_a + c_t + c_n;
+	//
+	// System.out.printf("T = %.2f, A = %.2f, N = %.2f\n", c_t / sum, c_a
+	// / sum, c_n / sum);
+
 	return trust;
     }
 
@@ -182,6 +212,14 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
 	    System.arraycopy(credibility, 0, newWeights, 0, credibility.length);
 	    credibility = newWeights;
 	}
+    }
+
+    @Override
+    public void setAgents(List<Integer> agents) {
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
     }
 
     @Override

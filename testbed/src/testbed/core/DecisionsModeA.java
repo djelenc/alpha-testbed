@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.core;
 
 import java.util.ArrayList;
@@ -20,17 +30,20 @@ import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 
 /**
- * In this evaluation protocol, the testbed treats the trust model as a
- * cognitive entity. This means that the trust model is required to select
- * partners for interactions.
+ * An evaluation protocol, where a scenario determines the opinion providers,
+ * while a trust model selects interaction partners.
  * 
  * <p>
- * Besides measuring accuracy, the testbed also measures the utility that the
+ * Besides measuring accuracy, the protocol also measures the utility that the
  * trust model obtains in interactions. The execution flow of the evaluation
  * protocol is the following:
  * <ol>
  * <li>The testbed sets time in the scenario.
  * <li>The testbed sets time in the trust model.
+ * <li>The testbed instructs the scenario to list all available services.
+ * <li>The testbed conveys the list of available services to the trust model.
+ * <li>The testbed instructs the scenario to list all available agents.
+ * <li>The testbed conveys the list of available agents to the trust model.
  * <li>The testbed instructs the scenario to generate opinions.
  * <li>The testbed conveys generated opinions to the trust model.
  * <li>The testbed instructs the trust model to tell, with whom does agent Alpha
@@ -40,8 +53,10 @@ import testbed.interfaces.Utility;
  * <li>The testbed conveys generated experiences to the trust model.
  * <li>The testbed instructs the trust model to evaluate trust.
  * <li>The testbed instructs the trust model to compute rankings of agents.
- * <li>The testbed evaluates received rankings.
- * <li>The testbed evaluates the utility which was obtained from interactions.
+ * <li>The testbed conveys estimated trust to accuracy metric that then
+ * evaluates its accuracy.
+ * <li>The testbed conveys selected interaction partner to the utility metric
+ * that then evaluates the utility in the interaction.
  * </ol>
  * 
  * @author David
@@ -102,15 +117,28 @@ public class DecisionsModeA extends NoDecisions {
     }
 
     @Override
-    protected void evaluationlStep(int time) {
+    protected void evaluationStep(int time) {
+	// convey current time
+	tm.setCurrentTime(time);
+	scn.setCurrentTime(time);
+
+	// get all services
+	final List<Integer> services = scn.getServices();
+
+	// convey services
+	tm.setServices(services);
+
+	// get all agents
+	final List<Integer> agents = scn.getAgents();
+
+	// convey agents
+	tm.setAgents(agents);
+
 	// get opinions
 	final List<Opinion> opinions = scn.generateOpinions();
 
 	// convey opinions to the trust model
 	tm.processOpinions(opinions);
-
-	// get services
-	final List<Integer> services = scn.getServices();
 
 	// Get interaction partners in a map
 	// Convert Map to a TreeMap to ensure deterministic iteration

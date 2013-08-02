@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.interfaces;
 
 import java.util.Collection;
@@ -9,7 +19,7 @@ import testbed.interfaces.RandomGenerator;
 
 /**
  * An example of the random number generator implementation. This class can be
- * used in testing.
+ * used in testing or when developing plug-ins.
  * 
  * @author David
  * 

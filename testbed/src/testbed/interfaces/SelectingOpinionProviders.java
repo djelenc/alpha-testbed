@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.interfaces;
 
 import java.util.List;
@@ -21,17 +31,4 @@ public interface SelectingOpinionProviders {
      */
     public List<OpinionRequest> getOpinionRequests();
 
-    /**
-     * Conveys the list of available agents to the trust model.
-     * 
-     * @param agents
-     */
-    public void setAgents(List<Integer> agents);
-
-    /**
-     * Conveys the list of available services to the trust model.
-     * 
-     * @param services
-     */
-    public void setServices(List<Integer> services);
 }

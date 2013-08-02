@@ -1,5 +1,5 @@
 /**
- * Contains implementations of the QAD trust model 
+ * Implementations of the QAD AND QTM trust models 
  */
 package testbed.trustmodel.qad;
 

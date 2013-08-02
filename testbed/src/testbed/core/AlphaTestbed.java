@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.core;
 
 import java.util.HashSet;
@@ -15,6 +25,25 @@ import testbed.interfaces.SelectingOpinionProviders;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 
+/**
+ * The factory class for creating {@link EvaluationProtocol} instances. This
+ * class should be updated, if one creates an additional
+ * {@link EvaluationProtocol} implementation.
+ * 
+ * <p>
+ * This class contains only one method: {@link AlphaTestbed#getProtocol}. It
+ * takes an instance of a {@link TrustModel}, an instance of a {@link Scenario}
+ * and a Map where keys represent instances of metrics and values are their
+ * initialization parameters.
+ * 
+ * <p>
+ * The method returns the suitable {@link EvaluationProtocol} instance or an
+ * {@link IllegalArgumentException} if an invalid combination of parameters is
+ * given.
+ * 
+ * @author David
+ * 
+ */
 public class AlphaTestbed {
     /** No suitable protocol error */
     private static final String NO_PROTOCOL_ERR;
@@ -78,8 +107,7 @@ public class AlphaTestbed {
      * @param scn
      *            Initialized instance of a scenario
      * @param metrics
-     *            Map of Metric <b>classes</b> and their initialization
-     *            parameters.
+     *            Map of Metric instances and their initialization parameters.
      * @return Evaluation protocol instance or {@link IllegalArgumentException}
      *         of no suitable protocol found.
      */

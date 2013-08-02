@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.trustmodel;
 
 import static testbed.trustmodel.TD.fromDouble;
@@ -394,5 +404,15 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
     @Override
     public String toString() {
 	return "Abdul-Rahman, Hailes";
+    }
+
+    @Override
+    public void setAgents(List<Integer> agents) {
+
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
+
     }
 }

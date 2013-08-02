@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.scenario;
 
 import testbed.common.Utils;
@@ -62,20 +72,41 @@ public class TransitiveWithChanges extends Transitive {
     public void setCurrentTime(int time) {
 	this.time = time;
 
-	// reassign capabilities and deception models
 	if (0 == time % changeInterval) {
+	    // reassign capabilities
 	    int counter = 0;
 	    final int changes = (int) Math.round(agents.size() * changeDens);
 
 	    while (counter < changes) {
 		final int agent = generator.nextIntFromTo(0, agents.size() - 1);
 		capabilities.put(agent, generator.nextDoubleFromTo(0, 1));
+
 		counter += 1;
 	    }
 
-	    partners.clear();
-	    partners.addAll(generator.chooseRandom(agents, interDens));
+	    // reassign deception models
 	    dms = assignDeceptionModels(agents, capabilities, opDens);
+
+	    // reassign interaction partners
+	    /*
+	     * counter = 0; final List<Integer> newPartners = new
+	     * ArrayList<Integer>();
+	     * 
+	     * final List<Integer> remainingAgents = new ArrayList<Integer>();
+	     * 
+	     * for (int agent : agents) if (!partners.contains(agent))
+	     * remainingAgents.add(agent);
+	     * 
+	     * newPartners.addAll(partners);
+	     * 
+	     * while (counter < changes) { final int agent =
+	     * generator.nextIntFromTo(0, remainingAgents.size() - 1);
+	     * 
+	     * counter += 1; }
+	     */
+
+	    // partners.clear();
+	    // partners.addAll(generator.chooseRandom(agents, interDens));
 	}
     }
 

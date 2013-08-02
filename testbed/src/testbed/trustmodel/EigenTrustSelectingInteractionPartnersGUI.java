@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.trustmodel;
 
 import java.awt.GridBagConstraints;
@@ -16,8 +26,10 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 
     protected JLabel zeroThresholdLabel;
     protected JSpinner zeroThreshold;
+    @SuppressWarnings("rawtypes")
     protected JComboBox selectionProcedure;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected JPanel getContentPanel() {
 	final JPanel panel = super.getContentPanel();
@@ -27,7 +39,10 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
-	c.gridy = 5;
+
+	int offset = panel.getComponentCount() / 2 + 1;
+
+	c.gridy = ++offset;
 	panel.add(lbl, c);
 	selectionProcedure = new JComboBox();
 	selectionProcedure.addItem("Deterministic ");
@@ -41,7 +56,7 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	});
 
 	c.gridx = 1;
-	c.gridy = 5;
+	c.gridy = offset;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
 	panel.add(selectionProcedure, c);
@@ -50,7 +65,7 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
-	c.gridy = 6;
+	c.gridy = ++offset;
 	panel.add(zeroThresholdLabel, c);
 	zeroThreshold = new JSpinner(new SpinnerNumberModel(0.1, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) zeroThreshold.getEditor()).getTextField()
@@ -58,7 +73,7 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	zeroThreshold
 		.setToolTipText("Probability with which a peer with trust value 0 is selected.");
 	c.gridx = 1;
-	c.gridy = 6;
+	c.gridy = offset;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
 	zeroThreshold.setEnabled(isProbabilistic());

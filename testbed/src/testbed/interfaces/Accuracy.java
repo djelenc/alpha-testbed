@@ -1,9 +1,19 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.interfaces;
 
 import java.util.Map;
 
 /**
- * Interface for metrics that evaluate the correctness of rankings.
+ * Interface for metrics that evaluate the correctness of trust values.
  * 
  * @author David
  * 
@@ -11,7 +21,7 @@ import java.util.Map;
 public interface Accuracy extends Metric {
 
     /**
-     * Evaluates given rankings against given capabilities.
+     * Evaluates given trust values against given capabilities.
      * 
      * @param trustDegrees
      *            A map of trust values, where keys represent agents and values

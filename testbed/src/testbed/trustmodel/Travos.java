@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.trustmodel;
 
 import java.util.LinkedHashMap;
@@ -26,39 +36,36 @@ import testbed.interfaces.ParametersPanel;
  * <p>
  * <b>Additional comment.</b> TRAVOS requires two specific data formats: a)
  * binary interactions outcomes and b) exchanged opinions in the form of
- * 2-dimensional vector of natural numbers. I solved this by:
+ * 2-dimensional vector of natural numbers. This is implemented by:
  * <ul>
- * <li>Scaling interaction outcomes by a FACTOR and then computing a pair (m, n)
- * from this scaled number. This can be explained as if an interaction consists
- * of several sub-interactions all of which have a binary outcome and the final
- * outcome is a pair of successful and unsuccessful interactions (it is
- * basically a mapping: [0, 1] &rarr; N &times; N)
- * <li>Scaling internalTrustDegrees from opinions by the same FACTOR and
- * computing the pair in the same way as interaction outcomes. This gives all
- * opinions the same weight (m + n = FACTOR). The FACTOR also needs to be large
- * enough so that an opinion has a chance of falling into every possible bin.
+ * <li>Thresholding interaction outcomes against a threshold given as a
+ * parameter SATISFACTORY_THRESHOLD. If the outcome reaches this threshold the
+ * interaction is considered to be positive, otherwise it is considered to be
+ * negative.
+ * <li>When TRAVOS obtains an opinion, it creates a (r, s) pair by sampling with
+ * truncated normal distribution. The mean is set to the internalTrustDegree
+ * from the obtained opinion, while the standard deviation is given as a
+ * parameter: OPINION_SAMPLE_SD. The number of drawn samples is also given as a
+ * parameter: OPINION_SAMPLE_NUM. Such sampling gives all opinions the same
+ * weight (r + s = OPINION_SAMPLE_NUM). The parameter OPINION_SAMPLE_NUM also
+ * needs to be large enough so that an opinion has a chance of falling into
+ * every possible bin.
  * </ul>
- * 
- * <p>
- * An alternative to this would be to program the model exactly as proposed,
- * then put larger values for sd_i and sd_o in scenarios, and finally define a
- * threshold function to determine the binary interaction outcome.
  * 
  * @author David
  * 
  */
 public class Travos extends AbstractTrustModel<Double> {
-    protected static final ParameterCondition<Double> VAL_MULTPLIER,
-	    VAL_THRESHOLD;
-
+    protected static final ParameterCondition<Double> VAL_THRESHOLD;
+    protected static final ParameterCondition<Integer> VAL_SAMPLE_NUM;
     static {
-	VAL_MULTPLIER = new ParameterCondition<Double>() {
+	VAL_SAMPLE_NUM = new ParameterCondition<Integer>() {
 	    @Override
-	    public void eval(Double var) {
-		if (var < 1 || var > 50)
+	    public void eval(Integer var) {
+		if (var < 1)
 		    throw new IllegalArgumentException(
 			    String.format(
-				    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
+				    "The number of samples must non-negative, but was %d",
 				    var));
 	    }
 	};
@@ -79,15 +86,17 @@ public class Travos extends AbstractTrustModel<Double> {
     public Map<Integer, BRSPair> experiences = null;
 
     // opinions
-    public Opinion[][] opinions = null;
+    public BRSPair[][] opinions = null;
 
     // observations about opinions
     public Map<Integer, BRSPair[]> observations = null;
 
+    // parameters
+    public static double SATISFACTORY_THRESHOLD = 0.5;
+    public static double OPINION_SAMPLE_NUM = 10;
+    public static double OPINION_SAMPLE_SD = 0.1;
+    public static double CONFIDENCE_THRESHOLD = 0.95;
     public static double ERROR = 0.2;
-    public static double THRESHOLD = 0.95;
-    public static double EXP_FACTOR = 5;
-    public static double OP_FACTOR = 5;
 
     protected static final BetaDistribution BETA = new BetaDistributionImpl(1,
 	    1);
@@ -96,12 +105,14 @@ public class Travos extends AbstractTrustModel<Double> {
     public void initialize(Object... params) {
 	experiences = new LinkedHashMap<Integer, BRSPair>();
 	observations = new LinkedHashMap<Integer, BRSPair[]>();
-	opinions = new Opinion[0][0];
+	opinions = new BRSPair[0][0];
 
-	EXP_FACTOR = Utils.extractParameter(VAL_MULTPLIER, 0, params);
-	OP_FACTOR = Utils.extractParameter(VAL_MULTPLIER, 1, params);
-	THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 2, params);
-	ERROR = Utils.extractParameter(VAL_THRESHOLD, 3, params);
+	SATISFACTORY_THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 0,
+		params);
+	OPINION_SAMPLE_NUM = Utils.extractParameter(VAL_SAMPLE_NUM, 1, params);
+	OPINION_SAMPLE_SD = Utils.extractParameter(VAL_THRESHOLD, 2, params);
+	CONFIDENCE_THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 3, params);
+	ERROR = Utils.extractParameter(VAL_THRESHOLD, 4, params);
     }
 
     @Override
@@ -113,8 +124,8 @@ public class Travos extends AbstractTrustModel<Double> {
 	for (Experience e : exps) {
 	    BRSPair p = experiences.get(e.agent);
 
-	    final double r = Math.round(EXP_FACTOR * e.outcome);
-	    final double s = EXP_FACTOR - r;
+	    final int r = (e.outcome >= SATISFACTORY_THRESHOLD ? 1 : 0);
+	    final int s = 1 - r;
 
 	    if (p == null) {
 		p = new BRSPair(r, s);
@@ -125,20 +136,18 @@ public class Travos extends AbstractTrustModel<Double> {
 	    }
 
 	    // Update deception detection mechanism
-	    for (int agent = 0; agent < opinions.length; agent++) {
+	    for (int reporter = 0; reporter < opinions.length; reporter++) {
 
 		// if an opinion exists
-		if (null != opinions[agent][e.agent]) {
-		    final BRSPair[] obs = observations.get(agent);
+		if (null != opinions[reporter][e.agent]) {
+		    final double op_r = opinions[reporter][e.agent].R;
+		    final double op_s = opinions[reporter][e.agent].S;
 
 		    // determine the bin
-		    final double op_r = Math.round(OP_FACTOR
-			    * opinions[agent][e.agent].internalTrustDegree);
-		    final double op_s = OP_FACTOR - op_r;
-
 		    final int bin = determineBin(op_r, op_s);
 
 		    // store the actual value into bin
+		    final BRSPair[] obs = observations.get(reporter);
 		    obs[bin].R += r;
 		    obs[bin].S += s;
 		}
@@ -152,8 +161,21 @@ public class Travos extends AbstractTrustModel<Double> {
 	expandOpinions(ops);
 
 	// store opinions
-	for (Opinion o : ops)
-	    opinions[o.agent1][o.agent2] = o;
+	for (Opinion o : ops) {
+	    // sample opinions to obtain (r, s) pair
+	    int op_r = 0, op_s = 0;
+
+	    for (int i = 0; i < OPINION_SAMPLE_NUM; i++) {
+		if (generator.nextDoubleFromUnitTND(o.internalTrustDegree,
+			OPINION_SAMPLE_SD) > SATISFACTORY_THRESHOLD) {
+		    op_r += 1;
+		} else {
+		    op_s += 1;
+		}
+	    }
+
+	    opinions[o.agent1][o.agent2] = new BRSPair(op_r, op_s);
+	}
     }
 
     @Override
@@ -225,7 +247,7 @@ public class Travos extends AbstractTrustModel<Double> {
 		    + ERROR);
 
 	    // if confidence is high enough this is the final score
-	    if (confidence > THRESHOLD)
+	    if (confidence > CONFIDENCE_THRESHOLD)
 		trust.put(agent, mean);
 	}
 
@@ -248,15 +270,14 @@ public class Travos extends AbstractTrustModel<Double> {
 		}
 
 		for (int reporter = 0; reporter < opinions.length; reporter++) {
-		    final Opinion o = opinions[reporter][agent];
+		    final BRSPair o = opinions[reporter][agent];
 
 		    // if opinion exists
 		    if (null != o) {
 			agentExists = true;
 			// compute (m, n) from the opinion
-			final double m = Math.round(OP_FACTOR
-				* o.internalTrustDegree);
-			final double n = OP_FACTOR - m;
+			final double m = o.R;
+			final double n = o.S;
 
 			// determine the bin of this opinion
 			final int bin = determineBin(m, n);
@@ -273,9 +294,12 @@ public class Travos extends AbstractTrustModel<Double> {
 			final double a_std = adjustSD(m, n, p_acc);
 
 			// compute adjusted m and n
+			final double adjusted_m = scaleM(a_mean, a_std);
+			final double adjusted_s = scaleN(a_mean, a_std);
+
 			// and add them to the reputation
-			rep.R += scaleM(a_mean, a_std);
-			rep.S += scaleN(a_mean, a_std);
+			rep.R += adjusted_m;
+			rep.S += adjusted_s;
 		    }
 		}
 
@@ -412,12 +436,20 @@ public class Travos extends AbstractTrustModel<Double> {
 	}
 
 	// copy opinions
-	Opinion[][] newOp = new Opinion[max + 1][max + 1];
+	BRSPair[][] newOp = new BRSPair[max + 1][max + 1];
 	for (int i = 0; i < opinions.length; i++) {
 	    System.arraycopy(opinions[i], 0, newOp[i], 0, opinions[i].length);
 	}
 
 	opinions = newOp;
+    }
+
+    @Override
+    public void setAgents(List<Integer> agents) {
+    }
+
+    @Override
+    public void setServices(List<Integer> services) {
     }
 
     @Override

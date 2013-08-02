@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.scenario;
 
 import java.util.ArrayList;
@@ -235,30 +245,27 @@ public class Random extends AbstractScenario implements Scenario {
     public List<Opinion> generateOpinions() {
 	List<Opinion> opinions = new ArrayList<Opinion>();
 
-	Opinion opinion = null;
-	DeceptionModel deceptionModel = null;
-	double cap, itd;
-
 	for (int agent1 : agents) {
 	    for (int agent2 : agents) {
-		for (int service : SERVICES) {
-		    // get deception model
-		    deceptionModel = deceptionModels.get(agent1);
+		// get deception model
+		final DeceptionModel deceptionModel = deceptionModels
+			.get(agent1);
 
-		    // if DM is not Silent, generate opinion
-		    if (deceptionModel != null) {
-			// get capability
-			cap = capabilities.get(agent2);
+		// if DM is not Silent, generate opinion
+		if (deceptionModel != null) {
+		    // get capability
+		    final double capability = capabilities.get(agent2);
 
-			// generate internal trust degree
-			itd = generator.nextDoubleFromUnitTND(cap, sd_o);
-			itd = deceptionModel.calculate(itd);
+		    // generate internal trust degree
+		    final double internalTrustDegree = generator
+			    .nextDoubleFromUnitTND(capability, sd_o);
+		    final double communicatedInternalTrustDegree = deceptionModel
+			    .calculate(internalTrustDegree);
 
-			// create opinion tuple and add it to list
-			opinion = new Opinion(agent1, agent2, service, time,
-				itd);
-			opinions.add(opinion);
-		    }
+		    // create opinion tuple and add it to list
+		    final Opinion opinion = new Opinion(agent1, agent2, 0,
+			    time, communicatedInternalTrustDegree, sd_o);
+		    opinions.add(opinion);
 		}
 	    }
 	}
@@ -274,18 +281,16 @@ public class Random extends AbstractScenario implements Scenario {
 	int agent = -1;
 	double cap, outcome;
 
-	for (int service : SERVICES) {
-	    // get agent to interact with
-	    agent = partners.get(time % partners.size());
+	// get agent to interact with
+	agent = partners.get(time % partners.size());
 
-	    // generate interaction outcome
-	    cap = capabilities.get(agent);
-	    outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
+	// generate interaction outcome
+	cap = capabilities.get(agent);
+	outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
-	    // create experience tuple and add it to list
-	    experience = new Experience(agent, service, time, outcome);
-	    experiences.add(experience);
-	}
+	// create experience tuple and add it to list
+	experience = new Experience(agent, 0, time, outcome);
+	experiences.add(experience);
 
 	return experiences;
     }

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2013 David Jelenc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     David Jelenc - initial API and implementation
+ */
 package testbed.trustmodel;
 
 import java.awt.BorderLayout;
@@ -21,7 +31,8 @@ public class EigenTrustGUI extends JPanel implements ParametersPanel {
 
     private static final long serialVersionUID = -1558821473401798087L;
 
-    protected JSpinner weight, expMltpl, opMltpl;
+    protected JSpinner weight, satisfactoryThreshold, opinionSampleNumber,
+	    opinionSampleSD;
 
     protected Observer observer;
 
@@ -64,16 +75,21 @@ public class EigenTrustGUI extends JPanel implements ParametersPanel {
 
     @Override
     public Object[] getParameters() {
-	return new Object[] { getWeight(), getExperienceMultiplier(),
-		getOpinionMultiplier() };
+	return new Object[] { getWeight(), getSatisfactoryThreshold(),
+		getOpinionSampleNumber(), getOpinionSampleSD() };
     }
 
-    protected double getOpinionMultiplier() {
-	return Double.parseDouble(String.valueOf(opMltpl.getValue()));
+    protected double getOpinionSampleSD() {
+	return Double.parseDouble(String.valueOf(opinionSampleSD.getValue()));
     }
 
-    protected double getExperienceMultiplier() {
-	return Double.parseDouble(String.valueOf(expMltpl.getValue()));
+    protected int getOpinionSampleNumber() {
+	return Integer.parseInt(String.valueOf(opinionSampleNumber.getValue()));
+    }
+
+    protected double getSatisfactoryThreshold() {
+	return Double.parseDouble(String.valueOf(satisfactoryThreshold
+		.getValue()));
     }
 
     protected double getWeight() {
@@ -114,41 +130,60 @@ public class EigenTrustGUI extends JPanel implements ParametersPanel {
 	c.anchor = GridBagConstraints.LINE_START;
 	panel.add(weight, c);
 
-	// experience multiplier
-	lbl = new JLabel("Experience multiplier:  ");
+	// Satisfactory threshold
+	lbl = new JLabel("Satisfactory threshold:  ");
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	expMltpl = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
-	((JSpinner.DefaultEditor) expMltpl.getEditor()).getTextField()
-		.setColumns(3);
-	expMltpl.setToolTipText("Multiplier that converts a contionouos interaction outcome from [0, 1] "
-		+ "to a discreete value.");
+	satisfactoryThreshold = new JSpinner(new SpinnerNumberModel(0.5, 0, 1,
+		0.25));
+	((JSpinner.DefaultEditor) satisfactoryThreshold.getEditor())
+		.getTextField().setColumns(3);
+	satisfactoryThreshold
+		.setToolTipText("A threshold that determines when the interaction outcome becomes a satisfactory.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
-	panel.add(expMltpl, c);
+	panel.add(satisfactoryThreshold, c);
 
-	// opinion multiplier
-	lbl = new JLabel("Opinions multiplier:  ");
+	// opinion sample number
+	lbl = new JLabel("Number of opinion samples:  ");
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_END;
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	opMltpl = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
-	((JSpinner.DefaultEditor) opMltpl.getEditor()).getTextField()
-		.setColumns(3);
-	opMltpl.setToolTipText("Multiplier that converts a contionouos internal trust degree "
-		+ "from [0, 1] to a discreete value.");
+	opinionSampleNumber = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
+	((JSpinner.DefaultEditor) opinionSampleNumber.getEditor())
+		.getTextField().setColumns(3);
+	opinionSampleNumber
+		.setToolTipText("Number of times the obtained opinion will be sampled to obtain a (pos, neg) tuple.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
 	c.anchor = GridBagConstraints.LINE_START;
-	panel.add(opMltpl, c);
+	panel.add(opinionSampleNumber, c);
+
+	// opinion sample standard deviation
+	lbl = new JLabel("SD to sample opinions:  ");
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_END;
+	c.gridx = 0;
+	c.gridy = i;
+	panel.add(lbl, c);
+	opinionSampleSD = new JSpinner(new SpinnerNumberModel(0.10, 0, 1, 0.05));
+	((JSpinner.DefaultEditor) opinionSampleSD.getEditor()).getTextField()
+		.setColumns(3);
+	opinionSampleSD
+		.setToolTipText("Standard deviation for sampling opinions.");
+	c.gridx = 1;
+	c.gridy = i++;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.LINE_START;
+	panel.add(opinionSampleSD, c);
 
 	return panel;
     }
