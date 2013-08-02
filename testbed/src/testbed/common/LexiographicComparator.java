@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Copyright (c) 2013 David Jelenc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     David Jelenc - initial API and implementation
- ******************************************************************************/
+ */
 package testbed.common;
 
 import java.util.Comparator;

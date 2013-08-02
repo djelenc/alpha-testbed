@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  *     Robert Eckstein - initial API and implementation
  *        http://www.oracle.com/technetwork/articles/javase/wizard-136789.html
  *     David Jelenc - adaptation and modification for ATB
- ******************************************************************************/
+ */
 package testbed.gui;
 
 import java.awt.BorderLayout;
