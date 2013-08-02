@@ -8,7 +8,7 @@
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
-package testbed.deceptiomodel;
+package testbed.deceptionmodel;
 
 import org.junit.Assert;
 import org.junit.Test;

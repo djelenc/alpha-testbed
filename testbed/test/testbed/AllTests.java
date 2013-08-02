@@ -21,7 +21,7 @@ import testbed.common.ExampleGeneratorTest;
 import testbed.common.UtilsTest;
 import testbed.core.AlphaTestbedTest;
 import testbed.core.EvaluationProtocolTests;
-import testbed.deceptiomodel.DeceptionModelsTest;
+import testbed.deceptionmodel.DeceptionModelsTest;
 import testbed.interfaces.OpinionRequestTest;
 import testbed.metric.MetricsTest;
 import testbed.scenario.OscillationScenarioTest;
