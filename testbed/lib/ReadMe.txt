@@ -1,1 +1,1 @@
-Place your external Java library files in this directory.
+Place ATB plug-ins in this directory.
