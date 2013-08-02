@@ -11,8 +11,9 @@
 package testbed.interfaces;
 
 /**
- * A parent interface for metrics. This interface provides a basis for the
- * {@link Accuracy} and the {@link Utility}.
+ * An umbrella interface for metrics. This interface provides a basis for the
+ * making interfaces for other (more specific) metrics, such as {@link Accuracy}
+ * or {@link Utility}.
  * 
  * @author David
  * 

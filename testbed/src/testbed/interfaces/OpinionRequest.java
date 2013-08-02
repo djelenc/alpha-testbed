@@ -11,7 +11,7 @@
 package testbed.interfaces;
 
 /**
- * Represents an opinion request sent by agent Alpha to other agent.
+ * Represents an opinion request sent by agent Alpha.
  * 
  * @author David
  * 

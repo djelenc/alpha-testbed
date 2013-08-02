@@ -21,7 +21,7 @@ package testbed.interfaces;
  * <ul>
  * <li>int: agent1 -- represents the agent that provides the opinion
  * <li>int: agent2 -- represents the agent whom the opinion is about
- * <li>int: service -- represents the of service for which the opinion is about
+ * <li>int: service -- represents the service for which the opinion is about
  * <li>int: time -- represents the time at which the opinion was given
  * <li>double internalTrustDegree -- represents the reported trust degree of
  * agent1 towards agent2. This value falls under [0, 1], where 1 is the best

@@ -13,8 +13,8 @@ package testbed.interfaces;
 import java.util.Map;
 
 /**
- * Interface for implementing scenarios that allow selecting interaction
- * partners.
+ * Interface for implementing scenarios that allow agent Alpha to select
+ * interaction partners.
  * 
  */
 public interface InteractionPartnerSelection {
@@ -32,7 +32,7 @@ public interface InteractionPartnerSelection {
      * <p>
      * The programmer of the Scenario must ensure that the given values are
      * correct -- if, for instance, agent 1 (or service 3) are invalid values,
-     * the method must throw {@link IllegalArgumentException}.
+     * the method should throw {@link IllegalArgumentException}.
      * 
      * @param partners
      *            Map of services and agents

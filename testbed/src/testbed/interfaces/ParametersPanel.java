@@ -13,6 +13,14 @@ package testbed.interfaces;
 import java.awt.Component;
 import java.util.Observer;
 
+/**
+ * Provides method with which various components (implementations of
+ * {@link TrustModel}, {@link Scenario}, ...) provide GUI for setting their
+ * parameters.
+ * 
+ * @author David
+ * 
+ */
 public interface ParametersPanel {
 
     /**

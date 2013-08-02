@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Interface for implementing selection of opinion providers in scenarios. A
  * scenario that would allow Alpha to select opinion providers, has to implement
- * method of this interface.
+ * this interface.
  * 
  */
 public interface OpinionProviderSelection {

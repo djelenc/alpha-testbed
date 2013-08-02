@@ -13,7 +13,7 @@ package testbed.interfaces;
 import java.util.Map;
 
 /**
- * Interface for metrics that evaluate the correctness of rankings.
+ * Interface for metrics that evaluate the correctness of trust values.
  * 
  * @author David
  * 
@@ -21,7 +21,7 @@ import java.util.Map;
 public interface Accuracy extends Metric {
 
     /**
-     * Evaluates given rankings against given capabilities.
+     * Evaluates given trust values against given capabilities.
      * 
      * @param trustDegrees
      *            A map of trust values, where keys represent agents and values

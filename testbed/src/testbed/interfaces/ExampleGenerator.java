@@ -19,7 +19,7 @@ import testbed.interfaces.RandomGenerator;
 
 /**
  * An example of the random number generator implementation. This class can be
- * used in testing.
+ * used in testing or when developing plug-ins.
  * 
  * @author David
  * 
