@@ -48,8 +48,7 @@ public interface Scenario {
     public void setCurrentTime(int time);
 
     /**
-     * Gets the capabilities of agents that concern the given service. The
-     * IMetric can then construct a ranking from it.
+     * Gets the capabilities of agents that concern the given service.
      * 
      * @param service
      * @return
