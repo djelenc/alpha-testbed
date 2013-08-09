@@ -4,8 +4,9 @@
 
 <installation version="1.0">
     <info>
-      <appname>testbed</appname>
-			<appversion>1.0</appversion>
+      <appname>Alpha Testbed</appname>
+      <appversion>1.0</appversion>
+      <appsubpath>atb-program</appsubpath>
       <summarylogfilepath>$INSTALL_PATH/installinfo/Summary.htm</summarylogfilepath>
     </info>
     <guiprefs height="600" resizable="yes" width="800">
@@ -88,7 +89,7 @@
     </panels>
     <packs>
         <pack name="Model" required="yes">
-            <description>The core model files</description>
+            <description>The core files of Alpha Testbed</description>
             
             <!-- model run batch and scripts -->
             <parsable targetfile="$INSTALL_PATH/start_model.bat"/>
@@ -154,14 +155,14 @@
 
 
 		<pack name="Sources" required="no">
-           	<description>The model source code</description>
+           	<description>The source code of Alpha Testbed</description>
            	<file src="$StagingOptionalArea/src" targetdir="$INSTALL_PATH/testbed"/>
         </pack>
 
-        <pack name="Documentation" required="no">
+        <!-- <pack name="Documentation" required="no">
            	<description>The model documentation</description>
            	<file src="$StagingOptionalArea/docs" targetdir="$INSTALL_PATH/testbed"/>
-        </pack>
+        </pack> -->
 
 <!--        <pack name="Data" required="no">-->
 <!--            <description>The user data</description>-->
