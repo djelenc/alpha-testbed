@@ -1,1 +1,1 @@
-Place your model's web-based (HTML) documentation files in this directory using "index.html" as the home page.
+For documentation, tutorials, source code and other resources, please visit http://atb.fri.uni-lj.si.

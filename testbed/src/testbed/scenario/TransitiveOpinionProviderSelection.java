@@ -69,7 +69,7 @@ public class TransitiveOpinionProviderSelection extends
 
     @Override
     public String toString() {
-	return "Transitive with opinion selection";
+	return "Transitive with opinion provider selection";
     }
 
 }

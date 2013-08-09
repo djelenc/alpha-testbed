@@ -4,10 +4,10 @@
 
   <skipIfNotSupported/>
   
-  <programGroup defaultName="testbed" location="StartMenu"/>
+  <programGroup defaultName="Alpha Testbed" location="StartMenu"/>
   
   <shortcut
-     name="testbed"
+     name="Run Alpha Testbed"
      programGroup="yes"
      desktop="no"
      applications="no"
@@ -24,23 +24,25 @@
   </shortcut>
   
   <shortcut
-     name="Documentation"
+     name="Homepage of Alpha Testbed"
      programGroup="yes"
      desktop="no"
      applications="no"
      startMenu="no"
      startup="no"
-     target="$INSTALL_PATH\testbed\docs\index.html"
+     target="http://atb.fri.uni-lj.si"
      commandLine=""
 	 iconFile="%SystemRoot%\system32\SHELL32.dll"
      iconIndex="23" 
-     workingDirectory="$INSTALL_PATH\docs"
-     description="Model Documentation">
-     <createForPack name="Documentation" />
+     workingDirectory="$INSTALL_PATH"
+     url="http://atb.fri.uni-lj.si"                                
+     type="Link"
+     description="Go to the homepage of ATB">
+     <createForPack name="Model" />
   </shortcut>
   
   <shortcut
-     name="testbed Uninstaller"
+     name="Uninstall Alpha Testbed"
      programGroup="yes"
      desktop="no"
      applications="no"
@@ -51,7 +53,7 @@
      workingDirectory="$INSTALL_PATH\Uninstaller"
 	 iconFile="%SystemRoot%\system32\SHELL32.dll"
      iconIndex="31" 
-     description="This Removes the Model">
+     description="This Removes the Alpha Testbed">
      <createForPack name="Model" />
    </shortcut>
    

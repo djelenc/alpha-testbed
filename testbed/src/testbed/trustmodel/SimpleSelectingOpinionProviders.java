@@ -52,6 +52,13 @@ public class SimpleSelectingOpinionProviders extends
 
 	return opinionRequests;
     }
+    
+    @Override
+    public void setAgents(List<Integer> agents) {
+        super.setAgents(agents);
+        
+        this.agents = agents;
+    }
 
     @Override
     public String toString() {

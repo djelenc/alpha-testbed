@@ -1,1 +1,3 @@
-This is the testbed model. Please contact the developers for more information.
+This program will install the Alpha Testbed on your computer.
+
+For documentation, tutorials, source code and other resources, please visit http://atb.fri.uni-lj.si.

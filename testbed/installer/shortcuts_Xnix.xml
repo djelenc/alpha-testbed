@@ -3,10 +3,10 @@
 
   <skipIfNotSupported/>
 
-  <programGroup defaultName="testbed" location="StartMenu"/>
+  <programGroup defaultName="Alpha Testbed" location="StartMenu"/>
   
   <shortcut
-     name="testbed"
+     name="Run Alpha Testbed"
      programGroup="yes"
      desktop="no"
      applications="no"
@@ -27,28 +27,28 @@
   </shortcut>
 
   <shortcut
-     name="Documentation"
+     name="Homepage of Alpha Testbed"
      programGroup="yes"
      desktop="yes"
      applications="no"
      startMenu="no"
      startup="no"
-     target="$INSTALL_PATH/testbed/docs/index.html"
-     workingDirectory="$INSTALL_PATH/docs"
+     target="http://atb.fri.uni-lj.si"
+     workingDirectory="$INSTALL_PATH"
      commandLine=""
      initialState="noShow"
      iconFile="help"
      iconIndex="0" 
-     url="$INSTALL_PATH/testbed/docs/index.html"                                
-     type="Application"
+     url="http://atb.fri.uni-lj.si"                                
+     type="Link"
      encoding="UTF-8" 
    	 createForAll="true"  
-     description="Model Documentation">
-     <createForPack name="Documentation"/>
+     description="Go to the homepage of ATB">
+     <createForPack name="Model"/>
   </shortcut>
    
   <shortcut
-     name="testbed Uninstaller"
+     name="Uninstall Alpha Testbed"
      programGroup="yes"
      desktop="no"
      applications="no"
