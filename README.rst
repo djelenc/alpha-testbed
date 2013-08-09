@@ -2,9 +2,8 @@
 Alpha Testbed
 =============
 
-Alpha Testbed (ATB) is a tool for benchmarking trust and reputaiton models. 
+Alpha Testbed (ATB) is a tool for benchmarking trust and reputation models. 
 
-This repository cotains the source files of the project.
+This repository contains the source files of the project.
 
-For additional information, please visit ATB's homepage
-http://atb.fri.uni-lj.si.
+For additional information, please visit ATB's homepage at http://atb.fri.uni-lj.si.
