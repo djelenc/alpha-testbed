@@ -17,8 +17,10 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import testbed.interfaces.ExampleGenerator;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
+import testbed.interfaces.RandomGenerator;
 import testbed.trustmodel.BRSWithFiltering;
 
 public class BRSWithFilteringTMTest {
@@ -29,6 +31,8 @@ public class BRSWithFilteringTMTest {
 	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
 	BRSWithFiltering tm = new BRSWithFiltering();
 	int time = 0;
+	RandomGenerator generator = new ExampleGenerator(0);
+	tm.setRandomGenerator(generator);
 	tm.initialize(1d, 0d, 0.01, 10d);
 
 	time = 1;

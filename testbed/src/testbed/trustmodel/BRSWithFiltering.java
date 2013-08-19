@@ -15,9 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.BetaDistribution;
-import org.apache.commons.math.distribution.BetaDistributionImpl;
+import org.apache.commons.math3.distribution.BetaDistribution;
 
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
@@ -29,7 +27,13 @@ import testbed.interfaces.ParametersPanel;
  * Beta reputation system with filtering ratings
  * 
  * <p>
- * As presented in <a href=''>﻿TODO</a>
+ * As presented in <b>Whitby, Andrew, Audun Jøsang, and Jadwiga Indulska.
+ * "Filtering out unfair ratings in bayesian reputation systems." Proc. 7th Int.
+ * Workshop on Trust in Agent Societies. 2004.</b>
+ * 
+ * <p>
+ * Note. This model is implemented very inefficiently. The implementation should
+ * be optimized.
  * 
  * @author David
  * 
@@ -51,8 +55,6 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 
     // experiences
     public Map<Integer, ArrayList<Experience>> experiences = null;
-
-    public static final BetaDistribution BETA = new BetaDistributionImpl(1, 1);
 
     public Opinion[][] opinions = null;
 
@@ -179,7 +181,6 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
      *            in question.
      * @return
      */
-    @SuppressWarnings("deprecation")
     public double filterRatings(int agent, Map<Integer, BRSPair> experienceTrust) {
 	List<Integer> allRaters = new ArrayList<Integer>();
 	double reputation = Double.NEGATIVE_INFINITY;
@@ -224,17 +225,11 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 			* discount;
 		final double rater_s = (FACTOR - rater_r) * discount;
 
-		BETA.setAlpha(1 + rater_r);
-		BETA.setBeta(1 + rater_s);
+		final BetaDistribution beta = new BetaDistribution(1 + rater_r,
+			1 + rater_s);
 
-		double l, u;
-
-		try {
-		    l = BETA.inverseCumulativeProbability(Q);
-		    u = BETA.inverseCumulativeProbability(1 - Q);
-		} catch (MathException e) {
-		    throw new RuntimeException(e);
-		}
+		final double l = beta.inverseCumulativeProbability(Q);
+		final double u = beta.inverseCumulativeProbability(1 - Q);
 
 		if (l > reputation || u < reputation)
 		    liars.add(rater);

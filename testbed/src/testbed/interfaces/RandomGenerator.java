@@ -99,4 +99,11 @@ public interface RandomGenerator {
     public <T extends Comparable<T>> Collection<T> chooseRandom(
 	    Collection<T> allItems, double fraction);
 
+    /**
+     * Returns the seed that initialized this instance.
+     * 
+     * @return The seed.
+     */
+    public int getSeed();
+
 }
