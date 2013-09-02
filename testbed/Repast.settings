@@ -5,21 +5,11 @@
       <loadFactor>0.75</loadFactor>
       <threshold>8</threshold>
     </default>
-    <int>3</int>
-    <int>7</int>
-    <string>SettingsFileName</string>
-    <string>Repast.settings</string>
-    <string>LastLoadedScenario</string>
-    <string>/home/david/workspace/testbed/testbed.rs</string>
+    <int>11</int>
+    <int>2</int>
     <string>SettingsRegistryId</string>
     <string>Repast.registry</string>
-    <string>R.home</string>
-    <string>C:\Program Files\R\R-2.14.2\bin\i386</string>
-    <string>Spreadsheet.licenseAccepted</string>
-    <boolean>true</boolean>
-    <string>R.licenseAccepted</string>
-    <boolean>true</boolean>
-    <string>Spreadsheet.home</string>
-    <string>C:\Program Files\Microsoft Office\OFFICE14\Excel.exe</string>
+    <string>LastLoadedScenario</string>
+    <string>/home/david/git/atb-code/testbed/testbed.rs</string>
   </hashtable>
 </simphony.settings.SettingsRegistry>
