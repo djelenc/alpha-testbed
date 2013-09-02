@@ -14,15 +14,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.BetaDistribution;
-import org.apache.commons.math.distribution.BetaDistributionImpl;
-
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
+import cern.jet.random.Beta;
+import cern.jet.random.engine.MersenneTwister;
 
 /**
  * TRAVOS trust and reputation model
@@ -98,8 +96,7 @@ public class Travos extends AbstractTrustModel<Double> {
     public static double CONFIDENCE_THRESHOLD = 0.95;
     public static double ERROR = 0.2;
 
-    protected static final BetaDistribution BETA = new BetaDistributionImpl(1,
-	    1);
+    protected static Beta BETA = null;
 
     @Override
     public void initialize(Object... params) {
@@ -113,6 +110,8 @@ public class Travos extends AbstractTrustModel<Double> {
 	OPINION_SAMPLE_SD = Utils.extractParameter(VAL_THRESHOLD, 2, params);
 	CONFIDENCE_THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 3, params);
 	ERROR = Utils.extractParameter(VAL_THRESHOLD, 4, params);
+
+	BETA = new Beta(1, 1, new MersenneTwister(generator.getSeed()));
     }
 
     @Override
@@ -214,23 +213,19 @@ public class Travos extends AbstractTrustModel<Double> {
      *            For setting alpha
      * @param n
      *            For setting beta
-     * @param low
+     * @param _low
      *            Lower integration bound
-     * @param high
+     * @param _high
      *            Higher integration bound
      * @return The integral
      */
-    @SuppressWarnings("deprecation")
-    public double integrate(double m, double n, double low, double high) {
-	BETA.setAlpha(m + 1);
-	BETA.setBeta(n + 1);
+    public double integrate(double m, double n, double _low, double _high) {
+	final double low = Math.min(Math.max(0, _low), 1);
+	final double high = Math.min(Math.max(0, _high), 1);
 
-	try {
-	    return BETA.cumulativeProbability(high)
-		    - BETA.cumulativeProbability(low);
-	} catch (MathException e) {
-	    throw new RuntimeException(e);
-	}
+	BETA.setState(m + 1, n + 1);
+
+	return BETA.cdf(high) - BETA.cdf(low);
     }
 
     @Override
