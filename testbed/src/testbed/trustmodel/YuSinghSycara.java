@@ -92,7 +92,7 @@ public class YuSinghSycara extends AbstractTrustModel<Double, Opinion> {
 	// empty
     }
 
-    public Map<Integer, Double> getTrust(int service) {
+    public Map<Integer, Double> getTrustTotalOrder(int service) {
 	Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {

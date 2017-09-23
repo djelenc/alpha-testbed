@@ -21,7 +21,7 @@ import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
-import testbed.interfaces.TrustModel;
+import testbed.trustmodel.AbstractTrustModel;
 
 /**
  * Qualitative assessment dynamics
@@ -29,7 +29,7 @@ import testbed.interfaces.TrustModel;
  * @author David
  * 
  */
-public class QAD implements TrustModel<Omega, Opinion> {
+public class QAD extends AbstractTrustModel<Omega, Opinion> {
     // matrix for other agents
     public Omega[][] op;
 
@@ -85,7 +85,7 @@ public class QAD implements TrustModel<Omega, Opinion> {
     }
 
     @Override
-    public Map<Integer, Omega> getTrust(int service) {
+    public Map<Integer, Omega> getTrustTotalOrder(int service) {
 	Map<Integer, Omega> newTrust = operator.compute(row, op);
 
 	// now update Alpha's row

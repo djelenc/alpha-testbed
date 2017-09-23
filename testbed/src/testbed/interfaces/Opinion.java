@@ -54,6 +54,8 @@ public final class Opinion extends OpinionObject {
      *            Time at which the opinion was given
      * @param itd
      *            The internal trust degree
+     * @param uncertainty
+     *            The uncertainty value
      */
     public Opinion(int agent1, int agent2, int service, int time, double itd,
 	    double uncertainty) {

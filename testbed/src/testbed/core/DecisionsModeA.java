@@ -168,7 +168,7 @@ public class DecisionsModeA extends NoDecisions {
 	    // accuracy
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
-	    final double accValue = accuracy.evaluate(tm.getTrust(service),
+	    final double accValue = accuracy.evaluate(tm.getTrustTotalOrder(service),
 		    capabilities);
 
 	    results.put(accKey, accValue);

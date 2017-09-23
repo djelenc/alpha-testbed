@@ -45,7 +45,7 @@ public class BetaReputationSelectingInteractionPartners extends BetaReputation
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, Double> trust = getTrust(service);
+	    final Map<Integer, Double> trust = getTrustTotalOrder(service);
 	    final Integer best = selector.probabilistic(trust);
 	    // final Integer best = selector.maximal(trust);
 

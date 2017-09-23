@@ -12,6 +12,9 @@ package testbed.interfaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import testbed.common.Tuple;
 
 /**
  * The core interface for implementing trust models.
@@ -79,6 +82,8 @@ public interface TrustModel<T extends Comparable<T>, O extends OpinionObject> {
     public void calculateTrust();
 
     /**
+     * XXX: Move me into separate interface
+     * 
      * Returns the calculated trust values for a given service. The trust values
      * have to be packaged in a map, whose keys represent agents and its values
      * represent their computed trust values.
@@ -87,7 +92,22 @@ public interface TrustModel<T extends Comparable<T>, O extends OpinionObject> {
      *            type of service
      * @return Map where keys represent agents and values computed trust values
      */
-    public Map<Integer, T> getTrust(int service);
+    public Map<Integer, T> getTrustTotalOrder(int service);
+
+    /**
+     * Returns the calculated trust expressed as partial order imposed over
+     * agents. Elements of this sent represents pairs of agents, where the first
+     * agent is less trustworthy than the second.
+     * 
+     * For instance, set {(A, B), (A, C)} denotes that A is less trustworthy
+     * than B and also A is less trustworthy than C. There is no information
+     * about comparing B and C.
+     * 
+     * @param service
+     *            The type of service
+     * @return A set of agent pairs representing pairwise comparisons.
+     */
+    public Set<Tuple<Integer, Integer>> getTrustPartialOrder(int service);
 
     /**
      * Returns an {@link ParametersPanel} instance, which is responsible for

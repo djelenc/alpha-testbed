@@ -151,7 +151,7 @@ public class NoDecisions extends EvaluationProtocol {
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
 	    final double accValue = accuracy
-		    .evaluate(trustModel.getTrust(service), capabilities);
+		    .evaluate(trustModel.getTrustTotalOrder(service), capabilities);
 
 	    results.put(accKey, accValue);
 	}

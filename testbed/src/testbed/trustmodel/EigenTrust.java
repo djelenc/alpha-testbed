@@ -138,7 +138,7 @@ public class EigenTrust extends AbstractTrustModel<Double, Opinion> {
     }
 
     @Override
-    public Map<Integer, Double> getTrust(int service) {
+    public Map<Integer, Double> getTrustTotalOrder(int service) {
 	// pre-trust vector
 	double[] p = computePretrustVector(cntExp);
 

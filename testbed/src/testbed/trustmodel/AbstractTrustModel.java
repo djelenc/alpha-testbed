@@ -10,6 +10,12 @@
  */
 package testbed.trustmodel;
 
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import testbed.common.Tuple;
 import testbed.interfaces.OpinionObject;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
@@ -42,5 +48,36 @@ public abstract class AbstractTrustModel<T extends Comparable<T>, O extends Opin
     @Override
     public ParametersPanel getParametersPanel() {
 	return null;
+    }
+
+    @Override
+    public Set<Tuple<Integer, Integer>> getTrustPartialOrder(int service) {
+	final Map<Integer, T> trust = getTrustTotalOrder(service);
+
+	final Set<Tuple<Integer, Integer>> partialTrust = new LinkedHashSet<>();
+
+	for (Entry<Integer, T> t1 : trust.entrySet()) {
+	    for (Entry<Integer, T> t2 : trust.entrySet()) {
+		final int agent1 = t1.getKey();
+		final int agent2 = t2.getKey();
+
+		if (agent1 < agent2) {
+		    final T value1 = t1.getValue();
+		    final T value2 = t2.getValue();
+
+		    if (value1 != null && value2 != null) {
+			if (value1.compareTo(value2) < 0) {
+			    partialTrust.add(new Tuple<Integer, Integer>(agent1,
+				    agent2));
+			} else if (value1.compareTo(value2) > 0) {
+			    partialTrust.add(new Tuple<Integer, Integer>(agent2,
+				    agent1));
+			}
+		    }
+		}
+	    }
+	}
+
+	return partialTrust;
     }
 }

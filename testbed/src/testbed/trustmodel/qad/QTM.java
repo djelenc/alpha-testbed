@@ -18,7 +18,7 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
-import testbed.interfaces.TrustModel;
+import testbed.trustmodel.AbstractTrustModel;
 
 /**
  * A Qualitative Trust Model as proposed by Jelenc and Trček. The paper is
@@ -28,7 +28,7 @@ import testbed.interfaces.TrustModel;
  * @author David
  * 
  */
-public class QTM implements TrustModel<Omega, Opinion> {
+public class QTM extends AbstractTrustModel<Omega, Opinion> {
 
     protected static final double LOWER_CRED = 0.001;
     protected static final double TF = 0.1; // 0.01
@@ -154,7 +154,7 @@ public class QTM implements TrustModel<Omega, Opinion> {
     }
 
     @Override
-    public Map<Integer, Omega> getTrust(int service) {
+    public Map<Integer, Omega> getTrustTotalOrder(int service) {
 	final Map<Integer, Omega> trust = new LinkedHashMap<Integer, Omega>();
 
 	for (int agent = 0; agent < opinions.length; agent++) {

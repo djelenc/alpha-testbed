@@ -114,7 +114,7 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD, Opinion> {
     }
 
     @Override
-    public Map<Integer, TD> getTrust(int service) {
+    public Map<Integer, TD> getTrustTotalOrder(int service) {
 	final Map<Integer, TD> trust = new HashMap<Integer, TD>();
 	final ArrayList<Integer> union = new ArrayList<Integer>();
 

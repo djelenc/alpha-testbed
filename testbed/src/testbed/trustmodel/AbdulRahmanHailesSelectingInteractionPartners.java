@@ -53,7 +53,7 @@ public class AbdulRahmanHailesSelectingInteractionPartners
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
-	    final Map<Integer, TD> computedTrust = getTrust(service);
+	    final Map<Integer, TD> computedTrust = getTrustTotalOrder(service);
 	    // final Integer best = selector.maximal(computedTrust);
 
 	    final Map<Integer, Double> trust = new LinkedHashMap<Integer, Double>();

@@ -13,16 +13,16 @@ package testbed.trustmodel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.Assert;
+import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
+import cern.colt.Arrays;
+import junit.framework.Assert;
+import testbed.common.Tuple;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.OnlyOpinions;
-import cern.colt.Arrays;
 
 public class OnlyOpinionsTMTest {
 
@@ -71,7 +71,7 @@ public class OnlyOpinionsTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	Map<Integer, Double> trust = tm.getTrust(0);
+	Map<Integer, Double> trust = tm.getTrustTotalOrder(0);
 
 	Assert.assertEquals(1d, trust.get(5), 0.001);
 	Assert.assertEquals(0.6, trust.get(0), 0.001);
@@ -85,12 +85,55 @@ public class OnlyOpinionsTMTest {
 	tm.processOpinions(opinions);
 	tm.calculateTrust();
 
-	trust = tm.getTrust(0);
+	trust = tm.getTrustTotalOrder(0);
 
 	Assert.assertEquals(0d, trust.get(5), 0.001);
 	Assert.assertEquals(0.6, trust.get(0), 0.001);
 	Assert.assertEquals(0.3, trust.get(1), 0.001);
 	Assert.assertEquals(0d, trust.get(4), 0.001);
+    }
 
+    @Test
+    public void testPartialOrder() {
+	OnlyOpinions tm = new OnlyOpinions();
+	tm.initialize();
+
+	ArrayList<Opinion> opinions = new ArrayList<Opinion>();
+	ArrayList<Experience> experiences = new ArrayList<Experience>();
+
+	final List<Integer> agents = new ArrayList<Integer>();
+	agents.add(0);
+	agents.add(1);
+	agents.add(2);
+	agents.add(3);
+	agents.add(4);
+	agents.add(5);
+	agents.add(6);
+
+	opinions.add(new Opinion(1, 0, 1, 0, 0.7, 0.05));
+	opinions.add(new Opinion(2, 0, 1, 0, 0.6, 0.05));
+	opinions.add(new Opinion(3, 0, 1, 0, 0.5, 0.05));
+	opinions.add(new Opinion(2, 1, 1, 0, 0.4, 0.05));
+	opinions.add(new Opinion(3, 1, 1, 0, 0.3, 0.05));
+	opinions.add(new Opinion(6, 1, 1, 0, 0.2, 0.05));
+	opinions.add(new Opinion(6, 5, 1, 0, 1.0, 0.05));
+
+	tm.setAgents(agents);
+	tm.processExperiences(experiences);
+	tm.processOpinions(opinions);
+	tm.calculateTrust();
+
+	Map<Integer, Double> trust = tm.getTrustTotalOrder(0);
+
+	Assert.assertEquals(1d, trust.get(5), 0.001);
+	Assert.assertEquals(0.6, trust.get(0), 0.001);
+	Assert.assertEquals(0.3, trust.get(1), 0.001);
+
+	final Set<Tuple<Integer, Integer>> partial = tm.getTrustPartialOrder(0);
+
+	Assert.assertEquals(3, partial.size());
+	Assert.assertTrue(partial.contains(new Tuple<Integer, Integer>(1, 0)));
+	Assert.assertTrue(partial.contains(new Tuple<Integer, Integer>(1, 5)));
+	Assert.assertTrue(partial.contains(new Tuple<Integer, Integer>(0, 5)));
     }
 }

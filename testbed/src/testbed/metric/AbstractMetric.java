@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import testbed.common.Tuple;
+import testbed.common.TrustTuple;
 import testbed.interfaces.Metric;
 import testbed.interfaces.ParametersPanel;
 
@@ -56,11 +56,11 @@ public abstract class AbstractMetric implements Metric {
      */
     public <T extends Comparable<T>> Map<Integer, Number> denseRankings(
 	    Map<Integer, T> estimations) {
-	final PriorityQueue<Tuple<Integer, T>> pq = new PriorityQueue<Tuple<Integer, T>>(
+	final PriorityQueue<TrustTuple<Integer, T>> pq = new PriorityQueue<TrustTuple<Integer, T>>(
 		100, Collections.reverseOrder());
 
 	for (Map.Entry<Integer, T> e : estimations.entrySet())
-	    pq.add(new Tuple<Integer, T>(e.getKey(), e.getValue()));
+	    pq.add(new TrustTuple<Integer, T>(e.getKey(), e.getValue()));
 
 	final Map<Integer, Number> rankings = new LinkedHashMap<Integer, Number>();
 
@@ -68,7 +68,7 @@ public abstract class AbstractMetric implements Metric {
 	int rank = 0;
 
 	while (!pq.isEmpty()) {
-	    final Tuple<Integer, T> tuple = pq.poll();
+	    final TrustTuple<Integer, T> tuple = pq.poll();
 	    final int agent = tuple.first;
 	    final T value = tuple.second;
 
@@ -109,11 +109,11 @@ public abstract class AbstractMetric implements Metric {
      */
     public <T extends Comparable<T>> Map<Integer, Number> standardRanking(
 	    Map<Integer, T> estimations) {
-	final PriorityQueue<Tuple<Integer, T>> pq = new PriorityQueue<Tuple<Integer, T>>(
+	final PriorityQueue<TrustTuple<Integer, T>> pq = new PriorityQueue<TrustTuple<Integer, T>>(
 		100, Collections.reverseOrder());
 
 	for (Map.Entry<Integer, T> e : estimations.entrySet())
-	    pq.add(new Tuple<Integer, T>(e.getKey(), e.getValue()));
+	    pq.add(new TrustTuple<Integer, T>(e.getKey(), e.getValue()));
 
 	final Map<Integer, Number> rankings = new LinkedHashMap<Integer, Number>();
 
@@ -121,7 +121,7 @@ public abstract class AbstractMetric implements Metric {
 	int count = 0, rank = 1;
 
 	while (!pq.isEmpty()) {
-	    final Tuple<Integer, T> tuple = pq.poll();
+	    final TrustTuple<Integer, T> tuple = pq.poll();
 	    final int agent = tuple.first;
 	    final T value = tuple.second;
 	    count++;
@@ -161,10 +161,10 @@ public abstract class AbstractMetric implements Metric {
      */
     public <T extends Comparable<T>> Map<Integer, Number> modifiedRanking(
 	    Map<Integer, T> estimations) {
-	final PriorityQueue<Tuple<Integer, T>> pq = new PriorityQueue<Tuple<Integer, T>>();
+	final PriorityQueue<TrustTuple<Integer, T>> pq = new PriorityQueue<TrustTuple<Integer, T>>();
 
 	for (Map.Entry<Integer, T> e : estimations.entrySet())
-	    pq.add(new Tuple<Integer, T>(e.getKey(), e.getValue()));
+	    pq.add(new TrustTuple<Integer, T>(e.getKey(), e.getValue()));
 
 	final Map<Integer, Number> rankings = new LinkedHashMap<Integer, Number>();
 
@@ -172,7 +172,7 @@ public abstract class AbstractMetric implements Metric {
 	int count = pq.size() + 1, rank = pq.size();
 
 	while (!pq.isEmpty()) {
-	    final Tuple<Integer, T> tuple = pq.poll();
+	    final TrustTuple<Integer, T> tuple = pq.poll();
 	    final int agent = tuple.first;
 	    final T value = tuple.second;
 	    count--;
