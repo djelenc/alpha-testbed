@@ -23,9 +23,9 @@ import testbed.interfaces.OpinionRequest;
  * @author David
  * 
  */
-public class TransitiveOpinionProviderSelection extends
-	TransitiveInteractionPartnerSelection implements
-	OpinionProviderSelection {
+public class TransitiveOpinionProviderSelection
+	extends TransitiveInteractionPartnerSelection
+	implements OpinionProviderSelection {
 
     protected List<OpinionRequest> opinionRequests;
 

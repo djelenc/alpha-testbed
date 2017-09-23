@@ -19,7 +19,7 @@ import java.util.Map;
  * collaborators for interactions.
  * 
  */
-public interface Scenario {
+public interface Scenario<T extends OpinionObject> {
 
     /**
      * Sets the random number generator. In order to produce repeatable results,
@@ -60,7 +60,7 @@ public interface Scenario {
      * 
      * @return
      */
-    public List<Opinion> generateOpinions();
+    public List<T> generateOpinions();
 
     /**
      * Generates a set of {@link Experience} tuples.

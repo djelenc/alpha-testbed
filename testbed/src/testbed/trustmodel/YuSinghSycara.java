@@ -136,8 +136,8 @@ public class YuSinghSycara extends AbstractTrustModel<Double> {
 		reputation = 0.5;
 	    }
 
-	    final double score = weight * localRating + (1 - weight)
-		    * reputation;
+	    final double score = weight * localRating
+		    + (1 - weight) * reputation;
 
 	    trust.put(agent, score);
 	}

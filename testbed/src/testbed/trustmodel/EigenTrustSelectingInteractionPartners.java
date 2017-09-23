@@ -53,10 +53,9 @@ public class EigenTrustSelectingInteractionPartners extends EigenTrust
 	    @Override
 	    public void eval(Double var) throws IllegalArgumentException {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The threshold must be a between 0 and 1 inclusively, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The threshold must be a between 0 and 1 inclusively, but was %.2f",
+			    var));
 	    }
 	};
     }
@@ -69,14 +68,15 @@ public class EigenTrustSelectingInteractionPartners extends EigenTrust
     public void initialize(Object... params) {
 	super.initialize(params);
 	selector = new PartnerSelectionTemplates(generator);
-	probSelection = Utils.extractParameter(VAL_PROCEDURE,
-		params.length - 2, params);
-	zeroThreshold = Utils.extractParameter(VAL_THRESHOLD,
-		params.length - 1, params);
+	probSelection = Utils.extractParameter(VAL_PROCEDURE, params.length - 2,
+		params);
+	zeroThreshold = Utils.extractParameter(VAL_THRESHOLD, params.length - 1,
+		params);
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(List<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(
+	    List<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {
@@ -110,8 +110,8 @@ public class EigenTrustSelectingInteractionPartners extends EigenTrust
 		    }
 		} else {
 		    // selecting according to the probabilities
-		    final Integer best = selector.probabilisticAndPowered(
-			    trust, 1d);
+		    final Integer best = selector.probabilisticAndPowered(trust,
+			    1d);
 
 		    if (null == best) {
 			bestAgent = 0;

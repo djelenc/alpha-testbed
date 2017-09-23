@@ -24,7 +24,6 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Scenario;
 
 /**
  * Scenario in which the probability of reporting an honest opinion is directly
@@ -47,14 +46,14 @@ import testbed.interfaces.Scenario;
  * <li>3: (double) interaction density -- the percentage of agents with which
  * agent Alpha interacts
  * <li>4: (double) opinion density -- the ratio that determines the number of
- * opinions that each agents provides. Or
- * "how many agents does a particular agent knows".
+ * opinions that each agents provides. Or "how many agents does a particular
+ * agent knows".
  * </ul>
  * 
  * @author David
  * 
  */
-public class Transitive extends AbstractScenario implements Scenario {
+public class Transitive extends AbstractScenario<Opinion> {
 
     protected static final ParameterCondition<Integer> VAL_SIZE;
     protected static final ParameterCondition<Double> VAL_SD, VAL_DENS;
@@ -65,10 +64,9 @@ public class Transitive extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The number of agents and services must be non negative integer, but was %d",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The number of agents and services must be non negative integer, but was %d",
+			    var));
 	    }
 	};
 
@@ -76,10 +74,9 @@ public class Transitive extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The density must be between 0 and 1 inclusively, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The density must be between 0 and 1 inclusively, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -87,10 +84,9 @@ public class Transitive extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The standard deviation must be a non-negative double, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The standard deviation must be a non-negative double, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -228,7 +224,8 @@ public class Transitive extends AbstractScenario implements Scenario {
 	}
 
 	// make opinions sparse
-	final int limit = (int) ((1 - opinionDensity) * dms.length * dms.length);
+	final int limit = (int) ((1 - opinionDensity) * dms.length
+		* dms.length);
 	int counter = 0;
 
 	while (counter < limit) {
@@ -253,9 +250,8 @@ public class Transitive extends AbstractScenario implements Scenario {
      * @param opinionDensity
      * @return
      */
-    public DeceptionModel[][] assignDeceptionModelsTenative(
-	    Set<Integer> agents, Map<Integer, Double> capabilities,
-	    double opinionDensity) {
+    public DeceptionModel[][] assignDeceptionModelsTenative(Set<Integer> agents,
+	    Map<Integer, Double> capabilities, double opinionDensity) {
 
 	DeceptionModel[][] dms = new DeceptionModel[agents.size()][agents
 		.size()];
@@ -290,7 +286,8 @@ public class Transitive extends AbstractScenario implements Scenario {
 	}
 
 	// make opinions sparse
-	final int limit = (int) ((1 - opinionDensity) * dms.length * dms.length);
+	final int limit = (int) ((1 - opinionDensity) * dms.length
+		* dms.length);
 	int i, j, counter = 0;
 
 	while (counter < limit) {

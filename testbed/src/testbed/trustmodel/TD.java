@@ -28,8 +28,8 @@ public enum TD {
 
     public static TD fromDouble(double d) {
 	if (d < 0d || d > 1d)
-	    throw new IllegalArgumentException(String.format(
-		    "TD must be within [0, 1], but was %.2f", d));
+	    throw new IllegalArgumentException(
+		    String.format("TD must be within [0, 1], but was %.2f", d));
 
 	if (d < B.numeric) {
 	    return VB;
@@ -47,7 +47,7 @@ public enum TD {
 	    if (td.ordinal() == i)
 		return td;
 
-	throw new IllegalArgumentException(String.format(
-		"Cannot determine TD for rank %d", i));
+	throw new IllegalArgumentException(
+		String.format("Cannot determine TD for rank %d", i));
     }
 }

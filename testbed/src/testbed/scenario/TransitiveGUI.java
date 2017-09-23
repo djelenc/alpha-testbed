@@ -124,8 +124,8 @@ public class TransitiveGUI extends JPanel implements ParametersPanel {
 	numOfAgents = new JSpinner(new SpinnerNumberModel(100, 1, 300, 1));
 	((JSpinner.DefaultEditor) numOfAgents.getEditor()).getTextField()
 		.setColumns(3);
-	numOfAgents
-		.setToolTipText("The number of agents must be between 1 and 300.");
+	numOfAgents.setToolTipText(
+		"The number of agents must be between 1 and 300.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -182,8 +182,8 @@ public class TransitiveGUI extends JPanel implements ParametersPanel {
 	interDens = new JSpinner(new SpinnerNumberModel(0.10, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) interDens.getEditor()).getTextField()
 		.setColumns(3);
-	interDens
-		.setToolTipText("The proportion of agents with agent Alpha interacts.");
+	interDens.setToolTipText(
+		"The proportion of agents with agent Alpha interacts.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;

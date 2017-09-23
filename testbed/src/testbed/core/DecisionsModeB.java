@@ -25,6 +25,7 @@ import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.Metric;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.OpinionCost;
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.OpinionProviderSelection;
 import testbed.interfaces.OpinionRequest;
 import testbed.interfaces.Scenario;
@@ -77,7 +78,7 @@ public class DecisionsModeB extends DecisionsModeA {
     private SelectingInteractionPartners tmIP;
     private SelectingOpinionProviders tmOP;
 
-    private Scenario scn;
+    private Scenario<Opinion> scn;
     private InteractionPartnerSelection scnIP;
     private OpinionProviderSelection scnOP;
 
@@ -87,7 +88,8 @@ public class DecisionsModeB extends DecisionsModeA {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initialize(TrustModel<?> tm, Scenario scn,
+    public void initialize(TrustModel<?> tm,
+	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 	if (!validTrustModelClasses(tm.getClass())) {
 	    throw new IllegalArgumentException("Invalid trust model.");
@@ -101,7 +103,9 @@ public class DecisionsModeB extends DecisionsModeA {
 	    throw new IllegalArgumentException("Invalid scenario.");
 	}
 
-	this.scn = scn;
+	// TODO: Assure this cannot fail
+	this.scn = (Scenario<Opinion>) scn;
+
 	this.scnIP = (InteractionPartnerSelection) scn;
 	this.scnOP = (OpinionProviderSelection) scn;
 
@@ -250,7 +254,7 @@ public class DecisionsModeB extends DecisionsModeA {
     }
 
     @Override
-    public Scenario getScenario() {
+    public Scenario<? extends OpinionObject> getScenario() {
 	return scn;
     }
 

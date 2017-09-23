@@ -212,13 +212,14 @@ public class QTM implements TrustModel<Omega> {
 		    }
 
 		    // TODO: increase connectedness for mutual opinions
-		    final double connectedness, recency, weight, providerTrustworthiness, pastAccuracy;
+		    final double connectedness, recency, weight,
+			    providerTrustworthiness, pastAccuracy;
 
-		    pastAccuracy = 1d / (1d + Math.exp(cntWrong[witness]
-			    - cntCorrect[witness]));
+		    pastAccuracy = 1d / (1d + Math
+			    .exp(cntWrong[witness] - cntCorrect[witness]));
 
-		    providerTrustworthiness = Math.sqrt(credibility[witness]
-			    * pastAccuracy);
+		    providerTrustworthiness = Math
+			    .sqrt(credibility[witness] * pastAccuracy);
 
 		    connectedness = (mutual + 0d) / combined;
 
@@ -248,8 +249,8 @@ public class QTM implements TrustModel<Omega> {
 	    // common vector
 	    final double[] common = new double[5];
 	    for (int i = 0; i < reputation.length; i++) {
-		common[i] = confidence * normalizedExp[i] + (1 - confidence)
-			* normalizedRep[i];
+		common[i] = confidence * normalizedExp[i]
+			+ (1 - confidence) * normalizedRep[i];
 	    }
 
 	    final Omega td = qualtitativeAverage(common);
@@ -370,7 +371,8 @@ public class QTM implements TrustModel<Omega> {
 
 	    // correct / wrong
 	    final double[] newCntCorrect = new double[max + 1];
-	    System.arraycopy(cntCorrect, 0, newCntCorrect, 0, cntCorrect.length);
+	    System.arraycopy(cntCorrect, 0, newCntCorrect, 0,
+		    cntCorrect.length);
 	    cntCorrect = newCntCorrect;
 
 	    final double[] newCntWrong = new double[max + 1];

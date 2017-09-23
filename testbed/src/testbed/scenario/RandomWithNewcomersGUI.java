@@ -75,11 +75,12 @@ public class RandomWithNewcomersGUI extends RandomGUI {
 	c.gridx = 0;
 	c.gridy = yPosition;
 	parent.add(lbl, c);
-	newcomersNumber = new JSpinner(new SpinnerNumberModel(50, 1, 10000, 50));
+	newcomersNumber = new JSpinner(
+		new SpinnerNumberModel(50, 1, 10000, 50));
 	((JSpinner.DefaultEditor) newcomersNumber.getEditor()).getTextField()
 		.setColumns(3);
-	newcomersNumber
-		.setToolTipText("The number of new agents that enter the system.");
+	newcomersNumber.setToolTipText(
+		"The number of new agents that enter the system.");
 	c.gridx = 1;
 	c.gridy = yPosition++;
 	c.fill = GridBagConstraints.NONE;

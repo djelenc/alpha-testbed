@@ -72,10 +72,9 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The forgetting factor must be a between 0 and 1 inclusively, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The forgetting factor must be a between 0 and 1 inclusively, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -83,10 +82,9 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 1 || var > 50)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The multiplier must be a between 1 and 50 inclusively, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -94,10 +92,9 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	    @Override
 	    public void eval(Double var) {
 		if (var <= 0 || var >= 0.5)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The percentile must be a between 0 and 0.5 exclusively, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The percentile must be a between 0 and 0.5 exclusively, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -181,7 +178,8 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
      *            in question.
      * @return
      */
-    public double filterRatings(int agent, Map<Integer, BRSPair> experienceTrust) {
+    public double filterRatings(int agent,
+	    Map<Integer, BRSPair> experienceTrust) {
 	List<Integer> allRaters = new ArrayList<Integer>();
 	double reputation = Double.NEGATIVE_INFINITY;
 
@@ -205,8 +203,8 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	    for (int rater : allRaters) {
 		final Opinion o = opinions[rater][agent];
 		final double discount = Math.pow(lambdaOp, time - o.time);
-		final double rater_r = Math.round(FACTOR
-			* o.internalTrustDegree);
+		final double rater_r = Math
+			.round(FACTOR * o.internalTrustDegree);
 		final double rater_s = FACTOR - rater_r;
 
 		r += rater_r * discount;
@@ -220,9 +218,8 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	    for (int rater : allRaters) {
 		final Opinion o = opinions[rater][agent];
 		final double discount = Math.pow(lambdaOp, time - o.time);
-		final double rater_r = (Math.round(FACTOR
-			* o.internalTrustDegree))
-			* discount;
+		final double rater_r = (Math
+			.round(FACTOR * o.internalTrustDegree)) * discount;
 		final double rater_s = (FACTOR - rater_r) * discount;
 
 		final BetaDistribution beta = new BetaDistribution(1 + rater_r,
@@ -241,7 +238,8 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 	}
 
 	// if no-one but Alpha knows this agent
-	if (Double.isInfinite(reputation) && experienceTrust.containsKey(agent)) {
+	if (Double.isInfinite(reputation)
+		&& experienceTrust.containsKey(agent)) {
 	    final BRSPair p = experienceTrust.get(agent);
 	    reputation = (p.R + 1) / (p.R + p.S + 2);
 	}

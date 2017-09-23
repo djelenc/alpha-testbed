@@ -23,8 +23,8 @@ import testbed.interfaces.TrustModel;
  * @param <T>
  *            The data type in which the trust model conveys trust
  */
-public abstract class AbstractTrustModel<T extends Comparable<T>> implements
-	TrustModel<T> {
+public abstract class AbstractTrustModel<T extends Comparable<T>>
+	implements TrustModel<T> {
 
     protected RandomGenerator generator;
 

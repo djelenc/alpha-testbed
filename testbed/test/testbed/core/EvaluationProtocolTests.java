@@ -23,6 +23,7 @@ import testbed.core.DecisionsModeB;
 import testbed.core.EvaluationProtocol;
 import testbed.core.NoDecisions;
 import testbed.interfaces.Metric;
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 import testbed.metric.CumulativeNormalizedUtility;
@@ -39,7 +40,7 @@ public class EvaluationProtocolTests {
 
     EvaluationProtocol epND, epA, epB;
     TrustModel<?> tm, tmdm, tmdm2;
-    Scenario scn, scndm, scndm2;
+    Scenario<? extends OpinionObject> scn, scndm, scndm2;
     Metric acc, cnu, oc;
     Map<Metric, Object[]> mtrcs;
 

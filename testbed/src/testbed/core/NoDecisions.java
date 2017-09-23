@@ -16,13 +16,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Metric;
 import testbed.interfaces.Opinion;
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
@@ -66,7 +67,7 @@ public class NoDecisions extends EvaluationProtocol {
     private TrustModel<?> trustModel = null;
 
     /** Scenario */
-    private Scenario scenario = null;
+    private Scenario<Opinion> scenario = null;
 
     /** Class of accuracy instances */
     protected Class<? extends Accuracy> accuracyClass = null;
@@ -79,7 +80,8 @@ public class NoDecisions extends EvaluationProtocol {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initialize(TrustModel<?> tm, Scenario scn,
+    public void initialize(TrustModel<?> tm,
+	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 
 	if (!validTrustModelClasses(tm.getClass())) {
@@ -92,7 +94,8 @@ public class NoDecisions extends EvaluationProtocol {
 	    throw new IllegalArgumentException("Invalid scenario.");
 	}
 
-	scenario = scn;
+	// TODO: Assure this does not fail
+	scenario = (Scenario<Opinion>) scn;
 
 	if (!validMetricClasses(metrics.keySet())) {
 	    throw new IllegalArgumentException("Invalid metrics.");
@@ -149,8 +152,8 @@ public class NoDecisions extends EvaluationProtocol {
 	    // accuracy
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
-	    final double accValue = accuracy.evaluate(
-		    trustModel.getTrust(service), capabilities);
+	    final double accValue = accuracy
+		    .evaluate(trustModel.getTrust(service), capabilities);
 
 	    results.put(accKey, accValue);
 	}
@@ -192,7 +195,7 @@ public class NoDecisions extends EvaluationProtocol {
     }
 
     @Override
-    public Scenario getScenario() {
+    public Scenario<? extends OpinionObject> getScenario() {
 	return scenario;
     }
 

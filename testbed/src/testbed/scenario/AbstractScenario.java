@@ -10,11 +10,13 @@
  */
 package testbed.scenario;
 
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.Scenario;
 
-public abstract class AbstractScenario implements Scenario {
+public abstract class AbstractScenario<T extends OpinionObject>
+	implements Scenario<T> {
 
     protected RandomGenerator generator;
 

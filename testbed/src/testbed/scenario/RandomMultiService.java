@@ -27,7 +27,6 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Scenario;
 
 /**
  * This scenario implementation differs from {@link Random} in the way that the
@@ -38,7 +37,7 @@ import testbed.interfaces.Scenario;
  * @author David
  * 
  */
-public class RandomMultiService extends AbstractScenario implements Scenario {
+public class RandomMultiService extends AbstractScenario<Opinion> {
     protected int time;
 
     protected Map<Integer, Double> capabilities;
@@ -61,10 +60,9 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The number of agents and services must be non negative integer, but was %d",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The number of agents and services must be non negative integer, but was %d",
+			    var));
 	    }
 	};
 
@@ -75,10 +73,9 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The standard deviation must be a non-negative double, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The standard deviation must be a non-negative double, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -100,10 +97,9 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 			}
 
 			if (Math.abs(1d - sum) > 0.001)
-			    throw new IllegalArgumentException(
-				    String.format(
-					    "The sum of probabilities must be %.2f, but was %.2f.",
-					    1d, sum));
+			    throw new IllegalArgumentException(String.format(
+				    "The sum of probabilities must be %.2f, but was %.2f.",
+				    1d, sum));
 		    }
 		}, 4, parameters));
 
@@ -116,10 +112,9 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The exaggeration parameter must be between 0 and 1, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The exaggeration parameter must be between 0 and 1, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -137,8 +132,8 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 
 	    for (int j = 0; j < numServices; j++) {
 		// calculate key for Map
-		final int key = (numAgentsLarger ? pivot * i + j : pivot * j
-			+ i);
+		final int key = (numAgentsLarger ? pivot * i + j
+			: pivot * j + i);
 
 		// assign capability
 		capabilities.put(key, generator.nextDoubleFromTo(0, 1));
@@ -171,8 +166,8 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 	    for (int agent2 : agents) {
 		for (int service : services) {
 		    // calculate key1
-		    final int key1 = (numAgentsLarger ? pivot * agent1
-			    + service : pivot * service + agent1);
+		    final int key1 = (numAgentsLarger ? pivot * agent1 + service
+			    : pivot * service + agent1);
 
 		    // get deception model
 		    final DeceptionModel deceptionModel = deceptionModels
@@ -181,8 +176,9 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 		    // generate opinion if DM is not Silent
 		    if (deceptionModel != null) {
 			// calculate key2
-			final int key2 = (numAgentsLarger ? pivot * agent2
-				+ service : pivot * service + agent2);
+			final int key2 = (numAgentsLarger
+				? pivot * agent2 + service
+				: pivot * service + agent2);
 
 			// get capability
 			final double cap = capabilities.get(key2);
@@ -216,8 +212,8 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 	    agent = time % agents.size();
 
 	    // calculate key
-	    key = (numAgentsLarger ? pivot * agent + service : pivot * service
-		    + agent);
+	    key = (numAgentsLarger ? pivot * agent + service
+		    : pivot * service + agent);
 
 	    // generate interaction outcome
 	    cap = capabilities.get(key);
@@ -237,8 +233,8 @@ public class RandomMultiService extends AbstractScenario implements Scenario {
 	int key = 0;
 
 	for (int agent : agents) {
-	    key = (numAgentsLarger ? pivot * agent + service : pivot * service
-		    + agent);
+	    key = (numAgentsLarger ? pivot * agent + service
+		    : pivot * service + agent);
 	    result.put(agent, capabilities.get(key));
 	}
 

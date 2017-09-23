@@ -24,8 +24,8 @@ import testbed.interfaces.InteractionPartnerSelection;
  * @author David
  * 
  */
-public class RandomMultiServiceInteractionPartnerSelection extends
-	RandomMultiService implements InteractionPartnerSelection {
+public class RandomMultiServiceInteractionPartnerSelection
+	extends RandomMultiService implements InteractionPartnerSelection {
 
     protected Map<Integer, Integer> partners = null;
 
@@ -45,8 +45,8 @@ public class RandomMultiServiceInteractionPartnerSelection extends
 	    if (null == agent || !getAgents().contains(agent))
 		continue;
 
-	    final int key = (numAgentsLarger ? pivot * agent + service : pivot
-		    * service + agent);
+	    final int key = (numAgentsLarger ? pivot * agent + service
+		    : pivot * service + agent);
 
 	    // generate interaction outcome
 	    final double cap = capabilities.get(key);

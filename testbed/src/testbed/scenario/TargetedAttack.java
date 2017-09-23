@@ -30,7 +30,7 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class TargetedAttack extends AbstractScenario {
+public class TargetedAttack extends AbstractScenario<Opinion> {
 
     private static final String TOO_MANY_IP = "Too many interaction partners. Should be at most %d, but was %d.";
 
@@ -89,10 +89,9 @@ public class TargetedAttack extends AbstractScenario {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The number of agents must be non negative integer, but was %d",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The number of agents must be non negative integer, but was %d",
+			    var));
 	    }
 	};
 
@@ -100,10 +99,9 @@ public class TargetedAttack extends AbstractScenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The density must be between 0 and 1 inclusively, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The density must be between 0 and 1 inclusively, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -111,10 +109,9 @@ public class TargetedAttack extends AbstractScenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The standard deviation must be a non-negative double, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The standard deviation must be a non-negative double, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -154,8 +151,8 @@ public class TargetedAttack extends AbstractScenario {
 	targets = new ArrayList<Integer>();
 
 	// assign agents to groups
-	assignAgentsToGroups(agents, neutrals, attackers, targets,
-		numAttackers, numTargets);
+	assignAgentsToGroups(agents, neutrals, attackers, targets, numAttackers,
+		numTargets);
 
 	// System.out.printf("Neutral = %s\nTarget = %s\nAttackers = %s\n",
 	// neutrals, targets, attackers);
@@ -181,16 +178,16 @@ public class TargetedAttack extends AbstractScenario {
 
 	switch (strategy) {
 	case LEVEL_1:
-	    assignDeceptionModelsSybilEasy(agents, neutrals, attackers,
-		    targets, models);
+	    assignDeceptionModelsSybilEasy(agents, neutrals, attackers, targets,
+		    models);
 	    break;
 	case LEVEL_2:
 	    assignDeceptionModelsSybil(agents, neutrals, attackers, targets,
 		    models);
 	    break;
 	default:
-	    assignDeceptionModelsSybilHard(agents, neutrals, attackers,
-		    targets, models);
+	    assignDeceptionModelsSybilHard(agents, neutrals, attackers, targets,
+		    models);
 	    break;
 	}
 
@@ -271,8 +268,8 @@ public class TargetedAttack extends AbstractScenario {
 	potential.addAll(attackers);
 
 	if (numPartners > potential.size())
-	    throw new IllegalArgumentException(String.format(TOO_MANY_IP,
-		    potential.size(), numPartners));
+	    throw new IllegalArgumentException(
+		    String.format(TOO_MANY_IP, potential.size(), numPartners));
 
 	final List<Integer> selected = new ArrayList<Integer>();
 
@@ -313,7 +310,8 @@ public class TargetedAttack extends AbstractScenario {
     public void assignDeceptionModelsSybil(List<Integer> agents,
 	    List<Integer> neutral, List<Integer> attackers,
 	    List<Integer> targets, DeceptionModel[][] models) {
-	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent, targetReporter, targetAgent;
+	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent,
+		targetReporter, targetAgent;
 
 	for (int reporter : agents) {
 	    for (int agent : agents) {
@@ -371,7 +369,8 @@ public class TargetedAttack extends AbstractScenario {
     public void assignDeceptionModelsSybilHard(List<Integer> agents,
 	    List<Integer> neutral, List<Integer> attackers,
 	    List<Integer> targets, DeceptionModel[][] models) {
-	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent, targetReporter, targetAgent;
+	boolean neutralReporter, neutralAgent, attackerReporter, attackerAgent,
+		targetReporter, targetAgent;
 
 	for (int reporter : agents) {
 	    for (int agent : agents) {
@@ -430,7 +429,8 @@ public class TargetedAttack extends AbstractScenario {
     public void assignDeceptionModelsSybilEasy(List<Integer> agents,
 	    List<Integer> neutral, List<Integer> attackers,
 	    List<Integer> targets, DeceptionModel[][] models) {
-	boolean neutralReporter, neutralAgent, attackerReporter, targetReporter, targetAgent;
+	boolean neutralReporter, neutralAgent, attackerReporter, targetReporter,
+		targetAgent;
 
 	for (int reporter : agents) {
 	    for (int agent : agents) {
@@ -526,8 +526,8 @@ public class TargetedAttack extends AbstractScenario {
     public List<Experience> generateExperiences() {
 	final List<Experience> experiences = new ArrayList<Experience>();
 
-	final int agent = interactionPartners.get(time
-		% interactionPartners.size());
+	final int agent = interactionPartners
+		.get(time % interactionPartners.size());
 
 	// get its capability
 	final double cap = capabilities.get(agent);
@@ -563,9 +563,9 @@ public class TargetedAttack extends AbstractScenario {
 
     public static List<Integer> getTargets() {
 	if (allTargets == null) {
-	    throw new IllegalArgumentException(String.format(
-		    "Scenario %s was not initialized!",
-		    TargetedAttack.class.getCanonicalName()));
+	    throw new IllegalArgumentException(
+		    String.format("Scenario %s was not initialized!",
+			    TargetedAttack.class.getCanonicalName()));
 	}
 
 	return allTargets;
@@ -573,9 +573,9 @@ public class TargetedAttack extends AbstractScenario {
 
     public static List<Integer> getNeutrals() {
 	if (allTargets == null) {
-	    throw new IllegalArgumentException(String.format(
-		    "Scenario %s was not initialized!",
-		    TargetedAttack.class.getCanonicalName()));
+	    throw new IllegalArgumentException(
+		    String.format("Scenario %s was not initialized!",
+			    TargetedAttack.class.getCanonicalName()));
 	}
 
 	return allNeutrals;
@@ -583,9 +583,9 @@ public class TargetedAttack extends AbstractScenario {
 
     public static List<Integer> getAttackers() {
 	if (allTargets == null) {
-	    throw new IllegalArgumentException(String.format(
-		    "Scenario %s was not initialized!",
-		    TargetedAttack.class.getCanonicalName()));
+	    throw new IllegalArgumentException(
+		    String.format("Scenario %s was not initialized!",
+			    TargetedAttack.class.getCanonicalName()));
 	}
 
 	return allAttackers;

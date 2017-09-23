@@ -28,8 +28,8 @@ import testbed.interfaces.SelectingInteractionPartners;
  * @author David
  * 
  */
-public class TravosSelectingInteractionPartners extends Travos implements
-	SelectingInteractionPartners {
+public class TravosSelectingInteractionPartners extends Travos
+	implements SelectingInteractionPartners {
 
     protected int time;
     protected PartnerSelectionTemplates selector;
@@ -47,7 +47,8 @@ public class TravosSelectingInteractionPartners extends Travos implements
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(List<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(
+	    List<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {

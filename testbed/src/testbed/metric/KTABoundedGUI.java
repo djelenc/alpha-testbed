@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
+
 import testbed.gui.WizardPanelDescriptor;
 import testbed.interfaces.ParametersPanel;
 
@@ -109,9 +110,10 @@ public class KTABoundedGUI extends JPanel implements ParametersPanel {
 	c.gridy = i;
 	panel.add(lbl, c);
 	lower = new JSpinner(new SpinnerNumberModel(0, 0, 1, 0.1));
-	((JSpinner.DefaultEditor) lower.getEditor()).getTextField().setColumns(
-		3);
-	lower.setToolTipText("The metric will evaluate trust towards agents whose capabilty is higher than the lower bound.");
+	((JSpinner.DefaultEditor) lower.getEditor()).getTextField()
+		.setColumns(3);
+	lower.setToolTipText(
+		"The metric will evaluate trust towards agents whose capabilty is higher than the lower bound.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -126,9 +128,10 @@ public class KTABoundedGUI extends JPanel implements ParametersPanel {
 	c.gridy = i;
 	panel.add(lbl, c);
 	upper = new JSpinner(new SpinnerNumberModel(1, 0, 1, 0.1));
-	((JSpinner.DefaultEditor) upper.getEditor()).getTextField().setColumns(
-		3);
-	upper.setToolTipText("The metric will evaluate trust towards agents whose capabilty is lower than the upper bound.");
+	((JSpinner.DefaultEditor) upper.getEditor()).getTextField()
+		.setColumns(3);
+	upper.setToolTipText(
+		"The metric will evaluate trust towards agents whose capabilty is lower than the upper bound.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;

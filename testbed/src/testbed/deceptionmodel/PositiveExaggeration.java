@@ -12,8 +12,8 @@ package testbed.deceptionmodel;
 
 import testbed.interfaces.DeceptionModel;
 
-public class PositiveExaggeration extends ExaggerationModel implements
-	DeceptionModel {
+public class PositiveExaggeration extends ExaggerationModel
+	implements DeceptionModel {
 
     @Override
     public double calculate(double value) {

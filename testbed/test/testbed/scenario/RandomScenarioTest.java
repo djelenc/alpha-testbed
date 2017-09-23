@@ -19,6 +19,7 @@ import org.junit.Test;
 import testbed.common.DefaultRandomGenerator;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.Scenario;
 import testbed.scenario.Random;
 
@@ -26,7 +27,7 @@ public class RandomScenarioTest {
 
     @Test
     public void checkSizesOfCollections() {
-	Scenario scenario = new Random();
+	Scenario<? extends OpinionObject> scenario = new Random();
 	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	Map<DeceptionModel, Double> deceptionModels = new HashMap<DeceptionModel, Double>();
 	deceptionModels.put(new Truthful(), 1d);
@@ -44,7 +45,7 @@ public class RandomScenarioTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void failWhenAdditionalParametersMissing() {
-	Scenario scenario = new Random();
+	Scenario<? extends OpinionObject> scenario = new Random();
 	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	scenario.initialize(1, 1);
     }

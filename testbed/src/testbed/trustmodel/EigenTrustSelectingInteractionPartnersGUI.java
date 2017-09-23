@@ -70,8 +70,8 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	zeroThreshold = new JSpinner(new SpinnerNumberModel(0.1, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) zeroThreshold.getEditor()).getTextField()
 		.setColumns(3);
-	zeroThreshold
-		.setToolTipText("Probability with which a peer with trust value 0 is selected.");
+	zeroThreshold.setToolTipText(
+		"Probability with which a peer with trust value 0 is selected.");
 	c.gridx = 1;
 	c.gridy = offset;
 	c.fill = GridBagConstraints.NONE;
@@ -92,8 +92,8 @@ public class EigenTrustSelectingInteractionPartnersGUI extends EigenTrustGUI {
 	    results[i] = parent[i];
 
 	results[parent.length] = isProbabilistic();
-	results[parent.length + 1] = Double.parseDouble(String
-		.valueOf(zeroThreshold.getValue()));
+	results[parent.length + 1] = Double
+		.parseDouble(String.valueOf(zeroThreshold.getValue()));
 
 	return results;
     }

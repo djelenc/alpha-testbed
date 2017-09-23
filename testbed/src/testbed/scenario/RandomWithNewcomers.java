@@ -12,8 +12,8 @@ package testbed.scenario;
 
 import testbed.common.Utils;
 import testbed.deceptionmodel.Complementary;
-import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
 
 /**
@@ -55,8 +55,8 @@ public class RandomWithNewcomers extends Random {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(String.format(
-			    NEW_NUM_EX, var));
+		    throw new IllegalArgumentException(
+			    String.format(NEW_NUM_EX, var));
 	    }
 	};
 
@@ -64,8 +64,8 @@ public class RandomWithNewcomers extends Random {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(String.format(
-			    INTERVAL_EX, var));
+		    throw new IllegalArgumentException(
+			    String.format(INTERVAL_EX, var));
 	    }
 	};
 

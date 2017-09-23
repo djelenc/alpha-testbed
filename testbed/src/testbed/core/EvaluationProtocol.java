@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Metric;
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
@@ -73,7 +74,8 @@ public abstract class EvaluationProtocol {
      *            Map of metrics, where keys represent metric classes and values
      *            their parameters.
      */
-    public abstract void initialize(TrustModel<?> tm, Scenario scn,
+    public abstract void initialize(TrustModel<?> tm,
+	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics);
 
     /**
@@ -96,7 +98,7 @@ public abstract class EvaluationProtocol {
      * 
      * @return
      */
-    public abstract Scenario getScenario();
+    public abstract Scenario<? extends OpinionObject> getScenario();
 
     /**
      * Returns the set of interfaces that have to be implemented by the
@@ -149,7 +151,8 @@ public abstract class EvaluationProtocol {
      *            Map of metrics and their parameters
      * @return True if the combination is valid
      */
-    public final boolean validParameters(TrustModel<?> tm, Scenario scn,
+    public final boolean validParameters(TrustModel<?> tm,
+	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 	return validTrustModelClasses(tm.getClass())
 		&& validScenarioClasses(scn.getClass())
@@ -298,8 +301,8 @@ public abstract class EvaluationProtocol {
 	result = results.get(metric.getClass().hashCode() ^ service);
 
 	if (null == result) {
-	    throw new IllegalArgumentException(String.format(INVALID_QUERY,
-		    metric, service));
+	    throw new IllegalArgumentException(
+		    String.format(INVALID_QUERY, metric, service));
 	} else {
 	    return result;
 	}

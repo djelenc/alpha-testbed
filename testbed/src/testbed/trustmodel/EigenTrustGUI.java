@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
+
 import testbed.gui.WizardPanelDescriptor;
 import testbed.interfaces.ParametersPanel;
 
@@ -88,8 +89,8 @@ public class EigenTrustGUI extends JPanel implements ParametersPanel {
     }
 
     protected double getSatisfactoryThreshold() {
-	return Double.parseDouble(String.valueOf(satisfactoryThreshold
-		.getValue()));
+	return Double
+		.parseDouble(String.valueOf(satisfactoryThreshold.getValue()));
     }
 
     protected double getWeight() {
@@ -137,12 +138,12 @@ public class EigenTrustGUI extends JPanel implements ParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	satisfactoryThreshold = new JSpinner(new SpinnerNumberModel(0.5, 0, 1,
-		0.25));
+	satisfactoryThreshold = new JSpinner(
+		new SpinnerNumberModel(0.5, 0, 1, 0.25));
 	((JSpinner.DefaultEditor) satisfactoryThreshold.getEditor())
 		.getTextField().setColumns(3);
-	satisfactoryThreshold
-		.setToolTipText("A threshold that determines when the interaction outcome becomes a satisfactory.");
+	satisfactoryThreshold.setToolTipText(
+		"A threshold that determines when the interaction outcome becomes a satisfactory.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -156,11 +157,12 @@ public class EigenTrustGUI extends JPanel implements ParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	opinionSampleNumber = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
+	opinionSampleNumber = new JSpinner(
+		new SpinnerNumberModel(10, 1, 50, 1));
 	((JSpinner.DefaultEditor) opinionSampleNumber.getEditor())
 		.getTextField().setColumns(3);
-	opinionSampleNumber
-		.setToolTipText("Number of times the obtained opinion will be sampled to obtain a (pos, neg) tuple.");
+	opinionSampleNumber.setToolTipText(
+		"Number of times the obtained opinion will be sampled to obtain a (pos, neg) tuple.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -174,7 +176,8 @@ public class EigenTrustGUI extends JPanel implements ParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	opinionSampleSD = new JSpinner(new SpinnerNumberModel(0.10, 0, 1, 0.05));
+	opinionSampleSD = new JSpinner(
+		new SpinnerNumberModel(0.10, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) opinionSampleSD.getEditor()).getTextField()
 		.setColumns(3);
 	opinionSampleSD

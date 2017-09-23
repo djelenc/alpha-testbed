@@ -1,5 +1,4 @@
 /**
- * Contains implementations of different metrics 
+ * Contains implementations of different metrics
  */
 package testbed.metric;
-

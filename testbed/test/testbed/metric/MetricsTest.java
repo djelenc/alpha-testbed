@@ -148,9 +148,9 @@ public class MetricsTest {
 		    final double m_sfr = sfr.evaluate(trust, cpbs);
 
 		    if (Math.abs(m_kta - m_acc) > 0.0001)
-			System.out
-				.printf("123:%d%d%d -> Acc: %.2f, KTA: %.2f, KTB: %.2f, SFR: %.2f\n",
-					i, j, k, m_acc, m_kta, m_ktb, m_sfr);
+			System.out.printf(
+				"123:%d%d%d -> Acc: %.2f, KTA: %.2f, KTB: %.2f, SFR: %.2f\n",
+				i, j, k, m_acc, m_kta, m_ktb, m_sfr);
 		}
 	    }
 	}

@@ -29,8 +29,8 @@ import testbed.interfaces.SelectingInteractionPartners;
  * @author David
  * 
  */
-public class AbdulRahmanHailesSelectingInteractionPartners extends
-	AbdulRahmanHailes implements SelectingInteractionPartners {
+public class AbdulRahmanHailesSelectingInteractionPartners
+	extends AbdulRahmanHailes implements SelectingInteractionPartners {
 
     protected int time;
     protected PartnerSelectionTemplates selector;
@@ -48,7 +48,8 @@ public class AbdulRahmanHailesSelectingInteractionPartners extends
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(List<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(
+	    List<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {

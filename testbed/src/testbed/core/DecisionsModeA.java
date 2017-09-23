@@ -24,6 +24,7 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.Metric;
 import testbed.interfaces.Opinion;
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.TrustModel;
@@ -67,7 +68,7 @@ public class DecisionsModeA extends NoDecisions {
     private TrustModel<?> tm;
     private SelectingInteractionPartners tmSelect;
 
-    private Scenario scn;
+    private Scenario<Opinion> scn;
     private InteractionPartnerSelection scnSelect;
 
     protected Class<? extends Utility> utilityClass;
@@ -77,7 +78,8 @@ public class DecisionsModeA extends NoDecisions {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initialize(TrustModel<?> tm, Scenario scn,
+    public void initialize(TrustModel<?> tm,
+	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 	if (!validTrustModelClasses(tm.getClass())) {
 	    throw new IllegalArgumentException("Invalid trust model.");
@@ -90,7 +92,9 @@ public class DecisionsModeA extends NoDecisions {
 	    throw new IllegalArgumentException("Invalid scenario.");
 	}
 
-	this.scn = scn;
+	// TODO: Assure this cannot fail
+	this.scn = (Scenario<Opinion>) scn;
+
 	this.scnSelect = (InteractionPartnerSelection) scn;
 
 	if (!validMetricClasses(metrics.keySet())) {
@@ -142,8 +146,8 @@ public class DecisionsModeA extends NoDecisions {
 
 	// Get interaction partners in a map
 	// Convert Map to a TreeMap to ensure deterministic iteration
-	final Map<Integer, Integer> partners = Utils.ordered(tmSelect
-		.getInteractionPartners(services));
+	final Map<Integer, Integer> partners = Utils
+		.ordered(tmSelect.getInteractionPartners(services));
 
 	// convey partner selection to the scenario
 	scnSelect.setInteractionPartners(partners);
@@ -220,7 +224,7 @@ public class DecisionsModeA extends NoDecisions {
     }
 
     @Override
-    public Scenario getScenario() {
+    public Scenario<? extends OpinionObject> getScenario() {
 	return scn;
     }
 

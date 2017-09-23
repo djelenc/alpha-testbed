@@ -37,10 +37,9 @@ public class TransitiveWithChanges extends Transitive {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 0)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The change interval must be positive integer, but was %d.",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The change interval must be positive integer, but was %d.",
+			    var));
 	    }
 	};
 

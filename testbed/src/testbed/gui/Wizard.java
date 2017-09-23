@@ -309,36 +309,36 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      */
     public void propertyChange(PropertyChangeEvent evt) {
 
-	if (evt.getPropertyName().equals(
-		WizardModel.CURRENT_PANEL_DESCRIPTOR_PROPERTY)) {
+	if (evt.getPropertyName()
+		.equals(WizardModel.CURRENT_PANEL_DESCRIPTOR_PROPERTY)) {
 	    wizardController.resetButtonsToPanelRules();
-	} else if (evt.getPropertyName().equals(
-		WizardModel.NEXT_FINISH_BUTTON_TEXT_PROPERTY)) {
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.NEXT_FINISH_BUTTON_TEXT_PROPERTY)) {
 	    nextButton.setText(evt.getNewValue().toString());
-	} else if (evt.getPropertyName().equals(
-		WizardModel.BACK_BUTTON_TEXT_PROPERTY)) {
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.BACK_BUTTON_TEXT_PROPERTY)) {
 	    backButton.setText(evt.getNewValue().toString());
-	} else if (evt.getPropertyName().equals(
-		WizardModel.CANCEL_BUTTON_TEXT_PROPERTY)) {
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.CANCEL_BUTTON_TEXT_PROPERTY)) {
 	    cancelButton.setText(evt.getNewValue().toString());
-	} else if (evt.getPropertyName().equals(
-		WizardModel.NEXT_FINISH_BUTTON_ENABLED_PROPERTY)) {
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.NEXT_FINISH_BUTTON_ENABLED_PROPERTY)) {
 	    nextButton.setEnabled(((Boolean) evt.getNewValue()).booleanValue());
-	} else if (evt.getPropertyName().equals(
-		WizardModel.BACK_BUTTON_ENABLED_PROPERTY)) {
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.BACK_BUTTON_ENABLED_PROPERTY)) {
 	    backButton.setEnabled(((Boolean) evt.getNewValue()).booleanValue());
-	} else if (evt.getPropertyName().equals(
-		WizardModel.CANCEL_BUTTON_ENABLED_PROPERTY)) {
-	    cancelButton.setEnabled(((Boolean) evt.getNewValue())
-		    .booleanValue());
-	} else if (evt.getPropertyName().equals(
-		WizardModel.NEXT_FINISH_BUTTON_ICON_PROPERTY)) {
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.CANCEL_BUTTON_ENABLED_PROPERTY)) {
+	    cancelButton
+		    .setEnabled(((Boolean) evt.getNewValue()).booleanValue());
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.NEXT_FINISH_BUTTON_ICON_PROPERTY)) {
 	    nextButton.setIcon((Icon) evt.getNewValue());
-	} else if (evt.getPropertyName().equals(
-		WizardModel.BACK_BUTTON_ICON_PROPERTY)) {
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.BACK_BUTTON_ICON_PROPERTY)) {
 	    backButton.setIcon((Icon) evt.getNewValue());
-	} else if (evt.getPropertyName().equals(
-		WizardModel.CANCEL_BUTTON_ICON_PROPERTY)) {
+	} else if (evt.getPropertyName()
+		.equals(WizardModel.CANCEL_BUTTON_ICON_PROPERTY)) {
 	    cancelButton.setIcon((Icon) evt.getNewValue());
 	}
 
@@ -366,7 +366,8 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     /**
      * Mirrors the WizardModel method of the same name.
      * 
-     * @param boolean newValue The new enabled status of the button.
+     * @param boolean
+     *            newValue The new enabled status of the button.
      */
     public void setBackButtonEnabled(boolean newValue) {
 	wizardModel.setBackButtonEnabled(new Boolean(newValue));
@@ -384,7 +385,8 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     /**
      * Mirrors the WizardModel method of the same name.
      * 
-     * @param boolean newValue The new enabled status of the button.
+     * @param boolean
+     *            newValue The new enabled status of the button.
      */
     public void setNextFinishButtonEnabled(boolean newValue) {
 	wizardModel.setNextFinishButtonEnabled(new Boolean(newValue));
@@ -402,7 +404,8 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     /**
      * Mirrors the WizardModel method of the same name.
      * 
-     * @param boolean newValue The new enabled status of the button.
+     * @param boolean
+     *            newValue The new enabled status of the button.
      */
     public void setCancelButtonEnabled(boolean newValue) {
 	wizardModel.setCancelButtonEnabled(new Boolean(newValue));

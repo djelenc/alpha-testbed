@@ -29,7 +29,6 @@ import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Scenario;
 
 /**
  * A very simple scenario implementation.
@@ -67,7 +66,7 @@ import testbed.interfaces.Scenario;
  * @author David
  * 
  */
-public class Random extends AbstractScenario implements Scenario {
+public class Random extends AbstractScenario<Opinion> {
     protected static final String DENS_EX = "The density must be between 0 and 1 inclusively, but was %.2f";
     protected static final String DM_EX = "Could not get deception model for agent %d (%d total agents) from %s";
     protected static final String TOTAL_PROB_EX = "The sum of probabilities must be %.2f, but was %.2f.";
@@ -87,8 +86,8 @@ public class Random extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(String.format(
-			    AGENT_NUM_EX, var));
+		    throw new IllegalArgumentException(
+			    String.format(AGENT_NUM_EX, var));
 	    }
 	};
 
@@ -96,8 +95,8 @@ public class Random extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
-		    throw new IllegalArgumentException(String.format(ST_DEV_EX,
-			    var));
+		    throw new IllegalArgumentException(
+			    String.format(ST_DEV_EX, var));
 	    }
 	};
 
@@ -105,8 +104,8 @@ public class Random extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(String.format(EXAGG_EX,
-			    var));
+		    throw new IllegalArgumentException(
+			    String.format(EXAGG_EX, var));
 	    }
 	};
 
@@ -120,8 +119,8 @@ public class Random extends AbstractScenario implements Scenario {
 		}
 
 		if (Math.abs(1d - sum) > 0.001)
-		    throw new IllegalArgumentException(String.format(
-			    TOTAL_PROB_EX, 1d, sum));
+		    throw new IllegalArgumentException(
+			    String.format(TOTAL_PROB_EX, 1d, sum));
 	    }
 	};
 
@@ -129,8 +128,8 @@ public class Random extends AbstractScenario implements Scenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(String.format(DENS_EX,
-			    var));
+		    throw new IllegalArgumentException(
+			    String.format(DENS_EX, var));
 	    }
 	};
 
@@ -237,8 +236,8 @@ public class Random extends AbstractScenario implements Scenario {
 	    }
 	}
 
-	throw new IllegalArgumentException(String.format(DM_EX, agent,
-		numAgents, dmPMF));
+	throw new IllegalArgumentException(
+		String.format(DM_EX, agent, numAgents, dmPMF));
     }
 
     @Override
@@ -263,8 +262,8 @@ public class Random extends AbstractScenario implements Scenario {
 			    .calculate(internalTrustDegree);
 
 		    // create opinion tuple and add it to list
-		    final Opinion opinion = new Opinion(agent1, agent2, 0,
-			    time, communicatedInternalTrustDegree, sd_o);
+		    final Opinion opinion = new Opinion(agent1, agent2, 0, time,
+			    communicatedInternalTrustDegree, sd_o);
 		    opinions.add(opinion);
 		}
 	    }

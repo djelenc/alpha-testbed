@@ -34,19 +34,7 @@ package testbed.interfaces;
  * @author David
  * 
  */
-public final class Opinion {
-    /** Opinion provider */
-    public final int agent1;
-
-    /** The agent who the opinion is about */
-    public final int agent2;
-
-    /** The type of service */
-    public final int service;
-
-    /** Time when the opinion was given */
-    public final int time;
-
+public final class Opinion extends OpinionObject {
     /** The expressed level of trust between agent1 and agent2 */
     public final double internalTrustDegree;
 
@@ -69,10 +57,7 @@ public final class Opinion {
      */
     public Opinion(int agent1, int agent2, int service, int time, double itd,
 	    double uncertainty) {
-	this.agent1 = agent1;
-	this.agent2 = agent2;
-	this.service = service;
-	this.time = time;
+	super(agent1, agent2, service, time);
 	this.internalTrustDegree = itd;
 	this.uncertainty = uncertainty;
 

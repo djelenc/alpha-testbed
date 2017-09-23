@@ -25,8 +25,8 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class RandomInteractionPartnerSelection extends Random implements
-	InteractionPartnerSelection {
+public class RandomInteractionPartnerSelection extends Random
+	implements InteractionPartnerSelection {
 
     private Map<Integer, Integer> partners;
 

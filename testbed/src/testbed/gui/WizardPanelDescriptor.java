@@ -21,9 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import testbed.interfaces.OpinionCost;
-import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Accuracy;
+import testbed.interfaces.OpinionCost;
+import testbed.interfaces.OpinionObject;
+import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
@@ -80,7 +81,8 @@ public class WizardPanelDescriptor implements Observer {
      *            A class which extends java.awt.Component that will be inserted
      *            as a panel into the wizard dialog.
      */
-    public WizardPanelDescriptor(Object id, ParametersPanel params, String title) {
+    public WizardPanelDescriptor(Object id, ParametersPanel params,
+	    String title) {
 	identifier = id;
 	paramsPanel = params;
 	name = String.format(TITLE, title);
@@ -280,7 +282,8 @@ public class WizardPanelDescriptor implements Observer {
 	    final ParametersPanel current, novel;
 
 	    if (arg instanceof Scenario) {
-		final Scenario scn = (Scenario) arg;
+		@SuppressWarnings("unchecked")
+		final Scenario<? extends OpinionObject> scn = (Scenario<? extends OpinionObject>) arg;
 		id = ParametersGUI.SCENARIO;
 		title = String.format("Scenario: %s", scn);
 		current = wizard.getModel().getPanelDescriptor(id)

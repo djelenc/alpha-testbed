@@ -82,8 +82,8 @@ public class TargetedAttackScenarioTest {
 
 	for (Integer agent : ip) {
 	    Assert.assertFalse(targets.contains(agent));
-	    Assert.assertTrue(attackers.contains(agent)
-		    || neutrals.contains(agent));
+	    Assert.assertTrue(
+		    attackers.contains(agent) || neutrals.contains(agent));
 	}
     }
 
@@ -113,8 +113,8 @@ public class TargetedAttackScenarioTest {
 
 	for (Integer agent : ip) {
 	    Assert.assertFalse(targets.contains(agent));
-	    Assert.assertTrue(attackers.contains(agent)
-		    || neutrals.contains(agent));
+	    Assert.assertTrue(
+		    attackers.contains(agent) || neutrals.contains(agent));
 	}
     }
 }

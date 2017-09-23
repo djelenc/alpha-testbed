@@ -252,7 +252,8 @@ public class WizardModel {
 	Boolean oldValue = getBackButtonEnabled();
 	if (newValue != oldValue) {
 	    buttonEnabledHashmap.put(BACK_BUTTON_ENABLED_PROPERTY, newValue);
-	    firePropertyChange(BACK_BUTTON_ENABLED_PROPERTY, oldValue, newValue);
+	    firePropertyChange(BACK_BUTTON_ENABLED_PROPERTY, oldValue,
+		    newValue);
 	}
     }
 

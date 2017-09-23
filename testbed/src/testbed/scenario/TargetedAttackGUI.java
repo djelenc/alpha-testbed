@@ -34,8 +34,8 @@ import testbed.interfaces.ParametersPanel;
 public class TargetedAttackGUI extends JPanel implements ParametersPanel {
     protected static final long serialVersionUID = -1558821473401798087L;
 
-    protected JSpinner numOfAgents, numOfTargets, numOfAttackers,
-	    numOfPartners, sdExperiences, sdOpinions;
+    protected JSpinner numOfAgents, numOfTargets, numOfAttackers, numOfPartners,
+	    sdExperiences, sdOpinions;
     @SuppressWarnings("rawtypes")
     protected JComboBox strategy;
 
@@ -81,8 +81,8 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
     @Override
     public Object[] getParameters() {
 	return new Object[] { getNumberOfAgents(), getNumberOfAttackers(),
-		getNumberOfTargets(), getNumberOfPartners(),
-		getSdExperiences(), getSdOpinions(), getStrategy() };
+		getNumberOfTargets(), getNumberOfPartners(), getSdExperiences(),
+		getSdOpinions(), getStrategy() };
     }
 
     protected int getNumberOfTargets() {
@@ -147,8 +147,8 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
 	numOfAgents = new JSpinner(new SpinnerNumberModel(100, 1, 300, 1));
 	((JSpinner.DefaultEditor) numOfAgents.getEditor()).getTextField()
 		.setColumns(3);
-	numOfAgents
-		.setToolTipText("The number of agents must be between 1 and 300.");
+	numOfAgents.setToolTipText(
+		"The number of agents must be between 1 and 300.");
 	numOfAgents.addChangeListener(listener);
 	c.gridx = 1;
 	c.gridy = i++;
@@ -166,8 +166,8 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
 	numOfAttackers = new JSpinner(new SpinnerNumberModel(40, 0, 300, 10));
 	((JSpinner.DefaultEditor) numOfAttackers.getEditor()).getTextField()
 		.setColumns(3);
-	numOfAttackers
-		.setToolTipText("The number of agents that badmounth targeted agents.");
+	numOfAttackers.setToolTipText(
+		"The number of agents that badmounth targeted agents.");
 	numOfAttackers.addChangeListener(listener);
 	c.gridx = 1;
 	c.gridy = i++;
@@ -185,8 +185,8 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
 	numOfTargets = new JSpinner(new SpinnerNumberModel(20, 0, 300, 10));
 	((JSpinner.DefaultEditor) numOfTargets.getEditor()).getTextField()
 		.setColumns(3);
-	numOfTargets
-		.setToolTipText("The number of agents that get badmounthed by attackers. "
+	numOfTargets.setToolTipText(
+		"The number of agents that get badmounthed by attackers. "
 			+ "Alpha does not get to interact with these agents.");
 	numOfTargets.addChangeListener(listener);
 	c.gridx = 1;
@@ -205,8 +205,8 @@ public class TargetedAttackGUI extends JPanel implements ParametersPanel {
 	numOfPartners = new JSpinner(new SpinnerNumberModel(20, 0, 300, 10));
 	((JSpinner.DefaultEditor) numOfPartners.getEditor()).getTextField()
 		.setColumns(3);
-	numOfPartners
-		.setToolTipText("The number of agents with which Alpha interacts. "
+	numOfPartners.setToolTipText(
+		"The number of agents with which Alpha interacts. "
 			+ "Targeted agents are never selected as interaction partners.");
 	numOfPartners.addChangeListener(listener);
 	c.gridx = 1;

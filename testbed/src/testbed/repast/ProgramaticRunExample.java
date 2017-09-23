@@ -18,6 +18,7 @@ import testbed.core.AlphaTestbed;
 import testbed.core.EvaluationProtocol;
 import testbed.core.MetricSubscriber;
 import testbed.interfaces.Metric;
+import testbed.interfaces.Opinion;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 import testbed.metric.CumulativeNormalizedUtility;
@@ -51,7 +52,7 @@ public class ProgramaticRunExample implements MetricSubscriber {
 	model.initialize();
 
 	// scenario
-	Scenario scenario = new TransitiveOpinionProviderSelection();
+	Scenario<Opinion> scenario = new TransitiveOpinionProviderSelection();
 	scenario.setRandomGenerator(new DefaultRandomGenerator(0));
 	scenario.initialize(100, 0.05, 0.1, 1d, 1d);
 

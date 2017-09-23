@@ -18,6 +18,7 @@ import testbed.interfaces.Accuracy;
 import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.Metric;
 import testbed.interfaces.OpinionCost;
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.OpinionProviderSelection;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.SelectingInteractionPartners;
@@ -112,7 +113,8 @@ public class AlphaTestbed {
      *         of no suitable protocol found.
      */
     public static EvaluationProtocol getProtocol(TrustModel<?> tm,
-	    Scenario scn, Map<? extends Metric, Object[]> metrics) {
+	    Scenario<? extends OpinionObject> scn,
+	    Map<? extends Metric, Object[]> metrics) {
 
 	for (Class<? extends EvaluationProtocol> clazz : EVALUATION_PROTOCOLS) {
 	    try {
@@ -123,12 +125,12 @@ public class AlphaTestbed {
 		    return instance;
 		}
 	    } catch (Exception e) {
-		throw new IllegalArgumentException(String.format(
-			INSTATIATION_ERR, tm, scn, metrics), e);
+		throw new IllegalArgumentException(
+			String.format(INSTATIATION_ERR, tm, scn, metrics), e);
 	    }
 	}
 
-	throw new IllegalArgumentException(String.format(NO_PROTOCOL_ERR, tm,
-		scn, metrics));
+	throw new IllegalArgumentException(
+		String.format(NO_PROTOCOL_ERR, tm, scn, metrics));
     }
 }

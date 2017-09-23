@@ -31,7 +31,7 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class Oscillation extends AbstractScenario {
+public class Oscillation extends AbstractScenario<Opinion> {
 
     // set of services -- only 1 service
     protected static final List<Integer> SERVICES = new ArrayList<Integer>();
@@ -40,8 +40,7 @@ public class Oscillation extends AbstractScenario {
     protected static final DeceptionModel NEG_EXAGG = new NegativeExaggeration();
 
     // input parameter validators
-    protected static final ParameterCondition<Integer> VAL_SIZE,
-	    VAL_CHANGE_INT;
+    protected static final ParameterCondition<Integer> VAL_SIZE, VAL_CHANGE_INT;
     protected static final ParameterCondition<Double> VAL_SD, VAL_FRAC;
 
     // time
@@ -78,8 +77,8 @@ public class Oscillation extends AbstractScenario {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(String.format(
-			    "The number of agents and services must be non negative "
+		    throw new IllegalArgumentException(String
+			    .format("The number of agents and services must be non negative "
 				    + "integer, but was %d", var));
 	    }
 	};
@@ -88,8 +87,8 @@ public class Oscillation extends AbstractScenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0)
-		    throw new IllegalArgumentException(String.format(
-			    "The standard deviation must be a non-negative "
+		    throw new IllegalArgumentException(String
+			    .format("The standard deviation must be a non-negative "
 				    + "double, but was %.2f", var));
 	    }
 	};
@@ -98,8 +97,8 @@ public class Oscillation extends AbstractScenario {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 0 || var > 1000)
-		    throw new IllegalArgumentException(String.format(
-			    "The change interval must be within [1, 1000],"
+		    throw new IllegalArgumentException(String
+			    .format("The change interval must be within [1, 1000],"
 				    + " but was %d", var));
 	    }
 	};
@@ -108,9 +107,11 @@ public class Oscillation extends AbstractScenario {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(String.format(
-			    "The percentage must be wethin [%.2f,"
-				    + " %.2f], but was %.2f", 0d, 1d, var));
+		    throw new IllegalArgumentException(
+			    String.format(
+				    "The percentage must be wethin [%.2f,"
+					    + " %.2f], but was %.2f",
+				    0d, 1d, var));
 	    }
 	};
     }
@@ -129,8 +130,8 @@ public class Oscillation extends AbstractScenario {
 	if (fracGood + fracBad > 1) {
 	    throw new IllegalArgumentException(String.format(
 		    "The sum of percentages for Good and Bad agents is %.2f"
-			    + ", but should be %.2f or less.", fracGood
-			    + fracBad, 1d));
+			    + ", but should be %.2f or less.",
+		    fracGood + fracBad, 1d));
 	}
 
 	fracNeutral = 1 - fracGood - fracBad;
@@ -173,7 +174,8 @@ public class Oscillation extends AbstractScenario {
      */
     public void assignDeceptionModels(List<Integer> agents, List<Integer> good,
 	    List<Integer> bad, DeceptionModel[][] models) {
-	boolean neutralReporter, neutralAgent, goodReporter, goodAgent, badReporter, badAgent;
+	boolean neutralReporter, neutralAgent, goodReporter, goodAgent,
+		badReporter, badAgent;
 
 	for (int reporter : agents) {
 	    for (int agent : agents) {
@@ -212,7 +214,8 @@ public class Oscillation extends AbstractScenario {
     /**
      * Switches the capabilities for good and bad agents. This method:
      * <ol>
-     * <li>Puts all agents from list of good agents to the list of bad agents</li>
+     * <li>Puts all agents from list of good agents to the list of bad
+     * agents</li>
      * <li>Puts all agents from the list of bad agents to the list of good
      * agents</li>
      * <li>Reassigns capabilities to good and bad agents.</li>
