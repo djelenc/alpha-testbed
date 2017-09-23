@@ -28,7 +28,6 @@ import testbed.gui.ParametersGUI;
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Metric;
 import testbed.interfaces.OpinionCost;
-import testbed.interfaces.OpinionObject;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
@@ -91,8 +90,7 @@ public class RepastPlatform extends DefaultContext<Object>
 	    final Object[] ocParams = gui.getOpinionCostParameters();
 
 	    // set scenario
-	    @SuppressWarnings("unchecked")
-	    final Scenario<? extends OpinionObject> scenario = (Scenario<? extends OpinionObject>) generalParams[0];
+	    final Scenario<?> scenario = (Scenario<?>) generalParams[0];
 	    scenario.setRandomGenerator(scnRnd);
 	    scenario.initialize(scenarioParams);
 

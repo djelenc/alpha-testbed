@@ -18,12 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import testbed.common.DefaultRandomGenerator;
-import testbed.core.AlphaTestbed;
-import testbed.core.DecisionsModeA;
-import testbed.core.DecisionsModeB;
-import testbed.core.NoDecisions;
 import testbed.interfaces.Metric;
-import testbed.interfaces.OpinionObject;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
@@ -42,7 +37,7 @@ public class AlphaTestbedTest {
     private Map<Metric, Object[]> metrics;
     private TrustModel<?, ?> tm;
     private RandomGenerator tmPRG;
-    private Scenario<? extends OpinionObject> scn;
+    private Scenario<?> scn;
     private RandomGenerator scnPRG;
     private Object[] scnParams = new Object[] { 100, 0.05, 0.1, 1d, 1d };
 

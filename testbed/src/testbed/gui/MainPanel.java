@@ -34,7 +34,6 @@ import testbed.common.ClassLoaderUtils;
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.OpinionCost;
-import testbed.interfaces.OpinionObject;
 import testbed.interfaces.OpinionProviderSelection;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.Scenario;
@@ -139,7 +138,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	return Integer.parseInt(String.valueOf(batchRunDuration.getValue()));
     }
 
-    private boolean[] type(Scenario<? extends OpinionObject> scn) {
+    private boolean[] type(Scenario<?> scn) {
 	final boolean noDecisions = !(scn instanceof InteractionPartnerSelection)
 		&& !(scn instanceof OpinionProviderSelection);
 	final boolean modeA = (scn instanceof InteractionPartnerSelection)
@@ -186,8 +185,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	GridBagConstraints c = new GridBagConstraints();
 
 	// Scenarios
-	for (Scenario<? extends OpinionObject> scn : ClassLoaderUtils
-		.lookUp(Scenario.class, cl))
+	for (Scenario<?> scn : ClassLoaderUtils.lookUp(Scenario.class, cl))
 	    scenario.addItem(scn);
 
 	// scenario.setRenderer(renderer);
@@ -195,7 +193,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	scenario.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		final Scenario<? extends OpinionObject> scn = (Scenario<? extends OpinionObject>) scenario
+		final Scenario<?> scn = (Scenario<?>) scenario
 			.getSelectedItem();
 		final boolean[] type = type(scn);
 
@@ -216,8 +214,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	panel.add(scenario, c);
 
 	// Trust models
-	final boolean[] types = type(
-		(Scenario<? extends OpinionObject>) scenario.getSelectedItem());
+	final boolean[] types = type((Scenario<?>) scenario.getSelectedItem());
 	populateTrustModels(types[0], types[1], types[2]);
 	trustModel.addActionListener(listener);
 
@@ -324,9 +321,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
     public void validateParameters() {
 	final TrustModel<?, ?> tm = (TrustModel<?, ?>) trustModel
 		.getSelectedItem();
-	@SuppressWarnings("unchecked")
-	final Scenario<? extends OpinionObject> scn = (Scenario<? extends OpinionObject>) scenario
-		.getSelectedItem();
+	final Scenario<?> scn = (Scenario<?>) scenario.getSelectedItem();
 	final Accuracy acc = (Accuracy) accMetric.getSelectedItem();
 	final Utility util = (Utility) utilMetric.getSelectedItem();
 	final OpinionCost opcst = (OpinionCost) ocMetric.getSelectedItem();

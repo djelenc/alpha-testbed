@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 
 import testbed.interfaces.Metric;
-import testbed.interfaces.OpinionObject;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
@@ -74,8 +73,7 @@ public abstract class EvaluationProtocol {
      *            Map of metrics, where keys represent metric classes and values
      *            their parameters.
      */
-    public abstract void initialize(TrustModel<?, ?> tm,
-	    Scenario<? extends OpinionObject> scn,
+    public abstract void initialize(TrustModel<?, ?> tm, Scenario<?> scn,
 	    Map<? extends Metric, Object[]> metrics);
 
     /**
@@ -98,7 +96,7 @@ public abstract class EvaluationProtocol {
      * 
      * @return
      */
-    public abstract Scenario<? extends OpinionObject> getScenario();
+    public abstract Scenario<?> getScenario();
 
     /**
      * Returns the set of interfaces that have to be implemented by the
@@ -151,8 +149,7 @@ public abstract class EvaluationProtocol {
      *            Map of metrics and their parameters
      * @return True if the combination is valid
      */
-    public final boolean validParameters(TrustModel<?, ?> tm,
-	    Scenario<? extends OpinionObject> scn,
+    public final boolean validParameters(TrustModel<?, ?> tm, Scenario<?> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 	return validTrustModelClasses(tm.getClass())
 		&& validScenarioClasses(scn.getClass())

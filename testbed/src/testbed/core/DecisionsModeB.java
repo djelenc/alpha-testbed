@@ -25,7 +25,6 @@ import testbed.interfaces.InteractionPartnerSelection;
 import testbed.interfaces.Metric;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.OpinionCost;
-import testbed.interfaces.OpinionObject;
 import testbed.interfaces.OpinionProviderSelection;
 import testbed.interfaces.OpinionRequest;
 import testbed.interfaces.Scenario;
@@ -88,8 +87,7 @@ public class DecisionsModeB extends DecisionsModeA {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initialize(TrustModel<?, ?> tm,
-	    Scenario<? extends OpinionObject> scn,
+    public void initialize(TrustModel<?, ?> tm, Scenario<?> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 	if (!validTrustModelClasses(tm.getClass())) {
 	    throw new IllegalArgumentException("Invalid trust model.");
@@ -254,7 +252,7 @@ public class DecisionsModeB extends DecisionsModeA {
     }
 
     @Override
-    public Scenario<? extends OpinionObject> getScenario() {
+    public Scenario<?> getScenario() {
 	return scn;
     }
 

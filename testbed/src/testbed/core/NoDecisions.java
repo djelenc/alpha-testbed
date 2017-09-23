@@ -23,7 +23,6 @@ import testbed.interfaces.Accuracy;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Metric;
 import testbed.interfaces.Opinion;
-import testbed.interfaces.OpinionObject;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
@@ -80,8 +79,7 @@ public class NoDecisions extends EvaluationProtocol {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initialize(TrustModel<?, ?> tm,
-	    Scenario<? extends OpinionObject> scn,
+    public void initialize(TrustModel<?, ?> tm, Scenario<?> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 
 	if (!validTrustModelClasses(tm.getClass())) {
@@ -195,7 +193,7 @@ public class NoDecisions extends EvaluationProtocol {
     }
 
     @Override
-    public Scenario<? extends OpinionObject> getScenario() {
+    public Scenario<?> getScenario() {
 	return scenario;
     }
 
