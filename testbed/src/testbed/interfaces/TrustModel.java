@@ -21,7 +21,7 @@ import java.util.Map;
  * @param <T>
  *            The data type in which the trust model conveys trust
  */
-public interface TrustModel<T extends Comparable<T>> {
+public interface TrustModel<T extends Comparable<T>, O extends OpinionObject> {
 
     /**
      * Initializes the trust model with an optional array of varargs Objects.
@@ -61,7 +61,7 @@ public interface TrustModel<T extends Comparable<T>> {
      * @param opinions
      *            List of opinions
      */
-    public void processOpinions(List<Opinion> opinions);
+    public void processOpinions(List<O> opinions);
 
     /**
      * Conveys experiences to the trust model.

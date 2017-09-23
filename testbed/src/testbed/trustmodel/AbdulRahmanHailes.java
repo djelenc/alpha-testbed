@@ -34,7 +34,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
+public class AbdulRahmanHailes extends AbstractTrustModel<TD, Opinion> {
 
     /**
      * Direct trust

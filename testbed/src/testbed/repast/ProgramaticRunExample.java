@@ -47,7 +47,7 @@ public class ProgramaticRunExample implements MetricSubscriber {
 
     public static void main(String[] args) {
 	// trust model
-	TrustModel<?> model = new SimpleSelectingOpinionProviders();
+	TrustModel<?, ?> model = new SimpleSelectingOpinionProviders();
 	model.setRandomGenerator(new DefaultRandomGenerator(0));
 	model.initialize();
 

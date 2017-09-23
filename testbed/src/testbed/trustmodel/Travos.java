@@ -53,7 +53,7 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class Travos extends AbstractTrustModel<Double> {
+public class Travos extends AbstractTrustModel<Double, Opinion> {
     protected static final ParameterCondition<Double> VAL_THRESHOLD;
     protected static final ParameterCondition<Integer> VAL_SAMPLE_NUM;
     static {

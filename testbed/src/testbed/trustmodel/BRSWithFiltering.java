@@ -38,7 +38,7 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class BRSWithFiltering extends AbstractTrustModel<Double> {
+public class BRSWithFiltering extends AbstractTrustModel<Double, Opinion> {
 
     private int time = 0;
 

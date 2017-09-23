@@ -10,6 +10,7 @@
  */
 package testbed.trustmodel;
 
+import testbed.interfaces.OpinionObject;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
@@ -23,8 +24,8 @@ import testbed.interfaces.TrustModel;
  * @param <T>
  *            The data type in which the trust model conveys trust
  */
-public abstract class AbstractTrustModel<T extends Comparable<T>>
-	implements TrustModel<T> {
+public abstract class AbstractTrustModel<T extends Comparable<T>, O extends OpinionObject>
+	implements TrustModel<T, O> {
 
     protected RandomGenerator generator;
 

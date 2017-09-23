@@ -25,7 +25,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class OnlyOpinions extends AbstractTrustModel<Double> {
+public class OnlyOpinions extends AbstractTrustModel<Double, Opinion> {
     // opinions
     private double[][] op;
 

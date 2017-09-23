@@ -97,7 +97,7 @@ public class RepastPlatform extends DefaultContext<Object>
 	    scenario.initialize(scenarioParams);
 
 	    // set trust model
-	    final TrustModel<?> trustModel = (TrustModel<?>) generalParams[1];
+	    final TrustModel<?, ?> trustModel = (TrustModel<?, ?>) generalParams[1];
 	    trustModel.setRandomGenerator(tmRnd);
 	    trustModel.initialize(trustModelParams);
 

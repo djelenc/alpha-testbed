@@ -29,7 +29,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class Simple extends AbstractTrustModel<Double> {
+public class Simple extends AbstractTrustModel<Double, Opinion> {
     // cumulative interaction outcomes
     protected double[] exSum;
 

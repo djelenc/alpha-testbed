@@ -23,7 +23,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class OnlyExperiences extends AbstractTrustModel<Double> {
+public class OnlyExperiences extends AbstractTrustModel<Double, Opinion> {
     // agent => cumulative interaction outcomes
     private Map<Integer, Double> exSum;
 

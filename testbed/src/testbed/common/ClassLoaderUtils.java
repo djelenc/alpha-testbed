@@ -63,12 +63,12 @@ public class ClassLoaderUtils {
      * @param classLoader
      * @return
      */
-    public static <T extends Comparable<T>> List<TrustModel<?>> lookUpTrustModels(
+    public static <T extends Comparable<T>> List<TrustModel<?, ?>> lookUpTrustModels(
 	    ClassLoader classLoader) {
 
-	List<TrustModel<?>> result = new ArrayList<TrustModel<?>>();
+	List<TrustModel<?, ?>> result = new ArrayList<TrustModel<?, ?>>();
 
-	for (TrustModel<?> impl : ServiceLoader.load(TrustModel.class,
+	for (TrustModel<?, ?> impl : ServiceLoader.load(TrustModel.class,
 		classLoader)) {
 	    result.add(impl);
 	}

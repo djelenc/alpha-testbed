@@ -32,7 +32,7 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class BetaReputation extends AbstractTrustModel<Double> {
+public class BetaReputation extends AbstractTrustModel<Double, Opinion> {
 
     protected static final String EX_FF = "The forgetting factor must be a between 0 and 1 inclusively, but was %.2f";
     protected static final ParameterCondition<Double> VAL_FF;

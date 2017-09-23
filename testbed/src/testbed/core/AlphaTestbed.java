@@ -112,7 +112,7 @@ public class AlphaTestbed {
      * @return Evaluation protocol instance or {@link IllegalArgumentException}
      *         of no suitable protocol found.
      */
-    public static EvaluationProtocol getProtocol(TrustModel<?> tm,
+    public static EvaluationProtocol getProtocol(TrustModel<?, ?> tm,
 	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 

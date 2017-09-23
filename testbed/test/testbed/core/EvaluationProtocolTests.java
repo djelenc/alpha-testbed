@@ -39,7 +39,7 @@ import testbed.trustmodel.YuSinghSycaraSelectingInteractionPartners;
 public class EvaluationProtocolTests {
 
     EvaluationProtocol epND, epA, epB;
-    TrustModel<?> tm, tmdm, tmdm2;
+    TrustModel<?, ?> tm, tmdm, tmdm2;
     Scenario<? extends OpinionObject> scn, scndm, scndm2;
     Metric acc, cnu, oc;
     Map<Metric, Object[]> mtrcs;

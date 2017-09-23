@@ -74,7 +74,7 @@ import testbed.interfaces.Utility;
  */
 public class DecisionsModeB extends DecisionsModeA {
 
-    private TrustModel<?> tm;
+    private TrustModel<?, Opinion> tm;
     private SelectingInteractionPartners tmIP;
     private SelectingOpinionProviders tmOP;
 
@@ -88,14 +88,14 @@ public class DecisionsModeB extends DecisionsModeA {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initialize(TrustModel<?> tm,
+    public void initialize(TrustModel<?, ?> tm,
 	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 	if (!validTrustModelClasses(tm.getClass())) {
 	    throw new IllegalArgumentException("Invalid trust model.");
 	}
 
-	this.tm = tm;
+	this.tm = (TrustModel<?, Opinion>) tm;
 	this.tmIP = (SelectingInteractionPartners) tm;
 	this.tmOP = (SelectingOpinionProviders) tm;
 
@@ -249,7 +249,7 @@ public class DecisionsModeB extends DecisionsModeA {
     }
 
     @Override
-    public TrustModel<?> getTrustModel() {
+    public TrustModel<?, ?> getTrustModel() {
 	return tm;
     }
 

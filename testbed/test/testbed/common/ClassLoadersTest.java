@@ -35,7 +35,7 @@ public class ClassLoadersTest {
 		classLoader);
 	List<Accuracy> metrics = ClassLoaderUtils.lookUp(Accuracy.class,
 		classLoader);
-	List<TrustModel<?>> trustModels = ClassLoaderUtils
+	List<TrustModel<?, ?>> trustModels = ClassLoaderUtils
 		.lookUpTrustModels(classLoader);
 	List<DeceptionModel> deceptionModels = ClassLoaderUtils
 		.lookUp(DeceptionModel.class, classLoader);

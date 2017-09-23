@@ -47,7 +47,7 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class EigenTrust extends AbstractTrustModel<Double> {
+public class EigenTrust extends AbstractTrustModel<Double, Opinion> {
     private static final ParameterCondition<Double> VAL_WEIGHT;
     private static final ParameterCondition<Integer> VAL_SAMPLE_NUM;
 

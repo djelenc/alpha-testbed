@@ -31,7 +31,7 @@ import testbed.interfaces.Opinion;
  * @author David
  * 
  */
-public class YuSinghSycara extends AbstractTrustModel<Double> {
+public class YuSinghSycara extends AbstractTrustModel<Double, Opinion> {
 
     // discount factor for liars
     public static final double BETA = 0.5;

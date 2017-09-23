@@ -290,7 +290,7 @@ public class WizardPanelDescriptor implements Observer {
 			.getIParametersPanel();
 		novel = scn.getParametersPanel();
 	    } else if (arg instanceof TrustModel) {
-		final TrustModel<?> tm = (TrustModel<?>) arg;
+		final TrustModel<?, ?> tm = (TrustModel<?, ?>) arg;
 		id = ParametersGUI.MODELS;
 		title = String.format("Trust model: %s", tm);
 		current = wizard.getModel().getPanelDescriptor(id)

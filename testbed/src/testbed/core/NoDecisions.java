@@ -64,7 +64,7 @@ public class NoDecisions extends EvaluationProtocol {
     }
 
     /** Trust model */
-    private TrustModel<?> trustModel = null;
+    private TrustModel<?, Opinion> trustModel = null;
 
     /** Scenario */
     private Scenario<Opinion> scenario = null;
@@ -80,7 +80,7 @@ public class NoDecisions extends EvaluationProtocol {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initialize(TrustModel<?> tm,
+    public void initialize(TrustModel<?, ?> tm,
 	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 
@@ -88,7 +88,7 @@ public class NoDecisions extends EvaluationProtocol {
 	    throw new IllegalArgumentException("Invalid trust model.");
 	}
 
-	trustModel = tm;
+	trustModel = (TrustModel<?, Opinion>) tm;
 
 	if (!validScenarioClasses(scn.getClass())) {
 	    throw new IllegalArgumentException("Invalid scenario.");
@@ -190,7 +190,7 @@ public class NoDecisions extends EvaluationProtocol {
     }
 
     @Override
-    public TrustModel<?> getTrustModel() {
+    public TrustModel<?, ?> getTrustModel() {
 	return trustModel;
     }
 

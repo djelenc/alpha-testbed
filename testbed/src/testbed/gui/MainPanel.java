@@ -46,7 +46,7 @@ import testbed.interfaces.Utility;
 public class MainPanel extends JPanel implements ParametersPanel {
     private static final long serialVersionUID = -1187728078314667265L;
 
-    private List<TrustModel<?>> allTrustModels;
+    private List<TrustModel<?, ?>> allTrustModels;
 
     private ClassLoader cl;
     private Observer observer;
@@ -155,7 +155,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	    boolean modeB) {
 	trustModel.removeAllItems();
 
-	for (TrustModel<?> tm : allTrustModels) {
+	for (TrustModel<?, ?> tm : allTrustModels) {
 	    final boolean tmNoDecisions = !(tm instanceof SelectingInteractionPartners)
 		    && !(tm instanceof SelectingOpinionProviders);
 	    final boolean tmModeA = tm instanceof SelectingInteractionPartners
@@ -322,7 +322,8 @@ public class MainPanel extends JPanel implements ParametersPanel {
     }
 
     public void validateParameters() {
-	final TrustModel<?> tm = (TrustModel<?>) trustModel.getSelectedItem();
+	final TrustModel<?, ?> tm = (TrustModel<?, ?>) trustModel
+		.getSelectedItem();
 	@SuppressWarnings("unchecked")
 	final Scenario<? extends OpinionObject> scn = (Scenario<? extends OpinionObject>) scenario
 		.getSelectedItem();

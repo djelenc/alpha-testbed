@@ -74,7 +74,7 @@ public abstract class EvaluationProtocol {
      *            Map of metrics, where keys represent metric classes and values
      *            their parameters.
      */
-    public abstract void initialize(TrustModel<?> tm,
+    public abstract void initialize(TrustModel<?, ?> tm,
 	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics);
 
@@ -91,7 +91,7 @@ public abstract class EvaluationProtocol {
      * 
      * @return
      */
-    public abstract TrustModel<?> getTrustModel();
+    public abstract TrustModel<?, ?> getTrustModel();
 
     /**
      * Returns the scenario instance.
@@ -151,7 +151,7 @@ public abstract class EvaluationProtocol {
      *            Map of metrics and their parameters
      * @return True if the combination is valid
      */
-    public final boolean validParameters(TrustModel<?> tm,
+    public final boolean validParameters(TrustModel<?, ?> tm,
 	    Scenario<? extends OpinionObject> scn,
 	    Map<? extends Metric, Object[]> metrics) {
 	return validTrustModelClasses(tm.getClass())

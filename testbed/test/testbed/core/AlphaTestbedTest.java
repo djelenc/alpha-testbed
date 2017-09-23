@@ -40,7 +40,7 @@ import testbed.trustmodel.SimpleSelectingOpinionProviders;
 public class AlphaTestbedTest {
 
     private Map<Metric, Object[]> metrics;
-    private TrustModel<?> tm;
+    private TrustModel<?, ?> tm;
     private RandomGenerator tmPRG;
     private Scenario<? extends OpinionObject> scn;
     private RandomGenerator scnPRG;

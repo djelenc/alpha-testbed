@@ -28,7 +28,7 @@ import testbed.interfaces.TrustModel;
  * @author David
  * 
  */
-public class QTM implements TrustModel<Omega> {
+public class QTM implements TrustModel<Omega, Opinion> {
 
     protected static final double LOWER_CRED = 0.001;
     protected static final double TF = 0.1; // 0.01

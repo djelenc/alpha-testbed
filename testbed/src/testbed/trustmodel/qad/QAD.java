@@ -29,7 +29,7 @@ import testbed.interfaces.TrustModel;
  * @author David
  * 
  */
-public class QAD implements TrustModel<Omega> {
+public class QAD implements TrustModel<Omega, Opinion> {
     // matrix for other agents
     public Omega[][] op;
 
