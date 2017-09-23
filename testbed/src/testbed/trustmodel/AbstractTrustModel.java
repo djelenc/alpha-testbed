@@ -20,6 +20,7 @@ import testbed.interfaces.OpinionObject;
 import testbed.interfaces.ParametersPanel;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.TrustModel;
+import testbed.interfaces.TrustModelTotalOrder;
 
 /**
  * A template class for implementing {@link TrustModel} interfaces. It provides
@@ -31,7 +32,7 @@ import testbed.interfaces.TrustModel;
  *            The data type in which the trust model conveys trust
  */
 public abstract class AbstractTrustModel<T extends Comparable<T>, O extends OpinionObject>
-	implements TrustModel<T, O> {
+	implements TrustModel<T, O>, TrustModelTotalOrder<T> {
 
     protected RandomGenerator generator;
 

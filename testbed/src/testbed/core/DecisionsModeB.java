@@ -31,6 +31,7 @@ import testbed.interfaces.Scenario;
 import testbed.interfaces.SelectingInteractionPartners;
 import testbed.interfaces.SelectingOpinionProviders;
 import testbed.interfaces.TrustModel;
+import testbed.interfaces.TrustModelTotalOrder;
 import testbed.interfaces.Utility;
 
 /**
@@ -76,6 +77,7 @@ public class DecisionsModeB extends DecisionsModeA {
     private TrustModel<?, Opinion> tm;
     private SelectingInteractionPartners tmIP;
     private SelectingOpinionProviders tmOP;
+    private TrustModelTotalOrder<?> tmTotalOrder;
 
     private Scenario<Opinion> scn;
     private InteractionPartnerSelection scnIP;
@@ -96,6 +98,7 @@ public class DecisionsModeB extends DecisionsModeA {
 	this.tm = (TrustModel<?, Opinion>) tm;
 	this.tmIP = (SelectingInteractionPartners) tm;
 	this.tmOP = (SelectingOpinionProviders) tm;
+	this.tmTotalOrder = (TrustModelTotalOrder<?>) tm;
 
 	if (!validScenarioClasses(scn.getClass())) {
 	    throw new IllegalArgumentException("Invalid scenario.");
@@ -190,8 +193,8 @@ public class DecisionsModeB extends DecisionsModeA {
 	    // accuracy
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
-	    final double accValue = accuracy.evaluate(tm.getTrustTotalOrder(service),
-		    capabilities);
+	    final double accValue = accuracy.evaluate(
+		    tmTotalOrder.getTrustTotalOrder(service), capabilities);
 
 	    results.put(accKey, accValue);
 
@@ -274,6 +277,7 @@ public class DecisionsModeB extends DecisionsModeA {
     protected Set<Class<?>> requiredTrustModelClasses() {
 	final Set<Class<?>> req = super.requiredTrustModelClasses();
 	req.add(SelectingOpinionProviders.class);
+	req.add(TrustModelTotalOrder.class);
 	return req;
     }
 }

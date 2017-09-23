@@ -25,6 +25,7 @@ import testbed.interfaces.Metric;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
+import testbed.interfaces.TrustModelTotalOrder;
 
 /**
  * An evaluation protocol, where a scenario determines both the opinion
@@ -65,6 +66,9 @@ public class NoDecisions extends EvaluationProtocol {
     /** Trust model */
     private TrustModel<?, Opinion> trustModel = null;
 
+    /** Reference to the trust model that uses total order to rank agents */
+    private TrustModelTotalOrder<?> tmTotalOrder = null;
+
     /** Scenario */
     private Scenario<Opinion> scenario = null;
 
@@ -87,6 +91,7 @@ public class NoDecisions extends EvaluationProtocol {
 	}
 
 	trustModel = (TrustModel<?, Opinion>) tm;
+	tmTotalOrder = (TrustModelTotalOrder<?>) tm;
 
 	if (!validScenarioClasses(scn.getClass())) {
 	    throw new IllegalArgumentException("Invalid scenario.");
@@ -150,8 +155,8 @@ public class NoDecisions extends EvaluationProtocol {
 	    // accuracy
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
-	    final double accValue = accuracy
-		    .evaluate(trustModel.getTrustTotalOrder(service), capabilities);
+	    final double accValue = accuracy.evaluate(
+		    tmTotalOrder.getTrustTotalOrder(service), capabilities);
 
 	    results.put(accKey, accValue);
 	}
@@ -208,6 +213,7 @@ public class NoDecisions extends EvaluationProtocol {
     protected Set<Class<?>> requiredTrustModelClasses() {
 	final Set<Class<?>> required = new HashSet<Class<?>>();
 	required.add(TrustModel.class);
+	required.add(TrustModelTotalOrder.class);
 	return required;
     }
 
