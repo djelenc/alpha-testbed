@@ -18,9 +18,8 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import testbed.common.ClassLoaderUtils;
-import testbed.interfaces.DeceptionModel;
 import testbed.interfaces.Accuracy;
+import testbed.interfaces.DeceptionModel;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 
@@ -37,8 +36,8 @@ public class ClassLoadersTest {
 		classLoader);
 	List<TrustModel<?>> trustModels = ClassLoaderUtils
 		.lookUpTrustModels(classLoader);
-	List<DeceptionModel> deceptionModels = ClassLoaderUtils.lookUp(
-		DeceptionModel.class, classLoader);
+	List<DeceptionModel> deceptionModels = ClassLoaderUtils
+		.lookUp(DeceptionModel.class, classLoader);
 
 	Assert.assertFalse(generators.isEmpty());
 	Assert.assertFalse(metrics.isEmpty());
@@ -51,8 +50,8 @@ public class ClassLoadersTest {
     public void testServiceLoaderFromExternalJar() throws Exception {
 	ClassLoader cl = ClassLoader.getSystemClassLoader();
 	// ensure the jar exists before running
-	ClassLoaderUtils.addURL(
-		new File("c:/testlib/some.jar").toURI().toURL(), cl);
+	ClassLoaderUtils.addURL(new File("c:/testlib/some.jar").toURI().toURL(),
+		cl);
 
 	for (Accuracy dg : ServiceLoader.load(Accuracy.class)) {
 	    System.out.println(dg);

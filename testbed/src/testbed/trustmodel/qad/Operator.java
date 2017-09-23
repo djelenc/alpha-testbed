@@ -144,7 +144,8 @@ public enum Operator {
      * @param op
      * @param trust
      */
-    public void centralist(Omega[] exp, Omega[][] op, Map<Integer, Omega> trust) {
+    public void centralist(Omega[] exp, Omega[][] op,
+	    Map<Integer, Omega> trust) {
 	for (int agent2 = 0; agent2 < op.length; agent2++) {
 	    double sum = 0;
 	    int count = 0;

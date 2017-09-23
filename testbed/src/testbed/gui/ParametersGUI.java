@@ -34,7 +34,8 @@ public class ParametersGUI {
 	wizard.getDialog().setTitle("Evaluation setup");
 	wizard.setClassLoader(cl);
 
-	final WizardPanelDescriptor scenarioWpd, modelWpd, accuracyWpd, utilityWpd, opinioncostWpd;
+	final WizardPanelDescriptor scenarioWpd, modelWpd, accuracyWpd,
+		utilityWpd, opinioncostWpd;
 
 	mainPanel = new MainPanel();
 	mainWpd = new WizardPanelDescriptor(MAIN, mainPanel,
@@ -115,8 +116,8 @@ public class ParametersGUI {
     }
 
     private Object[] getParameters(String str) {
-	final ParametersPanel ppanel = wizard.getModel()
-		.getPanelDescriptor(str).getIParametersPanel();
+	final ParametersPanel ppanel = wizard.getModel().getPanelDescriptor(str)
+		.getIParametersPanel();
 	if (null == ppanel) {
 	    return EMPTY;
 	} else {
@@ -125,8 +126,8 @@ public class ParametersGUI {
     }
 
     public static void main(String[] args) {
-	ParametersGUI sim = new ParametersGUI(Thread.currentThread()
-		.getContextClassLoader());
+	ParametersGUI sim = new ParametersGUI(
+		Thread.currentThread().getContextClassLoader());
 	int code = sim.showDialog();
 
 	System.out.printf("Return code: %d\n", code);

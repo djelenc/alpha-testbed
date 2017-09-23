@@ -12,10 +12,10 @@ package testbed.common;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import testbed.common.Utils;
 import testbed.interfaces.ParameterCondition;
 
 public class UtilsTest {
@@ -45,8 +45,8 @@ public class UtilsTest {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 1d)
-		    throw new IllegalArgumentException(String.format(
-			    "Var should be >=1, but was: %.2f", var));
+		    throw new IllegalArgumentException(String
+			    .format("Var should be >=1, but was: %.2f", var));
 	    }
 	};
 

@@ -217,8 +217,8 @@ public abstract class AbstractMetric implements Metric {
 
 	for (Map.Entry<Integer, Number> e : standard.entrySet()) {
 	    final Integer agent = e.getKey();
-	    final Double rank = (e.getValue().doubleValue() + modified.get(
-		    agent).doubleValue()) / 2d;
+	    final Double rank = (e.getValue().doubleValue()
+		    + modified.get(agent).doubleValue()) / 2d;
 	    rankings.put(agent, rank);
 	}
 

@@ -13,16 +13,13 @@ package testbed.trustmodel;
 import java.util.ArrayList;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
 import testbed.common.DefaultRandomGenerator;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.BRSPair;
-import testbed.trustmodel.Travos;
 
 public class TravosTMTest {
     private Travos tm = null;
@@ -42,7 +39,8 @@ public class TravosTMTest {
 	Assert.assertEquals(0.288675, tm.standardDeviation(0, 0), 0.001);
 	Assert.assertEquals(0.00962886, tm.scaleM(0.498833, 0.287527), 0.001);
 	Assert.assertEquals(0.0143514, tm.scaleN(0.498833, 0.287527), 0.001);
-	Assert.assertEquals(0.498833, tm.adjustMean(16, 47, integral), 0.000001);
+	Assert.assertEquals(0.498833, tm.adjustMean(16, 47, integral),
+		0.000001);
     }
 
     @Test

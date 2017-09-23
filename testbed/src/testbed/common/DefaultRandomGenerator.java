@@ -14,11 +14,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import testbed.interfaces.RandomGenerator;
 import cern.jet.random.Normal;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
+import testbed.interfaces.RandomGenerator;
 
 public class DefaultRandomGenerator implements RandomGenerator {
     private static final String MEAN_EX = "The mean must be between [0, 1], but was %.2f.";
@@ -86,8 +86,8 @@ public class DefaultRandomGenerator implements RandomGenerator {
 	}
 
 	if (Math.abs(1d - totalProbability) > 0.00001) {
-	    throw new IllegalArgumentException(String.format(
-		    TOTAL_PROBABILIT_EX, pmf, 1d, totalProbability));
+	    throw new IllegalArgumentException(String
+		    .format(TOTAL_PROBABILIT_EX, pmf, 1d, totalProbability));
 	}
 
 	double rnd = nextDoubleFromTo(0, 1), weight = 0;

@@ -14,15 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
+import cern.colt.Arrays;
+import junit.framework.Assert;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.OnlyOpinions;
-import cern.colt.Arrays;
 
 public class OnlyOpinionsTMTest {
 

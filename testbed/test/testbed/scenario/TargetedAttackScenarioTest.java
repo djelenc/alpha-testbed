@@ -15,14 +15,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
 import testbed.common.DefaultRandomGenerator;
-import testbed.scenario.TargetedAttack;
-import testbed.scenario.TargetedAttackStrategy;
 
 public class TargetedAttackScenarioTest {
 
@@ -82,8 +79,8 @@ public class TargetedAttackScenarioTest {
 
 	for (Integer agent : ip) {
 	    Assert.assertFalse(targets.contains(agent));
-	    Assert.assertTrue(attackers.contains(agent)
-		    || neutrals.contains(agent));
+	    Assert.assertTrue(
+		    attackers.contains(agent) || neutrals.contains(agent));
 	}
     }
 
@@ -113,8 +110,8 @@ public class TargetedAttackScenarioTest {
 
 	for (Integer agent : ip) {
 	    Assert.assertFalse(targets.contains(agent));
-	    Assert.assertTrue(attackers.contains(agent)
-		    || neutrals.contains(agent));
+	    Assert.assertTrue(
+		    attackers.contains(agent) || neutrals.contains(agent));
 	}
     }
 }

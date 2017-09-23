@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.YuSinghSycara;
 
 public class YuSinghSycaraTMTest {
 

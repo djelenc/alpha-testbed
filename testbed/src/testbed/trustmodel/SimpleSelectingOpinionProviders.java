@@ -23,8 +23,9 @@ import testbed.interfaces.SelectingOpinionProviders;
  * @author David
  * 
  */
-public class SimpleSelectingOpinionProviders extends
-	SimpleSelectingInteractionPartners implements SelectingOpinionProviders {
+public class SimpleSelectingOpinionProviders
+	extends SimpleSelectingInteractionPartners
+	implements SelectingOpinionProviders {
 
     protected List<Integer> agents;
 
@@ -42,8 +43,8 @@ public class SimpleSelectingOpinionProviders extends
 	    if (exCnt[target] < 3) {
 		for (int source : agents) {
 		    if (target != source) {
-			opinionRequests.add(new OpinionRequest(source, target,
-				0));
+			opinionRequests
+				.add(new OpinionRequest(source, target, 0));
 		    }
 
 		}
@@ -52,12 +53,12 @@ public class SimpleSelectingOpinionProviders extends
 
 	return opinionRequests;
     }
-    
+
     @Override
     public void setAgents(List<Integer> agents) {
-        super.setAgents(agents);
-        
-        this.agents = agents;
+	super.setAgents(agents);
+
+	this.agents = agents;
     }
 
     @Override

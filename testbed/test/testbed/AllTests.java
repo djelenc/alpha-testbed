@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-
 import testbed.common.ClassLoadersTest;
 import testbed.common.DefaultRandomGeneratorTest;
 import testbed.common.ExampleGeneratorTest;

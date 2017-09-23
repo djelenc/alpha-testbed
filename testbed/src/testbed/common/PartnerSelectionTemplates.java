@@ -61,8 +61,8 @@ public class PartnerSelectionTemplates {
 
 	for (Map.Entry<Integer, Double> e : trust.entrySet()) {
 	    if (e.getValue() < 0)
-		throw new IllegalArgumentException(String.format(NEGATIVE,
-			e.getKey(), e.getValue()));
+		throw new IllegalArgumentException(
+			String.format(NEGATIVE, e.getKey(), e.getValue()));
 
 	    final double prob = Math.pow(e.getValue(), power);
 	    agents.put(e.getKey(), prob);

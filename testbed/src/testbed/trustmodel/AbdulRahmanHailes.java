@@ -145,12 +145,12 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
 			final int weight = getWeight(rtd);
 
 			// obtain semantic distance
-			final int sd = modeSD(R[recommender][service][recommended
-				.ordinal()]);
+			final int sd = modeSD(
+				R[recommender][service][recommended.ordinal()]);
 
 			// correct recommendation with semantic distance
-			final TD corrected = fromIndex(recommended.ordinal()
-				- sd);
+			final TD corrected = fromIndex(
+				recommended.ordinal() - sd);
 
 			// record correct recommendation and its weight
 			opinions[corrected.ordinal()] += weight;
@@ -361,7 +361,8 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
 
 	if (maxAgent > Q.length - 1 || maxService > Q[0].length - 1) {
 	    // resize Q
-	    int[][][] newQ = new int[maxAgent + 1][maxService + 1][values().length];
+	    int[][][] newQ = new int[maxAgent + 1][maxService
+		    + 1][values().length];
 
 	    for (int a = 0; a < Q.length; a++)
 		for (int s = 0; s < Q[a].length; s++)
@@ -370,7 +371,8 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
 	    Q = newQ;
 
 	    // resize REC
-	    TD[][][] newREC = new TD[maxAgent + 1][maxAgent + 1][maxService + 1];
+	    TD[][][] newREC = new TD[maxAgent + 1][maxAgent + 1][maxService
+		    + 1];
 
 	    for (int a1 = 0; a1 < REC.length; a1++)
 		for (int a2 = 0; a2 < REC[a1].length; a2++)
@@ -382,8 +384,8 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
 	    // resize R
 
 	    @SuppressWarnings("unchecked")
-	    ArrayList<Integer>[][][] newR = (ArrayList<Integer>[][][]) new ArrayList[maxAgent + 1][maxService + 1][TD
-		    .values().length];
+	    ArrayList<Integer>[][][] newR = (ArrayList<Integer>[][][]) new ArrayList[maxAgent
+		    + 1][maxService + 1][TD.values().length];
 
 	    // copy existing
 	    for (int i = 0; i < R.length; i++)

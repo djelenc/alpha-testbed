@@ -12,15 +12,14 @@ package testbed.scenario;
 
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
 
 import org.junit.Test;
 
+import junit.framework.Assert;
 import testbed.common.DefaultRandomGenerator;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
 import testbed.interfaces.Scenario;
-import testbed.scenario.Random;
 
 public class RandomScenarioTest {
 

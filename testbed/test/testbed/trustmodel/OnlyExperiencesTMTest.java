@@ -13,13 +13,11 @@ package testbed.trustmodel;
 import java.util.ArrayList;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
+import junit.framework.Assert;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.OnlyExperiences;
 
 public class OnlyExperiencesTMTest {
 

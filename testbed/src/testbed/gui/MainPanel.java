@@ -61,8 +61,8 @@ public class MainPanel extends JPanel implements ParametersPanel {
     @SuppressWarnings("rawtypes")
     private JComboBox ocMetric = new JComboBox();
 
-    private JSpinner batchRunDuration = new JSpinner(new SpinnerNumberModel(
-	    500, 1, Integer.MAX_VALUE, 100));
+    private JSpinner batchRunDuration = new JSpinner(
+	    new SpinnerNumberModel(500, 1, Integer.MAX_VALUE, 100));
 
     private JLabel tmLabel = new JLabel("Trust model:  ");
     private JLabel scnLabel = new JLabel("Scenario:  ");
@@ -162,8 +162,8 @@ public class MainPanel extends JPanel implements ParametersPanel {
 	    final boolean tmModeB = tm instanceof SelectingInteractionPartners
 		    && tm instanceof SelectingOpinionProviders;
 
-	    if (modeA && tmModeA || modeB && tmModeB || noDecisions
-		    && tmNoDecisions) {
+	    if (modeA && tmModeA || modeB && tmModeB
+		    || noDecisions && tmNoDecisions) {
 		trustModel.addItem(tm);
 	    }
 	}

@@ -60,8 +60,8 @@ public class RandomMultiServiceGUI extends RandomGUI {
 	numOfServices = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
 	((JSpinner.DefaultEditor) numOfServices.getEditor()).getTextField()
 		.setColumns(3);
-	numOfServices
-		.setToolTipText("The number of services must be between 1 and 10.");
+	numOfServices.setToolTipText(
+		"The number of services must be between 1 and 10.");
 	c.gridx = 1;
 	c.gridy = yPosition++;
 	c.fill = GridBagConstraints.NONE;

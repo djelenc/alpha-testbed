@@ -298,8 +298,8 @@ public abstract class EvaluationProtocol {
 	result = results.get(metric.getClass().hashCode() ^ service);
 
 	if (null == result) {
-	    throw new IllegalArgumentException(String.format(INVALID_QUERY,
-		    metric, service));
+	    throw new IllegalArgumentException(
+		    String.format(INVALID_QUERY, metric, service));
 	} else {
 	    return result;
 	}

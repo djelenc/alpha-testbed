@@ -13,8 +13,6 @@ package testbed.interfaces;
 import org.junit.Assert;
 import org.junit.Test;
 
-import testbed.interfaces.OpinionRequest;
-
 public class OpinionRequestTest {
 
     @Test

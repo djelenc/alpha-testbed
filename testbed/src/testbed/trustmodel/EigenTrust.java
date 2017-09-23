@@ -62,10 +62,9 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The weight/SD must be a between 0 and 1 inclusively, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The weight/SD must be a between 0 and 1 inclusively, but was %.2f",
+			    var));
 	    }
 	};
 
@@ -73,10 +72,9 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The number of samples must be non-negative, but was %d",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The number of samples must be non-negative, but was %d",
+			    var));
 	    }
 	};
     }
@@ -122,7 +120,8 @@ public class EigenTrust extends AbstractTrustModel<Double> {
 	    int pos = 0, neg = 0;
 
 	    for (int i = 0; i < OPINION_SAMPLE_NUM; i++) {
-		if (generator.nextDoubleFromUnitTND(itd, OPINION_SAMPLE_SD) > SATISFACTORY_THRESHOLD) {
+		if (generator.nextDoubleFromUnitTND(itd,
+			OPINION_SAMPLE_SD) > SATISFACTORY_THRESHOLD) {
 		    pos += 1;
 		} else {
 		    neg += 1;
@@ -221,7 +220,8 @@ public class EigenTrust extends AbstractTrustModel<Double> {
      *            particular agent)
      * @return A matrix normalized column-wise
      */
-    public double[][] computeMatrix(final int[][] opinionCount, final double[] p) {
+    public double[][] computeMatrix(final int[][] opinionCount,
+	    final double[] p) {
 	final double[][] C = new double[opinionCount.length][opinionCount.length];
 
 	// normalize matrix column-wise

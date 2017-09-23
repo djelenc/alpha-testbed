@@ -48,11 +48,11 @@ public class WizardController implements ActionListener {
 
 	if (evt.getActionCommand().equals(Wizard.CANCEL_BUTTON_ACTION_COMMAND))
 	    cancelButtonPressed();
-	else if (evt.getActionCommand().equals(
-		Wizard.BACK_BUTTON_ACTION_COMMAND))
+	else if (evt.getActionCommand()
+		.equals(Wizard.BACK_BUTTON_ACTION_COMMAND))
 	    backButtonPressed();
-	else if (evt.getActionCommand().equals(
-		Wizard.NEXT_BUTTON_ACTION_COMMAND))
+	else if (evt.getActionCommand()
+		.equals(Wizard.NEXT_BUTTON_ACTION_COMMAND))
 	    nextButtonPressed();
 
     }
@@ -126,7 +126,8 @@ public class WizardController implements ActionListener {
 	// If the panel in question is the last panel in the series, change
 	// the Next button to Finish. Otherwise, set the text back to Next.
 
-	if (descriptor.getNext() instanceof WizardPanelDescriptor.FinishIdentifier) {
+	if (descriptor
+		.getNext() instanceof WizardPanelDescriptor.FinishIdentifier) {
 	    model.setNextFinishButtonText(Wizard.FINISH_TEXT);
 	} else {
 	    model.setNextFinishButtonText(Wizard.NEXT_TEXT);

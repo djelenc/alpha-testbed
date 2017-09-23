@@ -121,8 +121,8 @@ public class BRSWithFilteringGUI extends JPanel implements ParametersPanel {
 	lambdaExp = new JSpinner(new SpinnerNumberModel(1, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) lambdaExp.getEditor()).getTextField()
 		.setColumns(3);
-	lambdaExp
-		.setToolTipText("Factor that determines the exponential aging of the experiences.");
+	lambdaExp.setToolTipText(
+		"Factor that determines the exponential aging of the experiences.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -139,7 +139,8 @@ public class BRSWithFilteringGUI extends JPanel implements ParametersPanel {
 	lambdaOp = new JSpinner(new SpinnerNumberModel(0, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) lambdaOp.getEditor()).getTextField()
 		.setColumns(3);
-	lambdaOp.setToolTipText("Factor that determines the exponential aging of the opinions.");
+	lambdaOp.setToolTipText(
+		"Factor that determines the exponential aging of the opinions.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -153,12 +154,13 @@ public class BRSWithFilteringGUI extends JPanel implements ParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	quantile = new JSpinner(new SpinnerNumberModel(0.01, 0.001, 0.4999,
-		0.01));
+	quantile = new JSpinner(
+		new SpinnerNumberModel(0.01, 0.001, 0.4999, 0.01));
 	((JSpinner.DefaultEditor) quantile.getEditor()).getTextField()
 		.setColumns(3);
-	quantile.setToolTipText("The quantile parameter that determines which opinion "
-		+ "providers will be excluded from computation.");
+	quantile.setToolTipText(
+		"The quantile parameter that determines which opinion "
+			+ "providers will be excluded from computation.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -175,8 +177,9 @@ public class BRSWithFilteringGUI extends JPanel implements ParametersPanel {
 	factor = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
 	((JSpinner.DefaultEditor) factor.getEditor()).getTextField()
 		.setColumns(3);
-	factor.setToolTipText("Multiplier that converts a contionouos interaction outcome from [0, 1] "
-		+ "to a discreet pair of successful/unsuccessful interaction outcomes.");
+	factor.setToolTipText(
+		"Multiplier that converts a contionouos interaction outcome from [0, 1] "
+			+ "to a discreet pair of successful/unsuccessful interaction outcomes.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;

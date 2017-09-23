@@ -48,7 +48,8 @@ public class YuSinghSycaraSelectingInteractionPartners extends YuSinghSycara
     }
 
     @Override
-    public Map<Integer, Integer> getInteractionPartners(List<Integer> services) {
+    public Map<Integer, Integer> getInteractionPartners(
+	    List<Integer> services) {
 	final Map<Integer, Integer> partners = new HashMap<Integer, Integer>();
 
 	for (int service : services) {

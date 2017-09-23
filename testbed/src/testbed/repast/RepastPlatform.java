@@ -33,8 +33,8 @@ import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
 
-public class RepastPlatform extends DefaultContext<Object> implements
-	ContextBuilder<Object> {
+public class RepastPlatform extends DefaultContext<Object>
+	implements ContextBuilder<Object> {
     private static ParametersGUI gui;
 
     private EvaluationProtocol testbed;

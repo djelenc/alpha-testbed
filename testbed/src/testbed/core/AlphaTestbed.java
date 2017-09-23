@@ -111,8 +111,8 @@ public class AlphaTestbed {
      * @return Evaluation protocol instance or {@link IllegalArgumentException}
      *         of no suitable protocol found.
      */
-    public static EvaluationProtocol getProtocol(TrustModel<?> tm,
-	    Scenario scn, Map<? extends Metric, Object[]> metrics) {
+    public static EvaluationProtocol getProtocol(TrustModel<?> tm, Scenario scn,
+	    Map<? extends Metric, Object[]> metrics) {
 
 	for (Class<? extends EvaluationProtocol> clazz : EVALUATION_PROTOCOLS) {
 	    try {
@@ -123,12 +123,12 @@ public class AlphaTestbed {
 		    return instance;
 		}
 	    } catch (Exception e) {
-		throw new IllegalArgumentException(String.format(
-			INSTATIATION_ERR, tm, scn, metrics), e);
+		throw new IllegalArgumentException(
+			String.format(INSTATIATION_ERR, tm, scn, metrics), e);
 	    }
 	}
 
-	throw new IllegalArgumentException(String.format(NO_PROTOCOL_ERR, tm,
-		scn, metrics));
+	throw new IllegalArgumentException(
+		String.format(NO_PROTOCOL_ERR, tm, scn, metrics));
     }
 }

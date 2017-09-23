@@ -34,7 +34,8 @@ public class KTABounded extends OldAccuracy {
 	    public void eval(Double var) {
 		if (var > 1 || var < 0) {
 		    throw new IllegalArgumentException(String.format(
-			    "A bound has be within [0, 1], but was %.2f.", var));
+			    "A bound has be within [0, 1], but was %.2f.",
+			    var));
 		}
 	    }
 	};
@@ -43,10 +44,9 @@ public class KTABounded extends OldAccuracy {
 	upper = Utils.extractParameter(validator, 1, params);
 
 	if (lower >= upper) {
-	    throw new IllegalArgumentException(
-		    String.format(
-			    "The lower bound must be lower than the upper bound: lower = %.2f, upper = %.2f.",
-			    lower, upper));
+	    throw new IllegalArgumentException(String.format(
+		    "The lower bound must be lower than the upper bound: lower = %.2f, upper = %.2f.",
+		    lower, upper));
 	}
     }
 

@@ -91,8 +91,8 @@ public class TravosGUI extends JPanel implements ParametersPanel {
     }
 
     protected double getSatisfactoryThreshold() {
-	return Double.parseDouble(String.valueOf(satisfactoryThreshold
-		.getValue()));
+	return Double
+		.parseDouble(String.valueOf(satisfactoryThreshold.getValue()));
     }
 
     protected int getOpinionSampleNumber() {
@@ -126,12 +126,12 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	satisfactoryThreshold = new JSpinner(new SpinnerNumberModel(0.5, 0, 1,
-		0.25));
+	satisfactoryThreshold = new JSpinner(
+		new SpinnerNumberModel(0.5, 0, 1, 0.25));
 	((JSpinner.DefaultEditor) satisfactoryThreshold.getEditor())
 		.getTextField().setColumns(3);
-	satisfactoryThreshold
-		.setToolTipText("A threshold that determines when the interaction outcome becomes a satisfactory.");
+	satisfactoryThreshold.setToolTipText(
+		"A threshold that determines when the interaction outcome becomes a satisfactory.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -145,11 +145,12 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	opinionSampleNumber = new JSpinner(new SpinnerNumberModel(10, 1, 50, 1));
+	opinionSampleNumber = new JSpinner(
+		new SpinnerNumberModel(10, 1, 50, 1));
 	((JSpinner.DefaultEditor) opinionSampleNumber.getEditor())
 		.getTextField().setColumns(3);
-	opinionSampleNumber
-		.setToolTipText("Number of times the obtained opinion will be sampled to obtain an (r, s) tuple.");
+	opinionSampleNumber.setToolTipText(
+		"Number of times the obtained opinion will be sampled to obtain an (r, s) tuple.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -181,12 +182,12 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 	c.gridx = 0;
 	c.gridy = i;
 	panel.add(lbl, c);
-	confidenceThreshold = new JSpinner(new SpinnerNumberModel(0.95, 0, 1,
-		0.05));
+	confidenceThreshold = new JSpinner(
+		new SpinnerNumberModel(0.95, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) confidenceThreshold.getEditor())
 		.getTextField().setColumns(3);
-	confidenceThreshold
-		.setToolTipText("A threshold that determines the confidence value when the "
+	confidenceThreshold.setToolTipText(
+		"A threshold that determines the confidence value when the "
 			+ "computed trust suffices and opinions are not required.");
 	c.gridx = 1;
 	c.gridy = i++;
@@ -202,8 +203,8 @@ public class TravosGUI extends JPanel implements ParametersPanel {
 	c.gridy = i;
 	panel.add(lbl, c);
 	error = new JSpinner(new SpinnerNumberModel(0.2, 0, 1, 0.05));
-	((JSpinner.DefaultEditor) error.getEditor()).getTextField().setColumns(
-		3);
+	((JSpinner.DefaultEditor) error.getEditor()).getTextField()
+		.setColumns(3);
 	error.setToolTipText("The level of error that an agent is willing "
 		+ "to accept when determining the confidence value.");
 	c.gridx = 1;

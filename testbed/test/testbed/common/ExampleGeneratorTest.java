@@ -17,13 +17,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import testbed.common.LexiographicComparator;
 import testbed.deceptionmodel.Complementary;
 import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.RandomDeception;
 import testbed.deceptionmodel.Truthful;
-import testbed.interfaces.ExampleGenerator;
 import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ExampleGenerator;
 import testbed.interfaces.RandomGenerator;
 
 public class ExampleGeneratorTest {
@@ -86,8 +85,8 @@ public class ExampleGeneratorTest {
 	}
 
 	for (Map.Entry<DeceptionModel, Double> e : emp.entrySet()) {
-	    emp.put(e.getKey(), (e.getValue() == null ? 0d : e.getValue()
-		    / iterations));
+	    emp.put(e.getKey(),
+		    (e.getValue() == null ? 0d : e.getValue() / iterations));
 	}
 
 	for (Map.Entry<DeceptionModel, Double> e : distr.entrySet()) {

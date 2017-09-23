@@ -112,8 +112,8 @@ public class BetaReputationGUI extends JPanel implements ParametersPanel {
 	lambdaExp = new JSpinner(new SpinnerNumberModel(1, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) lambdaExp.getEditor()).getTextField()
 		.setColumns(3);
-	lambdaExp
-		.setToolTipText("Factor that determines the exponential aging of the experiences.");
+	lambdaExp.setToolTipText(
+		"Factor that determines the exponential aging of the experiences.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;
@@ -130,7 +130,8 @@ public class BetaReputationGUI extends JPanel implements ParametersPanel {
 	lambdaOp = new JSpinner(new SpinnerNumberModel(0, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) lambdaOp.getEditor()).getTextField()
 		.setColumns(3);
-	lambdaOp.setToolTipText("Factor that determines the exponential aging of the opinions.");
+	lambdaOp.setToolTipText(
+		"Factor that determines the exponential aging of the opinions.");
 	c.gridx = 1;
 	c.gridy = i++;
 	c.fill = GridBagConstraints.NONE;

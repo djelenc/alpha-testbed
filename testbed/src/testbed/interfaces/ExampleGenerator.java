@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
-import testbed.interfaces.RandomGenerator;
-
 /**
  * An example of the random number generator implementation. This class can be
  * used in testing or when developing plug-ins.
@@ -84,8 +82,8 @@ public class ExampleGenerator implements RandomGenerator {
 	}
 
 	if (Math.abs(1d - totalProbability) > 0.00001) {
-	    throw new IllegalArgumentException(String.format(
-		    TOTAL_PROBABILIT_EX, pmf, 1d, totalProbability));
+	    throw new IllegalArgumentException(String
+		    .format(TOTAL_PROBABILIT_EX, pmf, 1d, totalProbability));
 	}
 
 	double rnd = nextDoubleFromTo(0, 1), weight = 0;

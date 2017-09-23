@@ -142,8 +142,8 @@ public class DecisionsModeA extends NoDecisions {
 
 	// Get interaction partners in a map
 	// Convert Map to a TreeMap to ensure deterministic iteration
-	final Map<Integer, Integer> partners = Utils.ordered(tmSelect
-		.getInteractionPartners(services));
+	final Map<Integer, Integer> partners = Utils
+		.ordered(tmSelect.getInteractionPartners(services));
 
 	// convey partner selection to the scenario
 	scnSelect.setInteractionPartners(partners);

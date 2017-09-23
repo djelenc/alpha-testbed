@@ -21,9 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import testbed.interfaces.Accuracy;
 import testbed.interfaces.OpinionCost;
 import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Accuracy;
 import testbed.interfaces.Scenario;
 import testbed.interfaces.TrustModel;
 import testbed.interfaces.Utility;
@@ -80,7 +80,8 @@ public class WizardPanelDescriptor implements Observer {
      *            A class which extends java.awt.Component that will be inserted
      *            as a panel into the wizard dialog.
      */
-    public WizardPanelDescriptor(Object id, ParametersPanel params, String title) {
+    public WizardPanelDescriptor(Object id, ParametersPanel params,
+	    String title) {
 	identifier = id;
 	paramsPanel = params;
 	name = String.format(TITLE, title);

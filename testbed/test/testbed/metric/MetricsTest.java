@@ -13,21 +13,14 @@ package testbed.metric;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import testbed.interfaces.Metric;
+import junit.framework.Assert;
 import testbed.interfaces.Accuracy;
+import testbed.interfaces.Metric;
 import testbed.interfaces.Utility;
-import testbed.metric.OldAccuracy;
-import testbed.metric.Coverage;
-import testbed.metric.CumulativeNormalizedUtility;
-import testbed.metric.KendallsTauA;
-import testbed.metric.KendallsTauB;
-import testbed.metric.SpearmansFootRule;
 
 public class MetricsTest {
 
@@ -148,9 +141,9 @@ public class MetricsTest {
 		    final double m_sfr = sfr.evaluate(trust, cpbs);
 
 		    if (Math.abs(m_kta - m_acc) > 0.0001)
-			System.out
-				.printf("123:%d%d%d -> Acc: %.2f, KTA: %.2f, KTB: %.2f, SFR: %.2f\n",
-					i, j, k, m_acc, m_kta, m_ktb, m_sfr);
+			System.out.printf(
+				"123:%d%d%d -> Acc: %.2f, KTA: %.2f, KTB: %.2f, SFR: %.2f\n",
+				i, j, k, m_acc, m_kta, m_ktb, m_sfr);
 		}
 	    }
 	}

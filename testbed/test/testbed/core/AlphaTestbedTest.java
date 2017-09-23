@@ -18,10 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import testbed.common.DefaultRandomGenerator;
-import testbed.core.AlphaTestbed;
-import testbed.core.DecisionsModeA;
-import testbed.core.DecisionsModeB;
-import testbed.core.NoDecisions;
 import testbed.interfaces.Metric;
 import testbed.interfaces.RandomGenerator;
 import testbed.interfaces.Scenario;
@@ -84,7 +80,8 @@ public class AlphaTestbedTest {
 	metrics.put(new CumulativeNormalizedUtility(), null);
 	metrics.put(new DefaultOpinionCost(), null);
 
-	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn, metrics) instanceof DecisionsModeB);
+	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn,
+		metrics) instanceof DecisionsModeB);
     }
 
     @Test
@@ -100,7 +97,8 @@ public class AlphaTestbedTest {
 
 	metrics.put(new CumulativeNormalizedUtility(), null);
 
-	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn, metrics) instanceof DecisionsModeA);
+	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn,
+		metrics) instanceof DecisionsModeA);
     }
 
     @Test
@@ -114,6 +112,7 @@ public class AlphaTestbedTest {
 	tm.initialize();
 	scn.initialize(scnParams);
 
-	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn, metrics) instanceof NoDecisions);
+	Assert.assertTrue(AlphaTestbed.getProtocol(tm, scn,
+		metrics) instanceof NoDecisions);
     }
 }

@@ -11,8 +11,8 @@
 package testbed.deceptionmodel;
 
 import testbed.common.Utils;
-import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParameterCondition;
 
 public abstract class ExaggerationModel extends AbstractDeceptionModel
 	implements DeceptionModel {
@@ -35,7 +35,7 @@ public abstract class ExaggerationModel extends AbstractDeceptionModel
     }
 
     protected void kappaUnsetError() throws IllegalArgumentException {
-	throw new IllegalArgumentException(String.format(
-		"Kappa was not set for the deception model %s", this));
+	throw new IllegalArgumentException(String
+		.format("Kappa was not set for the deception model %s", this));
     }
 }

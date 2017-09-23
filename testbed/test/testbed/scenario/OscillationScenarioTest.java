@@ -24,7 +24,6 @@ import testbed.deceptionmodel.NegativeExaggeration;
 import testbed.deceptionmodel.PositiveExaggeration;
 import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
-import testbed.scenario.Oscillation;
 
 public class OscillationScenarioTest {
 
@@ -75,17 +74,23 @@ public class OscillationScenarioTest {
 		    }
 
 		    if (comb.equals("GG")) {
-			Assert.assertTrue(models[i][j] instanceof PositiveExaggeration);
+			Assert.assertTrue(
+				models[i][j] instanceof PositiveExaggeration);
 		    } else if (comb.equals("GB")) {
-			Assert.assertTrue(models[i][j] instanceof PositiveExaggeration);
+			Assert.assertTrue(
+				models[i][j] instanceof PositiveExaggeration);
 		    } else if (comb.equals("GN")) {
-			Assert.assertTrue(models[i][j] instanceof NegativeExaggeration);
+			Assert.assertTrue(
+				models[i][j] instanceof NegativeExaggeration);
 		    } else if (comb.equals("BG")) {
-			Assert.assertTrue(models[i][j] instanceof PositiveExaggeration);
+			Assert.assertTrue(
+				models[i][j] instanceof PositiveExaggeration);
 		    } else if (comb.equals("BB")) {
-			Assert.assertTrue(models[i][j] instanceof PositiveExaggeration);
+			Assert.assertTrue(
+				models[i][j] instanceof PositiveExaggeration);
 		    } else if (comb.equals("BN")) {
-			Assert.assertTrue(models[i][j] instanceof NegativeExaggeration);
+			Assert.assertTrue(
+				models[i][j] instanceof NegativeExaggeration);
 		    } else if (comb.equals("NG")) {
 			Assert.assertTrue(models[i][j] == null);
 		    } else if (comb.equals("NB")) {

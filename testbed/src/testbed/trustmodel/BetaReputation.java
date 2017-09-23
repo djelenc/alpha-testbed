@@ -104,7 +104,8 @@ public class BetaReputation extends AbstractTrustModel<Double> {
 
     public Map<Integer, BRSPair> computePairs() {
 	final Map<Integer, BRSPair> experienceTrust = computeExperiences();
-	final Map<Integer, BRSPair> opinionTrust = computeOpinions(experienceTrust);
+	final Map<Integer, BRSPair> opinionTrust = computeOpinions(
+		experienceTrust);
 
 	final Map<Integer, BRSPair> trust = new LinkedHashMap<Integer, BRSPair>();
 

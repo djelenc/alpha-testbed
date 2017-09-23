@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import testbed.interfaces.Accuracy;
 import testbed.interfaces.Experience;
@@ -149,8 +149,8 @@ public class NoDecisions extends EvaluationProtocol {
 	    // accuracy
 	    final Accuracy accuracy = getAccuracyInstance(service);
 	    final int accKey = accuracy.getClass().hashCode() ^ service;
-	    final double accValue = accuracy.evaluate(
-		    trustModel.getTrust(service), capabilities);
+	    final double accValue = accuracy
+		    .evaluate(trustModel.getTrust(service), capabilities);
 
 	    results.put(accKey, accValue);
 	}

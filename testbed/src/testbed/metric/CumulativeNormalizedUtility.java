@@ -14,8 +14,8 @@ import java.util.Map;
 
 import testbed.interfaces.Utility;
 
-public class CumulativeNormalizedUtility extends AbstractMetric implements
-	Utility {
+public class CumulativeNormalizedUtility extends AbstractMetric
+	implements Utility {
 
     private double total, maximal;
 

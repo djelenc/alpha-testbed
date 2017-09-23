@@ -24,8 +24,8 @@ import testbed.interfaces.ParametersPanel;
  * @author David
  * 
  */
-public class TransitiveInteractionPartnerSelection extends Transitive implements
-	InteractionPartnerSelection {
+public class TransitiveInteractionPartnerSelection extends Transitive
+	implements InteractionPartnerSelection {
 
     protected static final String PARTNER_NOT_SET = "No partner set for service %d.";
     protected Map<Integer, Integer> partners;
@@ -38,8 +38,8 @@ public class TransitiveInteractionPartnerSelection extends Transitive implements
 	    final Integer agent = partners.get(service);
 
 	    if (null == agent) {
-		throw new IllegalArgumentException(String.format(
-			PARTNER_NOT_SET, service));
+		throw new IllegalArgumentException(
+			String.format(PARTNER_NOT_SET, service));
 	    }
 
 	    // generate interaction outcome

@@ -58,7 +58,8 @@ public class TransitiveWithChangesGUI extends TransitiveGUI {
 	chgDens = new JSpinner(new SpinnerNumberModel(0.01, 0, 1, 0.05));
 	((JSpinner.DefaultEditor) chgDens.getEditor()).getTextField()
 		.setColumns(3);
-	chgDens.setToolTipText("How many agents are affected by the change in the system?");
+	chgDens.setToolTipText(
+		"How many agents are affected by the change in the system?");
 	c.gridx = 1;
 	c.gridy = yPosition++;
 	c.fill = GridBagConstraints.NONE;

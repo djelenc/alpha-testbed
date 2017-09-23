@@ -13,9 +13,6 @@ package testbed.deceptionmodel;
 import org.junit.Assert;
 import org.junit.Test;
 
-import testbed.deceptionmodel.NegativeExaggeration;
-import testbed.deceptionmodel.PositiveExaggeration;
-import testbed.deceptionmodel.Truthful;
 import testbed.interfaces.DeceptionModel;
 
 public class DeceptionModelsTest {

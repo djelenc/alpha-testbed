@@ -60,12 +60,12 @@ public class ExceptionWindowDialog extends JDialog {
 	javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(
 		jDialog1.getContentPane());
 	jDialog1.getContentPane().setLayout(jDialog1Layout);
-	jDialog1Layout.setHorizontalGroup(jDialog1Layout.createParallelGroup(
-		javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 400,
-		Short.MAX_VALUE));
-	jDialog1Layout.setVerticalGroup(jDialog1Layout.createParallelGroup(
-		javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 300,
-		Short.MAX_VALUE));
+	jDialog1Layout.setHorizontalGroup(jDialog1Layout
+		.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		.addGap(0, 400, Short.MAX_VALUE));
+	jDialog1Layout.setVerticalGroup(jDialog1Layout
+		.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		.addGap(0, 300, Short.MAX_VALUE));
 
 	setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 

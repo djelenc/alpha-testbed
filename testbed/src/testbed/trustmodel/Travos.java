@@ -14,13 +14,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import cern.jet.random.Beta;
+import cern.jet.random.engine.MersenneTwister;
 import testbed.common.Utils;
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
 import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.ParametersPanel;
-import cern.jet.random.Beta;
-import cern.jet.random.engine.MersenneTwister;
 
 /**
  * TRAVOS trust and reputation model
@@ -61,10 +61,9 @@ public class Travos extends AbstractTrustModel<Double> {
 	    @Override
 	    public void eval(Integer var) {
 		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The number of samples must non-negative, but was %d",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The number of samples must non-negative, but was %d",
+			    var));
 	    }
 	};
 
@@ -72,10 +71,9 @@ public class Travos extends AbstractTrustModel<Double> {
 	    @Override
 	    public void eval(Double var) {
 		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(
-				    "The threshold/error must be a between 0 and 1 inclusively, but was %.2f",
-				    var));
+		    throw new IllegalArgumentException(String.format(
+			    "The threshold/error must be a between 0 and 1 inclusively, but was %.2f",
+			    var));
 	    }
 	};
     }
@@ -238,8 +236,8 @@ public class Travos extends AbstractTrustModel<Double> {
 	    final int agent = e.getKey();
 
 	    final double mean = (p.R + 1) / (p.R + p.S + 2);
-	    final double confidence = integrate(p.R, p.S, mean - ERROR, mean
-		    + ERROR);
+	    final double confidence = integrate(p.R, p.S, mean - ERROR,
+		    mean + ERROR);
 
 	    // if confidence is high enough this is the final score
 	    if (confidence > CONFIDENCE_THRESHOLD)
@@ -328,8 +326,8 @@ public class Travos extends AbstractTrustModel<Double> {
      * @return Standard deviation
      */
     public double standardDeviation(double m, double n) {
-	final double var = (m + 1) * (n + 1) / (m + 1 + n + 1)
-		/ (m + 1 + n + 1) / (m + 1 + n + 1 + 1);
+	final double var = (m + 1) * (n + 1) / (m + 1 + n + 1) / (m + 1 + n + 1)
+		/ (m + 1 + n + 1 + 1);
 
 	return Math.sqrt(var);
     }
@@ -369,9 +367,9 @@ public class Travos extends AbstractTrustModel<Double> {
      * @return
      */
     public double scaleN(double a_mean, double a_std) {
-	return ((1 - a_mean) * (1 - a_mean) - (1 - a_mean) * (1 - a_mean)
-		* (1 - a_mean))
-		/ (a_std * a_std) - (1 - a_mean) - 1;
+	return ((1 - a_mean) * (1 - a_mean)
+		- (1 - a_mean) * (1 - a_mean) * (1 - a_mean)) / (a_std * a_std)
+		- (1 - a_mean) - 1;
     }
 
     /**
@@ -424,9 +422,9 @@ public class Travos extends AbstractTrustModel<Double> {
     protected void expandArrays(int max) {
 	for (int agent = 0; agent <= max; agent++) {
 	    if (!observations.containsKey(agent)) {
-		observations.put(agent, new BRSPair[] { new BRSPair(),
-			new BRSPair(), new BRSPair(), new BRSPair(),
-			new BRSPair() });
+		observations.put(agent,
+			new BRSPair[] { new BRSPair(), new BRSPair(),
+				new BRSPair(), new BRSPair(), new BRSPair() });
 	    }
 	}
 

@@ -47,7 +47,8 @@ public class OldAccuracy extends AbstractMetric implements Accuracy {
 	    Double c1, Double c2) {
 
 	final int rankDiff = t1.compareTo(t2);
-	final int capDiff = (Math.abs(c1 - c2) < 0.00001 ? 0 : c1.compareTo(c2));
+	final int capDiff = (Math.abs(c1 - c2) < 0.00001 ? 0
+		: c1.compareTo(c2));
 
 	if ((rankDiff >= 0 && capDiff >= 0) || (rankDiff < 0 && capDiff < 0)) {
 	    return 1;

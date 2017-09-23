@@ -10,10 +10,9 @@
  */
 package testbed;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
+import junit.framework.Assert;
 import testbed.interfaces.Metric;
 import testbed.metric.CumulativeNormalizedUtility;
 

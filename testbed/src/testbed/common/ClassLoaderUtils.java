@@ -90,8 +90,8 @@ public class ClassLoaderUtils {
 		addURL(file.toURI().toURL(), sysLoader);
 	    }
 	} else {
-	    logger.warning("The directory \"" + directory
-		    + "\" does not exist!");
+	    logger.warning(
+		    "The directory \"" + directory + "\" does not exist!");
 	}
     }
 
@@ -109,8 +109,8 @@ public class ClassLoaderUtils {
 
 	for (URL url : sysLoader.getURLs()) {
 	    if (url.toString().equalsIgnoreCase(u.toString())) {
-		logger.info(String.format("URL %s is already in the CLASSPATH",
-			u));
+		logger.info(
+			String.format("URL %s is already in the CLASSPATH", u));
 		return;
 	    }
 	}

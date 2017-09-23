@@ -11,8 +11,8 @@
 package testbed.deceptionmodel;
 
 import testbed.common.Utils;
-import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.DeceptionModel;
+import testbed.interfaces.ParameterCondition;
 import testbed.interfaces.RandomGenerator;
 
 /**
@@ -23,15 +23,15 @@ import testbed.interfaces.RandomGenerator;
  * @author David
  * 
  */
-public class RandomDeception extends AbstractDeceptionModel implements
-	DeceptionModel {
+public class RandomDeception extends AbstractDeceptionModel
+	implements DeceptionModel {
 
     private RandomGenerator generator;
 
     @Override
     public void initialize(Object... params) {
-	generator = Utils.extractParameter(
-		new ParameterCondition<RandomGenerator>() {
+	generator = Utils
+		.extractParameter(new ParameterCondition<RandomGenerator>() {
 		    @Override
 		    public void eval(RandomGenerator var)
 			    throws IllegalArgumentException {

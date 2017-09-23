@@ -12,12 +12,9 @@ package testbed.trustmodel;
 
 import java.util.ArrayList;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
-import testbed.trustmodel.AbdulRahmanHailes;
-import testbed.trustmodel.TD;
+import junit.framework.Assert;
 
 public class ARHTMTest {
 

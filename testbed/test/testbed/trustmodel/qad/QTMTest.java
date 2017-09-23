@@ -24,8 +24,6 @@ import org.junit.Test;
 
 import testbed.interfaces.Experience;
 import testbed.interfaces.Opinion;
-import testbed.trustmodel.qad.Omega;
-import testbed.trustmodel.qad.QTM;
 
 public class QTMTest {
 
