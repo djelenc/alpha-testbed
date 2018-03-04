@@ -7,11 +7,10 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="testbed.app.AppController"
-      fx:id="vbox">
+      fx:id="verticalBox">
     <HBox>
         <TextField fx:id="input" alignment="TOP_LEFT" HBox.hgrow="ALWAYS"/>
         <Button fx:id="init" onAction="#initButton" mnemonicParsing="false" text="Initialize"/>
-        <Button fx:id="start" onAction="#startButton" mnemonicParsing="false" text="Start"/>
         <Button fx:id="stop" onAction="#stopButton" mnemonicParsing="false" text="Stop"/>
     </HBox>
 </VBox>
