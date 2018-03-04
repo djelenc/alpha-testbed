@@ -1,1 +1,0 @@
-Place ATB plug-ins in this directory.
