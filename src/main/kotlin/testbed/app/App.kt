@@ -1,67 +1,81 @@
 package testbed.app
 
+import javafx.application.Application
 import javafx.application.Platform
-import javafx.event.ActionEvent
-import javafx.fxml.FXML
+import javafx.geometry.Pos
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
-import javafx.scene.control.Button
 import javafx.scene.control.TextField
-import javafx.scene.layout.VBox
+import javafx.scene.layout.Priority
 import testbed.common.DefaultRandomGenerator
 import testbed.core.AlphaTestbed
 import testbed.core.EvaluationProtocol
 import testbed.core.MetricSubscriber
 import testbed.gui.ParametersGUI
 import testbed.interfaces.*
+import tornadofx.*
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
-class AppController : MetricSubscriber {
-    @FXML
-    lateinit var input: TextField
-    @FXML
-    lateinit var init: Button
-    @FXML
-    lateinit var stop: Button
-    @FXML
-    lateinit var verticalBox: VBox
+class ATBMainView : View() {
 
-    private val chart = LineChart(
-            NumberAxis().apply {
-                tickUnit = 25.0
-                lowerBound = 0.0
-            },
-            NumberAxis().apply {
-                upperBound = 1.0
-                lowerBound = 0.0
-                tickUnit = 0.05
-                isAutoRanging = false
-            })
+    private val controller: ATBController by inject()
+    private var input: TextField by singleAssign()
+    private var chart: LineChart<Number, Number> by singleAssign()
+
+    override val root = vbox {
+        prefHeight = 400.0
+        prefWidth = 600.0
+
+        hbox {
+            input = textfield("1") {
+                alignment = Pos.TOP_LEFT
+                hgrow = Priority.ALWAYS
+            }
+            button("Start") {
+                action {
+                    controller.run(input.text.toInt(), chart)
+                }
+            }
+            button("Stop") {
+                action {
+                    controller.stop(chart)
+                }
+            }
+        }
+
+        chart = linechart("Results",
+                NumberAxis().apply {
+                    tickUnit = 25.0
+                    lowerBound = 0.0
+                }, NumberAxis().apply {
+            upperBound = 1.0
+            lowerBound = 0.0
+            tickUnit = 0.05
+            isAutoRanging = false
+        }) {
+            vgrow = Priority.ALWAYS
+        }
+    }
+}
+
+class ATBController : Controller(), MetricSubscriber {
 
     private val metricData = HashMap<Metric, XYChart.Series<Number, Number>>()
 
     private val executor = Executors.newSingleThreadExecutor()
 
-    @FXML
-    fun initialize() {
-        verticalBox.apply {
-            children += chart
-        }
-        input.text = "1"
-    }
-
-    fun initButton(event: ActionEvent) {
-        val gui = ParametersGUI(AppController::class.java.classLoader)
+    fun run(seed: Int, chart: LineChart<Number, Number>): Future<*> {
+        val gui = ParametersGUI(ATBController::class.java.classLoader)
         gui.setBatchRun(true)
 
         val answer = gui.showDialog()
 
         if (answer != 0) {
-            return
+            return CompletableFuture.completedFuture(Unit)
         }
-
-        val seed = Integer.parseInt(input.text)
 
         val scenario = gui.setupParameters[0] as Scenario
         scenario.setRandomGenerator(DefaultRandomGenerator(seed))
@@ -93,14 +107,14 @@ class AppController : MetricSubscriber {
         val protocol = AlphaTestbed.getProtocol(trustModel, scenario, metrics)
         protocol.subscribe(this)
 
-        executor.execute {
+        return executor.submit {
             for (time in 1..duration) {
                 protocol.step(time)
             }
         }
     }
 
-    fun stopButton(event: ActionEvent) {
+    fun stop(chart: LineChart<Number, Number>) {
         chart.data.clear()
         metricData.clear()
     }
@@ -112,4 +126,10 @@ class AppController : MetricSubscriber {
             }
         }
     }
+}
+
+class ATBApp : tornadofx.App(ATBMainView::class)
+
+fun main(args: Array<String>) {
+    Application.launch(ATBApp::class.java, *args)
 }
