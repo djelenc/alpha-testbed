@@ -125,11 +125,20 @@ public abstract class EvaluationProtocol {
      * @param time Current time of the evaluation.
      */
     public final void step(int time) {
+        // sets current time
+        this.time = time;
+
         // perform protocol step
         evaluationStep(time);
 
         // notify subscribers
-        notifiySubscribers();
+        notifySubscribers();
+    }
+
+    protected int time;
+
+    public final int getTime() {
+        return time;
     }
 
     /**
@@ -261,7 +270,7 @@ public abstract class EvaluationProtocol {
      * Notifies the subscribers that the new data is ready to be pulled from the
      * test-bed.
      */
-    protected final void notifiySubscribers() {
+    protected final void notifySubscribers() {
         for (MetricSubscriber s : subscribers) {
             s.update(this);
         }
