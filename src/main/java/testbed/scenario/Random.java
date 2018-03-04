@@ -4,32 +4,19 @@
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
- * 
+ *
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
 package testbed.scenario;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
 import testbed.common.LexiographicComparator;
 import testbed.common.Utils;
-import testbed.deceptionmodel.NegativeExaggeration;
-import testbed.deceptionmodel.PositiveExaggeration;
-import testbed.deceptionmodel.RandomDeception;
-import testbed.deceptionmodel.Silent;
-import testbed.deceptionmodel.Truthful;
-import testbed.interfaces.DeceptionModel;
-import testbed.interfaces.Experience;
-import testbed.interfaces.Opinion;
-import testbed.interfaces.ParameterCondition;
-import testbed.interfaces.ParametersPanel;
-import testbed.interfaces.Scenario;
+import testbed.deceptionmodel.*;
+import testbed.interfaces.*;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * A very simple scenario implementation.
@@ -49,7 +36,7 @@ import testbed.interfaces.Scenario;
  * using a {@link Silent} deception model. In that case, such agent does not
  * give any opinions.
  * </ul>
- * 
+ * <p>
  * <p>
  * The initialization method requires an array of objects that represent
  * parameters with the following semantics (corresponding to the indexes):
@@ -63,9 +50,8 @@ import testbed.interfaces.Scenario;
  * <li>6: (double) ratio between the number of distinct interaction partners and
  * all agents
  * </ul>
- * 
+ *
  * @author David
- * 
  */
 public class Random extends AbstractScenario implements Scenario {
     protected static final String DENS_EX = "The density must be between 0 and 1 inclusively, but was %.2f";
@@ -77,65 +63,65 @@ public class Random extends AbstractScenario implements Scenario {
 
     protected final static ParameterCondition<Integer> VAL_SIZE;
     protected final static ParameterCondition<Double> VAL_SD, VAL_EXAGG,
-	    VAL_DENS;
+            VAL_DENS;
     protected final static ParameterCondition<Map<DeceptionModel, Double>> VAL_PROB;
 
     protected static final List<Integer> SERVICES;
 
     static {
-	VAL_SIZE = new ParameterCondition<Integer>() {
-	    @Override
-	    public void eval(Integer var) {
-		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(AGENT_NUM_EX, var));
-	    }
-	};
+        VAL_SIZE = new ParameterCondition<Integer>() {
+            @Override
+            public void eval(Integer var) {
+                if (var < 1)
+                    throw new IllegalArgumentException(
+                            String.format(AGENT_NUM_EX, var));
+            }
+        };
 
-	VAL_SD = new ParameterCondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0)
-		    throw new IllegalArgumentException(
-			    String.format(ST_DEV_EX, var));
-	    }
-	};
+        VAL_SD = new ParameterCondition<Double>() {
+            @Override
+            public void eval(Double var) {
+                if (var < 0)
+                    throw new IllegalArgumentException(
+                            String.format(ST_DEV_EX, var));
+            }
+        };
 
-	VAL_EXAGG = new ParameterCondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(EXAGG_EX, var));
-	    }
-	};
+        VAL_EXAGG = new ParameterCondition<Double>() {
+            @Override
+            public void eval(Double var) {
+                if (var < 0 || var > 1)
+                    throw new IllegalArgumentException(
+                            String.format(EXAGG_EX, var));
+            }
+        };
 
-	VAL_PROB = new ParameterCondition<Map<DeceptionModel, Double>>() {
-	    @Override
-	    public void eval(Map<DeceptionModel, Double> var) {
-		double sum = 0;
+        VAL_PROB = new ParameterCondition<Map<DeceptionModel, Double>>() {
+            @Override
+            public void eval(Map<DeceptionModel, Double> var) {
+                double sum = 0;
 
-		for (Map.Entry<DeceptionModel, Double> pair : var.entrySet()) {
-		    sum += pair.getValue();
-		}
+                for (Map.Entry<DeceptionModel, Double> pair : var.entrySet()) {
+                    sum += pair.getValue();
+                }
 
-		if (Math.abs(1d - sum) > 0.001)
-		    throw new IllegalArgumentException(
-			    String.format(TOTAL_PROB_EX, 1d, sum));
-	    }
-	};
+                if (Math.abs(1d - sum) > 0.001)
+                    throw new IllegalArgumentException(
+                            String.format(TOTAL_PROB_EX, 1d, sum));
+            }
+        };
 
-	VAL_DENS = new ParameterCondition<Double>() {
-	    @Override
-	    public void eval(Double var) {
-		if (var < 0 || var > 1)
-		    throw new IllegalArgumentException(
-			    String.format(DENS_EX, var));
-	    }
-	};
+        VAL_DENS = new ParameterCondition<Double>() {
+            @Override
+            public void eval(Double var) {
+                if (var < 0 || var > 1)
+                    throw new IllegalArgumentException(
+                            String.format(DENS_EX, var));
+            }
+        };
 
-	SERVICES = new ArrayList<Integer>();
-	SERVICES.add(0);
+        SERVICES = new ArrayList<Integer>();
+        SERVICES.add(0);
     }
 
     protected int time;
@@ -151,172 +137,169 @@ public class Random extends AbstractScenario implements Scenario {
 
     @Override
     public void initialize(Object... parameters) {
-	capabilities = new LinkedHashMap<Integer, Double>();
-	deceptionModels = new LinkedHashMap<Integer, DeceptionModel>();
-	agents = new ArrayList<Integer>();
-	partners = new ArrayList<Integer>();
-	time = 0;
+        capabilities = new LinkedHashMap<Integer, Double>();
+        deceptionModels = new LinkedHashMap<Integer, DeceptionModel>();
+        agents = new ArrayList<Integer>();
+        partners = new ArrayList<Integer>();
+        time = 0;
 
-	int numAgents = Utils.extractParameter(VAL_SIZE, 0, parameters);
+        int numAgents = Utils.extractParameter(VAL_SIZE, 0, parameters);
 
-	sd_i = Utils.extractParameter(VAL_SD, 1, parameters);
-	sd_o = Utils.extractParameter(VAL_SD, 2, parameters);
+        sd_i = Utils.extractParameter(VAL_SD, 1, parameters);
+        sd_o = Utils.extractParameter(VAL_SD, 2, parameters);
 
-	// PMF for assigning deception models.
-	// We must use TreeMap to ensure deterministic iteration over it
-	TreeMap<DeceptionModel, Double> dmPMF = new TreeMap<DeceptionModel, Double>(
-		new LexiographicComparator());
+        // PMF for assigning deception models.
+        // We must use TreeMap to ensure deterministic iteration over it
+        TreeMap<DeceptionModel, Double> dmPMF = new TreeMap<DeceptionModel, Double>(
+                new LexiographicComparator());
 
-	dmPMF.putAll(Utils.extractParameter(VAL_PROB, 3, parameters));
+        dmPMF.putAll(Utils.extractParameter(VAL_PROB, 3, parameters));
 
-	posExCoef = Utils.extractParameter(VAL_EXAGG, 4, parameters);
-	negExCoef = Utils.extractParameter(VAL_EXAGG, 5, parameters);
+        posExCoef = Utils.extractParameter(VAL_EXAGG, 4, parameters);
+        negExCoef = Utils.extractParameter(VAL_EXAGG, 5, parameters);
 
-	// initialize deception models
-	for (Map.Entry<DeceptionModel, Double> dm : dmPMF.entrySet()) {
-	    final DeceptionModel model = dm.getKey();
+        // initialize deception models
+        for (Map.Entry<DeceptionModel, Double> dm : dmPMF.entrySet()) {
+            final DeceptionModel model = dm.getKey();
 
-	    if (model instanceof PositiveExaggeration) {
-		model.initialize(posExCoef);
-	    } else if (model instanceof NegativeExaggeration) {
-		model.initialize(negExCoef);
-	    } else if (model instanceof RandomDeception) {
-		model.initialize(generator);
-	    } else if (!(model instanceof Silent)) {
-		model.initialize();
-	    }
-	}
+            if (model instanceof PositiveExaggeration) {
+                model.initialize(posExCoef);
+            } else if (model instanceof NegativeExaggeration) {
+                model.initialize(negExCoef);
+            } else if (model instanceof RandomDeception) {
+                model.initialize(generator);
+            } else if (!(model instanceof Silent)) {
+                model.initialize();
+            }
+        }
 
-	// generate agents
-	for (int agent = 0; agent < numAgents; agent++) {
-	    // add agent to set
-	    agents.add(agent);
+        // generate agents
+        for (int agent = 0; agent < numAgents; agent++) {
+            // add agent to set
+            agents.add(agent);
 
-	    // assign capabilities
-	    capabilities.put(agent, generator.nextDoubleFromTo(0, 1));
+            // assign capabilities
+            capabilities.put(agent, generator.nextDoubleFromTo(0, 1));
 
-	    // assign deception model
-	    deceptionModels.put(agent, getDM(agent, numAgents, dmPMF));
-	}
+            // assign deception model
+            deceptionModels.put(agent, getDM(agent, numAgents, dmPMF));
+        }
 
-	interDens = Utils.extractParameter(VAL_DENS, 6, parameters);
+        interDens = Utils.extractParameter(VAL_DENS, 6, parameters);
 
-	partners.addAll(generator.chooseRandom(agents, interDens));
+        partners.addAll(generator.chooseRandom(agents, interDens));
     }
 
     /**
      * Gets an IDeceptionModel instance for an agent with given PMF
-     * 
-     * @param agent
-     *            Index of an agent
-     * @param numAgents
-     *            The total number of agents in the system
-     * @param dmPMF
-     *            The probability mass function of deception models
+     *
+     * @param agent     Index of an agent
+     * @param numAgents The total number of agents in the system
+     * @param dmPMF     The probability mass function of deception models
      * @return
      */
     public DeceptionModel getDM(int agent, int numAgents,
-	    TreeMap<DeceptionModel, Double> dmPMF) {
-	TreeMap<DeceptionModel, Integer> cumulative = new TreeMap<DeceptionModel, Integer>(
-		new LexiographicComparator());
-	float previous = 0;
+                                TreeMap<DeceptionModel, Double> dmPMF) {
+        TreeMap<DeceptionModel, Integer> cumulative = new TreeMap<DeceptionModel, Integer>(
+                new LexiographicComparator());
+        float previous = 0;
 
-	for (Entry<DeceptionModel, Double> d : dmPMF.entrySet()) {
-	    previous += d.getValue();
-	    final DeceptionModel dm = d.getKey();
-	    cumulative.put(dm, Math.round(previous * numAgents));
-	}
+        for (Entry<DeceptionModel, Double> d : dmPMF.entrySet()) {
+            previous += d.getValue();
+            final DeceptionModel dm = d.getKey();
+            cumulative.put(dm, Math.round(previous * numAgents));
+        }
 
-	for (Entry<DeceptionModel, Integer> d : cumulative.entrySet()) {
-	    if (agent < d.getValue()) {
-		if (d.getKey() instanceof Silent) {
-		    return null;
-		} else {
-		    return d.getKey();
-		}
-	    }
-	}
+        for (Entry<DeceptionModel, Integer> d : cumulative.entrySet()) {
+            if (agent < d.getValue()) {
+                if (d.getKey() instanceof Silent) {
+                    return null;
+                } else {
+                    return d.getKey();
+                }
+            }
+        }
 
-	throw new IllegalArgumentException(
-		String.format(DM_EX, agent, numAgents, dmPMF));
+        throw new IllegalArgumentException(
+                String.format(DM_EX, agent, numAgents, dmPMF));
     }
 
     @Override
     public List<Opinion> generateOpinions() {
-	List<Opinion> opinions = new ArrayList<Opinion>();
+        List<Opinion> opinions = new ArrayList<Opinion>();
 
-	for (int agent1 : agents) {
-	    for (int agent2 : agents) {
-		// get deception model
-		final DeceptionModel deceptionModel = deceptionModels
-			.get(agent1);
+        for (int agent1 : agents) {
+            for (int agent2 : agents) {
+                // get deception model
+                final DeceptionModel deceptionModel = deceptionModels
+                        .get(agent1);
 
-		// if DM is not Silent, generate opinion
-		if (deceptionModel != null) {
-		    // get capability
-		    final double capability = capabilities.get(agent2);
+                // if DM is not Silent, generate opinion
+                if (deceptionModel != null) {
+                    // get capability
+                    final double capability = capabilities.get(agent2);
 
-		    // generate internal trust degree
-		    final double internalTrustDegree = generator
-			    .nextDoubleFromUnitTND(capability, sd_o);
-		    final double communicatedInternalTrustDegree = deceptionModel
-			    .calculate(internalTrustDegree);
+                    // generate internal trust degree
+                    final double internalTrustDegree = generator
+                            .nextDoubleFromUnitTND(capability, sd_o);
+                    final double communicatedInternalTrustDegree = deceptionModel
+                            .calculate(internalTrustDegree);
 
-		    // create opinion tuple and add it to list
-		    final Opinion opinion = new Opinion(agent1, agent2, 0, time,
-			    communicatedInternalTrustDegree, sd_o);
-		    opinions.add(opinion);
-		}
-	    }
-	}
+                    // create opinion tuple and add it to list
+                    final Opinion opinion = new Opinion(agent1, agent2, 0, time,
+                            communicatedInternalTrustDegree, sd_o);
+                    opinions.add(opinion);
+                }
+            }
+        }
 
-	return opinions;
+        return opinions;
     }
 
     @Override
     public List<Experience> generateExperiences() {
-	List<Experience> experiences = new ArrayList<Experience>();
+        List<Experience> experiences = new ArrayList<Experience>();
 
-	Experience experience = null;
-	int agent = -1;
-	double cap, outcome;
+        Experience experience = null;
+        int agent = -1;
+        double cap, outcome;
 
-	// get agent to interact with
-	agent = partners.get(time % partners.size());
+        // get agent to interact with
+        agent = partners.get(time % partners.size());
 
-	// generate interaction outcome
-	cap = capabilities.get(agent);
-	outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
+        // generate interaction outcome
+        cap = capabilities.get(agent);
+        outcome = generator.nextDoubleFromUnitTND(cap, sd_i);
 
-	// create experience tuple and add it to list
-	experience = new Experience(agent, 0, time, outcome);
-	experiences.add(experience);
+        // create experience tuple and add it to list
+        experience = new Experience(agent, 0, time, outcome);
+        experiences.add(experience);
 
-	return experiences;
+        return experiences;
     }
 
     @Override
     public Map<Integer, Double> getCapabilities(int service) {
-	return capabilities;
+        return capabilities;
     }
 
     @Override
     public List<Integer> getAgents() {
-	return agents;
+        return agents;
     }
 
     @Override
     public List<Integer> getServices() {
-	return SERVICES;
+        return SERVICES;
     }
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new RandomGUI();
+        return new RandomGUI();
     }
 
     @Override
     public void setCurrentTime(int time) {
-	this.time = time;
+        this.time = time;
     }
 }

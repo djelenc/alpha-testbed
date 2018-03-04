@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
- * 
+ *
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
@@ -20,7 +20,7 @@ import testbed.interfaces.ParametersPanel;
  * Very similar to the {@link Random}, but this scenario features entering of
  * new agents to the system at given time intervals. New agents are all liars --
  * they all use {@link Complementary} deception model.
- * 
+ * <p>
  * <p>
  * The scenario requires almost the same parameters as the {@link Random}
  * scenario, but there are some differences. Parameter 6 is ignored (all agents
@@ -32,9 +32,8 @@ import testbed.interfaces.ParametersPanel;
  * <li>8 (int): howManyNewAgents -- the number of new agents that enter the
  * system at every changeInterval
  * </ul>
- * 
+ *
  * @author David
- * 
  */
 public class RandomWithNewcomers extends Random {
 
@@ -42,74 +41,77 @@ public class RandomWithNewcomers extends Random {
     protected static final String NEW_NUM_EX = "The number of newcomers must be a positive integer, but was %d.";
     protected static final DeceptionModel LIAR = new Complementary();
     protected final static ParameterCondition<Integer> VAL_NEW_NUM,
-	    VAL_INTERVAL;
-
-    /** Time between changes */
-    protected int changeInterval;
-
-    /** The number of new agents that enter the system */
-    protected int newcomersNumber;
+            VAL_INTERVAL;
 
     static {
-	VAL_NEW_NUM = new ParameterCondition<Integer>() {
-	    @Override
-	    public void eval(Integer var) {
-		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(NEW_NUM_EX, var));
-	    }
-	};
+        VAL_NEW_NUM = new ParameterCondition<Integer>() {
+            @Override
+            public void eval(Integer var) {
+                if (var < 1)
+                    throw new IllegalArgumentException(
+                            String.format(NEW_NUM_EX, var));
+            }
+        };
 
-	VAL_INTERVAL = new ParameterCondition<Integer>() {
-	    @Override
-	    public void eval(Integer var) {
-		if (var < 1)
-		    throw new IllegalArgumentException(
-			    String.format(INTERVAL_EX, var));
-	    }
-	};
+        VAL_INTERVAL = new ParameterCondition<Integer>() {
+            @Override
+            public void eval(Integer var) {
+                if (var < 1)
+                    throw new IllegalArgumentException(
+                            String.format(INTERVAL_EX, var));
+            }
+        };
 
-	LIAR.initialize();
+        LIAR.initialize();
     }
+
+    /**
+     * Time between changes
+     */
+    protected int changeInterval;
+    /**
+     * The number of new agents that enter the system
+     */
+    protected int newcomersNumber;
 
     @Override
     public void initialize(Object... parameters) {
-	super.initialize(parameters);
+        super.initialize(parameters);
 
-	changeInterval = Utils.extractParameter(VAL_INTERVAL, 7, parameters);
-	newcomersNumber = Utils.extractParameter(VAL_NEW_NUM, 8, parameters);
+        changeInterval = Utils.extractParameter(VAL_INTERVAL, 7, parameters);
+        newcomersNumber = Utils.extractParameter(VAL_NEW_NUM, 8, parameters);
     }
 
     @Override
     public ParametersPanel getParametersPanel() {
-	return new RandomWithNewcomersGUI();
+        return new RandomWithNewcomersGUI();
     }
 
     @Override
     public void setCurrentTime(int time) {
-	this.time = time;
+        this.time = time;
 
-	if (0 == time % changeInterval) {
-	    final int newSize = agents.size() + newcomersNumber;
+        if (0 == time % changeInterval) {
+            final int newSize = agents.size() + newcomersNumber;
 
-	    for (int agent = agents.size(); agent < newSize; agent++) {
-		// add agent
-		agents.add(agent);
+            for (int agent = agents.size(); agent < newSize; agent++) {
+                // add agent
+                agents.add(agent);
 
-		// assign capabilities
-		capabilities.put(agent, generator.nextDoubleFromTo(0, 1));
+                // assign capabilities
+                capabilities.put(agent, generator.nextDoubleFromTo(0, 1));
 
-		// assign deception model
-		deceptionModels.put(agent, LIAR);
-	    }
+                // assign deception model
+                deceptionModels.put(agent, LIAR);
+            }
 
-	    partners.clear();
-	    partners.addAll(agents);
-	}
+            partners.clear();
+            partners.addAll(agents);
+        }
     }
 
     @Override
     public String toString() {
-	return "Random with newcomers";
+        return "Random with newcomers";
     }
 }

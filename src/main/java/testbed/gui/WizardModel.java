@@ -3,7 +3,7 @@
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
- * 
+ *
  * Contributors:
  *     Robert Eckstein - initial API and implementation
  *        http://www.oracle.com/technetwork/articles/javase/wizard-136789.html
@@ -11,12 +11,11 @@
  */
 package testbed.gui;
 
+import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.Icon;
 
 /**
  * The model for the Wizard component, which tracks the text, icons, and enabled
@@ -85,219 +84,216 @@ public class WizardModel {
      */
     public WizardModel() {
 
-	panelHashmap = new HashMap<Object, WizardPanelDescriptor>();
+        panelHashmap = new HashMap<Object, WizardPanelDescriptor>();
 
-	buttonTextHashmap = new HashMap<String, Object>();
-	buttonIconHashmap = new HashMap<String, Icon>();
-	buttonEnabledHashmap = new HashMap<String, Boolean>();
+        buttonTextHashmap = new HashMap<String, Object>();
+        buttonIconHashmap = new HashMap<String, Icon>();
+        buttonEnabledHashmap = new HashMap<String, Boolean>();
 
-	propertyChangeSupport = new PropertyChangeSupport(this);
+        propertyChangeSupport = new PropertyChangeSupport(this);
 
     }
 
     /**
      * Returns the currently displayed WizardPanelDescriptor.
-     * 
+     *
      * @return The currently displayed WizardPanelDescriptor
      */
     WizardPanelDescriptor getCurrentPanelDescriptor() {
-	return currentPanel;
+        return currentPanel;
     }
 
     /**
      * Returns {@link WizardPanelDescriptor} for a given id. Returns null if no
      * descriptor exists.
-     * 
+     *
      * @return
      */
     WizardPanelDescriptor getPanelDescriptor(Object id) {
-	return panelHashmap.get(id);
+        return panelHashmap.get(id);
     }
 
     /**
      * Registers the WizardPanelDescriptor in the model using the
      * Object-identifier specified.
-     * 
-     * @param id
-     *            Object-based identifier
-     * @param descriptor
-     *            WizardPanelDescriptor that describes the panel
+     *
+     * @param id         Object-based identifier
+     * @param descriptor WizardPanelDescriptor that describes the panel
      */
     void registerPanel(Object id, WizardPanelDescriptor descriptor) {
 
-	// Place a reference to it in a hashtable so we can access it later
-	// when it is about to be displayed.
+        // Place a reference to it in a hashtable so we can access it later
+        // when it is about to be displayed.
 
-	panelHashmap.put(id, descriptor);
+        panelHashmap.put(id, descriptor);
 
     }
 
     /**
      * Sets the current panel to that identified by the Object passed in.
-     * 
-     * @param id
-     *            Object-based panel identifier
+     *
+     * @param id Object-based panel identifier
      * @return boolean indicating success or failure
      */
     boolean setCurrentPanel(Object id) {
 
-	// First, get the hashtable reference to the panel that should
-	// be displayed.
+        // First, get the hashtable reference to the panel that should
+        // be displayed.
 
-	WizardPanelDescriptor nextPanel = panelHashmap.get(id);
+        WizardPanelDescriptor nextPanel = panelHashmap.get(id);
 
-	// If we couldn't find the panel that should be displayed, return
-	// false.
+        // If we couldn't find the panel that should be displayed, return
+        // false.
 
-	if (nextPanel == null)
-	    throw new WizardPanelNotFoundException();
+        if (nextPanel == null)
+            throw new WizardPanelNotFoundException();
 
-	WizardPanelDescriptor oldPanel = currentPanel;
-	currentPanel = nextPanel;
+        WizardPanelDescriptor oldPanel = currentPanel;
+        currentPanel = nextPanel;
 
-	if (oldPanel != currentPanel)
-	    firePropertyChange(CURRENT_PANEL_DESCRIPTOR_PROPERTY, oldPanel,
-		    currentPanel);
+        if (oldPanel != currentPanel)
+            firePropertyChange(CURRENT_PANEL_DESCRIPTOR_PROPERTY, oldPanel,
+                    currentPanel);
 
-	return true;
+        return true;
 
     }
 
     Object getBackButtonText() {
-	return buttonTextHashmap.get(BACK_BUTTON_TEXT_PROPERTY);
+        return buttonTextHashmap.get(BACK_BUTTON_TEXT_PROPERTY);
     }
 
     void setBackButtonText(Object newText) {
 
-	Object oldText = getBackButtonText();
-	if (!newText.equals(oldText)) {
-	    buttonTextHashmap.put(BACK_BUTTON_TEXT_PROPERTY, newText);
-	    firePropertyChange(BACK_BUTTON_TEXT_PROPERTY, oldText, newText);
-	}
+        Object oldText = getBackButtonText();
+        if (!newText.equals(oldText)) {
+            buttonTextHashmap.put(BACK_BUTTON_TEXT_PROPERTY, newText);
+            firePropertyChange(BACK_BUTTON_TEXT_PROPERTY, oldText, newText);
+        }
     }
 
     Object getNextFinishButtonText() {
-	return buttonTextHashmap.get(NEXT_FINISH_BUTTON_TEXT_PROPERTY);
+        return buttonTextHashmap.get(NEXT_FINISH_BUTTON_TEXT_PROPERTY);
     }
 
     void setNextFinishButtonText(Object newText) {
 
-	Object oldText = getNextFinishButtonText();
-	if (!newText.equals(oldText)) {
-	    buttonTextHashmap.put(NEXT_FINISH_BUTTON_TEXT_PROPERTY, newText);
-	    firePropertyChange(NEXT_FINISH_BUTTON_TEXT_PROPERTY, oldText,
-		    newText);
-	}
+        Object oldText = getNextFinishButtonText();
+        if (!newText.equals(oldText)) {
+            buttonTextHashmap.put(NEXT_FINISH_BUTTON_TEXT_PROPERTY, newText);
+            firePropertyChange(NEXT_FINISH_BUTTON_TEXT_PROPERTY, oldText,
+                    newText);
+        }
     }
 
     Object getCancelButtonText() {
-	return buttonTextHashmap.get(CANCEL_BUTTON_TEXT_PROPERTY);
+        return buttonTextHashmap.get(CANCEL_BUTTON_TEXT_PROPERTY);
     }
 
     void setCancelButtonText(Object newText) {
 
-	Object oldText = getCancelButtonText();
-	if (!newText.equals(oldText)) {
-	    buttonTextHashmap.put(CANCEL_BUTTON_TEXT_PROPERTY, newText);
-	    firePropertyChange(CANCEL_BUTTON_TEXT_PROPERTY, oldText, newText);
-	}
+        Object oldText = getCancelButtonText();
+        if (!newText.equals(oldText)) {
+            buttonTextHashmap.put(CANCEL_BUTTON_TEXT_PROPERTY, newText);
+            firePropertyChange(CANCEL_BUTTON_TEXT_PROPERTY, oldText, newText);
+        }
     }
 
     Icon getBackButtonIcon() {
-	return buttonIconHashmap.get(BACK_BUTTON_ICON_PROPERTY);
+        return buttonIconHashmap.get(BACK_BUTTON_ICON_PROPERTY);
     }
 
     void setBackButtonIcon(Icon newIcon) {
 
-	Object oldIcon = getBackButtonIcon();
-	if (!newIcon.equals(oldIcon)) {
-	    buttonIconHashmap.put(BACK_BUTTON_ICON_PROPERTY, newIcon);
-	    firePropertyChange(BACK_BUTTON_ICON_PROPERTY, oldIcon, newIcon);
-	}
+        Object oldIcon = getBackButtonIcon();
+        if (!newIcon.equals(oldIcon)) {
+            buttonIconHashmap.put(BACK_BUTTON_ICON_PROPERTY, newIcon);
+            firePropertyChange(BACK_BUTTON_ICON_PROPERTY, oldIcon, newIcon);
+        }
     }
 
     Icon getNextFinishButtonIcon() {
-	return buttonIconHashmap.get(NEXT_FINISH_BUTTON_ICON_PROPERTY);
+        return buttonIconHashmap.get(NEXT_FINISH_BUTTON_ICON_PROPERTY);
     }
 
     public void setNextFinishButtonIcon(Icon newIcon) {
 
-	Object oldIcon = getNextFinishButtonIcon();
-	if (!newIcon.equals(oldIcon)) {
-	    buttonIconHashmap.put(NEXT_FINISH_BUTTON_ICON_PROPERTY, newIcon);
-	    firePropertyChange(NEXT_FINISH_BUTTON_ICON_PROPERTY, oldIcon,
-		    newIcon);
-	}
+        Object oldIcon = getNextFinishButtonIcon();
+        if (!newIcon.equals(oldIcon)) {
+            buttonIconHashmap.put(NEXT_FINISH_BUTTON_ICON_PROPERTY, newIcon);
+            firePropertyChange(NEXT_FINISH_BUTTON_ICON_PROPERTY, oldIcon,
+                    newIcon);
+        }
     }
 
     Icon getCancelButtonIcon() {
-	return buttonIconHashmap.get(CANCEL_BUTTON_ICON_PROPERTY);
+        return buttonIconHashmap.get(CANCEL_BUTTON_ICON_PROPERTY);
     }
 
     void setCancelButtonIcon(Icon newIcon) {
 
-	Icon oldIcon = getCancelButtonIcon();
-	if (!newIcon.equals(oldIcon)) {
-	    buttonIconHashmap.put(CANCEL_BUTTON_ICON_PROPERTY, newIcon);
-	    firePropertyChange(CANCEL_BUTTON_ICON_PROPERTY, oldIcon, newIcon);
-	}
+        Icon oldIcon = getCancelButtonIcon();
+        if (!newIcon.equals(oldIcon)) {
+            buttonIconHashmap.put(CANCEL_BUTTON_ICON_PROPERTY, newIcon);
+            firePropertyChange(CANCEL_BUTTON_ICON_PROPERTY, oldIcon, newIcon);
+        }
     }
 
     Boolean getBackButtonEnabled() {
-	return buttonEnabledHashmap.get(BACK_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(BACK_BUTTON_ENABLED_PROPERTY);
     }
 
     void setBackButtonEnabled(Boolean newValue) {
 
-	Boolean oldValue = getBackButtonEnabled();
-	if (newValue != oldValue) {
-	    buttonEnabledHashmap.put(BACK_BUTTON_ENABLED_PROPERTY, newValue);
-	    firePropertyChange(BACK_BUTTON_ENABLED_PROPERTY, oldValue,
-		    newValue);
-	}
+        Boolean oldValue = getBackButtonEnabled();
+        if (newValue != oldValue) {
+            buttonEnabledHashmap.put(BACK_BUTTON_ENABLED_PROPERTY, newValue);
+            firePropertyChange(BACK_BUTTON_ENABLED_PROPERTY, oldValue,
+                    newValue);
+        }
     }
 
     Boolean getNextFinishButtonEnabled() {
-	return buttonEnabledHashmap.get(NEXT_FINISH_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(NEXT_FINISH_BUTTON_ENABLED_PROPERTY);
     }
 
     void setNextFinishButtonEnabled(Boolean newValue) {
 
-	Boolean oldValue = getNextFinishButtonEnabled();
-	if (newValue != oldValue) {
-	    buttonEnabledHashmap.put(NEXT_FINISH_BUTTON_ENABLED_PROPERTY,
-		    newValue);
-	    firePropertyChange(NEXT_FINISH_BUTTON_ENABLED_PROPERTY, oldValue,
-		    newValue);
-	}
+        Boolean oldValue = getNextFinishButtonEnabled();
+        if (newValue != oldValue) {
+            buttonEnabledHashmap.put(NEXT_FINISH_BUTTON_ENABLED_PROPERTY,
+                    newValue);
+            firePropertyChange(NEXT_FINISH_BUTTON_ENABLED_PROPERTY, oldValue,
+                    newValue);
+        }
     }
 
     Boolean getCancelButtonEnabled() {
-	return buttonEnabledHashmap.get(CANCEL_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(CANCEL_BUTTON_ENABLED_PROPERTY);
     }
 
     void setCancelButtonEnabled(Boolean newValue) {
 
-	Boolean oldValue = getCancelButtonEnabled();
-	if (newValue != oldValue) {
-	    buttonEnabledHashmap.put(CANCEL_BUTTON_ENABLED_PROPERTY, newValue);
-	    firePropertyChange(CANCEL_BUTTON_ENABLED_PROPERTY, oldValue,
-		    newValue);
-	}
+        Boolean oldValue = getCancelButtonEnabled();
+        if (newValue != oldValue) {
+            buttonEnabledHashmap.put(CANCEL_BUTTON_ENABLED_PROPERTY, newValue);
+            firePropertyChange(CANCEL_BUTTON_ENABLED_PROPERTY, oldValue,
+                    newValue);
+        }
     }
 
     public void addPropertyChangeListener(PropertyChangeListener p) {
-	propertyChangeSupport.addPropertyChangeListener(p);
+        propertyChangeSupport.addPropertyChangeListener(p);
     }
 
     public void removePropertyChangeListener(PropertyChangeListener p) {
-	propertyChangeSupport.removePropertyChangeListener(p);
+        propertyChangeSupport.removePropertyChangeListener(p);
     }
 
     protected void firePropertyChange(String propertyName, Object oldValue,
-	    Object newValue) {
-	propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-		newValue);
+                                      Object newValue) {
+        propertyChangeSupport.firePropertyChange(propertyName, oldValue,
+                newValue);
     }
 
 }

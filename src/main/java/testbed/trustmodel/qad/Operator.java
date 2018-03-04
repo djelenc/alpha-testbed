@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
- * 
+ *
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
@@ -16,318 +16,317 @@ import java.util.Map;
 /**
  * Enumeration that represents operators for {@link QAD Qualitative Assessment
  * Dynamics}.
- * 
+ *
  * @author David
- * 
  */
 public enum Operator {
     EXTREME_OPTIMIST, EXTREME_PESSIMIST, CENTRALIST, NON_CENTRALIST, MODERATE_OPTIMIST, MODERATE_PESSIMIST, STABLE;
 
     public Map<Integer, Omega> compute(Omega[] exp, Omega[][] op) {
-	Map<Integer, Omega> trust = new HashMap<Integer, Omega>();
+        Map<Integer, Omega> trust = new HashMap<Integer, Omega>();
 
-	switch (this) {
-	case EXTREME_OPTIMIST:
-	    extremeOptimist(exp, op, trust);
-	    break;
-	case EXTREME_PESSIMIST:
-	    extremePessimistic(exp, op, trust);
-	    break;
-	case CENTRALIST:
-	    centralist(exp, op, trust);
-	    break;
-	case NON_CENTRALIST:
-	    nonCentralist(exp, op, trust);
-	    break;
-	case MODERATE_OPTIMIST:
-	    moderateOptimist(exp, op, trust);
-	    break;
-	case MODERATE_PESSIMIST:
-	    moderatePessimist(exp, op, trust);
-	    break;
-	case STABLE:
-	    stable(exp, op, trust);
-	    break;
-	default:
-	    throw new IllegalArgumentException("Unknown operator: " + this);
-	}
+        switch (this) {
+            case EXTREME_OPTIMIST:
+                extremeOptimist(exp, op, trust);
+                break;
+            case EXTREME_PESSIMIST:
+                extremePessimistic(exp, op, trust);
+                break;
+            case CENTRALIST:
+                centralist(exp, op, trust);
+                break;
+            case NON_CENTRALIST:
+                nonCentralist(exp, op, trust);
+                break;
+            case MODERATE_OPTIMIST:
+                moderateOptimist(exp, op, trust);
+                break;
+            case MODERATE_PESSIMIST:
+                moderatePessimist(exp, op, trust);
+                break;
+            case STABLE:
+                stable(exp, op, trust);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown operator: " + this);
+        }
 
-	return trust;
+        return trust;
     }
 
     /**
      * Extreme pessimistic operator
-     * 
+     *
      * @param exp
      * @param op
      * @param trust
      */
     public void extremePessimistic(Omega[] exp, Omega[][] op,
-	    Map<Integer, Omega> trust) {
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
-	    Omega result = null;
+                                   Map<Integer, Omega> trust) {
+        for (int agent2 = 0; agent2 < op.length; agent2++) {
+            Omega result = null;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		final Omega omega = op[agent1][agent2];
+            for (int agent1 = 0; agent1 < op.length; agent1++) {
+                final Omega omega = op[agent1][agent2];
 
-		if (null != omega) {
-		    if (null == result) {
-			result = omega;
-		    } else {
-			if (omega.numeric < result.numeric) {
-			    result = omega;
-			}
-		    }
-		}
-	    }
+                if (null != omega) {
+                    if (null == result) {
+                        result = omega;
+                    } else {
+                        if (omega.numeric < result.numeric) {
+                            result = omega;
+                        }
+                    }
+                }
+            }
 
-	    if (null != exp[agent2]) {
-		if (null == result) {
-		    result = exp[agent2];
-		} else {
-		    if (exp[agent2].numeric < result.numeric) {
-			result = exp[agent2];
-		    }
-		}
-	    }
+            if (null != exp[agent2]) {
+                if (null == result) {
+                    result = exp[agent2];
+                } else {
+                    if (exp[agent2].numeric < result.numeric) {
+                        result = exp[agent2];
+                    }
+                }
+            }
 
-	    if (null != result)
-		trust.put(agent2, result);
-	}
+            if (null != result)
+                trust.put(agent2, result);
+        }
     }
 
     /**
      * Extreme optimistic operator
-     * 
+     *
      * @param exp
      * @param op
      * @param trust
      */
     public void extremeOptimist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Omega> trust) {
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
-	    Omega result = null;
+                                Map<Integer, Omega> trust) {
+        for (int agent2 = 0; agent2 < op.length; agent2++) {
+            Omega result = null;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		final Omega omega = op[agent1][agent2];
+            for (int agent1 = 0; agent1 < op.length; agent1++) {
+                final Omega omega = op[agent1][agent2];
 
-		if (null != omega) {
-		    if (null == result) {
-			result = omega;
-		    } else {
-			if (omega.numeric > result.numeric) {
-			    result = omega;
-			}
-		    }
-		}
-	    }
+                if (null != omega) {
+                    if (null == result) {
+                        result = omega;
+                    } else {
+                        if (omega.numeric > result.numeric) {
+                            result = omega;
+                        }
+                    }
+                }
+            }
 
-	    if (null != exp[agent2]) {
-		if (null == result) {
-		    result = exp[agent2];
-		} else {
-		    if (exp[agent2].numeric > result.numeric) {
-			result = exp[agent2];
-		    }
-		}
-	    }
+            if (null != exp[agent2]) {
+                if (null == result) {
+                    result = exp[agent2];
+                } else {
+                    if (exp[agent2].numeric > result.numeric) {
+                        result = exp[agent2];
+                    }
+                }
+            }
 
-	    if (null != result)
-		trust.put(agent2, result);
-	}
+            if (null != result)
+                trust.put(agent2, result);
+        }
     }
 
     /**
      * Centralistic operator
-     * 
+     *
      * @param exp
      * @param op
      * @param trust
      */
     public void centralist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Omega> trust) {
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
-	    double sum = 0;
-	    int count = 0;
+                           Map<Integer, Omega> trust) {
+        for (int agent2 = 0; agent2 < op.length; agent2++) {
+            double sum = 0;
+            int count = 0;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		final Omega omega = op[agent1][agent2];
+            for (int agent1 = 0; agent1 < op.length; agent1++) {
+                final Omega omega = op[agent1][agent2];
 
-		if (null != omega) {
-		    sum += omega.numeric;
-		    count += 1;
-		}
-	    }
+                if (null != omega) {
+                    sum += omega.numeric;
+                    count += 1;
+                }
+            }
 
-	    if (null != exp[agent2]) {
-		count += 1;
-		sum += exp[agent2].numeric;
-	    }
+            if (null != exp[agent2]) {
+                count += 1;
+                sum += exp[agent2].numeric;
+            }
 
-	    if (count > 0) {
-		final double avg = sum / count;
-		final Omega result;
-		if (avg >= 0d) {
-		    result = Omega.fromNumeric(Math.floor(avg));
-		} else {
-		    result = Omega.fromNumeric(Math.ceil(avg));
-		}
+            if (count > 0) {
+                final double avg = sum / count;
+                final Omega result;
+                if (avg >= 0d) {
+                    result = Omega.fromNumeric(Math.floor(avg));
+                } else {
+                    result = Omega.fromNumeric(Math.ceil(avg));
+                }
 
-		trust.put(agent2, result);
-	    }
-	}
+                trust.put(agent2, result);
+            }
+        }
     }
 
     /**
      * Non-Centralistic operator
-     * 
+     *
      * @param exp
      * @param op
      * @param trust
      */
     public void nonCentralist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Omega> trust) {
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
-	    double sum = 0;
-	    int count = 0;
+                              Map<Integer, Omega> trust) {
+        for (int agent2 = 0; agent2 < op.length; agent2++) {
+            double sum = 0;
+            int count = 0;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		final Omega omega = op[agent1][agent2];
+            for (int agent1 = 0; agent1 < op.length; agent1++) {
+                final Omega omega = op[agent1][agent2];
 
-		if (null != omega) {
-		    sum += omega.numeric;
-		    count += 1;
-		}
-	    }
+                if (null != omega) {
+                    sum += omega.numeric;
+                    count += 1;
+                }
+            }
 
-	    if (null != exp[agent2]) {
-		count += 1;
-		sum += exp[agent2].numeric;
-	    }
+            if (null != exp[agent2]) {
+                count += 1;
+                sum += exp[agent2].numeric;
+            }
 
-	    if (count > 0) {
-		final double avg = sum / count;
-		final Omega result;
-		if (avg > 0d) {
-		    result = Omega.fromNumeric(Math.ceil(avg));
-		} else {
-		    result = Omega.fromNumeric(Math.floor(avg));
-		}
+            if (count > 0) {
+                final double avg = sum / count;
+                final Omega result;
+                if (avg > 0d) {
+                    result = Omega.fromNumeric(Math.ceil(avg));
+                } else {
+                    result = Omega.fromNumeric(Math.floor(avg));
+                }
 
-		trust.put(agent2, result);
-	    }
-	}
+                trust.put(agent2, result);
+            }
+        }
     }
 
     /**
      * Moderate optimistic operator
-     * 
+     *
      * @param exp
      * @param op
      * @param trust
      */
     public void moderateOptimist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Omega> trust) {
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
-	    double sum = 0;
-	    int count = 0;
+                                 Map<Integer, Omega> trust) {
+        for (int agent2 = 0; agent2 < op.length; agent2++) {
+            double sum = 0;
+            int count = 0;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		final Omega omega = op[agent1][agent2];
+            for (int agent1 = 0; agent1 < op.length; agent1++) {
+                final Omega omega = op[agent1][agent2];
 
-		if (null != omega) {
-		    sum += omega.numeric;
-		    count += 1;
-		}
-	    }
+                if (null != omega) {
+                    sum += omega.numeric;
+                    count += 1;
+                }
+            }
 
-	    if (null != exp[agent2]) {
-		count += 1;
-		sum += exp[agent2].numeric;
-	    }
+            if (null != exp[agent2]) {
+                count += 1;
+                sum += exp[agent2].numeric;
+            }
 
-	    if (count > 0) {
-		final double avg = sum / count;
-		final Omega result = Omega.fromNumeric(Math.round(avg));
+            if (count > 0) {
+                final double avg = sum / count;
+                final Omega result = Omega.fromNumeric(Math.round(avg));
 
-		final Omega previous;
+                final Omega previous;
 
-		if (null == exp[agent2]) {
-		    previous = Omega.D;
-		} else {
-		    previous = exp[agent2];
-		}
+                if (null == exp[agent2]) {
+                    previous = Omega.D;
+                } else {
+                    previous = exp[agent2];
+                }
 
-		if (result.numeric <= previous.numeric) {
-		    trust.put(agent2, previous);
-		} else {
-		    trust.put(agent2, Omega.fromNumeric(previous.numeric + 1d));
-		}
-	    }
-	}
+                if (result.numeric <= previous.numeric) {
+                    trust.put(agent2, previous);
+                } else {
+                    trust.put(agent2, Omega.fromNumeric(previous.numeric + 1d));
+                }
+            }
+        }
     }
 
     /**
      * Moderate pessimistic operator
-     * 
+     *
      * @param exp
      * @param op
      * @param trust
      */
     public void moderatePessimist(Omega[] exp, Omega[][] op,
-	    Map<Integer, Omega> trust) {
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
-	    double sum = 0;
-	    int count = 0;
+                                  Map<Integer, Omega> trust) {
+        for (int agent2 = 0; agent2 < op.length; agent2++) {
+            double sum = 0;
+            int count = 0;
 
-	    for (int agent1 = 0; agent1 < op.length; agent1++) {
-		final Omega omega = op[agent1][agent2];
+            for (int agent1 = 0; agent1 < op.length; agent1++) {
+                final Omega omega = op[agent1][agent2];
 
-		if (null != omega) {
-		    sum += omega.numeric;
-		    count += 1;
-		}
-	    }
+                if (null != omega) {
+                    sum += omega.numeric;
+                    count += 1;
+                }
+            }
 
-	    if (null != exp[agent2]) {
-		count += 1;
-		sum += exp[agent2].numeric;
-	    }
+            if (null != exp[agent2]) {
+                count += 1;
+                sum += exp[agent2].numeric;
+            }
 
-	    if (count > 0) {
-		final double avg = sum / count;
-		final Omega result = Omega.fromNumeric(Math.round(avg));
+            if (count > 0) {
+                final double avg = sum / count;
+                final Omega result = Omega.fromNumeric(Math.round(avg));
 
-		final Omega previous;
+                final Omega previous;
 
-		if (null == exp[agent2]) {
-		    previous = Omega.T;
-		} else {
-		    previous = exp[agent2];
-		}
+                if (null == exp[agent2]) {
+                    previous = Omega.T;
+                } else {
+                    previous = exp[agent2];
+                }
 
-		if (result.numeric >= previous.numeric) {
-		    trust.put(agent2, previous);
-		} else {
-		    trust.put(agent2, Omega.fromNumeric(previous.numeric - 1));
-		}
-	    }
-	}
+                if (result.numeric >= previous.numeric) {
+                    trust.put(agent2, previous);
+                } else {
+                    trust.put(agent2, Omega.fromNumeric(previous.numeric - 1));
+                }
+            }
+        }
     }
 
     /**
      * Stable operator
-     * 
+     *
      * @param exp
      * @param op
      * @param trust
      */
     public void stable(Omega[] exp, Omega[][] op, Map<Integer, Omega> trust) {
-	for (int agent2 = 0; agent2 < op.length; agent2++) {
-	    final Omega value = exp[agent2];
+        for (int agent2 = 0; agent2 < op.length; agent2++) {
+            final Omega value = exp[agent2];
 
-	    if (null != value)
-		trust.put(agent2, value);
-	}
+            if (null != value)
+                trust.put(agent2, value);
+        }
     }
 }

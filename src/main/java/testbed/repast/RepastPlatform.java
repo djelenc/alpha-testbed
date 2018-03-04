@@ -4,13 +4,13 @@
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
- * 
+ *
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
 package testbed.repast;
 
-import java.util.Arrays;
+/*import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -191,4 +191,4 @@ public class RepastPlatform extends DefaultContext<Object>
 
 	return wd.showNotification();
     }
-}
+}*/

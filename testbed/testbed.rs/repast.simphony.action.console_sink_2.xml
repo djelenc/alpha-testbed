@@ -1,15 +1,15 @@
 <repast.simphony.data2.engine.ConsoleSinkDescriptor>
-  <name>Console</name>
-  <dataSet>TestbedMetrics</dataSet>
-  <delimiter>,</delimiter>
-  <format>LINE</format>
-  <sourceIds class="linked-hash-set">
-    <string>tick</string>
-    <string>Metric</string>
-    <string>Name</string>
-    <string>TrustModel</string>
-    <string>Scenario</string>
-  </sourceIds>
-  <enabled>false</enabled>
-  <outputStream>OUT</outputStream>
+    <name>Console</name>
+    <dataSet>TestbedMetrics</dataSet>
+    <delimiter>,</delimiter>
+    <format>LINE</format>
+    <sourceIds class="linked-hash-set">
+        <string>tick</string>
+        <string>Metric</string>
+        <string>Name</string>
+        <string>TrustModel</string>
+        <string>Scenario</string>
+    </sourceIds>
+    <enabled>false</enabled>
+    <outputStream>OUT</outputStream>
 </repast.simphony.data2.engine.ConsoleSinkDescriptor>

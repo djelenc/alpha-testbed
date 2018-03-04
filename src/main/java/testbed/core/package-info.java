@@ -1,6 +1,6 @@
 /**
  * Core of the AlphaTestbed
- * 
+ * <p>
  * <p>
  * This package consists of the {@link testbed.core.AlphaTestbed main class}
  * that evaluates the model, and the {@link testbed.core.MetricSubscriber}

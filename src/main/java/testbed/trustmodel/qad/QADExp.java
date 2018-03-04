@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
- * 
+ *
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
@@ -20,22 +20,22 @@ public class QADExp {
     public final Omega outcome;
 
     public QADExp(int agent, int service, int time, Omega omega) {
-	this.agent = agent;
-	this.service = service;
-	this.time = time;
-	this.outcome = omega;
+        this.agent = agent;
+        this.service = service;
+        this.time = time;
+        this.outcome = omega;
     }
 
     public QADExp(Experience e) {
-	this.agent = e.agent;
-	this.service = e.service;
-	this.time = e.time;
-	this.outcome = Omega.normalizedNumeric(e.outcome);
+        this.agent = e.agent;
+        this.service = e.service;
+        this.time = e.time;
+        this.outcome = Omega.normalizedNumeric(e.outcome);
     }
 
     @Override
     public String toString() {
-	return String.format("Exp<%d, %d, %d, %s>", agent, service, time,
-		outcome);
+        return String.format("Exp<%d, %d, %d, %s>", agent, service, time,
+                outcome);
     }
 }
