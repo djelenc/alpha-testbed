@@ -19,6 +19,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
+
 class ATBMainView : View() {
 
     private val controller: ATBController by inject()
@@ -41,7 +42,7 @@ class ATBMainView : View() {
             }
             button("Stop") {
                 action {
-                    controller.stop(chart)
+                    controller.stop()
                 }
             }
         }
@@ -65,11 +66,16 @@ class ATBController : Controller(), MetricSubscriber {
 
     private val metricData = HashMap<Metric, XYChart.Series<Number, Number>>()
 
-    private val executor = Executors.newSingleThreadExecutor()
+    private val executor = Executors.newFixedThreadPool(1) {
+        Executors.defaultThreadFactory().newThread(it).apply { isDaemon = true }
+    }
 
     private var task: Future<*> = stoppedTask()
 
     fun run(seed: Int, chart: LineChart<Number, Number>) {
+        chart.data.clear()
+        metricData.clear()
+
         val gui = ParametersGUI(ATBController::class.java.classLoader)
         gui.setBatchRun(true)
 
@@ -111,10 +117,8 @@ class ATBController : Controller(), MetricSubscriber {
         task = startedTask(protocol, duration)
     }
 
-    fun stop(chart: LineChart<Number, Number>) {
+    fun stop() {
         task.cancel(true)
-        chart.data.clear()
-        metricData.clear()
         task = stoppedTask()
     }
 
@@ -130,11 +134,9 @@ class ATBController : Controller(), MetricSubscriber {
         }
     }
 
-    override fun update(instance: EvaluationProtocol) {
-        Platform.runLater {
-            for ((metric, series) in metricData) {
-                series.data.add(XYChart.Data(instance.time, instance.getResult(0, metric)))
-            }
+    override fun update(instance: EvaluationProtocol): Unit = Platform.runLater {
+        for ((metric, series) in metricData) {
+            series.data.add(XYChart.Data(instance.time, instance.getResult(0, metric)))
         }
     }
 }
