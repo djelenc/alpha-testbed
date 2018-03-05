@@ -67,14 +67,16 @@ class ATBController : Controller(), MetricSubscriber {
 
     private val executor = Executors.newSingleThreadExecutor()
 
-    fun run(seed: Int, chart: LineChart<Number, Number>): Future<*> {
+    private var task: Future<*> = stoppedTask()
+
+    fun run(seed: Int, chart: LineChart<Number, Number>) {
         val gui = ParametersGUI(ATBController::class.java.classLoader)
         gui.setBatchRun(true)
 
         val answer = gui.showDialog()
 
         if (answer != 0) {
-            return CompletableFuture.completedFuture(Unit)
+            task = stoppedTask()
         }
 
         val scenario = gui.setupParameters[0] as Scenario
@@ -106,17 +108,26 @@ class ATBController : Controller(), MetricSubscriber {
 
         val protocol = AlphaTestbed.getProtocol(trustModel, scenario, metrics)
         protocol.subscribe(this)
-
-        return executor.submit {
-            for (time in 1..duration) {
-                protocol.step(time)
-            }
-        }
+        task = startedTask(protocol, duration)
     }
 
     fun stop(chart: LineChart<Number, Number>) {
+        task.cancel(true)
         chart.data.clear()
         metricData.clear()
+        task = stoppedTask()
+    }
+
+    private fun stoppedTask() = CompletableFuture.completedFuture(Unit)
+
+    private fun startedTask(protocol: EvaluationProtocol, duration: Int) = executor.submit {
+        for (time in 1..duration) {
+            protocol.step(time)
+
+            if (Thread.interrupted()) {
+                break
+            }
+        }
     }
 
     override fun update(instance: EvaluationProtocol) {
