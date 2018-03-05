@@ -83,6 +83,7 @@ class ATBController : Controller(), MetricSubscriber {
 
         if (answer != 0) {
             task = stoppedTask()
+            return
         }
 
         val scenario = gui.setupParameters[0] as Scenario
