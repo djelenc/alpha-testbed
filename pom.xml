@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>testbed</groupId>
-    <artifactId>atb-testbed</artifactId>
+    <groupId>atb</groupId>
+    <artifactId>alpha-testbed</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>atb-testbed</name>
+    <name>alpha-atb</name>
     <url>http://atb.fri.uni-lj.si</url>
 
     <properties>
@@ -78,7 +78,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>testbed.app.AppKt</mainClass>
+                                    <mainClass>atb.app.AppKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
