@@ -25,7 +25,7 @@ import java.util.*
  *
  * @author David
  */
-fun main(args: Array<String>) {
+fun manualRun() {
     // trust model
     val model = SimpleSelectingOpinionProviders()
     model.setRandomGenerator(DefaultRandomGenerator(0))
