@@ -1,5 +1,11 @@
 package atb.app
 
+import atb.common.DefaultRandomGenerator
+import atb.core.AlphaTestbed
+import atb.core.EvaluationProtocol
+import atb.core.MetricSubscriber
+import atb.gui.ParametersGUI
+import atb.interfaces.*
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.geometry.Pos
@@ -8,16 +14,12 @@ import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.control.TextField
 import javafx.scene.layout.Priority
-import atb.common.DefaultRandomGenerator
-import atb.core.AlphaTestbed
-import atb.core.EvaluationProtocol
-import atb.core.MetricSubscriber
-import atb.gui.ParametersGUI
-import atb.interfaces.*
 import tornadofx.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executors
 import java.util.concurrent.Future
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 
 class ATBMainView : View() {
@@ -66,9 +68,7 @@ class ATBController : Controller(), MetricSubscriber {
 
     private val metricData = HashMap<Metric, XYChart.Series<Number, Number>>()
 
-    private val executor = Executors.newFixedThreadPool(1) {
-        Executors.defaultThreadFactory().newThread(it).apply { isDaemon = true }
-    }
+    private val runner = Runner()
 
     private var task: Future<*> = stoppedTask()
 
@@ -125,7 +125,7 @@ class ATBController : Controller(), MetricSubscriber {
 
     private fun stoppedTask() = CompletableFuture.completedFuture(Unit)
 
-    private fun startedTask(protocol: EvaluationProtocol, duration: Int) = executor.submit {
+    private fun startedTask(protocol: EvaluationProtocol, duration: Int) = runner.submit {
         for (time in 1..duration) {
             protocol.step(time)
 
