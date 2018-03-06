@@ -1,1 +1,0 @@
-For documentation, tutorials, source code and other resources, please visit http://atb.fri.uni-lj.si.

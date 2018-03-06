@@ -1,0 +1,11 @@
+atb.scenario.Random
+atb.scenario.RandomMultiService
+atb.scenario.RandomMultiServiceInteractionPartnerSelection
+atb.scenario.RandomWithNewcomers
+atb.scenario.RandomInteractionPartnerSelection
+atb.scenario.Transitive
+atb.scenario.TransitiveWithChanges
+atb.scenario.TransitiveInteractionPartnerSelection
+atb.scenario.TransitiveOpinionProviderSelection
+atb.scenario.TargetedAttack
+atb.scenario.Oscillation
