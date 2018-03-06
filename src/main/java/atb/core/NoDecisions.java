@@ -19,7 +19,6 @@ import java.util.Map.Entry;
  * An evaluation protocol, where a scenario determines both the opinion
  * providers and the interaction partners.
  * <p>
- * <p>
  * The evaluation protocol measures the accuracy of the computed trust values.
  * The execution flow of the evaluation protocol is the following:
  * <ol>
@@ -62,7 +61,7 @@ public class NoDecisions extends EvaluationProtocol {
      */
     protected Object[] accuracyParameters = null;
     /**
-     * Map of service -> accuracy metrics
+     * Map of service to accuracy metrics
      */
     protected Map<Integer, Accuracy> serviceAccuracy = null;
     /**
@@ -155,7 +154,6 @@ public class NoDecisions extends EvaluationProtocol {
 
     /**
      * Returns an instance of the ranking metric for the given service.
-     * <p>
      * <p>
      * Method retrieves the instance from the the map of all ranking metric
      * instances. If for the given service, the map does not contain a metric

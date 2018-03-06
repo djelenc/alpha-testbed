@@ -255,7 +255,6 @@ public class OscillationGUI extends JPanel implements ParametersPanel {
     /**
      * Evaluates the parameters.
      * <p>
-     * <p>
      * This method invokes the observer's update method. (Observer should be set
      * to a {@link WizardPanelDescriptor} instance.)
      */

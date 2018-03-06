@@ -8,7 +8,7 @@
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
-package atb.repast;
+package atb.app;
 
 import atb.common.DefaultRandomGenerator;
 import atb.core.AlphaTestbed;

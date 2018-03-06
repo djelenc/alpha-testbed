@@ -34,16 +34,13 @@ public class PartnerSelectionTemplates {
      * Selects a random agent, while using assigned trust values as
      * probabilities.
      * <p>
-     * <p>
      * The values are first raised to the power which is given as the second
      * parameter, and then normalized. Because of this, it is not required that
      * the given map of trust values is a proper PMF (i.e. the sum of trust
      * values in the given map does not need to be one -- this function will
      * normalize the weights).
      * <p>
-     * <p>
      * The assigned trust values, however, have to be positive numbers.
-     * <p>
      * <p>
      * If the given map of trust values is empty, the function returns null.
      *
@@ -76,14 +73,11 @@ public class PartnerSelectionTemplates {
      * Selects a random agent, while using assigned trust values as
      * probabilities.
      * <p>
-     * <p>
      * It is not required that the given map of trust values is a proper PMF
      * (i.e. the sum of trust values in the given map does not need to be one --
      * this function will normalize the weights).
      * <p>
-     * <p>
      * The assigned trust values, however, have to be positive numbers.
-     * <p>
      * <p>
      * If the given map of trust values is empty, the function returns null.
      *
@@ -96,7 +90,6 @@ public class PartnerSelectionTemplates {
 
     /**
      * Selects an agent with the highest trust value.
-     * <p>
      * <p>
      * If the given map is empty, the function returns null.
      *

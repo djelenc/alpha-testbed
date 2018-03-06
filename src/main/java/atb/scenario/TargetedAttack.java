@@ -358,7 +358,6 @@ public class TargetedAttack extends AbstractScenario {
      * <li>do not know attackers (have no opinions about them)
      * </ul>
      * <p>
-     * <p>
      * Targets
      * <ul>
      * <li>know other targets and the give honest opinions about them

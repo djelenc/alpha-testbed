@@ -32,7 +32,7 @@ public interface ParametersPanel {
      *               the parameters are valid, or false, when they are invalid.
      * @param params Optional parameters.
      */
-    public void initialize(Observer o, Object... params);
+    void initialize(Observer o, Object... params);
 
     /**
      * Returns an {@link java.awt.Component} instance that holds the GUI for the
@@ -40,12 +40,12 @@ public interface ParametersPanel {
      *
      * @return
      */
-    public Component getComponent();
+    Component getComponent();
 
     /**
      * Returns an object of parameters for a particular component.
      *
      * @return
      */
-    public Object[] getParameters();
+    Object[] getParameters();
 }

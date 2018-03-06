@@ -25,14 +25,14 @@ public interface Scenario {
      *
      * @param generator Generator to be set
      */
-    public void setRandomGenerator(RandomGenerator generator);
+    void setRandomGenerator(RandomGenerator generator);
 
     /**
      * Initializes the scenario with an optional array of varargs Objects.
      *
      * @param parameters Optional scenario parameters
      */
-    public void initialize(Object... parameters);
+    void initialize(Object... parameters);
 
     /**
      * Notifies the scenario of the current time. The atb calls this method
@@ -40,7 +40,7 @@ public interface Scenario {
      *
      * @param time Current time
      */
-    public void setCurrentTime(int time);
+    void setCurrentTime(int time);
 
     /**
      * Gets the capabilities of agents that concern the given service.
@@ -48,44 +48,43 @@ public interface Scenario {
      * @param service
      * @return
      */
-    public Map<Integer, Double> getCapabilities(int service);
+    Map<Integer, Double> getCapabilities(int service);
 
     /**
      * Generates a set of {@link Opinion} tuples.
      *
      * @return
      */
-    public List<Opinion> generateOpinions();
+    List<Opinion> generateOpinions();
 
     /**
      * Generates a set of {@link Experience} tuples.
      *
      * @return
      */
-    public List<Experience> generateExperiences();
+    List<Experience> generateExperiences();
 
     /**
      * Returns a set of ID numbers of agents.
      *
      * @return
      */
-    public List<Integer> getAgents();
+    List<Integer> getAgents();
 
     /**
      * Returns a set of service types.
      *
      * @return
      */
-    public List<Integer> getServices();
+    List<Integer> getServices();
 
     /**
      * Returns an {@link ParametersPanel} instance, which is responsible for
      * generating a graphical user interface for setting scenario parameters.
      * <p>
-     * <p>
      * When a scenario does not need parameters, the method should return null.
      *
      * @return
      */
-    public ParametersPanel getParametersPanel();
+    ParametersPanel getParametersPanel();
 }

@@ -116,7 +116,6 @@ public class OldAccuracyWithSensitivityGUI extends JPanel
     /**
      * Evaluates the deception model distribution parameters.
      * <p>
-     * <p>
      * This method invokes the observer's update method. (Observer should be set
      * to a {@link WizardPanelDescriptor} instance.)
      */

@@ -22,16 +22,14 @@ public interface OpinionProviderSelection {
     /**
      * Conveys opinion request to the scenario.
      * <p>
-     * <p>
      * This method is used to tell the scenario, which opinions it should
      * generate in the current tick. The set of opinionRequest should be
      * obtained form the trust model.
-     * <p>
      * <p>
      * This method should ignore invalid opinion requests; requests for opinions
      * from or about non-existing agents or for non-existing services.
      *
      * @param opinionRequests A list of opinionRequests.
      */
-    public void setOpinionRequests(List<OpinionRequest> opinionRequests);
+    void setOpinionRequests(List<OpinionRequest> opinionRequests);
 }

@@ -17,11 +17,9 @@ import java.util.Map;
 /**
  * Euclidean difference between calculated trust values and capabilities.
  * <p>
- * <p>
  * The metric calculates the Euclidean distance between the actual capabilities
  * and the calculated trust values. The trust values have to be expressed in
  * floating point numbers from [0, 1].
- * <p>
  * <p>
  * This metric is different from other metrics in several aspects:
  * <ul>

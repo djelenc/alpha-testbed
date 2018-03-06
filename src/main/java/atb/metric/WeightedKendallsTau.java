@@ -17,7 +17,6 @@ import java.util.Map;
 /**
  * Weighted Kendall's Tau
  * <p>
- * <p>
  * This metric weighs every inversion with the amount of difference between
  * elements that are inverted. The weights are computed from capabilities.
  *

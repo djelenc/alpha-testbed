@@ -37,14 +37,13 @@ import java.util.Map.Entry;
  * give any opinions.
  * </ul>
  * <p>
- * <p>
  * The initialization method requires an array of objects that represent
  * parameters with the following semantics (corresponding to the indexes):
  * <ul>
  * <li>0: (int) number of agents
  * <li>1: (double) standard deviation for generating experiences
  * <li>2: (double) standard deviation for generation opinions
- * <li>3: (Map<{@link DeceptionModel}, Double>) distribution of deception models
+ * <li>3: (Map({@link DeceptionModel}, Double)) distribution of deception models
  * <li>4: (double) positive exaggeration coefficient
  * <li>5: (double) negative exaggeration coefficient
  * <li>6: (double) ratio between the number of distinct interaction partners and

@@ -20,13 +20,11 @@ import java.util.Map.Entry;
 /**
  * Evaluates trust in {@link TargetedAttack} scenario.
  * <p>
- * <p>
  * It derives from Kendall's Tau-A, except that -- when evaluating pairs of
  * comparisons -- it skips pairs when one of the agents is the attacker or when
  * both of agents are neutrals. Therefore this method will throw an
  * {@link IllegalArgumentException} if not used on the {@link TargetedAttack}
  * scenario.
- * <p>
  * <p>
  * The reasoning for skipping those pairs is to narrow the measurement of trust
  * only on the attacked agents; attackers and neutrals are not attacked at all,

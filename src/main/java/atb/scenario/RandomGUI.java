@@ -304,10 +304,8 @@ public class RandomGUI extends JPanel implements ParametersPanel {
     /**
      * Evaluates the scenario parameters.
      * <p>
-     * <p>
      * This method invokes the observer's update method. (Observer should be set
      * to a {@link WizardPanelDescriptor} instance.)
-     * <p>
      * <p>
      * This method checks if the sum of the probabilities for deception models
      * adds up to one. If the sum adds up to one, the method invokes the update

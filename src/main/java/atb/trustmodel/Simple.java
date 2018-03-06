@@ -21,7 +21,6 @@ import java.util.Map;
  * A straightforward implementation of a trust model. Used mostly for testing
  * purposes.
  * <p>
- * <p>
  * As trust, the model computes the average value between experiences and
  * opinions. The experiences are weighted with their number, and once the model
  * has at least three experiences, it starts to ignore opinions.

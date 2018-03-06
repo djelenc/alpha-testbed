@@ -24,5 +24,5 @@ public interface ParameterCondition<T> {
      *
      * @param var
      */
-    public void eval(T var) throws IllegalArgumentException;
+    void eval(T var) throws IllegalArgumentException;
 }

@@ -25,12 +25,10 @@ import java.util.Map;
 /**
  * TRAVOS trust and reputation model
  * <p>
- * <p>
  * As proposed in <a href='http://dx.doi.org/10.1007/s10458-006-5952-x'>W. T.
  * Teacy, Jigar Patel, Nicholas R. Jennings, and Michael Luck. 2006. TRAVOS:
  * Trust and Reputation in the Context of Inaccurate Information Sources.
  * Autonomous Agents and Multi-Agent Systems 12, 2 (March 2006), 183-198.</a>
- * <p>
  * <p>
  * <b>Additional comment.</b> TRAVOS requires two specific data formats: a)
  * binary interactions outcomes and b) exchanged opinions in the form of
@@ -300,7 +298,6 @@ public class Travos extends AbstractTrustModel<Double> {
      * @param m
      * @param n
      * @param p_acc
-     * @param std0
      * @return
      */
     public double adjustSD(final double m, final double n, double p_acc) {

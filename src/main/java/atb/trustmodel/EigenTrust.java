@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * EigenTrust model
  * <p>
- * <p>
  * Implementation notes
  * <ul>
  * <li>The interactions outcomes are recorded in the <b>cntExp</b> array. Values
@@ -37,7 +36,6 @@ import java.util.Map;
  * <li>Obtained opinions are stored in the cntOp array. This array is used to
  * compute normalized local trust values that constitute the matrix C.
  * </ul>
- * <p>
  * <p>
  * <a href='http://doi.acm.org/10.1145/775152.775242'>Sepandar D. Kamvar, Mario
  * T. Schlosser, and Hector Garcia-Molina. 2003. The Eigentrust algorithm for

@@ -27,6 +27,6 @@ public interface OpinionCost extends Metric {
      * @param opinionRequests List of requested opinions
      * @return Score
      */
-    public double evaluate(List<Integer> agents, List<Integer> services,
+    double evaluate(List<Integer> agents, List<Integer> services,
                            List<OpinionRequest> opinionRequests);
 }

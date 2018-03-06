@@ -17,7 +17,6 @@ import java.util.Map;
 /**
  * Spearman's foot rule metric.
  * <p>
- * <p>
  * Assumes the rankings have the same length.
  *
  * @author David
@@ -34,8 +33,8 @@ public class SpearmansFootRule extends AbstractMetric implements Accuracy {
 
         for (Map.Entry<Integer, Double> e : data.entrySet()) {
             final int agent = e.getKey();
-            final double dataRank = e.getValue().doubleValue();
-            final double truthRank = truth.get(agent).doubleValue();
+            final double dataRank = e.getValue();
+            final double truthRank = truth.get(agent);
             final double rankDiff = dataRank - truthRank;
             squaredSum += rankDiff * rankDiff;
         }

@@ -17,11 +17,9 @@ import java.util.Map;
 /**
  * Mean Absolute Error (MAE) between calculated trust values and capabilities.
  * <p>
- * <p>
  * The metric calculates the the mean absolute error between the actual
  * capabilities and the calculated trust values. The trust values have to be
  * expressed in floating point numbers from [0, 1].
- * <p>
  * <p>
  * The metric is inverted -- smaller values mean better results.
  *

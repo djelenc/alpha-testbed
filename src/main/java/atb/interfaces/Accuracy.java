@@ -28,6 +28,6 @@ public interface Accuracy extends Metric {
      *                     represent their capabilities
      * @return An evaluation score between 0 and 1, inclusively.
      */
-    public <T extends Comparable<T>> double evaluate(
+    <T extends Comparable<T>> double evaluate(
             Map<Integer, T> trustDegrees, Map<Integer, Double> capabilities);
 }

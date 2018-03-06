@@ -24,10 +24,8 @@ import java.util.*;
  * opinion. False opinions are computed with {@link Complementary} deception
  * model.
  * <p>
- * <p>
  * Capabilities (and by transitivity -- deception models) are assigned at
  * initialization and do not change during execution.
- * <p>
  * <p>
  * The initialization method requires an array of objects that represent
  * parameters with the following semantics:

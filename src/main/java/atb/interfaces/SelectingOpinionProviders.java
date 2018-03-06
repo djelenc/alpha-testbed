@@ -23,11 +23,10 @@ public interface SelectingOpinionProviders {
      * This method returns a list of opinion requests that will be generated in
      * current tick.
      * <p>
-     * <p>
      * Invalid request (for invalid agents or services) are ignored.
      *
      * @return A list of opinion requests.
      */
-    public List<OpinionRequest> getOpinionRequests();
+    List<OpinionRequest> getOpinionRequests();
 
 }

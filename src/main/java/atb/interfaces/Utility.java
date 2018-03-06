@@ -27,5 +27,5 @@ public interface Utility extends Metric {
      * @param agent        Agent with whom Alpha made an interaction.
      * @return An evaluation score between 0 and 1, inclusively.
      */
-    public double evaluate(Map<Integer, Double> capabilities, int agent);
+    double evaluate(Map<Integer, Double> capabilities, int agent);
 }

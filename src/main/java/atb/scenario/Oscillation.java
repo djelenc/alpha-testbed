@@ -203,7 +203,7 @@ public class Oscillation extends AbstractScenario {
      * <li>Puts all agents from the list of bad agents to the list of good
      * agents</li>
      * <li>Reassigns capabilities to good and bad agents.</li>
-     * <ol>
+     * </ol>
      * <p>
      * Capabilities for neutral agents remain unchanged.
      *

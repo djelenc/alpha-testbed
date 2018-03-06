@@ -23,7 +23,7 @@ public interface DeceptionModel {
      *
      * @param params
      */
-    public void initialize(Object... params);
+    void initialize(Object... params);
 
     /**
      * Transforms a given trust degree to a trust degree that is given to agent
@@ -32,5 +32,5 @@ public interface DeceptionModel {
      * @param trustDegree Given trust degree.
      * @return Transformed trust degree.
      */
-    public double calculate(double trustDegree);
+    double calculate(double trustDegree);
 }

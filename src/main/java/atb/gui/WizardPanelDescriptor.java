@@ -40,7 +40,7 @@ public class WizardPanelDescriptor implements Observer {
 
     private Component panel;
     private ParametersPanel paramsPanel;
-    private String name = String.format(TITLE, "Unnamed");
+    private String name;
 
     /**
      * Default constructor. The id and the Component panel must be set
@@ -62,9 +62,10 @@ public class WizardPanelDescriptor implements Observer {
      * Constructor which accepts both the Object-based identifier and a
      * reference to the Component class which makes up the panel.
      *
-     * @param id    Object-based identifier
-     * @param panel A class which extends java.awt.Component that will be inserted
-     *              as a panel into the wizard dialog.
+     * @param id     Object-based identifier
+     * @param params A class which extends java.awt.Component that will be inserted
+     *               as a panel into the wizard dialog.
+     * @param title  of the panel
      */
     public WizardPanelDescriptor(Object id, ParametersPanel params,
                                  String title) {

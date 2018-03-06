@@ -206,8 +206,6 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      * Object-based identifier (often a String), which can be used by the
      * setCurrentPanel() method to display the panel at runtime.
      *
-     * @param id    An Object-based identifier used to identify the
-     *              WizardPanelDescriptor object.
      * @param panel The WizardPanelDescriptor object which contains helpful
      *              information about the panel.
      */
@@ -344,7 +342,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     /**
      * Mirrors the WizardModel method of the same name.
      *
-     * @param boolean newValue The new enabled status of the button.
+     * @param newValue The new enabled status of the button.
      */
     public void setBackButtonEnabled(boolean newValue) {
         wizardModel.setBackButtonEnabled(new Boolean(newValue));
@@ -362,7 +360,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     /**
      * Mirrors the WizardModel method of the same name.
      *
-     * @param boolean newValue The new enabled status of the button.
+     * @param newValue The new enabled status of the button.
      */
     public void setNextFinishButtonEnabled(boolean newValue) {
         wizardModel.setNextFinishButtonEnabled(new Boolean(newValue));
@@ -380,7 +378,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
     /**
      * Mirrors the WizardModel method of the same name.
      *
-     * @param boolean newValue The new enabled status of the button.
+     * @param newValue The new enabled status of the button.
      */
     public void setCancelButtonEnabled(boolean newValue) {
         wizardModel.setCancelButtonEnabled(new Boolean(newValue));
@@ -475,7 +473,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
      * If the user presses the close box on the dialog's window, treat it as a
      * cancel.
      *
-     * @param WindowEvent The event passed in from AWT.
+     * @param e The event passed in from AWT.
      */
 
     public void windowClosing(WindowEvent e) {

@@ -24,7 +24,6 @@ import java.util.Map;
  * Trust model on the basis of the {@link EigenTrust} trust model that supports
  * selection partners for interactions.
  * <p>
- * <p>
  * The proposal contains two partner selection procedures
  * <ol>
  * <li>Selecting the most trustworthy agent as the collaborator

@@ -24,7 +24,6 @@ import java.util.Map;
 /**
  * Beta reputation system
  * <p>
- * <p>
  * As presented in <a href="http://aisel.aisnet.org/bled2002/41">﻿Audun Jøsang
  * and Roslan Ismail. The beta reputation system. Proceedings of the 15th Bled
  * Electronic Commerce Conference (Vol. 160), 2002.</a>

@@ -41,7 +41,6 @@ public abstract class AbstractMetric implements Metric {
      * estimations. Estimations can be of any type, but they have to be mutually
      * comparable.
      * <p>
-     * <p>
      * In dense ranking, items that compare equal receive the same ranking
      * number, and the next item(s) receive the immediately following ranking
      * number. Equivalently, each item's ranking number is 1 plus the number of
@@ -86,7 +85,6 @@ public abstract class AbstractMetric implements Metric {
      * Constructs a map of standard competition ranking ("1224" ranking) from a
      * given map of estimations. Estimations can be of any type, but they have
      * to be mutually comparable.
-     * <p>
      * <p>
      * In competition ranking, items that compare equal receive the same ranking
      * number, and then a gap is left in the ranking numbers. The number of
@@ -140,7 +138,6 @@ public abstract class AbstractMetric implements Metric {
      * given map of estimations. Estimations can be of any type, but they have
      * to be mutually comparable.
      * <p>
-     * <p>
      * Sometimes, competition ranking is done by leaving the gaps in the ranking
      * numbers before the sets of equal-ranking items (rather than after them as
      * in standard competition ranking). The number of ranking numbers that are
@@ -189,7 +186,6 @@ public abstract class AbstractMetric implements Metric {
      * Constructs a map of fractional ranking ("1 2.5 2.5 4" ranking) from a
      * given map of estimations. Estimations can be of any type, but they have
      * to be mutually comparable.
-     * <p>
      * <p>
      * Items that compare equal receive the same ranking number, which is the
      * mean of what they would have under ordinal rankings. Equivalently, the

@@ -24,7 +24,7 @@ public interface Metric {
      *
      * @param params Optional parameters
      */
-    public void initialize(Object... params);
+    void initialize(Object... params);
 
     /**
      * Returns {@link ParametersPanel} instance, which defines GUI for setting
@@ -35,5 +35,5 @@ public interface Metric {
      * @return Instance of the {@link ParametersPanel} or null if parameters are
      * not needed.
      */
-    public ParametersPanel getParametersPanel();
+    ParametersPanel getParametersPanel();
 }

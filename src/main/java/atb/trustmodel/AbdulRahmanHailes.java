@@ -23,7 +23,6 @@ import static atb.trustmodel.TD.*;
 /**
  * Trust model of Alfarez Abdul-Rahman and Stephen Hailes
  * <p>
- * <p>
  * <a href="http://dx.doi.org/10.1109/HICSS.2000.926814">Alfarez Abdul-Rahman
  * and Stephen Hailes. Supporting trust in virtual communities. In Proceedings
  * of the 33rd Annual Hawaii International Conference on System Sciences,
@@ -36,7 +35,6 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
     /**
      * Direct trust
      * <p>
-     * <p>
      * Q[Agent][Service][TrustDegree] => Frequency
      */
     private int[][][] Q;
@@ -44,14 +42,12 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
     /**
      * Trusted recommender agents
      * <p>
-     * <p>
      * R[Agent][Service][TrustDegree] => {Semantic differences}
      */
     private ArrayList<Integer>[][][] R;
 
     /**
      * Received recommendations
-     * <p>
      * <p>
      * REC[Agent][Agent][Service] => TrustDegree
      */
@@ -180,7 +176,6 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
      * the given statistical vector. The vector must be an array of integers,
      * where indices correspond to the trust degrees and the values to their
      * respective frequencies.
-     * <p>
      * <ul>
      * <li>If vector is empty (all frequencies are 0), the method returns null.
      * <li><font color='red'>When the vector is multi-modal, the method should
@@ -188,6 +183,7 @@ public class AbdulRahmanHailes extends AbstractTrustModel<TD> {
      * description on how to handle such values. Thus in case of multi-modality,
      * the method returns <b>the trust degree that corresponds to the lowest
      * mode.</b></font>
+     * </ul>
      *
      * @param stats Statistical vector, in which keys represent the indices of
      *              trust degrees, and the values their respective frequencies.

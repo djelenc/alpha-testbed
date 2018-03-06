@@ -57,7 +57,6 @@ public class ClassLoaderUtils {
      * loader. The implementations have to be registered in
      * META-INF/services/atb.interfaces.ITrustModel file.
      *
-     * @param clazz
      * @param classLoader
      * @return
      */

@@ -25,11 +25,9 @@ import java.util.Map;
 /**
  * Beta reputation system with filtering ratings
  * <p>
- * <p>
  * As presented in <b>Whitby, Andrew, Audun Jøsang, and Jadwiga Indulska.
  * "Filtering out unfair ratings in bayesian reputation systems." Proc. 7th Int.
  * Workshop on Trust in Agent Societies. 2004.</b>
- * <p>
  * <p>
  * Note. This model is implemented very inefficiently. The implementation should
  * be optimized.
@@ -157,7 +155,6 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
      * Returns reputation in the form of an expected value for a particular
      * agent. The method uses iterative filtering by removing outliers from
      * opinions.
-     * <p>
      * <p>
      * If agent Alpha is the only agent who has information about the agent
      * under consideration, then its experiences are returned as result.

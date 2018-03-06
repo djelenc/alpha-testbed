@@ -13,7 +13,6 @@ package atb.interfaces;
 /**
  * Represents an experience tuple.
  * <p>
- * <p>
  * An experience is a record of an interaction between some agent and agent
  * Alpha. We denote experience as a 4-tuple (agent, service, time, outcome),
  * where each member has the following meaning.
@@ -53,10 +52,10 @@ public final class Experience {
     /**
      * Creates a new {@link Experience} tuple
      *
-     * @param interaction counter-part
-     * @param service     type of service
-     * @param time        of the interaction
-     * @param outcome     of the interaction
+     * @param agent   interaction counter-part
+     * @param service type of service
+     * @param time    of the interaction
+     * @param outcome of the interaction
      */
     public Experience(int agent, int service, int time, double outcome) {
         this.agent = agent;

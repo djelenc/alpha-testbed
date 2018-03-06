@@ -20,7 +20,6 @@ import java.util.Map.Entry;
  * An evaluation protocol, where a scenario determines the opinion providers,
  * while a trust model selects interaction partners.
  * <p>
- * <p>
  * Besides measuring accuracy, the protocol also measures the utility that the
  * trust model obtains in interactions. The execution flow of the evaluation
  * protocol is the following:
@@ -169,7 +168,6 @@ public class DecisionsModeA extends NoDecisions {
 
     /**
      * Returns an instance of the utility metric for the given service.
-     * <p>
      * <p>
      * Method retrieves the instance from the the map of all utility metric
      * instances. If for the given service, the map does not contain a metric

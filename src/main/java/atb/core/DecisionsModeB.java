@@ -20,7 +20,6 @@ import java.util.Map.Entry;
  * An evaluation protocol, where a trust model determines both, the opinion
  * providers and the interaction partners.
  * <p>
- * <p>
  * Besides measuring accuracy and utility, the protocol also measures the cost
  * that was endured in obtaining required opinions. The execution flow of the
  * evaluation protocol is the following:
@@ -196,7 +195,6 @@ public class DecisionsModeB extends DecisionsModeA {
 
     /**
      * Returns an instance of the opinion cost metric for the given service.
-     * <p>
      * <p>
      * Method retrieves the instance from the the map of all opinion cost metric
      * instances. If for the given service, the map does not contain an

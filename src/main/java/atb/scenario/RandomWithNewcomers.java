@@ -21,7 +21,6 @@ import atb.interfaces.ParametersPanel;
  * new agents to the system at given time intervals. New agents are all liars --
  * they all use {@link Complementary} deception model.
  * <p>
- * <p>
  * The scenario requires almost the same parameters as the {@link Random}
  * scenario, but there are some differences. Parameter 6 is ignored (all agents
  * are potential interaction counterparts), and two additional parameters are

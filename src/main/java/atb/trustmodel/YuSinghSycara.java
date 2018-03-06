@@ -20,13 +20,10 @@ import java.util.Map;
 /**
  * Trust model of Yu, Singh and Sycara
  * <p>
- * <p>
- * <p>
- * As proposed in <a href=
- * "http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1368412&isnumber=29953"
- * > Bin Yu, Munidar P. Singh, Katia Sycara, Developing trust in large-scale
- * peer-to-peer systems, Multi-Agent Security and Survivability, 2004 IEEE First
- * Symposium on, 2004</a>
+ * As proposed in
+ * <a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1368412&isnumber=29953">
+ * Bin Yu, Munidar P. Singh, Katia Sycara, Developing trust in large-scale peer-to-peer
+ * systems, Multi-Agent Security and Survivability, 2004 IEEE First Symposium on, 2004</a>
  *
  * @author David
  */

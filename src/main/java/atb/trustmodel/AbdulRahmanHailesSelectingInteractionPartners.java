@@ -22,7 +22,6 @@ import java.util.Map;
  * Trust model on the basis of the {@link AbdulRahmanHailes} that supports
  * selection partners for interactions. The selection is probabilistic.
  * <p>
- * <p>
  * <b>Note that the original proposal contains no such procedure. This is for
  * experimental purposes only.</b>
  *

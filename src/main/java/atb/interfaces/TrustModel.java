@@ -27,7 +27,7 @@ public interface TrustModel<T extends Comparable<T>> {
      *
      * @param params Optional parameters
      */
-    public void initialize(Object... params);
+    void initialize(Object... params);
 
     /**
      * Notifies the trust model of the current time. Called once at every step
@@ -35,42 +35,42 @@ public interface TrustModel<T extends Comparable<T>> {
      *
      * @param time Current time
      */
-    public void setCurrentTime(int time);
+    void setCurrentTime(int time);
 
     /**
      * Conveys the list of available services to the trust model.
      *
      * @param services
      */
-    public void setServices(List<Integer> services);
+    void setServices(List<Integer> services);
 
     /**
      * Conveys the list of available agents to the trust model.
      *
      * @param agents
      */
-    public void setAgents(List<Integer> agents);
+    void setAgents(List<Integer> agents);
 
     /**
      * Conveys opinions to the trust model.
      *
      * @param opinions List of opinions
      */
-    public void processOpinions(List<Opinion> opinions);
+    void processOpinions(List<Opinion> opinions);
 
     /**
      * Conveys experiences to the trust model.
      *
      * @param experiences List of experiences
      */
-    public void processExperiences(List<Experience> experiences);
+    void processExperiences(List<Experience> experiences);
 
     /**
      * Calculates trust towards agents in the system. The calculated trust must
      * be stored internally. The method is called once at every step of the test
      * run.
      */
-    public void calculateTrust();
+    void calculateTrust();
 
     /**
      * Returns the calculated trust values for a given service. The trust values
@@ -80,19 +80,18 @@ public interface TrustModel<T extends Comparable<T>> {
      * @param service type of service
      * @return Map where keys represent agents and values computed trust values
      */
-    public Map<Integer, T> getTrust(int service);
+    Map<Integer, T> getTrust(int service);
 
     /**
      * Returns an {@link ParametersPanel} instance, which is responsible for
      * generating a graphical user interface for setting trust model's
      * parameters.
      * <p>
-     * <p>
      * When a model does not need parameters, the method should return null.
      *
      * @return
      */
-    public ParametersPanel getParametersPanel();
+    ParametersPanel getParametersPanel();
 
     /**
      * Sets the random number generator. In order to produce repeatable results,
@@ -100,5 +99,5 @@ public interface TrustModel<T extends Comparable<T>> {
      *
      * @param generator Generator to be set
      */
-    public void setRandomGenerator(RandomGenerator generator);
+    void setRandomGenerator(RandomGenerator generator);
 }

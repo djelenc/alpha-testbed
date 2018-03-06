@@ -13,7 +13,6 @@ package atb.interfaces;
 /**
  * Represents an opinion tuple.
  * <p>
- * <p>
  * An opinion is a statement about trust that was given by one agent about a
  * third party to agent Alpha. We denote an opinion as a 5-tuple (agent1,
  * agent2, service, time, internalTrustDegree, uncertainty), where each member
