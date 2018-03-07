@@ -1,5 +1,6 @@
-package atb.app
+package atb.app.gui
 
+import atb.app.Runner
 import atb.common.DefaultRandomGenerator
 import atb.core.AlphaTestbed
 import atb.core.EvaluationProtocol

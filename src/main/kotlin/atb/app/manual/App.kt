@@ -8,7 +8,7 @@
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
-package atb.app
+package atb.app.manual
 
 import atb.common.DefaultRandomGenerator
 import atb.core.AlphaTestbed
@@ -25,7 +25,7 @@ import java.util.*
  *
  * @author David
  */
-fun manualRun() {
+fun main(args: Array<String>) {
     // trust model
     val model = SimpleSelectingOpinionProviders()
     model.setRandomGenerator(DefaultRandomGenerator(0))
@@ -46,12 +46,20 @@ fun manualRun() {
     metrics[utility] = null
     metrics[opinionCost] = null
 
-    val ep = AlphaTestbed.getProtocol(model, scenario, metrics)
-    ep.subscribe({ println("$accuracy: ${it.getResult(0, accuracy)}") })
-    ep.subscribe({ println("$utility: ${it.getResult(0, utility)}") })
-    ep.subscribe({ println("$opinionCost: ${it.getResult(0, opinionCost)}") })
+    // protocol
+    val protocol = AlphaTestbed.getProtocol(model, scenario, metrics)
 
+    // subscribe for receiving results from metrics
+    protocol.subscribe({
+        for (metric in metrics.keys) {
+            for (service in it.scenario.services) {
+                println("${it.time}: $metric = ${it.getResult(service, metric)}")
+            }
+        }
+    })
+
+    // run the evaluation
     for (time in 1..500) {
-        ep.step(time)
+        protocol.step(time)
     }
 }
