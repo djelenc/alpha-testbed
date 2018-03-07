@@ -19,6 +19,7 @@ import atb.metric.KendallsTauA
 import atb.scenario.TransitiveOpinionProviderSelection
 import atb.trustmodel.SimpleSelectingOpinionProviders
 import java.util.*
+import java.util.concurrent.Callable
 
 /**
  * An example showing how to run an evaluation in a simple Kotlin program.
