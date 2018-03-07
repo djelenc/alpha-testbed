@@ -3,7 +3,6 @@ package atb.app
 import atb.common.DefaultRandomGenerator
 import atb.core.AlphaTestbed
 import atb.core.EvaluationProtocol
-import atb.core.MetricSubscriber
 import atb.gui.ParametersGUI
 import atb.interfaces.*
 import javafx.application.Application
@@ -17,8 +16,6 @@ import javafx.scene.layout.Priority
 import tornadofx.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.set
 
 
@@ -64,9 +61,10 @@ class ATBMainView : View() {
     }
 }
 
-class ATBController : Controller(), MetricSubscriber {
+class ATBController : Controller() {
 
-    private val metricData = HashMap<Metric, XYChart.Series<Number, Number>>()
+    // (metric, service) -> [(time, value), ... ]
+    private val metricData = HashMap<Pair<Metric, Int>, XYChart.Series<Number, Number>>()
 
     private val runner = Runner()
 
@@ -97,24 +95,38 @@ class ATBController : Controller(), MetricSubscriber {
         val metrics = HashMap<Metric, Array<Any>>()
         gui.setupParameters[2]?.let {
             metrics[it as Accuracy] = gui.accuracyParameters
-            metricData[it] = XYChart.Series<Number, Number>().apply { name = it.toString() }
-            chart.data.add(metricData[it])
+
+            for (service in scenario.services) {
+                metricData[Pair(it, service)] = XYChart.Series<Number, Number>().apply { name = it.toString() }
+                chart.data.add(metricData[Pair(it, service)])
+            }
         }
         gui.setupParameters[3]?.let {
             metrics[it as Utility] = gui.utilityParameters
-            metricData[it] = XYChart.Series<Number, Number>().apply { name = it.toString() }
-            chart.data.add(metricData[it])
+            for (service in scenario.services) {
+                metricData[Pair(it, service)] = XYChart.Series<Number, Number>().apply { name = it.toString() }
+                chart.data.add(metricData[Pair(it, service)])
+            }
         }
         gui.setupParameters[4]?.let {
             metrics[it as OpinionCost] = gui.opinionCostParameters
-            metricData[it] = XYChart.Series<Number, Number>().apply { name = it.toString() }
-            chart.data.add(metricData[it])
+            for (service in scenario.services) {
+                metricData[Pair(it, service)] = XYChart.Series<Number, Number>().apply { name = it.toString() }
+                chart.data.add(metricData[Pair(it, service)])
+            }
         }
 
         val duration = gui.setupParameters[5] as Int
 
         val protocol = AlphaTestbed.getProtocol(trustModel, scenario, metrics)
-        protocol.subscribe(this)
+        protocol.subscribe({
+            for ((key, data) in metricData) {
+                val (metric, service) = key
+                Platform.runLater {
+                    data.data.add(XYChart.Data(it.time, it.getResult(service, metric)))
+                }
+            }
+        })
         task = startedTask(protocol, duration)
     }
 
@@ -132,12 +144,6 @@ class ATBController : Controller(), MetricSubscriber {
             if (Thread.interrupted()) {
                 break
             }
-        }
-    }
-
-    override fun update(instance: EvaluationProtocol): Unit = Platform.runLater {
-        for ((metric, series) in metricData) {
-            series.data.add(XYChart.Data(instance.time, instance.getResult(0, metric)))
         }
     }
 }
