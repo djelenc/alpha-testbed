@@ -27,8 +27,6 @@ import java.util.concurrent.CountDownLatch
  *
  * @author David
  */
-
-
 fun main(args: Array<String>) {
     // random seed
     val seed = 0

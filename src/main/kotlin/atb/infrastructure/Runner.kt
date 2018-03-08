@@ -2,15 +2,14 @@ package atb.infrastructure
 
 import atb.core.EvaluationProtocol
 import atb.interfaces.Metric
+import com.github.salomonbrys.kotson.jsonObject
+import com.github.salomonbrys.kotson.registerTypeAdapter
+import com.github.salomonbrys.kotson.toJson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
 import com.opencsv.bean.ColumnPositionMappingStrategy
 import com.opencsv.bean.StatefulBeanToCsvBuilder
 import java.io.File
 import java.io.FileWriter
-import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
@@ -49,16 +48,19 @@ data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
     }
 
     fun toJSON(filename: String = "example.data.json") = File(filename).printWriter().use {
-        val gson = GsonBuilder().let {
-            it.registerTypeAdapter(Metric::class.java, MetricAdapter())
-            it.create()
-        }
-        it.write(gson.toJson(readings))
-    }
+        val converter = GsonBuilder().apply {
+            registerTypeAdapter<Metric> { serialize { it.src.toString().toJson() } }
+            registerTypeAdapter<EvaluationProtocol> {
+                serialize {
+                    jsonObject(
+                            "scenario" to it.src.scenario.toString(),
+                            "trustModel" to it.src.trustModel.toString()
+                    )
+                }
+            }
+        }.create()
 
-    internal inner class MetricAdapter : JsonSerializer<Metric> {
-        override fun serialize(src: Metric, typeOfSrc: Type, context: JsonSerializationContext) =
-                JsonPrimitive(src.toString())
+        it.write(converter.toJson(this))
     }
 }
 
