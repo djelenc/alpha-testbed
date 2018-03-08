@@ -2,9 +2,13 @@ package atb.infrastructure
 
 import atb.core.EvaluationProtocol
 import atb.interfaces.Metric
+import atb.interfaces.Scenario
+import atb.interfaces.TrustModel
 import com.github.salomonbrys.kotson.jsonObject
 import com.github.salomonbrys.kotson.registerTypeAdapter
 import com.github.salomonbrys.kotson.toJson
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
 import com.opencsv.CSVWriter
 import java.io.File
@@ -58,9 +62,21 @@ data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
                     )
                 }
             }
+            setPrettyPrinting()
+            setExclusionStrategies(ExcludeModelsAndScenarios())
         }.create()
 
         it.write(converter.toJson(this))
+    }
+
+    /**
+     * Because of class overriding, do not JSON encode [TrustModel] and [Scenario] instances
+     */
+    internal inner class ExcludeModelsAndScenarios : ExclusionStrategy {
+        override fun shouldSkipClass(clazz: Class<*>): Boolean =
+                clazz == TrustModel::class.java || clazz == Scenario::class.java
+
+        override fun shouldSkipField(f: FieldAttributes): Boolean = false
     }
 }
 
