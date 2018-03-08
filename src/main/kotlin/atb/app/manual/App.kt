@@ -12,6 +12,8 @@ package atb.app.manual
 
 import atb.common.DefaultRandomGenerator
 import atb.core.AlphaTestbed
+import atb.infrastructure.Runner
+import atb.infrastructure.createRun
 import atb.interfaces.Metric
 import atb.metric.CumulativeNormalizedUtility
 import atb.metric.DefaultOpinionCost
@@ -19,22 +21,26 @@ import atb.metric.KendallsTauA
 import atb.scenario.TransitiveOpinionProviderSelection
 import atb.trustmodel.SimpleSelectingOpinionProviders
 import java.util.*
-import java.util.concurrent.Callable
 
 /**
  * An example showing how to run an evaluation in a simple Kotlin program.
  *
  * @author David
  */
+
+
 fun main(args: Array<String>) {
+    // random seed
+    val seed = 0
+
     // trust model
     val model = SimpleSelectingOpinionProviders()
-    model.setRandomGenerator(DefaultRandomGenerator(0))
+    model.setRandomGenerator(DefaultRandomGenerator(seed))
     model.initialize()
 
     // scenario
     val scenario = TransitiveOpinionProviderSelection()
-    scenario.setRandomGenerator(DefaultRandomGenerator(0))
+    scenario.randomGenerator = DefaultRandomGenerator(seed)
     scenario.initialize(100, 0.05, 0.1, 1.0, 1.0)
 
     // metrics
@@ -58,9 +64,12 @@ fun main(args: Array<String>) {
             }
         }
     })
+    val run = createRun(protocol, 500, metrics.keys)
 
-    // run the evaluation
-    for (time in 1..500) {
-        protocol.step(time)
-    }
+    val runner = Runner()
+    val submitted = runner.submit(run)
+    val evaluation = submitted.get() // this will block until evaluation finishes
+
+    println("Finished testing '${protocol.trustModel}' in '${protocol.scenario}'.")
+    println("Produced ${evaluation.results.size} measurements.")
 }

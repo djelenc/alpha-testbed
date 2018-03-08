@@ -32,4 +32,9 @@ public abstract class AbstractScenario implements Scenario {
     public void setRandomGenerator(RandomGenerator generator) {
         this.generator = generator;
     }
+
+    @Override
+    public RandomGenerator getRandomGenerator() {
+        return this.generator;
+    }
 }

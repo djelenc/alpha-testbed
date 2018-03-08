@@ -1,10 +1,11 @@
 package atb.app.gui
 
-import atb.app.Runner
 import atb.common.DefaultRandomGenerator
 import atb.core.AlphaTestbed
-import atb.core.EvaluationProtocol
 import atb.gui.ParametersGUI
+import atb.infrastructure.Evaluation
+import atb.infrastructure.Runner
+import atb.infrastructure.createRun
 import atb.interfaces.*
 import javafx.application.Application
 import javafx.application.Platform
@@ -15,7 +16,9 @@ import javafx.scene.chart.XYChart
 import javafx.scene.control.TextField
 import javafx.scene.layout.Priority
 import tornadofx.*
+import java.util.concurrent.CancellationException
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 import kotlin.collections.set
 
@@ -45,6 +48,11 @@ class ATBMainView : View() {
                     controller.stop()
                 }
             }
+            button("Print results") {
+                action {
+                    controller.showResults()
+                }
+            }
         }
 
         chart = linechart("Results",
@@ -69,11 +77,12 @@ class ATBController : Controller() {
 
     private val runner = Runner()
 
-    private var task: Future<*> = stoppedTask()
+    private var task: Future<*> = CompletableFuture.completedFuture(Unit)
 
     fun run(seed: Int, chart: LineChart<Number, Number>) {
         chart.data.clear()
         metricData.clear()
+        task = CompletableFuture.completedFuture(Unit)
 
         val gui = ParametersGUI(ATBController::class.java.classLoader)
         gui.setBatchRun(true)
@@ -81,12 +90,11 @@ class ATBController : Controller() {
         val answer = gui.showDialog()
 
         if (answer != 0) {
-            task = stoppedTask()
             return
         }
 
         val scenario = gui.setupParameters[0] as Scenario
-        scenario.setRandomGenerator(DefaultRandomGenerator(seed))
+        scenario.randomGenerator = DefaultRandomGenerator(seed)
         scenario.initialize(*gui.scenarioParameters)
 
         val trustModel = gui.setupParameters[1] as TrustModel<*>
@@ -128,24 +136,30 @@ class ATBController : Controller() {
                 }
             }
         })
-        task = startedTask(protocol, duration)
+
+        val run = createRun(protocol, duration, metrics.keys)
+        task = runner.submit(run)
     }
 
     fun stop() {
         task.cancel(true)
-        task = stoppedTask()
+        task = CompletableFuture.completedFuture(Unit)
     }
 
-    private fun stoppedTask() = CompletableFuture.completedFuture(Unit)
-
-    private fun startedTask(protocol: EvaluationProtocol, duration: Int) = runner.submit {
-        for (time in 1..duration) {
-            protocol.step(time)
-
-            if (Thread.interrupted()) {
-                break
+    fun showResults(): Unit = when (task.isDone) {
+        true -> {
+            try {
+                val evaluation = task.get() as Evaluation
+                println("Got ${evaluation.results.size} lines of data")
+            } catch (e: CancellationException) {
+                println("Evaluation has been stopped")
+                task = CompletableFuture.completedFuture(Unit)
+            } catch (e: ExecutionException) {
+                println("Evaluation encountered an error: ${e.message}")
+                task = CompletableFuture.completedFuture(Unit)
             }
         }
+        false -> println("Evaluation in progress, cannot print data")
     }
 }
 
