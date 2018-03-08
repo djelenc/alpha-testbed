@@ -44,7 +44,7 @@ public class MainPanel extends JPanel implements ParametersPanel {
     private JComboBox ocMetric = new JComboBox();
 
     private JSpinner batchRunDuration = new JSpinner(
-            new SpinnerNumberModel(500, 1, Integer.MAX_VALUE, 100));
+            new SpinnerNumberModel(100, 1, Integer.MAX_VALUE, 100));
 
     private JLabel tmLabel = new JLabel("Trust model:  ");
     private JLabel scnLabel = new JLabel("Scenario:  ");

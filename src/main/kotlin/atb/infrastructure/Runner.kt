@@ -6,15 +6,13 @@ import com.github.salomonbrys.kotson.jsonObject
 import com.github.salomonbrys.kotson.registerTypeAdapter
 import com.github.salomonbrys.kotson.toJson
 import com.google.gson.GsonBuilder
-import com.opencsv.bean.ColumnPositionMappingStrategy
-import com.opencsv.bean.StatefulBeanToCsvBuilder
+import com.opencsv.CSVWriter
 import java.io.File
 import java.io.FileWriter
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Supplier
-import kotlin.reflect.full.memberProperties
 
 
 /** Contains a reading from an evaluation run */
@@ -28,23 +26,25 @@ data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
                      val readings: MutableList<Reading>, val seed: Int) : EvaluationState() {
     /**
      * Writes the contents of a run to a CSV-based file.
+     *
+     * The format is the same as it was in the Repast version; each file
+     * contains the following header which is followed by the data:
+     * ```
+     * "run", "tick", "Metric", "Name", "TrustModel", "Scenario"
+     * ```
      */
     fun toCSV(filename: String = "example.data.csv") {
-        val fileWriter = FileWriter(filename)
-
-        val mapping = ColumnPositionMappingStrategy<Reading>().apply {
-            type = Reading::class.java
-            val props = Reading::class.memberProperties.map { it.name }.toTypedArray().sortedArray()
-            setColumnMapping(*props)
+        val writer = CSVWriter(FileWriter(filename))
+        val records = readings.map {
+            arrayOf(seed.toString(), it.tick.toString(), it.value.toString(),
+                    it.metric.toString(), protocol.trustModel.toString(),
+                    protocol.scenario.toString())
         }
 
-        val toCsv = StatefulBeanToCsvBuilder<Reading>(fileWriter).apply {
-            withMappingStrategy(mapping)
-        }.build()
-
-        toCsv.write(readings)
-        fileWriter.flush()
-        fileWriter.close()
+        writer.writeNext(arrayOf("run", "tick", "Metric", "Name", "TrustModel", "Scenario"))
+        writer.writeAll(records)
+        writer.flushQuietly()
+        writer.close()
     }
 
     fun toJSON(filename: String = "example.data.json") = File(filename).printWriter().use {
