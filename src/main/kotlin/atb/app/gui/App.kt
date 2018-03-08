@@ -42,9 +42,9 @@ class ATBMainView : View() {
                     controller.stop()
                 }
             }
-            button("Results") {
+            button("Export") {
                 action {
-                    controller.results()
+                    controller.export()
                 }
             }
         }
@@ -156,7 +156,7 @@ class ATBController : Controller() {
         state = Running
     }
 
-    fun results() {
+    fun export() {
         val state = this.state
 
         when (state) {

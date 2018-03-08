@@ -13,6 +13,8 @@ import com.google.gson.GsonBuilder
 import com.opencsv.CSVWriter
 import java.io.File
 import java.io.FileWriter
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
@@ -37,8 +39,8 @@ data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
      * "run", "tick", "Metric", "Name", "TrustModel", "Scenario"
      * ```
      */
-    fun toCSV(filename: String = "example.data.csv") {
-        val writer = CSVWriter(FileWriter(filename))
+    fun toCSV(fileName: String = autoName("csv")) {
+        val writer = CSVWriter(FileWriter(fileName))
         val records = readings.map {
             arrayOf(seed.toString(), it.tick.toString(), it.value.toString(),
                     it.metric.toString(), protocol.trustModel.toString(),
@@ -51,7 +53,7 @@ data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
         writer.close()
     }
 
-    fun toJSON(filename: String = "example.data.json") = File(filename).printWriter().use {
+    fun toJSON(fileName: String = autoName("json")) = File(fileName).printWriter().use {
         val converter = GsonBuilder().apply {
             registerTypeAdapter<Metric> { serialize { it.src.toString().toJson() } }
             registerTypeAdapter<EvaluationProtocol> {
@@ -77,6 +79,21 @@ data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
                 clazz == TrustModel::class.java || clazz == Scenario::class.java
 
         override fun shouldSkipField(f: FieldAttributes): Boolean = false
+    }
+
+    private fun autoName(type: String): String {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd.HHmmss")
+        val date = current.format(formatter)
+
+        fun String.toFileName(): String = split(" ")
+                .joinToString("") { it.capitalize() }
+                .replace(Regex("\\W+"), "")
+
+        val model = protocol.trustModel.toString().toFileName()
+        val scenario = protocol.scenario.toString().toFileName()
+
+        return "$scenario-$model-$date.$type"
     }
 }
 
