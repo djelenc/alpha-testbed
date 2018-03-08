@@ -12,8 +12,7 @@ package atb.app.manual
 
 import atb.common.DefaultRandomGenerator
 import atb.core.AlphaTestbed
-import atb.infrastructure.Runner
-import atb.infrastructure.createRun
+import atb.infrastructure.runAsync
 import atb.interfaces.Metric
 import atb.metric.CumulativeNormalizedUtility
 import atb.metric.DefaultOpinionCost
@@ -21,6 +20,7 @@ import atb.metric.KendallsTauA
 import atb.scenario.TransitiveOpinionProviderSelection
 import atb.trustmodel.SimpleSelectingOpinionProviders
 import java.util.*
+import java.util.concurrent.CountDownLatch
 
 /**
  * An example showing how to run an evaluation in a simple Kotlin program.
@@ -32,6 +32,9 @@ import java.util.*
 fun main(args: Array<String>) {
     // random seed
     val seed = 0
+
+    // evaluation duration in ticks
+    val duration = 500
 
     // trust model
     val model = SimpleSelectingOpinionProviders()
@@ -56,7 +59,7 @@ fun main(args: Array<String>) {
     // protocol
     val protocol = AlphaTestbed.getProtocol(model, scenario, metrics)
 
-    // subscribe for receiving results from metrics
+    // subscribe for receiving readings from metrics
     protocol.subscribe({
         for (metric in metrics.keys) {
             for (service in it.scenario.services) {
@@ -64,12 +67,21 @@ fun main(args: Array<String>) {
             }
         }
     })
-    val run = createRun(protocol, 500, metrics.keys)
 
-    val runner = Runner()
-    val submitted = runner.submit(run)
-    val evaluation = submitted.get() // this will block until evaluation finishes
+    val latch = CountDownLatch(1)
+
+    val interrupter = runAsync(protocol, duration, metrics.keys, {
+        println("Got ${it.readings.size} lines of data!")
+        latch.countDown()
+    }, {
+        println("Got an error: ${it.thrown.message}")
+        latch.countDown()
+    }, {
+        println("Run was interrupted at tick ${it.tick}")
+        latch.countDown()
+    })
+
+    latch.await()
 
     println("Finished testing '${protocol.trustModel}' in '${protocol.scenario}'.")
-    println("Produced ${evaluation.results.size} measurements.")
 }

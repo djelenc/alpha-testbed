@@ -3,9 +3,7 @@ package atb.app.gui
 import atb.common.DefaultRandomGenerator
 import atb.core.AlphaTestbed
 import atb.gui.ParametersGUI
-import atb.infrastructure.Evaluation
-import atb.infrastructure.Runner
-import atb.infrastructure.createRun
+import atb.infrastructure.*
 import atb.interfaces.*
 import javafx.application.Application
 import javafx.application.Platform
@@ -16,10 +14,6 @@ import javafx.scene.chart.XYChart
 import javafx.scene.control.TextField
 import javafx.scene.layout.Priority
 import tornadofx.*
-import java.util.concurrent.CancellationException
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.Future
 import kotlin.collections.set
 
 
@@ -48,9 +42,9 @@ class ATBMainView : View() {
                     controller.stop()
                 }
             }
-            button("Print results") {
+            button("Results") {
                 action {
-                    controller.showResults()
+                    controller.results()
                 }
             }
         }
@@ -72,17 +66,20 @@ class ATBMainView : View() {
 
 class ATBController : Controller() {
 
-    // (metric, service) -> [(time, value), ... ]
+    // plotting data (metric, service) -> [(tick, value), ... ]
     private val metricData = HashMap<Pair<Metric, Int>, XYChart.Series<Number, Number>>()
 
-    private val runner = Runner()
+    // used for interrupting executing runs
+    private var interrupter: () -> Unit = {}
 
-    private var task: Future<*> = CompletableFuture.completedFuture(Unit)
+    // currents evaluation state
+    private var state: EvaluationState = Idle
+
+    fun stop() = interrupter()
 
     fun run(seed: Int, chart: LineChart<Number, Number>) {
         chart.data.clear()
         metricData.clear()
-        task = CompletableFuture.completedFuture(Unit)
 
         val gui = ParametersGUI(ATBController::class.java.classLoader)
         gui.setBatchRun(true)
@@ -137,34 +134,43 @@ class ATBController : Controller() {
             }
         })
 
-        val run = createRun(protocol, duration, metrics.keys)
-        task = runner.submit(run)
+        interrupter = runAsync(protocol, duration, metrics.keys,
+                {
+                    Platform.runLater {
+                        state = it
+                        println("All done. Got ${it.readings.size} data points!")
+                    }
+                },
+                {
+                    Platform.runLater {
+                        state = it
+                        println("Wow. I did not expect to get a ${it.thrown}")
+                    }
+                },
+                {
+                    Platform.runLater {
+                        state = it
+                        println("Sure, I'll stop.")
+                    }
+                })
+        state = Running
     }
 
-    fun stop() {
-        task.cancel(true)
-        task = CompletableFuture.completedFuture(Unit)
-    }
+    fun results() {
+        val state = this.state
 
-    fun showResults(): Unit = when (task.isDone) {
-        true -> {
-            try {
-                val evaluation = task.get() as Evaluation
-                println("Got ${evaluation.results.size} lines of data")
-            } catch (e: CancellationException) {
-                println("Evaluation has been stopped")
-                task = CompletableFuture.completedFuture(Unit)
-            } catch (e: ExecutionException) {
-                println("Evaluation encountered an error: ${e.message}")
-                task = CompletableFuture.completedFuture(Unit)
-            }
+        when (state) {
+            is Idle -> println("Nothing has been run yet")
+            is Running -> println("Run is still in progress!")
+            is Faulted -> println("Something went wrong: ${state.thrown}")
+            is Completed -> println(state.readings)
+            is Interrupted -> println("Interrupted at ${state.tick}")
         }
-        false -> println("Evaluation in progress, cannot print data")
     }
 }
 
-class ATBApp : tornadofx.App(ATBMainView::class)
+class JFXApp : tornadofx.App(ATBMainView::class)
 
 fun main(args: Array<String>) {
-    Application.launch(ATBApp::class.java, *args)
+    Application.launch(JFXApp::class.java, *args)
 }

@@ -3,53 +3,77 @@ package atb.infrastructure
 import atb.core.EvaluationProtocol
 import atb.interfaces.Metric
 import java.util.*
-import java.util.concurrent.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Supplier
 
-internal class Runner : ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS,
-        LinkedBlockingQueue(), ThreadFactory {
-    Executors.defaultThreadFactory().newThread(it).apply { isDaemon = true }
-}) {
+sealed class EvaluationState
 
-    override fun afterExecute(task: Runnable?, thrown: Throwable?) {
-        if (task is Future<*>) {
-            try {
-                task.get()
-            } catch (ignored: CancellationException) {
-            } catch (e: ExecutionException) {
-                e.printStackTrace()
-            }
-        }
-    }
-}
+data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
+                     val readings: MutableList<Reading>, val seed: Int) : EvaluationState()
 
+data class Interrupted(val tick: Int, val completed: Completed) : EvaluationState()
 
-data class Evaluation(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
-                      val results: MutableList<Result>, val seed: Int)
+data class Faulted(val thrown: Throwable) : EvaluationState()
 
-data class Result(val tick: Int, val metric: Metric, val service: Int, val value: Double)
+object Idle : EvaluationState()
 
-fun createRun(protocol: EvaluationProtocol, duration: Int, metrics: Set<Metric>):
-        Callable<Evaluation> {
-    val results = ArrayList<Result>()
-    val evaluation = Evaluation(protocol, metrics, results, protocol.scenario.randomGenerator.seed)
+object Running : EvaluationState()
 
+data class Reading(val tick: Int, val metric: Metric, val service: Int, val value: Double)
+
+/**
+ * Runs the evaluation setup (consisting of the [protocol], [duration] and [metrics]) asynchronously. The method
+ * fires the following callbacks:
+ * * [completed] callback on successfully completing the run;
+ * * [faulted] callback if an exception occurs during the run;
+ * * [interrupted] callback if the run gets interrupted.
+ *
+ * @return A callback, which, upon invocation, stops the evaluation run and triggers the [interrupted] callback.
+ * If the run has already ended, the invocation does nothing.
+ */
+fun runAsync(protocol: EvaluationProtocol, duration: Int, metrics: Set<Metric>,
+             completed: (Completed) -> Unit, faulted: (Faulted) -> Unit, interrupted: (Interrupted) -> Unit):
+        () -> Unit {
+    // evaluation data
+    val data = Completed(protocol, metrics, ArrayList(), protocol.scenario.randomGenerator.seed)
+
+    // subscribe for updates
     protocol.subscribe({
         for (metric in metrics) {
             for (service in it.scenario.services) {
                 val value = it.getResult(service, metric)
-                evaluation.results.add(Result(it.time, metric, service, value))
+                data.readings.add(Reading(it.time, metric, service, value))
             }
         }
     })
 
-    return Callable {
-        for (time in 1..duration) {
-            protocol.step(time)
+    // create interruption handle
+    val isInterrupted = AtomicBoolean(false)
+    val interrupter = { isInterrupted.set(true) }
 
-            if (Thread.interrupted()) {
-                break
+    // create supplier (actual task)
+    val task = Supplier stepper@{
+        for (tick in 1..duration) {
+            protocol.step(tick)
+
+            if (isInterrupted.get()) {
+                return@stepper Interrupted(tick, data)
             }
         }
-        evaluation
+        return@stepper data
     }
+
+    // execute the run
+    CompletableFuture.supplyAsync(task).exceptionally {
+        Faulted(it)
+    }.thenAccept {
+        when (it) {
+            is Completed -> completed(it)
+            is Faulted -> faulted(it)
+            is Interrupted -> interrupted(it)
+        }
+    }
+
+    return interrupter
 }
