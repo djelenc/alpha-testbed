@@ -87,4 +87,11 @@ public interface Scenario {
      * @return
      */
     ParametersPanel getParametersPanel();
+
+    /**
+     * Returns the {@link RandomGenerator} being used in the scenario
+     *
+     * @return the random generator
+     */
+    RandomGenerator getRandomGenerator();
 }

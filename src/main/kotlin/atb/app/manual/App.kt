@@ -8,10 +8,11 @@
  * Contributors:
  *     David Jelenc - initial API and implementation
  */
-package atb.app
+package atb.app.manual
 
 import atb.common.DefaultRandomGenerator
 import atb.core.AlphaTestbed
+import atb.infrastructure.runAsync
 import atb.interfaces.Metric
 import atb.metric.CumulativeNormalizedUtility
 import atb.metric.DefaultOpinionCost
@@ -19,21 +20,28 @@ import atb.metric.KendallsTauA
 import atb.scenario.TransitiveOpinionProviderSelection
 import atb.trustmodel.SimpleSelectingOpinionProviders
 import java.util.*
+import java.util.concurrent.CountDownLatch
 
 /**
  * An example showing how to run an evaluation in a simple Kotlin program.
  *
  * @author David
  */
-fun manualRun() {
+fun main(args: Array<String>) {
+    // random seed
+    val seed = 0
+
+    // evaluation duration in ticks
+    val duration = 500
+
     // trust model
     val model = SimpleSelectingOpinionProviders()
-    model.setRandomGenerator(DefaultRandomGenerator(0))
+    model.setRandomGenerator(DefaultRandomGenerator(seed))
     model.initialize()
 
     // scenario
     val scenario = TransitiveOpinionProviderSelection()
-    scenario.setRandomGenerator(DefaultRandomGenerator(0))
+    scenario.randomGenerator = DefaultRandomGenerator(seed)
     scenario.initialize(100, 0.05, 0.1, 1.0, 1.0)
 
     // metrics
@@ -46,12 +54,32 @@ fun manualRun() {
     metrics[utility] = null
     metrics[opinionCost] = null
 
-    val ep = AlphaTestbed.getProtocol(model, scenario, metrics)
-    ep.subscribe({ println("$accuracy: ${it.getResult(0, accuracy)}") })
-    ep.subscribe({ println("$utility: ${it.getResult(0, utility)}") })
-    ep.subscribe({ println("$opinionCost: ${it.getResult(0, opinionCost)}") })
+    // protocol
+    val protocol = AlphaTestbed.getProtocol(model, scenario, metrics)
 
-    for (time in 1..500) {
-        ep.step(time)
-    }
+    // subscribe for receiving readings from metrics
+    protocol.subscribe({
+        for (metric in metrics.keys) {
+            for (service in it.scenario.services) {
+                println("${it.time}: $metric = ${it.getResult(service, metric)}")
+            }
+        }
+    })
+
+    val latch = CountDownLatch(1)
+
+    val interrupter = runAsync(protocol, duration, metrics.keys, {
+        println("Got ${it.readings.size} lines of data!")
+        latch.countDown()
+    }, {
+        println("Got an error: ${it.thrown.message}")
+        latch.countDown()
+    }, {
+        println("Run was interrupted at tick ${it.tick}")
+        latch.countDown()
+    })
+
+    latch.await()
+
+    println("Finished testing '${protocol.trustModel}' in '${protocol.scenario}'.")
 }
