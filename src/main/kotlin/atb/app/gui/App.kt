@@ -163,7 +163,7 @@ class ATBController : Controller() {
             is Idle -> println("Nothing has been run yet")
             is Running -> println("Run is still in progress!")
             is Faulted -> println("Something went wrong: ${state.thrown}")
-            is Completed -> println(state.readings)
+            is Completed -> state.toJSON()
             is Interrupted -> println("Interrupted at ${state.tick}")
         }
     }

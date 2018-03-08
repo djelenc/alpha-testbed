@@ -2,25 +2,77 @@ package atb.infrastructure
 
 import atb.core.EvaluationProtocol
 import atb.interfaces.Metric
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
+import com.opencsv.bean.ColumnPositionMappingStrategy
+import com.opencsv.bean.StatefulBeanToCsvBuilder
+import java.io.File
+import java.io.FileWriter
+import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Supplier
+import kotlin.reflect.full.memberProperties
 
+
+/** Contains a reading from an evaluation run */
+data class Reading(val tick: Int, val metric: Metric, val service: Int, val value: Double)
+
+/** States in which an evaluation run can be in */
 sealed class EvaluationState
 
+/** Evaluation is completed */
 data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
-                     val readings: MutableList<Reading>, val seed: Int) : EvaluationState()
+                     val readings: MutableList<Reading>, val seed: Int) : EvaluationState() {
+    /**
+     * Writes the contents of a run to a CSV-based file.
+     */
+    fun toCSV(filename: String = "example.data.csv") {
+        val fileWriter = FileWriter(filename)
 
+        val mapping = ColumnPositionMappingStrategy<Reading>().apply {
+            type = Reading::class.java
+            val props = Reading::class.memberProperties.map { it.name }.toTypedArray().sortedArray()
+            setColumnMapping(*props)
+        }
+
+        val toCsv = StatefulBeanToCsvBuilder<Reading>(fileWriter).apply {
+            withMappingStrategy(mapping)
+        }.build()
+
+        toCsv.write(readings)
+        fileWriter.flush()
+        fileWriter.close()
+    }
+
+    fun toJSON(filename: String = "example.data.json") = File(filename).printWriter().use {
+        val gson = GsonBuilder().let {
+            it.registerTypeAdapter(Metric::class.java, MetricAdapter())
+            it.create()
+        }
+        it.write(gson.toJson(readings))
+    }
+
+    internal inner class MetricAdapter : JsonSerializer<Metric> {
+        override fun serialize(src: Metric, typeOfSrc: Type, context: JsonSerializationContext) =
+                JsonPrimitive(src.toString())
+    }
+}
+
+/** Evaluation has been interrupted */
 data class Interrupted(val tick: Int, val completed: Completed) : EvaluationState()
 
+/** Evaluation ended with an exception  */
 data class Faulted(val thrown: Throwable) : EvaluationState()
 
+/** Evaluation has not yet started */
 object Idle : EvaluationState()
 
+/** Evaluation is running */
 object Running : EvaluationState()
-
-data class Reading(val tick: Int, val metric: Metric, val service: Int, val value: Double)
 
 /**
  * Runs the evaluation setup (consisting of the [protocol], [duration] and [metrics]) asynchronously. The method
