@@ -38,14 +38,13 @@ data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Met
      */
     fun toCSV(fileName: String = autoName("csv")) {
         val writer = CSVWriter(FileWriter(fileName))
-        val records = readings.map {
-            arrayOf(seed.toString(), it.tick.toString(), it.value.toString(),
-                    it.metric.toString(), protocol.trustModel.toString(),
-                    protocol.scenario.toString())
-        }
-
         writer.writeNext(arrayOf("run", "tick", "Metric", "Name", "TrustModel", "Scenario"))
-        writer.writeAll(records)
+        readings.forEach {
+            writer.writeNext(arrayOf(
+                    seed.toString(), it.tick.toString(), it.value.toString(),
+                    it.metric.toString(), protocol.trustModel.toString(),
+                    protocol.scenario.toString()))
+        }
         writer.flushQuietly()
         writer.close()
     }
