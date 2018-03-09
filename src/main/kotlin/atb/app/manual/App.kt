@@ -68,8 +68,8 @@ fun main(args: Array<String>) {
 
     val latch = CountDownLatch(1)
 
-    val interrupter = runAsync(protocol, duration, metrics.keys, {
-        println("Got ${it.readings.size} lines of data!")
+    runAsync(protocol, duration, metrics.keys, {
+        println("Got ${it.data.readings.size} lines of data!")
         latch.countDown()
     }, {
         println("Got an error: ${it.thrown.message}")

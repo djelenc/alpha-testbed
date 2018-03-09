@@ -21,15 +21,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Supplier
 
 
-/** Contains a reading from an evaluation run */
+/** Contains a single reading in an evaluation run */
 data class Reading(val tick: Int, val metric: Metric, val service: Int, val value: Double)
 
-/** States in which an evaluation run can be in */
-sealed class EvaluationState
-
-/** Evaluation is completed */
-data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
-                     val readings: MutableList<Reading>, val seed: Int) : EvaluationState() {
+/** Contains all results of an evaluation run */
+data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
+                          val readings: MutableList<Reading>, val seed: Int) {
     /**
      * Writes the contents of a run to a CSV-based file.
      *
@@ -97,10 +94,16 @@ data class Completed(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
     }
 }
 
-/** Evaluation has been interrupted */
-data class Interrupted(val tick: Int, val completed: Completed) : EvaluationState()
+/** States of an evaluation run */
+sealed class EvaluationState
 
-/** Evaluation ended with an exception  */
+/** Evaluation has completed successfully */
+data class Completed(val data: EvaluationData) : EvaluationState()
+
+/** Evaluation has been interrupted */
+data class Interrupted(val tick: Int, val data: EvaluationData) : EvaluationState()
+
+/** Evaluation has ended with an exception  */
 data class Faulted(val thrown: Throwable) : EvaluationState()
 
 /** Evaluation has not yet started */
@@ -123,7 +126,7 @@ fun runAsync(protocol: EvaluationProtocol, duration: Int, metrics: Set<Metric>,
              completed: (Completed) -> Unit, faulted: (Faulted) -> Unit, interrupted: (Interrupted) -> Unit):
         () -> Unit {
     // evaluation data
-    val data = Completed(protocol, metrics, ArrayList(), protocol.scenario.randomGenerator.seed)
+    val data = EvaluationData(protocol, metrics, ArrayList(), protocol.scenario.randomGenerator.seed)
 
     // subscribe for updates
     protocol.subscribe({
@@ -140,15 +143,15 @@ fun runAsync(protocol: EvaluationProtocol, duration: Int, metrics: Set<Metric>,
     val interrupter = { isInterrupted.set(true) }
 
     // create supplier (actual task)
-    val task = Supplier stepper@{
+    val task = Supplier supplier@{
         for (tick in 1..duration) {
             protocol.step(tick)
 
             if (isInterrupted.get()) {
-                return@stepper Interrupted(tick, data)
+                return@supplier Interrupted(tick, data)
             }
         }
-        return@stepper data
+        return@supplier Completed(data)
     }
 
     // execute the run
@@ -159,6 +162,7 @@ fun runAsync(protocol: EvaluationProtocol, duration: Int, metrics: Set<Metric>,
             is Completed -> completed(it)
             is Faulted -> faulted(it)
             is Interrupted -> interrupted(it)
+            is Idle, Running -> throw IllegalStateException("An evaluation cannot end in state: $it")
         }
     }
 

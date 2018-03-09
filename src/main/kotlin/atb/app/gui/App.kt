@@ -138,7 +138,7 @@ class ATBController : Controller() {
                 {
                     Platform.runLater {
                         state = it
-                        println("All done. Got ${it.readings.size} data points!")
+                        println("All done. Got ${it.data.readings.size} data points!")
                     }
                 },
                 {
@@ -163,7 +163,7 @@ class ATBController : Controller() {
             is Idle -> println("Nothing has been run yet")
             is Running -> println("Run is still in progress!")
             is Faulted -> println("Something went wrong: ${state.thrown}")
-            is Completed -> state.toJSON()
+            is Completed -> state.data.toJSON()
             is Interrupted -> println("Interrupted at ${state.tick}")
         }
     }
