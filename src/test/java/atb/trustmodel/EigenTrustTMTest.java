@@ -10,14 +10,15 @@
  */
 package atb.trustmodel;
 
-import junit.framework.Assert;
+import atb.interfaces.Experience;
+import atb.interfaces.Opinion;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import atb.interfaces.Experience;
-import atb.interfaces.Opinion;
 
 import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
 
 @Ignore
 public class EigenTrustTMTest {
@@ -44,7 +45,7 @@ public class EigenTrustTMTest {
         double[] t_new = new double[]{0.26389, 0.625, 0.1111};
         double[] t_old = new double[]{1 / 3d, 1 / 3d, 1 / 3d};
 
-        Assert.assertEquals(false, tm.hasConverged(t_new, t_old));
+        assertEquals(false, tm.hasConverged(t_new, t_old));
     }
 
     @Test
@@ -66,8 +67,8 @@ public class EigenTrustTMTest {
         tm.processOpinions(opinions);
         tm.calculateTrust();
 
-        Assert.assertEquals(new Integer(2), tm.getTrust(0).get(0));
-        Assert.assertEquals(new Integer(1), tm.getTrust(0).get(1));
-        Assert.assertEquals(new Integer(3), tm.getTrust(0).get(2));
+        assertEquals(new Integer(2), tm.getTrust(0).get(0));
+        assertEquals(new Integer(1), tm.getTrust(0).get(1));
+        assertEquals(new Integer(3), tm.getTrust(0).get(2));
     }
 }

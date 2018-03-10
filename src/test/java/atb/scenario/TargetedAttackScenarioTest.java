@@ -10,15 +10,18 @@
  */
 package atb.scenario;
 
-import junit.framework.Assert;
+import atb.common.DefaultRandomGenerator;
 import org.junit.Before;
 import org.junit.Test;
-import atb.common.DefaultRandomGenerator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TargetedAttackScenarioTest {
 
@@ -28,8 +31,8 @@ public class TargetedAttackScenarioTest {
     public void setUp() {
         scenario = new TargetedAttack();
         scenario.setRandomGenerator(new DefaultRandomGenerator(0));
-        scenario.initialize(new Object[]{100, 60, 20, 20, 0.1, 0.05,
-                TargetedAttackStrategy.LEVEL_1});
+        scenario.initialize(100, 60, 20, 20, 0.1, 0.05,
+                TargetedAttackStrategy.LEVEL_1);
     }
 
     @Test
@@ -44,16 +47,16 @@ public class TargetedAttackScenarioTest {
 
         scenario.assignAgentsToGroups(all, neutral, attackers, targets, 5, 2);
 
-        Assert.assertEquals(5, attackers.size());
-        Assert.assertEquals(2, targets.size());
-        Assert.assertEquals(21, all.size());
+        assertEquals(5, attackers.size());
+        assertEquals(2, targets.size());
+        assertEquals(21, all.size());
     }
 
     @Test
     public void determineInteractionPartners() {
         final int numPartners = 80;
-        scenario.initialize(new Object[]{100, 60, 20, numPartners, 0.1, 0.05,
-                TargetedAttackStrategy.LEVEL_1});
+        scenario.initialize(100, 60, 20, numPartners, 0.1, 0.05,
+                TargetedAttackStrategy.LEVEL_1);
 
         final Set<Integer> targets = new HashSet<Integer>();
         final Set<Integer> neutrals = new HashSet<Integer>();
@@ -68,17 +71,17 @@ public class TargetedAttackScenarioTest {
                 TargetedAttack.getNeutrals(), TargetedAttack.getAttackers()));
 
         for (Integer agent : targets)
-            Assert.assertFalse(ip.contains(agent));
+            assertFalse(ip.contains(agent));
 
         for (Integer agent : attackers)
-            Assert.assertTrue(ip.contains(agent));
+            assertTrue(ip.contains(agent));
 
         for (Integer agent : neutrals)
-            Assert.assertTrue(ip.contains(agent));
+            assertTrue(ip.contains(agent));
 
         for (Integer agent : ip) {
-            Assert.assertFalse(targets.contains(agent));
-            Assert.assertTrue(
+            assertFalse(targets.contains(agent));
+            assertTrue(
                     attackers.contains(agent) || neutrals.contains(agent));
         }
     }
@@ -86,8 +89,8 @@ public class TargetedAttackScenarioTest {
     @Test
     public void determineInteractionPartnersBalanced() {
         final int numPartners = 5;
-        scenario.initialize(new Object[]{10, 6, 2, numPartners, 0.1, 0.05,
-                TargetedAttackStrategy.LEVEL_1});
+        scenario.initialize(10, 6, 2, numPartners, 0.1, 0.05,
+                TargetedAttackStrategy.LEVEL_1);
 
         final Set<Integer> targets = new HashSet<Integer>();
         final Set<Integer> neutrals = new HashSet<Integer>();
@@ -102,14 +105,14 @@ public class TargetedAttackScenarioTest {
                 TargetedAttack.getNeutrals(), TargetedAttack.getAttackers()));
 
         for (Integer agent : targets)
-            Assert.assertFalse(ip.contains(agent));
+            assertFalse(ip.contains(agent));
 
         for (Integer agent : neutrals)
-            Assert.assertTrue(ip.contains(agent));
+            assertTrue(ip.contains(agent));
 
         for (Integer agent : ip) {
-            Assert.assertFalse(targets.contains(agent));
-            Assert.assertTrue(
+            assertFalse(targets.contains(agent));
+            assertTrue(
                     attackers.contains(agent) || neutrals.contains(agent));
         }
     }

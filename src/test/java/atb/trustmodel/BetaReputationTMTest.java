@@ -10,12 +10,13 @@
  */
 package atb.trustmodel;
 
-import junit.framework.Assert;
-import org.junit.Test;
 import atb.interfaces.Experience;
 import atb.interfaces.Opinion;
+import org.junit.Test;
 
 import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
 
 public class BetaReputationTMTest {
 
@@ -37,7 +38,7 @@ public class BetaReputationTMTest {
         tm.processOpinions(opinions);
         tm.calculateTrust();
 
-        Assert.assertEquals(0.70, tm.computePairs().get(0).R, 0.001);
+        assertEquals(0.70, tm.computePairs().get(0).R, 0.001);
 
         time = 2;
         experiences.clear();
@@ -50,7 +51,7 @@ public class BetaReputationTMTest {
         tm.processOpinions(opinions);
         tm.calculateTrust();
 
-        Assert.assertEquals(0.70, tm.computePairs().get(0).R, 0.001);
+        assertEquals(0.70, tm.computePairs().get(0).R, 0.001);
 
         time = 3;
         experiences.clear();
@@ -62,8 +63,8 @@ public class BetaReputationTMTest {
         tm.processOpinions(opinions);
         tm.calculateTrust();
 
-        Assert.assertEquals(0.95, tm.computePairs().get(0).R, 0.001);
-        Assert.assertEquals(0.30, tm.computePairs().get(0).S, 0.001);
+        assertEquals(0.95, tm.computePairs().get(0).R, 0.001);
+        assertEquals(0.30, tm.computePairs().get(0).S, 0.001);
 
         time = 4;
         experiences.clear();
@@ -76,10 +77,10 @@ public class BetaReputationTMTest {
         tm.processOpinions(opinions);
         tm.calculateTrust();
 
-        Assert.assertEquals(0.50, tm.computePairs().get(2).R, 0.001);
-        Assert.assertEquals(0.50, tm.computePairs().get(2).S, 0.001);
-        Assert.assertEquals(0.08823, tm.computePairs().get(3).R, 0.001);
-        Assert.assertEquals(0.02941, tm.computePairs().get(3).S, 0.001);
+        assertEquals(0.50, tm.computePairs().get(2).R, 0.001);
+        assertEquals(0.50, tm.computePairs().get(2).S, 0.001);
+        assertEquals(0.08823, tm.computePairs().get(3).R, 0.001);
+        assertEquals(0.02941, tm.computePairs().get(3).S, 0.001);
 
         // experiences.clear();
         // experiences.add(new Experience(0, 0, 4, 1.0));
@@ -108,9 +109,9 @@ public class BetaReputationTMTest {
         tm.processOpinions(opinions);
         tm.calculateTrust();
 
-        Assert.assertEquals(0.50, tm.opinions[0][1].internalTrustDegree, 0.001);
-        Assert.assertEquals(0.75, tm.opinions[1][1].internalTrustDegree, 0.001);
-        Assert.assertEquals(1.00, tm.opinions[2][1].internalTrustDegree, 0.001);
+        assertEquals(0.50, tm.opinions[0][1].internalTrustDegree, 0.001);
+        assertEquals(0.75, tm.opinions[1][1].internalTrustDegree, 0.001);
+        assertEquals(1.00, tm.opinions[2][1].internalTrustDegree, 0.001);
 
         opinions.clear();
         opinions.add(new Opinion(2, 0, 0, 0, 0.50, 0.05));
@@ -121,9 +122,9 @@ public class BetaReputationTMTest {
         tm.processOpinions(opinions);
         tm.calculateTrust();
 
-        Assert.assertEquals(0.50, tm.opinions[2][0].internalTrustDegree, 0.001);
-        Assert.assertEquals(0.50, tm.opinions[2][1].internalTrustDegree, 0.001);
-        Assert.assertEquals(0.50, tm.opinions[5][4].internalTrustDegree, 0.001);
+        assertEquals(0.50, tm.opinions[2][0].internalTrustDegree, 0.001);
+        assertEquals(0.50, tm.opinions[2][1].internalTrustDegree, 0.001);
+        assertEquals(0.50, tm.opinions[5][4].internalTrustDegree, 0.001);
     }
 
     @Test
@@ -139,7 +140,7 @@ public class BetaReputationTMTest {
         tm.calculateTrust();
         experiences.clear();
 
-        Assert.assertEquals(tm.experiences.get(0).get(0).outcome, 1, 0.001);
+        assertEquals(tm.experiences.get(0).get(0).outcome, 1, 0.001);
 
         experiences.add(new Experience(1, 0, 0, 0.3));
         experiences.add(new Experience(0, 0, 0, 0.5));
@@ -148,8 +149,8 @@ public class BetaReputationTMTest {
         tm.calculateTrust();
         experiences.clear();
 
-        Assert.assertEquals(tm.experiences.get(0).get(0).outcome, 1, 0.001);
-        Assert.assertEquals(tm.experiences.get(0).get(1).outcome, 0.5, 0.001);
-        Assert.assertEquals(tm.experiences.get(1).get(0).outcome, 0.3, 0.001);
+        assertEquals(tm.experiences.get(0).get(0).outcome, 1, 0.001);
+        assertEquals(tm.experiences.get(0).get(1).outcome, 0.5, 0.001);
+        assertEquals(tm.experiences.get(1).get(0).outcome, 0.3, 0.001);
     }
 }

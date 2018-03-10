@@ -10,15 +10,16 @@
  */
 package atb.scenario;
 
-import junit.framework.Assert;
-import org.junit.Test;
 import atb.common.DefaultRandomGenerator;
 import atb.deceptionmodel.Truthful;
 import atb.interfaces.DeceptionModel;
 import atb.interfaces.Scenario;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class RandomScenarioTest {
 
@@ -31,13 +32,13 @@ public class RandomScenarioTest {
 
         scenario.initialize(1, 0.1, 0.05, deceptionModels, 0.25, 0.25, 1d);
 
-        Assert.assertEquals(1, scenario.getAgents().size());
-        Assert.assertEquals(1, scenario.getServices().size());
+        assertEquals(1, scenario.getAgents().size());
+        assertEquals(1, scenario.getServices().size());
 
         Map<Integer, Double> capabilities = scenario.getCapabilities(0);
 
-        Assert.assertEquals(1, capabilities.size());
-        Assert.assertEquals(1, scenario.generateExperiences().size());
+        assertEquals(1, capabilities.size());
+        assertEquals(1, scenario.generateExperiences().size());
     }
 
     @Test(expected = IllegalArgumentException.class)

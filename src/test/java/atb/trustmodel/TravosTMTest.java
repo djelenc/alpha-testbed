@@ -10,15 +10,16 @@
  */
 package atb.trustmodel;
 
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import atb.common.DefaultRandomGenerator;
 import atb.interfaces.Experience;
 import atb.interfaces.Opinion;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class TravosTMTest {
     private Travos tm = null;
@@ -34,11 +35,11 @@ public class TravosTMTest {
     public void testFormulaeMethods() {
         final double integral = tm.integrate(11, 4, 0.2, 0.4);
 
-        Assert.assertEquals(0.00489242, integral, 0.001);
-        Assert.assertEquals(0.288675, tm.standardDeviation(0, 0), 0.001);
-        Assert.assertEquals(0.00962886, tm.scaleM(0.498833, 0.287527), 0.001);
-        Assert.assertEquals(0.0143514, tm.scaleN(0.498833, 0.287527), 0.001);
-        Assert.assertEquals(0.498833, tm.adjustMean(16, 47, integral),
+        assertEquals(0.00489242, integral, 0.001);
+        assertEquals(0.288675, tm.standardDeviation(0, 0), 0.001);
+        assertEquals(0.00962886, tm.scaleM(0.498833, 0.287527), 0.001);
+        assertEquals(0.0143514, tm.scaleN(0.498833, 0.287527), 0.001);
+        assertEquals(0.498833, tm.adjustMean(16, 47, integral),
                 0.000001);
     }
 
@@ -90,12 +91,12 @@ public class TravosTMTest {
 
         Map<Integer, Double> trust = tm.getTrust(0);
 
-        Assert.assertEquals(0.7500, trust.get(2), 0.001);
-        Assert.assertEquals(0.1579, trust.get(3), 0.001);
-        Assert.assertEquals(0.7600, trust.get(4), 0.001);
-        Assert.assertEquals(0.4000, trust.get(5), 0.001);
-        Assert.assertEquals(0.8000, trust.get(6), 0.001);
-        Assert.assertEquals(0.6129, trust.get(7), 0.001);
+        assertEquals(0.7500, trust.get(2), 0.001);
+        assertEquals(0.1579, trust.get(3), 0.001);
+        assertEquals(0.7600, trust.get(4), 0.001);
+        assertEquals(0.4000, trust.get(5), 0.001);
+        assertEquals(0.8000, trust.get(6), 0.001);
+        assertEquals(0.6129, trust.get(7), 0.001);
 
         experiences.clear();
         opinions.clear();
@@ -124,6 +125,6 @@ public class TravosTMTest {
         tm.observations.get(10)[3].R = 18;
         tm.observations.get(10)[3].S = 8;
 
-        Assert.assertEquals(0.7419, tm.getTrust(0).get(6), 0.001);
+        assertEquals(0.7419, tm.getTrust(0).get(6), 0.001);
     }
 }

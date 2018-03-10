@@ -10,16 +10,17 @@
  */
 package atb.trustmodel;
 
-import cern.colt.Arrays;
-import junit.framework.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
 import atb.interfaces.Experience;
 import atb.interfaces.Opinion;
+import cern.colt.Arrays;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class OnlyOpinionsTMTest {
 
@@ -70,9 +71,9 @@ public class OnlyOpinionsTMTest {
 
         Map<Integer, Double> trust = tm.getTrust(0);
 
-        Assert.assertEquals(1d, trust.get(5), 0.001);
-        Assert.assertEquals(0.6, trust.get(0), 0.001);
-        Assert.assertEquals(0.3, trust.get(1), 0.001);
+        assertEquals(1d, trust.get(5), 0.001);
+        assertEquals(0.6, trust.get(0), 0.001);
+        assertEquals(0.3, trust.get(1), 0.001);
 
         opinions.clear();
         opinions.add(new Opinion(6, 4, 1, 0, 0.0, 0.05));
@@ -84,10 +85,10 @@ public class OnlyOpinionsTMTest {
 
         trust = tm.getTrust(0);
 
-        Assert.assertEquals(0d, trust.get(5), 0.001);
-        Assert.assertEquals(0.6, trust.get(0), 0.001);
-        Assert.assertEquals(0.3, trust.get(1), 0.001);
-        Assert.assertEquals(0d, trust.get(4), 0.001);
+        assertEquals(0d, trust.get(5), 0.001);
+        assertEquals(0.6, trust.get(0), 0.001);
+        assertEquals(0.3, trust.get(1), 0.001);
+        assertEquals(0d, trust.get(4), 0.001);
 
     }
 }

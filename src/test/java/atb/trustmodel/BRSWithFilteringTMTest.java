@@ -10,15 +10,16 @@
  */
 package atb.trustmodel;
 
-import junit.framework.Assert;
-import org.junit.Test;
 import atb.interfaces.ExampleGenerator;
 import atb.interfaces.Experience;
 import atb.interfaces.Opinion;
 import atb.interfaces.RandomGenerator;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class BRSWithFilteringTMTest {
 
@@ -61,8 +62,8 @@ public class BRSWithFilteringTMTest {
         tm.calculateTrust();
         Map<Integer, Double> score = tm.getTrust(0);
 
-        Assert.assertEquals(0.9861111111111112, score.get(0), 0.00001);
-        Assert.assertEquals(0.7500000000000000, score.get(2), 0.00001);
-        Assert.assertEquals(0.5161290322580645, score.get(3), 0.00001);
+        assertEquals(0.9861111111111112, score.get(0), 0.00001);
+        assertEquals(0.7500000000000000, score.get(2), 0.00001);
+        assertEquals(0.5161290322580645, score.get(3), 0.00001);
     }
 }

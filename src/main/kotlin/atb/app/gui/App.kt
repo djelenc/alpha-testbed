@@ -134,25 +134,22 @@ class ATBController : Controller() {
             }
         })
 
-        interrupter = runAsync(protocol, duration, metrics.keys,
-                {
-                    Platform.runLater {
-                        state = it
-                        println("All done. Got ${it.data.readings.size} data points!")
-                    }
-                },
-                {
-                    Platform.runLater {
-                        state = it
-                        println("Wow. I did not expect to get a ${it.thrown}")
-                    }
-                },
-                {
-                    Platform.runLater {
-                        state = it
-                        println("Sure, I'll stop.")
-                    }
-                })
+        interrupter = runAsync(protocol, duration, metrics.keys, {
+            Platform.runLater {
+                state = it
+                println("All done. Got ${it.data.readings.size} data points!")
+            }
+        }, {
+            Platform.runLater {
+                state = it
+                println("Wow. I did not expect to get a ${it.thrown}")
+            }
+        }, {
+            Platform.runLater {
+                state = it
+                println("Sure, I'll stop.")
+            }
+        })
         state = Running
     }
 

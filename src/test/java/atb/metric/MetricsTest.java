@@ -10,16 +10,19 @@
  */
 package atb.metric;
 
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import atb.interfaces.Accuracy;
 import atb.interfaces.Metric;
 import atb.interfaces.Utility;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 
 public class MetricsTest {
 
@@ -167,42 +170,42 @@ public class MetricsTest {
         cpbs.put(2, 0.25);
         cpbs.put(3, 0.50);
 
-        Assert.assertEquals(acc.evaluate(trust, cpbs),
+        assertEquals(acc.evaluate(trust, cpbs),
                 ktb.evaluate(trust, cpbs), 0.001);
 
         trust.clear();
         trust.put(1, 0.1);
         trust.put(3, 0.2);
         trust.put(2, 0.3);
-        Assert.assertEquals(acc.evaluate(trust, cpbs),
+        assertEquals(acc.evaluate(trust, cpbs),
                 ktb.evaluate(trust, cpbs), 0.001);
 
         trust.clear();
         trust.put(2, 0.1);
         trust.put(1, 0.2);
         trust.put(3, 0.3);
-        Assert.assertEquals(acc.evaluate(trust, cpbs),
+        assertEquals(acc.evaluate(trust, cpbs),
                 ktb.evaluate(trust, cpbs), 0.001);
 
         trust.clear();
         trust.put(2, 0.1);
         trust.put(3, 0.2);
         trust.put(1, 0.3);
-        Assert.assertEquals(acc.evaluate(trust, cpbs),
+        assertEquals(acc.evaluate(trust, cpbs),
                 ktb.evaluate(trust, cpbs), 0.001);
 
         trust.clear();
         trust.put(3, 0.1);
         trust.put(1, 0.2);
         trust.put(2, 0.3);
-        Assert.assertEquals(acc.evaluate(trust, cpbs),
+        assertEquals(acc.evaluate(trust, cpbs),
                 ktb.evaluate(trust, cpbs), 0.001);
 
         trust.clear();
         trust.put(3, 0.1);
         trust.put(2, 0.2);
         trust.put(1, 0.3);
-        Assert.assertEquals(acc.evaluate(trust, cpbs),
+        assertEquals(acc.evaluate(trust, cpbs),
                 ktb.evaluate(trust, cpbs), 0.001);
     }
 
@@ -237,7 +240,7 @@ public class MetricsTest {
 
         final double score = taub.evaluate(rnks, cpbs) * 2 - 1;
 
-        Assert.assertEquals(0.730251, score, 0.0001);
+        assertEquals(0.730251, score, 0.0001);
     }
 
     @Test
@@ -247,10 +250,8 @@ public class MetricsTest {
         utility.initialize();
         accuracy.initialize();
 
-        Assert.assertTrue(utility instanceof Utility);
-        Assert.assertFalse(utility instanceof Accuracy);
-        Assert.assertTrue(accuracy instanceof Accuracy);
-        Assert.assertFalse(accuracy instanceof Utility);
+        assertFalse(utility instanceof Accuracy);
+        assertFalse(accuracy instanceof Utility);
     }
 
     @Test
@@ -259,13 +260,13 @@ public class MetricsTest {
 
         utility.initialize();
 
-        Assert.assertEquals(1, utility.evaluate(cpbs, 1), 0.001); // total 1
-        Assert.assertEquals(1, utility.evaluate(cpbs, 1), 0.001); // total 2
-        Assert.assertEquals(0.9, utility.evaluate(cpbs, 4), 0.001); // total 2.7
-        Assert.assertEquals(0.9, utility.evaluate(cpbs, 2), 0.001); // total 3.6
-        Assert.assertEquals(0.88, utility.evaluate(cpbs, 3), 0.001); // total
+        assertEquals(1, utility.evaluate(cpbs, 1), 0.001); // total 1
+        assertEquals(1, utility.evaluate(cpbs, 1), 0.001); // total 2
+        assertEquals(0.9, utility.evaluate(cpbs, 4), 0.001); // total 2.7
+        assertEquals(0.9, utility.evaluate(cpbs, 2), 0.001); // total 3.6
+        assertEquals(0.88, utility.evaluate(cpbs, 3), 0.001); // total
         // 4.4
-        Assert.assertEquals(0.9, utility.evaluate(cpbs, 1), 0.001); // total 5.4
+        assertEquals(0.9, utility.evaluate(cpbs, 1), 0.001); // total 5.4
     }
 
     @Test
@@ -276,7 +277,7 @@ public class MetricsTest {
         rnks.put(2, 1);
         rnks.put(3, 1);
         rnks.put(4, 1);
-        Assert.assertEquals(0.5, accuracy.evaluate(rnks, cpbs), 0.0001);
+        assertEquals(0.5, accuracy.evaluate(rnks, cpbs), 0.0001);
     }
 
     @Test
@@ -285,8 +286,8 @@ public class MetricsTest {
         Accuracy coverage = new Coverage();
 
         rnks.remove(3);
-        Assert.assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
-        Assert.assertEquals(0.75, coverage.evaluate(rnks, cpbs), 0.0001);
+        assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
+        assertEquals(0.75, coverage.evaluate(rnks, cpbs), 0.0001);
     }
 
     @Test
@@ -296,8 +297,8 @@ public class MetricsTest {
 
         cpbs.put(4, 0.8);
         cpbs.put(3, 0.7);
-        Assert.assertEquals(10.0 / 12.0, accuracy.evaluate(rnks, cpbs), 0.0001);
-        Assert.assertEquals(1.0, coverage.evaluate(rnks, cpbs), 0.0001);
+        assertEquals(10.0 / 12.0, accuracy.evaluate(rnks, cpbs), 0.0001);
+        assertEquals(1.0, coverage.evaluate(rnks, cpbs), 0.0001);
     }
 
     @Test
@@ -305,31 +306,31 @@ public class MetricsTest {
         Accuracy accuracy = new OldAccuracy();
 
         cpbs.put(4, 0.8);
-        Assert.assertEquals(11.0 / 12.0, accuracy.evaluate(rnks, cpbs), 0.0001);
+        assertEquals(11.0 / 12.0, accuracy.evaluate(rnks, cpbs), 0.0001);
     }
 
     @Test
     public void accuracyAllCorrect() {
         Accuracy accuracy = new OldAccuracy();
-        Assert.assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
+        assertEquals(1.0, accuracy.evaluate(rnks, cpbs), 0.0001);
     }
 
     @Test
     public void evaluatePair() {
         OldAccuracy accuracy = new OldAccuracy();
 
-        Assert.assertEquals(1, accuracy.evaluatePair(1, 1, 0.7, 0.7));
-        Assert.assertEquals(1, accuracy.evaluatePair(2, 1, 0.7, 0.7));
-        Assert.assertEquals(0, accuracy.evaluatePair(1, 2, 0.7, 0.7));
-        Assert.assertEquals(1, accuracy.evaluatePair(2, 2, 0.7, 0.7));
-        Assert.assertEquals(1, accuracy.evaluatePair(1, 1, 0.9, 0.7));
-        Assert.assertEquals(1, accuracy.evaluatePair(2, 1, 0.9, 0.7));
-        Assert.assertEquals(0, accuracy.evaluatePair(1, 2, 0.9, 0.7));
-        Assert.assertEquals(1, accuracy.evaluatePair(2, 2, 0.9, 0.7));
-        Assert.assertEquals(0, accuracy.evaluatePair(1, 1, 0.7, 0.9));
-        Assert.assertEquals(0, accuracy.evaluatePair(2, 1, 0.7, 0.9));
-        Assert.assertEquals(1, accuracy.evaluatePair(1, 2, 0.7, 0.9));
-        Assert.assertEquals(0, accuracy.evaluatePair(2, 2, 0.7, 0.9));
+        assertEquals(1, accuracy.evaluatePair(1, 1, 0.7, 0.7));
+        assertEquals(1, accuracy.evaluatePair(2, 1, 0.7, 0.7));
+        assertEquals(0, accuracy.evaluatePair(1, 2, 0.7, 0.7));
+        assertEquals(1, accuracy.evaluatePair(2, 2, 0.7, 0.7));
+        assertEquals(1, accuracy.evaluatePair(1, 1, 0.9, 0.7));
+        assertEquals(1, accuracy.evaluatePair(2, 1, 0.9, 0.7));
+        assertEquals(0, accuracy.evaluatePair(1, 2, 0.9, 0.7));
+        assertEquals(1, accuracy.evaluatePair(2, 2, 0.9, 0.7));
+        assertEquals(0, accuracy.evaluatePair(1, 1, 0.7, 0.9));
+        assertEquals(0, accuracy.evaluatePair(2, 1, 0.7, 0.9));
+        assertEquals(1, accuracy.evaluatePair(1, 2, 0.7, 0.9));
+        assertEquals(0, accuracy.evaluatePair(2, 2, 0.7, 0.9));
     }
 
 }

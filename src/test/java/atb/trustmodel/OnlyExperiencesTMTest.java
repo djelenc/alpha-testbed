@@ -10,13 +10,14 @@
  */
 package atb.trustmodel;
 
-import junit.framework.Assert;
-import org.junit.Test;
 import atb.interfaces.Experience;
 import atb.interfaces.Opinion;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class OnlyExperiencesTMTest {
 
@@ -56,10 +57,10 @@ public class OnlyExperiencesTMTest {
 
         Map<Integer, Double> trust = tm.getTrust(0);
 
-        Assert.assertEquals(0.9, trust.get(0), 0.001);
-        Assert.assertEquals(0.8, trust.get(1), 0.001);
-        Assert.assertEquals(0.7, trust.get(2), 0.001);
-        Assert.assertEquals(0.6, trust.get(3), 0.001);
-        Assert.assertEquals(0.1, trust.get(10), 0.001);
+        assertEquals(0.9, trust.get(0), 0.001);
+        assertEquals(0.8, trust.get(1), 0.001);
+        assertEquals(0.7, trust.get(2), 0.001);
+        assertEquals(0.6, trust.get(3), 0.001);
+        assertEquals(0.1, trust.get(10), 0.001);
     }
 }
