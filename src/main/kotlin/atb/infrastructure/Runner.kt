@@ -92,6 +92,6 @@ fun runAsync(supplier: Supplier<EvaluationState>, completed: (Completed) -> Unit
                 is Completed -> completed(it)
                 is Faulted -> faulted(it)
                 is Interrupted -> interrupted(it)
-                is Idle, Running -> throw IllegalStateException("An evaluation cannot end in state: $it")
+                // is Idle, Running -> throw IllegalStateException("An evaluation cannot end in state: $it")
             }
         }
