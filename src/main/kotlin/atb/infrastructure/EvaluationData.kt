@@ -84,6 +84,6 @@ data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Met
         val model = protocol.trustModel.toString().toFileName()
         val scenario = protocol.scenario.toString().toFileName()
 
-        return "$scenario-$seed-$model-$date.$type"
+        return "$scenario-$model-$seed-$date.$type"
     }
 }

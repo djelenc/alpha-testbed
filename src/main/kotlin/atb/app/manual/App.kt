@@ -10,9 +10,7 @@
  */
 package atb.app.manual
 
-import atb.infrastructure.createProtocol
-import atb.infrastructure.runAsync
-import atb.infrastructure.setupEvaluation
+import atb.infrastructure.*
 import atb.interfaces.Metric
 import atb.metric.CumulativeNormalizedUtility
 import atb.metric.DefaultOpinionCost
@@ -60,13 +58,14 @@ fun main(args: Array<String>) {
 
     val evaluationTask = setupEvaluation(protocol, duration, metrics.keys)
 
-    runAsync(evaluationTask.supplier, {
-        println("Got ${it.data.readings.size} lines of data!")
-    }, {
-        println("Got an error: ${it.thrown.message}")
-    }, {
-        println("Run was interrupted at tick ${it.tick}")
-    }).join() // this will block untill evaluation finishes
+    runAsync(evaluationTask, {
+        when (it) {
+            is Completed -> println("Got ${it.data.readings.size} lines of data!")
+            is Faulted -> println("Got an error: ${it.thrown.message}")
+            is Interrupted -> println("Run was interrupted at tick ${it.tick}")
+            else -> throw IllegalStateException("State $it should never occur here.")
+        }
+    }).join() // this will block until evaluation finishes
 
     println("Finished testing '${protocol.trustModel}' in '${protocol.scenario}'.")
 }

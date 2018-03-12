@@ -33,14 +33,10 @@ class EvaluationTask(val supplier: Supplier<EvaluationState>, val interrupter: (
 
 /**
  * Sets up an evaluation run and returns an EvaluationTask.
- * Runs the evaluation setup (consisting of the [protocol], [duration] and [metrics]) asynchronously. The method
- * fires the following callbacks:
- * * [completed] callback on successfully completing the run;
- * * [faulted] callback if an exception occurs during the run;
- * * [interrupted] callback if the run gets interrupted.
+ * Runs the evaluation setup (consisting of the [protocol], [duration] and [metrics]) asynchronously.
  *
- * @return A callback, which, upon invocation, stops the evaluation run and triggers the [interrupted] callback.
- * If the run has already ended, the invocation does nothing.
+ * @return A callback, which, upon invocation, stops the evaluation run. Invoking the handled on an
+ * evaluation run that has already ended, results in a no-op.
  */
 fun setupEvaluation(protocol: EvaluationProtocol, duration: Int, metrics: Set<Metric>): EvaluationTask {
     // evaluation data
@@ -76,22 +72,14 @@ fun setupEvaluation(protocol: EvaluationProtocol, duration: Int, metrics: Set<Me
 }
 
 /**
- * Runs given supplier asynchronously and fires the following callbacks:
- * * [completed] is fired if the run completes successfully;
- * * [faulted] is fired if an exception occurs during the run;
- * * [interrupted] is fired if the run has been manually interrupted.
+ * Runs given evaluation task asynchronously and fires the callback upon competition.
  *
  * @return A reference to the underlying completable future
  * */
-fun runAsync(supplier: Supplier<EvaluationState>, completed: (Completed) -> Unit,
-             faulted: (Faulted) -> Unit, interrupted: (Interrupted) -> Unit): CompletableFuture<Void> =
-        CompletableFuture.supplyAsync(supplier).exceptionally {
+fun runAsync(task: EvaluationTask, callback: (EvaluationState) -> Unit): CompletableFuture<Void> =
+        CompletableFuture.supplyAsync(task.supplier).exceptionally {
             Faulted(it)
         }.thenAccept {
-            when (it) {
-                is Completed -> completed(it)
-                is Faulted -> faulted(it)
-                is Interrupted -> interrupted(it)
-                // is Idle, Running -> throw IllegalStateException("An evaluation cannot end in state: $it")
-            }
+            callback(it)
         }
+

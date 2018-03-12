@@ -13,6 +13,7 @@ import javafx.scene.control.TextField
 import javafx.scene.layout.Priority
 import tornadofx.*
 import kotlin.collections.set
+import kotlin.properties.Delegates
 
 
 class ATBMainView : View() {
@@ -70,8 +71,16 @@ class ATBController : Controller() {
     // used for interrupting executing runs
     private var interrupter: () -> Unit = {}
 
-    // currents evaluation state
-    private var state: EvaluationState = Idle
+    // current evaluation state
+    private var state: EvaluationState by Delegates.observable<EvaluationState>(Idle) { _, old, new ->
+        when (new) {
+            is Idle -> println("Evaluation is idling")
+            is Running -> println("Run is in progress!")
+            is Faulted -> println("Run terminated abruptly: ${new.thrown}")
+            is Completed -> println("Run completed: ${new.data.readings.size} data points")
+            is Interrupted -> println("Run was interrupted at tick ${new.tick}")
+        }
+    }
 
     fun stop() = interrupter()
 
@@ -111,35 +120,15 @@ class ATBController : Controller() {
         })
 
         val evaluationTask = setupEvaluation(protocol, duration, metrics.keys)
-        interrupter = evaluationTask.interrupter
-        runAsync(evaluationTask.supplier, {
-            Platform.runLater {
-                state = it
-                println("All done. Got ${it.data.readings.size} data points!")
-            }
-        }, {
-            Platform.runLater {
-                state = it
-                println("Wow. I did not expect to get a ${it.thrown}")
-            }
-        }, {
-            Platform.runLater {
-                state = it
-                println("Sure, I'll stop.")
-            }
-        })
+        runAsync(evaluationTask, { Platform.runLater { state = it } })
         state = Running
+        interrupter = evaluationTask.interrupter
     }
 
     fun export() {
-        val state = this.state
-
-        when (state) {
-            is Idle -> println("Nothing has been run yet")
-            is Running -> println("Run is still in progress!")
-            is Faulted -> println("Something went wrong: ${state.thrown}")
-            is Completed -> state.data.toJSON()
-            is Interrupted -> println("Interrupted at ${state.tick}")
+        val copied = state
+        if (copied is Completed) {
+            copied.data.toJSON()
         }
     }
 }
