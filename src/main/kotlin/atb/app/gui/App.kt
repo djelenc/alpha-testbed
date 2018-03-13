@@ -5,35 +5,71 @@ import atb.infrastructure.*
 import atb.interfaces.*
 import javafx.application.Application
 import javafx.application.Platform
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Pos
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
-import javafx.scene.control.TextField
 import javafx.scene.layout.Priority
+import javafx.stage.StageStyle
+import javafx.util.converter.NumberStringConverter
 import tornadofx.*
 import kotlin.collections.set
 import kotlin.properties.Delegates
 
 
+class BatchRunView : View() {
+    // maybe use form builder instead
+    // https://edvin.gitbooks.io/tornadofx-guide/content/part1/7.%20Layouts%20and%20Menus.html
+
+    private val start = SimpleIntegerProperty(1)
+    private val stop = SimpleIntegerProperty(30)
+
+    override val root = vbox {
+        prefHeight = 300.0
+        prefWidth = 450.0
+
+        hbox {
+            alignment = Pos.BASELINE_CENTER
+            label("Seed range: ")
+            textfield {
+                prefWidth = 45.0
+                textProperty().bindBidirectional(start, NumberStringConverter())
+            }
+            label(" - ")
+            textfield {
+                prefWidth = 45.0
+                textProperty().bindBidirectional(stop, NumberStringConverter())
+            }
+            button("Start") { action { println("$start - $stop") } }
+            button("Stop") { action { println("$start - $stop") } }
+        }
+        textarea {
+            vgrow = Priority.ALWAYS
+        }
+    }
+}
+
 class ATBMainView : View() {
 
     private val controller: ATBController by inject()
-    private var input: TextField by singleAssign()
     private var chart: LineChart<Number, Number> by singleAssign()
+
+    private val seed = SimpleIntegerProperty(1)
 
     override val root = vbox {
         prefHeight = 400.0
         prefWidth = 600.0
 
         hbox {
-            input = textfield("1") {
+            textfield {
                 alignment = Pos.TOP_LEFT
                 hgrow = Priority.ALWAYS
+                textProperty().bindBidirectional(seed, NumberStringConverter())
             }
             button("Start") {
                 action {
-                    controller.run(input.text.toInt(), chart)
+                    controller.run(seed.value, chart)
                 }
             }
             button("Stop") {
@@ -41,9 +77,9 @@ class ATBMainView : View() {
                     controller.stop()
                 }
             }
-            button("Export") {
+            button("Batch run") {
                 action {
-                    controller.export()
+                    find(BatchRunView::class).openModal(stageStyle = StageStyle.UTILITY)
                 }
             }
         }
@@ -72,7 +108,7 @@ class ATBController : Controller() {
     private var interrupter: () -> Unit = {}
 
     // current evaluation state
-    private var state: EvaluationState by Delegates.observable<EvaluationState>(Idle) { _, old, new ->
+    private var state: EvaluationState by Delegates.observable<EvaluationState>(Idle) { _, _, new ->
         when (new) {
             is Idle -> println("Evaluation is idling")
             is Running -> println("Run is in progress!")
@@ -123,13 +159,6 @@ class ATBController : Controller() {
         run(evaluationTask, { Platform.runLater { state = it } })
         state = Running
         interrupter = evaluationTask.interrupter
-    }
-
-    fun export() {
-        val copied = state
-        if (copied is Completed) {
-            copied.data.toJSON()
-        }
     }
 }
 
