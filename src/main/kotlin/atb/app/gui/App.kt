@@ -181,9 +181,6 @@ class ATBMainView : View() {
 class ATBController : Controller() {
     val seed = SimpleIntegerProperty(1)
 
-    // plotting data (metric, service) -> [(tick, value), ... ]
-    private val metricData = HashMap<Pair<Metric, Int>, XYChart.Series<Number, Number>>()
-
     // used for interrupting executing runs
     private var interrupter: () -> Unit = {}
 
@@ -202,7 +199,6 @@ class ATBController : Controller() {
 
     fun run(chart: LineChart<Number, Number>) {
         chart.data.clear()
-        metricData.clear()
 
         val gui = ParametersGUI(ATBController::class.java.classLoader)
         val answer = gui.showDialog()
@@ -217,16 +213,20 @@ class ATBController : Controller() {
         gui.setupParameters[2]?.let { metrics[it as Accuracy] = gui.accuracyParameters }
         gui.setupParameters[3]?.let { metrics[it as Utility] = gui.utilityParameters }
         gui.setupParameters[4]?.let { metrics[it as OpinionCost] = gui.opinionCostParameters }
+
+        val protocol = createProtocol(trustModel, gui.trustModelParameters, scenario, gui.scenarioParameters, metrics, seed.value)
+
+        val metric2series = HashMap<Pair<Metric, Int>, XYChart.Series<Number, Number>>()
+
         metrics.forEach { metric, _ ->
             for (service in scenario.services) {
-                metricData[Pair(metric, service)] = XYChart.Series<Number, Number>().apply { name = metric.toString() }
-                chart.data.add(metricData[Pair(metric, service)])
+                metric2series[Pair(metric, service)] = XYChart.Series<Number, Number>().apply { name = metric.toString() }
+                chart.data.add(metric2series[Pair(metric, service)])
             }
         }
 
-        val protocol = createProtocol(trustModel, gui.trustModelParameters, scenario, gui.scenarioParameters, metrics, seed.value)
         protocol.subscribe({
-            for ((key, data) in metricData) {
+            for ((key, data) in metric2series) {
                 val (metric, service) = key
                 Platform.runLater {
                     data.data.add(XYChart.Data(it.time, it.getResult(service, metric)))
