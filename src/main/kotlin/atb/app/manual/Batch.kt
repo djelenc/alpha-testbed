@@ -46,9 +46,7 @@ fun main(args: Array<String>) {
         val task = setupEvaluation(protocol, duration, metrics.keys)
         futures.add(CompletableFuture
                 .supplyAsync(task.supplier)
-                .exceptionally {
-                    Faulted(it)
-                }.thenApply({
+                .thenApply({
                     when (it) {
                         is Completed -> {
                             println("Completed run for ${it.data.seed}")

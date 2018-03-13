@@ -59,10 +59,14 @@ fun setupEvaluation(protocol: EvaluationProtocol, duration: Int, metrics: Set<Me
     // create supplier (actual task)
     val supplier = Supplier supplier@{
         for (tick in 1..duration) {
-            protocol.step(tick)
+            try {
+                if (isInterrupted.get()) {
+                    return@supplier Interrupted(tick, data)
+                }
 
-            if (isInterrupted.get()) {
-                return@supplier Interrupted(tick, data)
+                protocol.step(tick)
+            } catch (e: Exception) {
+                return@supplier Faulted(tick, e)
             }
         }
         return@supplier Completed(data)
@@ -77,9 +81,5 @@ fun setupEvaluation(protocol: EvaluationProtocol, duration: Int, metrics: Set<Me
  * @return A reference to the underlying completable future
  * */
 fun runAsync(task: EvaluationTask, callback: (EvaluationState) -> Unit): CompletableFuture<Void> =
-        CompletableFuture.supplyAsync(task.supplier).exceptionally {
-            Faulted(it)
-        }.thenAccept {
-            callback(it)
-        }
+        CompletableFuture.supplyAsync(task.supplier).thenAccept { callback(it) }
 
