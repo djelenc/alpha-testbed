@@ -15,28 +15,28 @@ import atb.interfaces.Metric
 import atb.metric.CumulativeNormalizedUtility
 import atb.metric.DefaultOpinionCost
 import atb.metric.KendallsTauA
+import atb.scenario.Transitive
 import atb.scenario.TransitiveOpinionProviderSelection
+import atb.trustmodel.AbdulRahmanHailes
 import atb.trustmodel.SimpleSelectingOpinionProviders
 import java.util.concurrent.CountDownLatch
 
 fun main(args: Array<String>) {
-    val duration = 500
+    val duration = 100
     val start = 1
     val stop = 30
 
     val tasks = (start..stop).map { seed ->
         // trust model
-        val model = SimpleSelectingOpinionProviders()
+        val model = AbdulRahmanHailes()
 
         // scenario
-        val scenario = TransitiveOpinionProviderSelection()
+        val scenario = Transitive()
         val scenarioParams = arrayOf(100, 0.05, 0.1, 1.0, 1.0)
 
         // metrics
         val metrics = hashMapOf<Metric, Array<Any>>(
-                KendallsTauA() to emptyArray(),
-                CumulativeNormalizedUtility() to emptyArray(),
-                DefaultOpinionCost() to emptyArray())
+                KendallsTauA() to emptyArray())
 
         // protocol
         val protocol = createProtocol(model, emptyArray(), scenario, scenarioParams, metrics, seed)

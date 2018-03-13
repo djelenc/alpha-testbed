@@ -10,6 +10,7 @@ import javafx.geometry.Pos
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
+import javafx.scene.control.TextArea
 import javafx.scene.layout.Priority
 import javafx.stage.StageStyle
 import javafx.util.converter.NumberStringConverter
@@ -19,41 +20,45 @@ import kotlin.properties.Delegates
 
 
 class BatchRunView : View() {
-    // maybe use form builder instead
-    // https://edvin.gitbooks.io/tornadofx-guide/content/part1/7.%20Layouts%20and%20Menus.html
-
     private val start = SimpleIntegerProperty(1)
     private val stop = SimpleIntegerProperty(30)
+    private var logger by singleAssign<TextArea>()
 
-    override val root = vbox {
-        prefHeight = 300.0
-        prefWidth = 450.0
+    private val controller: ATBController by inject()
 
-        hbox {
-            alignment = Pos.BASELINE_CENTER
-            label("Seed range: ")
-            textfield {
-                prefWidth = 45.0
-                textProperty().bindBidirectional(start, NumberStringConverter())
+    override val root = form {
+        fieldset("Seed range") {
+            field("Start") {
+                textfield {
+                    prefWidth = 45.0
+                    textProperty().bindBidirectional(start, NumberStringConverter())
+                }
             }
-            label(" - ")
-            textfield {
-                prefWidth = 45.0
-                textProperty().bindBidirectional(stop, NumberStringConverter())
+            field("Stop") {
+                textfield {
+                    prefWidth = 45.0
+                    textProperty().bindBidirectional(stop, NumberStringConverter())
+                }
             }
-            button("Start") { action { println("$start - $stop") } }
-            button("Stop") { action { println("$start - $stop") } }
+
         }
-        textarea {
+        buttonbar {
+            button("Start") {
+                action { controller.runBatch(start.value, stop.value, logger) }
+            }
+            button("Stop") {
+                action { controller.stop() }
+            }
+        }
+        logger = textarea {
             vgrow = Priority.ALWAYS
         }
     }
 }
 
 class ATBMainView : View() {
-
     private val controller: ATBController by inject()
-    private var chart: LineChart<Number, Number> by singleAssign()
+    private var chart by singleAssign<LineChart<Number, Number>>()
 
     private val seed = SimpleIntegerProperty(1)
 
@@ -155,10 +160,57 @@ class ATBController : Controller() {
             }
         })
 
-        val evaluationTask = setupEvaluation(protocol, duration, metrics.keys)
-        run(evaluationTask, { Platform.runLater { state = it } })
+        val job = setupEvaluation(protocol, duration, metrics.keys)
+        interrupter = run(job, { Platform.runLater { state = it } })
         state = Running
-        interrupter = evaluationTask.interrupter
+    }
+
+    fun runBatch(start: Int, stop: Int, logger: TextArea) {
+        val gui = ParametersGUI(ATBController::class.java.classLoader)
+        gui.setBatchRun(true)
+        val answer = gui.showDialog()
+        if (answer != 0) {
+            return
+        }
+
+        val duration = gui.setupParameters[5] as Int
+
+        val tasks = (start..stop).map { seed ->
+            // GUI returns instances of TMs and scenarios
+            // due to thread issues, we have to make copies for every run
+            val model = (gui.setupParameters[1] as TrustModel<*>).javaClass.newInstance()
+            val scenario = (gui.setupParameters[0] as Scenario).javaClass.newInstance()
+            val metrics = HashMap<Metric, Array<Any>>()
+            gui.setupParameters[2]?.let { metrics[it as Accuracy] = gui.accuracyParameters }
+            gui.setupParameters[3]?.let { metrics[it as Utility] = gui.utilityParameters }
+            gui.setupParameters[4]?.let { metrics[it as OpinionCost] = gui.opinionCostParameters }
+
+            val protocol = createProtocol(model, gui.trustModelParameters,
+                    scenario, gui.scenarioParameters, metrics, seed)
+            setupEvaluation(protocol, duration, metrics.keys)
+        }
+
+        interrupter = runBatch(tasks, {
+            Platform.runLater {
+                logger.appendText("All done!\n")
+            }
+        }, {
+            when (it) {
+                is Completed -> Platform.runLater {
+                    logger.appendText("Completed run ${it.data.seed}\n")
+                }
+                is Interrupted -> Platform.runLater {
+                    logger.appendText("Interrupted run ${it.data.seed} at ${it.tick}\n")
+                }
+                is Faulted -> Platform.runLater {
+                    logger.appendText("An exception (${it.thrown}) occurred at ${it.tick}\n")
+                }
+                else -> Platform.runLater {
+                    logger.appendText("Something else went wrong ...\n")
+                }
+            }
+        })
+        state = Running
     }
 }
 
