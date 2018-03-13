@@ -120,7 +120,7 @@ class ATBController : Controller() {
         })
 
         val evaluationTask = setupEvaluation(protocol, duration, metrics.keys)
-        runAsync(evaluationTask, { Platform.runLater { state = it } })
+        run(evaluationTask, { Platform.runLater { state = it } })
         state = Running
         interrupter = evaluationTask.interrupter
     }

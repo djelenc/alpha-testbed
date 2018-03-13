@@ -58,7 +58,7 @@ fun main(args: Array<String>) {
 
     val evaluationTask = setupEvaluation(protocol, duration, metrics.keys)
 
-    runAsync(evaluationTask, {
+    run(evaluationTask, {
         when (it) {
             is Completed -> println("Got ${it.data.readings.size} lines of data!")
             is Faulted -> println("Got an error: ${it.thrown.message}")

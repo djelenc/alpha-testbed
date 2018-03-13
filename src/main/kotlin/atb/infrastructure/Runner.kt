@@ -27,7 +27,7 @@ fun createProtocol(model: TrustModel<*>, modelParams: Array<Any>, scenario: Scen
 }
 
 /** Represents an evaluation task that can be run on a thread pool; [supplier] is the task that is to be executed,
- * and the [interrupter] is a function that can be used to interrupt the task once it starts. As the tasks ends,
+ * and the [interrupter] is a function that can be used to interrupt the task once it starts. Once the tasks ends,
  * invoking interrupter is a no-op. */
 class EvaluationTask(val supplier: Supplier<EvaluationState>, val interrupter: () -> Unit)
 
@@ -80,6 +80,29 @@ fun setupEvaluation(protocol: EvaluationProtocol, duration: Int, metrics: Set<Me
  *
  * @return A reference to the underlying completable future
  * */
-fun runAsync(task: EvaluationTask, callback: (EvaluationState) -> Unit): CompletableFuture<Void> =
+fun run(task: EvaluationTask, callback: (EvaluationState) -> Unit): CompletableFuture<Void> =
         CompletableFuture.supplyAsync(task.supplier).thenAccept { callback(it) }
 
+fun runBatch(tasks: List<EvaluationTask>, callback: () -> Unit): () -> Unit {
+    val interrupter: () -> Unit = { tasks.forEach { it.interrupter() } }
+
+    val futures = ArrayList<CompletableFuture<EvaluationState>>()
+
+    tasks.forEach {
+        futures.add(CompletableFuture
+                .supplyAsync(it.supplier)
+                .thenApply({
+                    when (it) {
+                        is Completed -> println("Completed run for ${it.data.seed}")
+                        else -> println("Something went wrong: $it")
+                    }
+                    it
+                }))
+    }
+
+    CompletableFuture.allOf(*futures.toTypedArray()).thenApply {
+        callback()
+    }
+
+    return interrupter
+}

@@ -10,24 +10,22 @@
  */
 package atb.app.manual
 
-import atb.infrastructure.*
+import atb.infrastructure.createProtocol
+import atb.infrastructure.runBatch
+import atb.infrastructure.setupEvaluation
 import atb.interfaces.Metric
 import atb.metric.CumulativeNormalizedUtility
 import atb.metric.DefaultOpinionCost
 import atb.metric.KendallsTauA
 import atb.scenario.TransitiveOpinionProviderSelection
 import atb.trustmodel.SimpleSelectingOpinionProviders
-import java.util.concurrent.CompletableFuture
 
 fun main(args: Array<String>) {
     val duration = 500
-    val jobs = ArrayList<EvaluationTask>()
-    val futures = ArrayList<CompletableFuture<EvaluationState>>()
+    val start = 1
+    val stop = 30
 
-    val startSeed = 1
-    val stopSeed = 30
-
-    for (seed in startSeed..stopSeed) {
+    val tasks = (start..stop).map { seed ->
         // trust model
         val model = SimpleSelectingOpinionProviders()
 
@@ -43,24 +41,13 @@ fun main(args: Array<String>) {
 
         // protocol
         val protocol = createProtocol(model, emptyArray(), scenario, scenarioParams, metrics, seed)
-        val task = setupEvaluation(protocol, duration, metrics.keys)
-        futures.add(CompletableFuture
-                .supplyAsync(task.supplier)
-                .thenApply({
-                    when (it) {
-                        is Completed -> {
-                            println("Completed run for ${it.data.seed}")
-                            it.data.toJSON()
-                        }
-                        else -> println("Something went wrong: $it")
-                    }
-                    it
-                }))
 
-        jobs.add(task)
+        setupEvaluation(protocol, duration, metrics.keys)
     }
 
-    CompletableFuture.allOf(*futures.toTypedArray()).thenApply {
-        println("All done!")
-    }.join()
+    val interrupt = runBatch(tasks, { println("All done!") })
+
+    Thread.sleep(3000)
+    interrupt()
+    Thread.sleep(3000)
 }
