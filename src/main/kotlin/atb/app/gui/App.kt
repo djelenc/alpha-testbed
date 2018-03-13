@@ -5,12 +5,14 @@ import atb.infrastructure.*
 import atb.interfaces.*
 import javafx.application.Application
 import javafx.application.Platform
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
-import javafx.scene.control.TextArea
 import javafx.scene.layout.Priority
 import javafx.stage.StageStyle
 import javafx.util.converter.NumberStringConverter
@@ -20,47 +22,119 @@ import kotlin.properties.Delegates
 
 
 class BatchRunView : View() {
-    private val start = SimpleIntegerProperty(1)
-    private val stop = SimpleIntegerProperty(30)
-    private var logger by singleAssign<TextArea>()
-
-    private val controller: ATBController by inject()
+    private val controller: BatchRunController by inject()
 
     override val root = form {
         fieldset("Seed range") {
             field("Start") {
                 textfield {
-                    prefWidth = 45.0
-                    textProperty().bindBidirectional(start, NumberStringConverter())
+                    //prefWidth = 45.0
+                    textProperty().bindBidirectional(controller.start, NumberStringConverter())
                 }
             }
             field("Stop") {
                 textfield {
-                    prefWidth = 45.0
-                    textProperty().bindBidirectional(stop, NumberStringConverter())
+                    //prefWidth = 45.0
+                    textProperty().bindBidirectional(controller.stop, NumberStringConverter())
                 }
             }
+            buttonbar {
+                button("Start") {
+                    action { controller.run() }
+                }
+                button("Stop") {
+                    action { controller.stop() }
+                }
+            }
+            progressbar {
+                fitToParentWidth()
+                progressProperty().bindBidirectional(controller.rate)
+            }
+        }
+        fieldset(labelPosition = Orientation.VERTICAL) {
+            field("", Orientation.VERTICAL) {
+                textarea {
+                    prefRowCount = 5
+                    vgrow = Priority.ALWAYS
+                    textProperty().bindBidirectional(controller.logger)
+                }
+            }
+        }
+    }
+}
 
-        }
-        buttonbar {
-            button("Start") {
-                action { controller.runBatch(start.value, stop.value, logger) }
+class BatchRunController : Controller() {
+    val start = SimpleIntegerProperty(1)
+    val stop = SimpleIntegerProperty(30)
+    val logger = SimpleStringProperty("")
+    val rate = SimpleDoubleProperty(0.0)
+
+    private var interrupter: () -> Unit = {}
+
+    private var state: EvaluationState by Delegates.observable<EvaluationState>(Idle) { _, _, new ->
+        Platform.runLater {
+            when (new) {
+                is Idle -> logger.value += "Evaluation is idle.\n"
+                is Running -> logger.value += "Run is in progress!\n"
+                is Faulted -> logger.value += "Run terminated abruptly: ${new.thrown}\n"
+                is Completed -> logger.value += "Run completed: ${new.data.readings.size} data points\n"
+                is Interrupted -> logger.value += "Run was interrupted at tick ${new.tick}\n"
             }
-            button("Stop") {
-                action { controller.stop() }
+        }
+    }
+
+    fun stop() = interrupter()
+
+    fun run() {
+        rate.value = 0.0
+        val gui = ParametersGUI(ATBController::class.java.classLoader)
+        val answer = gui.showDialog()
+        if (answer != 0) {
+            return
+        }
+
+        val duration = gui.setupParameters[5] as Int
+
+        val tasks = (start.value..stop.value).map { seed ->
+            // GUI returns instances of TMs and scenarios
+            // due to thread issues, we have to make copies for every run
+            val model = (gui.setupParameters[1] as TrustModel<*>).javaClass.newInstance()
+            val scenario = (gui.setupParameters[0] as Scenario).javaClass.newInstance()
+            val metrics = HashMap<Metric, Array<Any>>()
+            gui.setupParameters[2]?.let { metrics[it as Accuracy] = gui.accuracyParameters }
+            gui.setupParameters[3]?.let { metrics[it as Utility] = gui.utilityParameters }
+            gui.setupParameters[4]?.let { metrics[it as OpinionCost] = gui.opinionCostParameters }
+
+            val protocol = createProtocol(model, gui.trustModelParameters,
+                    scenario, gui.scenarioParameters, metrics, seed)
+            setupEvaluation(protocol, duration, metrics.keys)
+        }
+
+        val progressRate = 1.0 / (stop.value - start.value)
+
+        interrupter = runBatch(tasks, {
+            Platform.runLater {
+                logger.value += "All done!\n"
+                rate.value = 100.0
             }
-        }
-        logger = textarea {
-            vgrow = Priority.ALWAYS
-        }
+        }, {
+            Platform.runLater {
+                when (it) {
+                    is Completed -> logger.value += ("Completed run ${it.data.seed}\n")
+                    is Interrupted -> logger.value += ("Interrupted run ${it.data.seed} at ${it.tick}\n")
+                    is Faulted -> logger.value += ("An exception (${it.thrown}) occurred at ${it.tick}\n")
+                    else -> logger.value += ("Something else went wrong ...\n")
+                }
+                rate.value += progressRate
+            }
+        })
+        state = Running
     }
 }
 
 class ATBMainView : View() {
     private val controller: ATBController by inject()
     private var chart by singleAssign<LineChart<Number, Number>>()
-
-    private val seed = SimpleIntegerProperty(1)
 
     override val root = vbox {
         prefHeight = 400.0
@@ -70,11 +144,11 @@ class ATBMainView : View() {
             textfield {
                 alignment = Pos.TOP_LEFT
                 hgrow = Priority.ALWAYS
-                textProperty().bindBidirectional(seed, NumberStringConverter())
+                textProperty().bindBidirectional(controller.seed, NumberStringConverter())
             }
             button("Start") {
                 action {
-                    controller.run(seed.value, chart)
+                    controller.run(chart)
                 }
             }
             button("Stop") {
@@ -105,6 +179,7 @@ class ATBMainView : View() {
 }
 
 class ATBController : Controller() {
+    val seed = SimpleIntegerProperty(1)
 
     // plotting data (metric, service) -> [(tick, value), ... ]
     private val metricData = HashMap<Pair<Metric, Int>, XYChart.Series<Number, Number>>()
@@ -125,12 +200,11 @@ class ATBController : Controller() {
 
     fun stop() = interrupter()
 
-    fun run(seed: Int, chart: LineChart<Number, Number>) {
+    fun run(chart: LineChart<Number, Number>) {
         chart.data.clear()
         metricData.clear()
 
         val gui = ParametersGUI(ATBController::class.java.classLoader)
-        gui.setBatchRun(true)
         val answer = gui.showDialog()
         if (answer != 0) {
             return
@@ -150,7 +224,7 @@ class ATBController : Controller() {
             }
         }
 
-        val protocol = createProtocol(trustModel, gui.trustModelParameters, scenario, gui.scenarioParameters, metrics, seed)
+        val protocol = createProtocol(trustModel, gui.trustModelParameters, scenario, gui.scenarioParameters, metrics, seed.value)
         protocol.subscribe({
             for ((key, data) in metricData) {
                 val (metric, service) = key
@@ -162,54 +236,6 @@ class ATBController : Controller() {
 
         val job = setupEvaluation(protocol, duration, metrics.keys)
         interrupter = run(job, { Platform.runLater { state = it } })
-        state = Running
-    }
-
-    fun runBatch(start: Int, stop: Int, logger: TextArea) {
-        val gui = ParametersGUI(ATBController::class.java.classLoader)
-        gui.setBatchRun(true)
-        val answer = gui.showDialog()
-        if (answer != 0) {
-            return
-        }
-
-        val duration = gui.setupParameters[5] as Int
-
-        val tasks = (start..stop).map { seed ->
-            // GUI returns instances of TMs and scenarios
-            // due to thread issues, we have to make copies for every run
-            val model = (gui.setupParameters[1] as TrustModel<*>).javaClass.newInstance()
-            val scenario = (gui.setupParameters[0] as Scenario).javaClass.newInstance()
-            val metrics = HashMap<Metric, Array<Any>>()
-            gui.setupParameters[2]?.let { metrics[it as Accuracy] = gui.accuracyParameters }
-            gui.setupParameters[3]?.let { metrics[it as Utility] = gui.utilityParameters }
-            gui.setupParameters[4]?.let { metrics[it as OpinionCost] = gui.opinionCostParameters }
-
-            val protocol = createProtocol(model, gui.trustModelParameters,
-                    scenario, gui.scenarioParameters, metrics, seed)
-            setupEvaluation(protocol, duration, metrics.keys)
-        }
-
-        interrupter = runBatch(tasks, {
-            Platform.runLater {
-                logger.appendText("All done!\n")
-            }
-        }, {
-            when (it) {
-                is Completed -> Platform.runLater {
-                    logger.appendText("Completed run ${it.data.seed}\n")
-                }
-                is Interrupted -> Platform.runLater {
-                    logger.appendText("Interrupted run ${it.data.seed} at ${it.tick}\n")
-                }
-                is Faulted -> Platform.runLater {
-                    logger.appendText("An exception (${it.thrown}) occurred at ${it.tick}\n")
-                }
-                else -> Platform.runLater {
-                    logger.appendText("Something else went wrong ...\n")
-                }
-            }
-        })
         state = Running
     }
 }
