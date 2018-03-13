@@ -78,31 +78,36 @@ fun setupEvaluation(protocol: EvaluationProtocol, duration: Int, metrics: Set<Me
 /**
  * Runs given evaluation task asynchronously and fires the callback upon competition.
  *
- * @return A reference to the underlying completable future
+ * @return A handle to interrupt the task
  * */
-fun run(task: EvaluationTask, callback: (EvaluationState) -> Unit): CompletableFuture<Void> =
-        CompletableFuture.supplyAsync(task.supplier).thenAccept { callback(it) }
+fun run(task: EvaluationTask, callback: (EvaluationState) -> Unit): () -> Unit {
+    CompletableFuture.supplyAsync(task.supplier).thenAccept { callback(it) }
+    return task.interrupter
+}
 
-fun runBatch(tasks: List<EvaluationTask>, callback: () -> Unit): () -> Unit {
-    val interrupter: () -> Unit = { tasks.forEach { it.interrupter() } }
+/**
+ * Runs given list of evaluation tasks asynchronously and fires the [finished] callback upon
+ * competition. The optional parameter, [progress], is invoked upon completition of every
+ * task in the list.
+ *
+ * @return A handle to interrupt the entire run (completed, running and scheduled tasks)
+ */
+fun runBatch(tasks: List<EvaluationTask>, finished: (List<EvaluationState>) -> Unit,
+             progress: (EvaluationState) -> Unit = {}): () -> Unit {
+    val interruptAll: () -> Unit = { tasks.forEach { it.interrupter() } }
 
-    val futures = ArrayList<CompletableFuture<EvaluationState>>()
+    val allTasksAsync = tasks.map {
+        CompletableFuture.supplyAsync(it.supplier).thenApply {
+            progress(it)
+            it
+        }
+    }.toTypedArray()
 
-    tasks.forEach {
-        futures.add(CompletableFuture
-                .supplyAsync(it.supplier)
-                .thenApply({
-                    when (it) {
-                        is Completed -> println("Completed run for ${it.data.seed}")
-                        else -> println("Something went wrong: $it")
-                    }
-                    it
-                }))
+    // wait for all to complete, then fire callback
+    CompletableFuture.allOf(*allTasksAsync).thenApply {
+        val completed = allTasksAsync.map { it.join() }
+        finished(completed)
     }
 
-    CompletableFuture.allOf(*futures.toTypedArray()).thenApply {
-        callback()
-    }
-
-    return interrupter
+    return interruptAll
 }

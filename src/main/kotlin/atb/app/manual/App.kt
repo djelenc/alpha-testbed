@@ -17,6 +17,7 @@ import atb.metric.DefaultOpinionCost
 import atb.metric.KendallsTauA
 import atb.scenario.TransitiveOpinionProviderSelection
 import atb.trustmodel.SimpleSelectingOpinionProviders
+import java.util.concurrent.CountDownLatch
 
 /**
  * An example showing how to run an evaluation in a simple Kotlin program.
@@ -58,14 +59,19 @@ fun main(args: Array<String>) {
 
     val evaluationTask = setupEvaluation(protocol, duration, metrics.keys)
 
+    val latch = CountDownLatch(1)
+
     run(evaluationTask, {
         when (it) {
             is Completed -> println("Got ${it.data.readings.size} lines of data!")
-            is Faulted -> println("Got an error: ${it.thrown.message}")
+            is Faulted -> println("Run stopped unexpectedly at tick ${it.tick} because of ${it.thrown.message}")
             is Interrupted -> println("Run was interrupted at tick ${it.tick}")
             else -> throw IllegalStateException("State $it should never occur here.")
         }
-    }).join() // this will block until evaluation finishes
 
+        latch.countDown()
+    })
+
+    latch.await()
     println("Finished testing '${protocol.trustModel}' in '${protocol.scenario}'.")
 }

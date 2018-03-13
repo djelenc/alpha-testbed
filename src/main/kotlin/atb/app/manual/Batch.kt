@@ -10,15 +10,14 @@
  */
 package atb.app.manual
 
-import atb.infrastructure.createProtocol
-import atb.infrastructure.runBatch
-import atb.infrastructure.setupEvaluation
+import atb.infrastructure.*
 import atb.interfaces.Metric
 import atb.metric.CumulativeNormalizedUtility
 import atb.metric.DefaultOpinionCost
 import atb.metric.KendallsTauA
 import atb.scenario.TransitiveOpinionProviderSelection
 import atb.trustmodel.SimpleSelectingOpinionProviders
+import java.util.concurrent.CountDownLatch
 
 fun main(args: Array<String>) {
     val duration = 500
@@ -45,9 +44,19 @@ fun main(args: Array<String>) {
         setupEvaluation(protocol, duration, metrics.keys)
     }
 
-    val interrupt = runBatch(tasks, { println("All done!") })
+    val latch = CountDownLatch(1)
 
-    Thread.sleep(3000)
-    interrupt()
-    Thread.sleep(3000)
+    runBatch(tasks, {
+        println("All done!")
+        latch.countDown()
+    }, {
+        when (it) {
+            is Completed -> println("Completed run ${it.data.seed}")
+            is Interrupted -> println("Interrupted at ${it.tick}")
+            is Faulted -> println("An exception (${it.thrown}) occurred at ${it.tick}")
+            else -> println("Something else went wrong ...")
+        }
+    })
+
+    latch.await()
 }
