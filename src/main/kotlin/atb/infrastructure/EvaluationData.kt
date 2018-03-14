@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder
 import com.opencsv.CSVWriter
 import java.io.File
 import java.io.FileWriter
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -44,23 +45,45 @@ data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Met
         writer.close()
     }
 
-    fun toJSON(fileName: String = autoName("json")) = File(fileName).printWriter().use {
-        val converter = GsonBuilder().apply {
-            registerTypeAdapter<Metric> { serialize { it.src.toString().toJson() } }
-            registerTypeAdapter<EvaluationProtocol> {
-                serialize {
-                    jsonObject(
-                            "scenario" to it.src.scenario.toString(),
-                            "trustModel" to it.src.trustModel.toString()
-                    )
-                }
-            }
-            setPrettyPrinting()
-            setExclusionStrategies(ExcludeModelsAndScenarios())
-        }.create()
+    /**
+     * Writes evaluation data as JSON to [fileName] in directory [path]. JSON object has the
+     * following structure:
+     * ```json
+     * {
+     *   "protocol": {
+     *     "scenario": "Scenario name",
+     *     "trustModel": "Trust model name"
+     *   },
+     *   "metrics": ["Kendall's Tau-A"],
+     *   "readings": [{
+     *     "tick": 1,
+     *     "metric": "Kendall's Tau-A",
+     *     "service": 0,
+     *     "value": 0.65
+     *     }, ... remaining readings ...
+     *   ],
+     *   "seed": 1
+     * }
+     * ```
+     */
+    fun toJSON(path: String = System.getProperty("user.dir"), fileName: String = autoName("json")) =
+            File(Paths.get(path, fileName).toUri()).printWriter().use {
+                val converter = GsonBuilder().apply {
+                    registerTypeAdapter<Metric> { serialize { it.src.toString().toJson() } }
+                    registerTypeAdapter<EvaluationProtocol> {
+                        serialize {
+                            jsonObject(
+                                    "scenario" to it.src.scenario.toString(),
+                                    "trustModel" to it.src.trustModel.toString()
+                            )
+                        }
+                    }
+                    setPrettyPrinting()
+                    setExclusionStrategies(ExcludeModelsAndScenarios())
+                }.create()
 
-        it.write(converter.toJson(this))
-    }
+                it.write(converter.toJson(this))
+            }
 
     /**
      * Because of class overriding, do not JSON encode [TrustModel] and [Scenario] instances

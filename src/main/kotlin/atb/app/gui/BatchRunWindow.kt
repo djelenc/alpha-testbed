@@ -35,7 +35,10 @@ class BatchRunView : View() {
                     hgrow = Priority.ALWAYS
                     action {
                         val dir = chooseDirectory("Select folder for saving results")
-                        dir?.let { text = it.toString() }
+                        dir?.let {
+                            text = it.toString()
+                            controller.outputDirectory = it.toString()
+                        }
                     }
                 }
             }
@@ -64,10 +67,9 @@ class BatchRunView : View() {
             }
             field("Log output", Orientation.VERTICAL) {
                 textarea {
-                    //prefRowCount = 5
                     vgrow = Priority.ALWAYS
                     textProperty().bindBidirectional(controller.logger)
-                    controller.logger.onChange { positionCaret(length) } // auto-scroll
+                    controller.logger.onChange { positionCaret(length) } // auto-scroll fix
                 }
             }
         }
@@ -79,6 +81,7 @@ class BatchRunController : Controller() {
     val stop = SimpleIntegerProperty(30)
     val logger = SimpleStringProperty("")
     val rate = SimpleDoubleProperty(0.0)
+    var outputDirectory: String = System.getProperty("user.dir")
 
     val isRunning = SimpleBooleanProperty(false)
 
@@ -113,14 +116,20 @@ class BatchRunController : Controller() {
         val progressRate = 1.0 / (stop.value - start.value)
         rate.value = 0.0
 
-        interrupter = runBatch(tasks, {
+        interrupter = runBatch(tasks, { results ->
             Platform.runLater {
                 rate.value = 100.0
                 isRunning.value = false
                 when {
-                    it.any { it is Interrupted } -> logger.value += "Evaluation was interrupted.\n"
-                    it.any { it is Faulted } -> logger.value += "Some runs failed.\n"
-                    it.all { it is Completed } -> logger.value += "Evaluation completed.\n"
+                    results.any { it is Interrupted } -> logger.value += "Evaluation was interrupted.\n"
+                    results.any { it is Faulted } -> logger.value += "Some runs failed.\n"
+                    results.all { it is Completed } -> {
+                        logger.value += "Evaluation completed, writing results to $outputDirectory ... "
+                        results.forEach {
+                            (it as Completed).data.toJSON(outputDirectory)
+                        }
+                        logger.value += "done.\n"
+                    }
                     else -> throw IllegalStateException("All states have to be complete")
                 }
             }
