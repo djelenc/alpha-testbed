@@ -10,7 +10,7 @@ data class Completed(val data: EvaluationData) : EvaluationState()
 data class Interrupted(val tick: Int, val data: EvaluationData) : EvaluationState()
 
 /** Evaluation has ended with an exception  */
-data class Faulted(val thrown: Throwable) : EvaluationState()
+data class Faulted(val tick: Int, val thrown: Throwable) : EvaluationState()
 
 /** Evaluation has not yet started */
 object Idle : EvaluationState()

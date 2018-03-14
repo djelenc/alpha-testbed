@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 David Jelenc.
+ * Copyright (c) 2018 David Jelenc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,13 @@
  */
 package atb.app.manual
 
-import atb.common.DefaultRandomGenerator
-import atb.core.AlphaTestbed
-import atb.infrastructure.runAsync
+import atb.infrastructure.*
 import atb.interfaces.Metric
 import atb.metric.CumulativeNormalizedUtility
 import atb.metric.DefaultOpinionCost
 import atb.metric.KendallsTauA
 import atb.scenario.TransitiveOpinionProviderSelection
 import atb.trustmodel.SimpleSelectingOpinionProviders
-import java.util.*
 import java.util.concurrent.CountDownLatch
 
 /**
@@ -36,28 +33,22 @@ fun main(args: Array<String>) {
 
     // trust model
     val model = SimpleSelectingOpinionProviders()
-    model.setRandomGenerator(DefaultRandomGenerator(seed))
-    model.initialize()
 
     // scenario
     val scenario = TransitiveOpinionProviderSelection()
-    scenario.randomGenerator = DefaultRandomGenerator(seed)
-    scenario.initialize(100, 0.05, 0.1, 1.0, 1.0)
+    val scenarioParams = arrayOf(100, 0.05, 0.1, 1.0, 1.0)
 
     // metrics
-    val accuracy = KendallsTauA()
-    val utility = CumulativeNormalizedUtility()
-    val opinionCost = DefaultOpinionCost()
-
-    val metrics = HashMap<Metric, Array<Any>?>()
-    metrics[accuracy] = null
-    metrics[utility] = null
-    metrics[opinionCost] = null
+    val metrics = hashMapOf<Metric, Array<Any>>(
+            KendallsTauA() to emptyArray(),
+            CumulativeNormalizedUtility() to emptyArray(),
+            DefaultOpinionCost() to emptyArray()
+    )
 
     // protocol
-    val protocol = AlphaTestbed.getProtocol(model, scenario, metrics)
+    val protocol = createProtocol(model, emptyArray(), scenario, scenarioParams, metrics, seed)
 
-    // subscribe for receiving readings from metrics
+    // subscribe to receive results in real-time
     protocol.subscribe({
         for (metric in metrics.keys) {
             for (service in it.scenario.services) {
@@ -66,20 +57,21 @@ fun main(args: Array<String>) {
         }
     })
 
+    val evaluationTask = setupEvaluation(protocol, duration, metrics.keys)
+
     val latch = CountDownLatch(1)
 
-    runAsync(protocol, duration, metrics.keys, {
-        println("Got ${it.data.readings.size} lines of data!")
-        latch.countDown()
-    }, {
-        println("Got an error: ${it.thrown.message}")
-        latch.countDown()
-    }, {
-        println("Run was interrupted at tick ${it.tick}")
+    run(evaluationTask, {
+        when (it) {
+            is Completed -> println("Got ${it.data.readings.size} lines of data!")
+            is Faulted -> println("Run stopped unexpectedly at tick ${it.tick} because of ${it.thrown.message}")
+            is Interrupted -> println("Run was interrupted at tick ${it.tick}")
+            else -> throw IllegalStateException("State $it should never occur here.")
+        }
+
         latch.countDown()
     })
 
     latch.await()
-
     println("Finished testing '${protocol.trustModel}' in '${protocol.scenario}'.")
 }

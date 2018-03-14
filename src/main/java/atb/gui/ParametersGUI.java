@@ -66,6 +66,7 @@ public class ParametersGUI {
         opinioncostWpd.setBack(utilityWpd.getID());
 
         mainPanel.initialize(mainWpd, cl);
+        mainPanel.setBatchRun(true);
         wizard.setCurrentPanel(mainWpd.getID());
     }
 
@@ -87,10 +88,6 @@ public class ParametersGUI {
                 Arrays.toString(sim.getUtilityParameters()));
         System.out.printf("Opinion cost parameters: %s\n",
                 Arrays.toString(sim.getOpinionCostParameters()));
-    }
-
-    public void setBatchRun(boolean batch) {
-        mainPanel.setBatchRun(batch);
     }
 
     /**
