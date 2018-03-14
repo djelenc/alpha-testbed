@@ -7,10 +7,12 @@ import javafx.application.Application
 import javafx.application.Platform
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
-import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.layout.Priority
@@ -134,7 +136,6 @@ class BatchRunController : Controller() {
 
 class ATBMainView : View() {
     private val controller: ATBController by inject()
-    private var chart by singleAssign<LineChart<Number, Number>>()
 
     override val root = vbox {
         prefHeight = 400.0
@@ -148,7 +149,7 @@ class ATBMainView : View() {
             }
             button("Start") {
                 action {
-                    controller.run(chart)
+                    controller.run()
                 }
             }
             button("Stop") {
@@ -163,7 +164,7 @@ class ATBMainView : View() {
             }
         }
 
-        chart = linechart("Results",
+        linechart("Results",
                 NumberAxis().apply {
                     tickUnit = 25.0
                     lowerBound = 0.0
@@ -174,12 +175,14 @@ class ATBMainView : View() {
             isAutoRanging = false
         }) {
             vgrow = Priority.ALWAYS
+            dataProperty().bindBidirectional(controller.series)
         }
     }
 }
 
 class ATBController : Controller() {
     val seed = SimpleIntegerProperty(1)
+    val series = SimpleObjectProperty<ObservableList<XYChart.Series<Number, Number>>>(FXCollections.observableArrayList())
 
     // used for interrupting executing runs
     private var interrupter: () -> Unit = {}
@@ -197,8 +200,8 @@ class ATBController : Controller() {
 
     fun stop() = interrupter()
 
-    fun run(chart: LineChart<Number, Number>) {
-        chart.data.clear()
+    fun run() {
+        series.value.clear()
 
         val gui = ParametersGUI(ATBController::class.java.classLoader)
         val answer = gui.showDialog()
@@ -221,7 +224,7 @@ class ATBController : Controller() {
         metrics.forEach { metric, _ ->
             for (service in scenario.services) {
                 metric2series[Pair(metric, service)] = XYChart.Series<Number, Number>().apply { name = metric.toString() }
-                chart.data.add(metric2series[Pair(metric, service)])
+                series.value.add(metric2series[Pair(metric, service)])
             }
         }
 
