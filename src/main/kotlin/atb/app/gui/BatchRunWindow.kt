@@ -63,7 +63,7 @@ class BatchRunView : View() {
         fieldset("Run progress", labelPosition = Orientation.VERTICAL) {
             progressbar {
                 fitToParentWidth()
-                progressProperty().bindBidirectional(controller.rate)
+                progressProperty().bindBidirectional(controller.progress)
             }
             field("Log output", Orientation.VERTICAL) {
                 textarea {
@@ -80,7 +80,7 @@ class BatchRunController : Controller() {
     val start = SimpleIntegerProperty(1)
     val stop = SimpleIntegerProperty(30)
     val logger = SimpleStringProperty("")
-    val rate = SimpleDoubleProperty(0.0)
+    val progress = SimpleDoubleProperty(0.0)
     var outputDirectory: String = System.getProperty("user.dir")
 
     val isRunning = SimpleBooleanProperty(false)
@@ -114,11 +114,11 @@ class BatchRunController : Controller() {
         }
 
         val progressRate = 1.0 / (stop.value - start.value)
-        rate.value = 0.0
+        progress.value = 0.0
 
         interrupter = runBatch(tasks, { results ->
             Platform.runLater {
-                rate.value = 100.0
+                progress.value = 100.0
                 isRunning.value = false
                 when {
                     results.any { it is Interrupted } -> logger.value += "Evaluation was interrupted.\n"
@@ -141,7 +141,7 @@ class BatchRunController : Controller() {
                     is Faulted -> logger.value += "An exception (${it.thrown}) occurred at ${it.tick}\n"
                     else -> logger.value += "Something else went wrong ...\n"
                 }
-                rate.value += progressRate
+                progress.value += progressRate
             }
         })
         isRunning.value = true

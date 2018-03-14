@@ -4,6 +4,7 @@ import atb.gui.ParametersGUI
 import atb.infrastructure.*
 import atb.interfaces.*
 import javafx.application.Platform
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
@@ -15,6 +16,7 @@ import javafx.scene.layout.Priority
 import javafx.stage.StageStyle
 import javafx.util.converter.NumberStringConverter
 import tornadofx.*
+import tornadofx.controlsfx.statusbar
 import kotlin.properties.Delegates
 
 class ATBMainView : View() {
@@ -60,6 +62,9 @@ class ATBMainView : View() {
             vgrow = Priority.ALWAYS
             dataProperty().bindBidirectional(controller.series)
         }
+        statusbar {
+            progressProperty().bind(controller.progress)
+        }
     }
 }
 
@@ -67,6 +72,7 @@ class ATBMainController : Controller() {
     val seed = SimpleIntegerProperty(1)
     val series = SimpleObjectProperty<ObservableList<XYChart.Series<Number, Number>>>(
             FXCollections.observableArrayList())
+    val progress = SimpleDoubleProperty(0.0)
 
     // used for interrupting executing runs
     private var interrupter: () -> Unit = {}
@@ -85,13 +91,14 @@ class ATBMainController : Controller() {
     fun stop() = interrupter()
 
     fun run() {
-        series.value.clear()
-
         val gui = ParametersGUI(ATBMainController::class.java.classLoader)
         val answer = gui.showDialog()
         if (answer != 0) {
             return
         }
+
+        series.value.clear()
+        progress.value = 0.0
 
         val scenario = gui.setupParameters[0] as Scenario
         val trustModel = gui.setupParameters[1] as TrustModel<*>
@@ -115,11 +122,14 @@ class ATBMainController : Controller() {
             }
         }
 
+        val rate = 1.0 / duration
+
         protocol.subscribe({
             for ((key, data) in metric2series) {
                 val (metric, service) = key
                 Platform.runLater {
                     data.data.add(XYChart.Data(it.time, it.getResult(service, metric)))
+                    progress.value += rate
                 }
             }
         })
