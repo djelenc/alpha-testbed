@@ -4,9 +4,7 @@ import atb.gui.ParametersGUI
 import atb.infrastructure.*
 import atb.interfaces.*
 import javafx.application.Platform
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.*
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.Pos
@@ -31,21 +29,19 @@ class ATBMainView : View() {
                 alignment = Pos.TOP_LEFT
                 hgrow = Priority.ALWAYS
                 textProperty().bindBidirectional(controller.seed, NumberStringConverter())
+                enableWhen(controller.isRunning.not())
             }
             button("Start") {
-                action {
-                    controller.run()
-                }
+                action { controller.run() }
+                enableWhen(controller.isRunning.not())
             }
             button("Stop") {
-                action {
-                    controller.stop()
-                }
+                action { controller.stop() }
+                enableWhen(controller.isRunning)
             }
             button("Batch run") {
-                action {
-                    find(BatchRunView::class).openModal(stageStyle = StageStyle.UTILITY)
-                }
+                action { find(BatchRunView::class).openModal(stageStyle = StageStyle.UTILITY) }
+                enableWhen(controller.isRunning.not())
             }
         }
 
@@ -54,7 +50,7 @@ class ATBMainView : View() {
                     tickUnit = 25.0
                     lowerBound = 0.0
                 }, NumberAxis().apply {
-            upperBound = 1.0
+            upperBound = 1.01
             lowerBound = 0.0
             tickUnit = 0.05
             isAutoRanging = false
@@ -64,6 +60,8 @@ class ATBMainView : View() {
         }
         statusbar {
             progressProperty().bind(controller.progress)
+            textProperty().bind(controller.statusText)
+            // textProperty().onChange { println("Change: $it") }
         }
     }
 }
@@ -73,6 +71,8 @@ class ATBMainController : Controller() {
     val series = SimpleObjectProperty<ObservableList<XYChart.Series<Number, Number>>>(
             FXCollections.observableArrayList())
     val progress = SimpleDoubleProperty(0.0)
+    val statusText = SimpleStringProperty("Idle")
+    val isRunning = SimpleBooleanProperty(false)
 
     // used for interrupting executing runs
     private var interrupter: () -> Unit = {}
@@ -86,6 +86,11 @@ class ATBMainController : Controller() {
             is Completed -> println("Run completed: ${new.data.readings.size} data points")
             is Interrupted -> println("Run was interrupted at tick ${new.tick}")
         }
+
+        if (new !is Running) isRunning.value = false
+
+        progress.value = 0.0
+        statusText.value = new.javaClass.simpleName
     }
 
     fun stop() = interrupter()
@@ -137,5 +142,6 @@ class ATBMainController : Controller() {
         val job = setupEvaluation(protocol, duration, metrics.keys)
         interrupter = run(job, { Platform.runLater { state = it } })
         state = Running
+        isRunning.value = true
     }
 }
