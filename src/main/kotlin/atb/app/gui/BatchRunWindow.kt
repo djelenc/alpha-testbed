@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.Orientation
 import javafx.scene.layout.Priority
 import javafx.util.converter.NumberStringConverter
 import tornadofx.*
@@ -16,6 +17,7 @@ class BatchRunView : View() {
     private val controller: BatchRunController by inject()
 
     override val root = form {
+        title = "Batch runs"
         fieldset("Seed range") {
             field("Start") {
                 textfield {
@@ -27,35 +29,48 @@ class BatchRunView : View() {
                     textProperty().bindBidirectional(controller.stop, NumberStringConverter())
                 }
             }
-
-            disableWhen { controller.isRunning }
+            field("Output directory") {
+                button {
+                    text = System.getProperty("user.dir")
+                    hgrow = Priority.ALWAYS
+                    action {
+                        val dir = chooseDirectory("Select folder for saving results")
+                        dir?.let { text = it.toString() }
+                    }
+                }
+            }
             enableWhen { controller.isRunning.not() }
         }
-        fieldset {
+        fieldset("Manage run") {
             buttonbar {
                 button("Start") {
-                    action { controller.run() }
-                    disableWhen { controller.isRunning }
-                    enableWhen { controller.isRunning.not() }
+                    action {
+                        controller.logger.value = ""
+                        controller.run()
+                    }
+                    enableWhen(controller.isRunning.not())
                 }
                 button("Stop") {
                     action { controller.stop() }
-                    disableWhen { controller.isRunning.not() }
-                    enableWhen { controller.isRunning }
+                    enableWhen(controller.isRunning)
                 }
             }
+            spacer { prefHeight = 10.0 }
+        }
+        fieldset("Run progress", labelPosition = Orientation.VERTICAL) {
             progressbar {
                 fitToParentWidth()
                 progressProperty().bindBidirectional(controller.rate)
             }
+            field("Log output", Orientation.VERTICAL) {
+                textarea {
+                    //prefRowCount = 5
+                    vgrow = Priority.ALWAYS
+                    textProperty().bindBidirectional(controller.logger)
+                    controller.logger.onChange { positionCaret(length) } // auto-scroll
+                }
+            }
         }
-
-        textarea {
-            prefRowCount = 5
-            vgrow = Priority.ALWAYS
-            textProperty().bindBidirectional(controller.logger)
-        }
-
     }
 }
 
@@ -80,10 +95,11 @@ class BatchRunController : Controller() {
 
         val duration = gui.setupParameters[5] as Int
         val tasks = (start.value..stop.value).map { seed ->
-            // GUI returns instances of TMs and scenarios
-            // due to thread issues, we have to make copies for every run
+            // To avoid threading issues, we have to copy instances of TMs and scenarios
+            // in every run; the ones we get from ParametersGUI are not thread safe.
             val model = (gui.setupParameters[1] as TrustModel<*>).javaClass.newInstance()
             val scenario = (gui.setupParameters[0] as Scenario).javaClass.newInstance()
+
             val metrics = HashMap<Metric, Array<Any>>()
             gui.setupParameters[2]?.let { metrics[it as Accuracy] = gui.accuracyParameters }
             gui.setupParameters[3]?.let { metrics[it as Utility] = gui.utilityParameters }
@@ -99,13 +115,12 @@ class BatchRunController : Controller() {
 
         interrupter = runBatch(tasks, {
             Platform.runLater {
-                logger.value += "All done!\n"
                 rate.value = 100.0
                 isRunning.value = false
                 when {
-                    it.any { it is Interrupted } -> println("Batch run was interrupted")
-                    it.any { it is Faulted } -> println("Batch run failed")
-                    it.all { it is Completed } -> println("All good!")
+                    it.any { it is Interrupted } -> logger.value += "Evaluation was interrupted.\n"
+                    it.any { it is Faulted } -> logger.value += "Some runs failed.\n"
+                    it.all { it is Completed } -> logger.value += "Evaluation completed.\n"
                     else -> throw IllegalStateException("All states have to be complete")
                 }
             }
