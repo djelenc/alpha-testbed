@@ -4,7 +4,7 @@
 
     <groupId>atb</groupId>
     <artifactId>alpha-testbed</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Alpha Testbed</name>
@@ -113,6 +113,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <mainClass>atb.app.gui.AppKt</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -87,7 +87,7 @@ fun run(task: EvaluationTask, callback: (EvaluationState) -> Unit): () -> Unit {
 
 /**
  * Runs given list of evaluation tasks asynchronously and fires the [finished] callback upon
- * competition. The optional parameter, [progress], is invoked upon completition of every
+ * competition. The optional parameter, [progress], is invoked upon completion of every
  * task in the list.
  *
  * @return A handle to interrupt the entire run (completed, running and scheduled tasks)
