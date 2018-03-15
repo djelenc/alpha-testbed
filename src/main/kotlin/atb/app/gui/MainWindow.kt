@@ -139,7 +139,12 @@ class ATBMainController : Controller() {
         })
 
         val job = setupEvaluation(protocol, duration, metrics.keys)
-        interrupter = run(job, { Platform.runLater { state.value = it } })
+        interrupter = run(job, {
+            Platform.runLater {
+                state.value = it
+                if (it is Faulted) it.thrown.printStackTrace()
+            }
+        })
         state.value = Running
     }
 }
