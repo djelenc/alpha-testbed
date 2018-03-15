@@ -31,14 +31,11 @@ class BatchRunView : View() {
             }
             field("Output directory") {
                 button {
-                    text = System.getProperty("user.dir")
                     hgrow = Priority.ALWAYS
+                    textProperty().bindBidirectional(controller.outputDirectory)
                     action {
                         val dir = chooseDirectory("Select folder for saving results")
-                        dir?.let {
-                            text = it.toString()
-                            controller.outputDirectory = it.toString()
-                        }
+                        dir?.let { controller.outputDirectory.value = it.toString() }
                     }
                 }
             }
@@ -81,7 +78,7 @@ class BatchRunController : Controller() {
     val stop = SimpleIntegerProperty(30)
     val logger = SimpleStringProperty("")
     val progress = SimpleDoubleProperty(0.0)
-    var outputDirectory: String = System.getProperty("user.dir")
+    val outputDirectory = SimpleStringProperty(System.getProperty("user.dir"))
 
     val isRunning = SimpleBooleanProperty(false)
 
@@ -124,11 +121,9 @@ class BatchRunController : Controller() {
                     results.any { it is Interrupted } -> logger.value += "Evaluation was interrupted.\n"
                     results.any { it is Faulted } -> logger.value += "Some runs failed.\n"
                     results.all { it is Completed } -> {
-                        logger.value += "Evaluation completed, writing results to $outputDirectory ... "
-                        results.forEach {
-                            (it as Completed).data.toJSON(outputDirectory)
-                        }
-                        logger.value += "done.\n"
+                        logger.value += "Evaluation completed.\n"
+                        results.forEach { (it as Completed).data.toJSON(outputDirectory.value) }
+                        logger.value += "Results saved to ${outputDirectory.value}.\n"
                     }
                     else -> throw IllegalStateException("All states have to be complete")
                 }

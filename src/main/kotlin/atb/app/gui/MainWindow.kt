@@ -4,7 +4,9 @@ import atb.gui.ParametersGUI
 import atb.infrastructure.*
 import atb.interfaces.*
 import javafx.application.Platform
-import javafx.beans.property.*
+import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.Pos
@@ -12,10 +14,11 @@ import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
 import javafx.scene.layout.Priority
 import javafx.stage.StageStyle
+import javafx.util.StringConverter
 import javafx.util.converter.NumberStringConverter
+import sun.plugin.dom.exception.InvalidStateException
 import tornadofx.*
 import tornadofx.controlsfx.statusbar
-import kotlin.properties.Delegates
 
 class ATBMainView : View() {
     private val controller: ATBMainController by inject()
@@ -29,19 +32,19 @@ class ATBMainView : View() {
                 alignment = Pos.TOP_LEFT
                 hgrow = Priority.ALWAYS
                 textProperty().bindBidirectional(controller.seed, NumberStringConverter())
-                enableWhen(controller.isRunning.not())
+                enableWhen(controller.state.isNotEqualTo(Running))
             }
             button("Start") {
                 action { controller.run() }
-                enableWhen(controller.isRunning.not())
+                enableWhen(controller.state.isNotEqualTo(Running))
             }
             button("Stop") {
                 action { controller.stop() }
-                enableWhen(controller.isRunning)
+                enableWhen(controller.state.isEqualTo(Running))
             }
             button("Batch run") {
                 action { find(BatchRunView::class).openModal(stageStyle = StageStyle.UTILITY) }
-                enableWhen(controller.isRunning.not())
+                enableWhen(controller.state.isNotEqualTo(Running))
             }
         }
 
@@ -60,8 +63,19 @@ class ATBMainView : View() {
         }
         statusbar {
             progressProperty().bind(controller.progress)
-            textProperty().bind(controller.statusText)
-            // textProperty().onChange { println("Change: $it") }
+            textProperty().bindBidirectional(controller.state, EvaluationStateToString())
+        }
+    }
+
+    /** Converts between EvaluationState instances and their string representation */
+    internal class EvaluationStateToString : StringConverter<EvaluationState>() {
+        override fun fromString(value: String): EvaluationState =
+                throw InvalidStateException("This property cannot be created from String!")
+
+        override fun toString(value: EvaluationState): String = when (value) {
+            is Interrupted -> "Interrupted at ${value.tick}"
+            is Faulted -> "Error occurred at ${value.tick}: ${value.thrown.message}"
+            else -> value.javaClass.simpleName
         }
     }
 }
@@ -71,27 +85,12 @@ class ATBMainController : Controller() {
     val series = SimpleObjectProperty<ObservableList<XYChart.Series<Number, Number>>>(
             FXCollections.observableArrayList())
     val progress = SimpleDoubleProperty(0.0)
-    val statusText = SimpleStringProperty("Idle")
-    val isRunning = SimpleBooleanProperty(false)
 
     // used for interrupting executing runs
     private var interrupter: () -> Unit = {}
 
     // current evaluation state
-    private var state: EvaluationState by Delegates.observable<EvaluationState>(Idle) { _, _, new ->
-        when (new) {
-            is Idle -> println("Evaluation is idling")
-            is Running -> println("Run is in progress!")
-            is Faulted -> println("Run terminated abruptly: ${new.thrown}")
-            is Completed -> println("Run completed: ${new.data.readings.size} data points")
-            is Interrupted -> println("Run was interrupted at tick ${new.tick}")
-        }
-
-        if (new !is Running) isRunning.value = false
-
-        progress.value = 0.0
-        statusText.value = new.javaClass.simpleName
-    }
+    val state = SimpleObjectProperty<EvaluationState>(Idle)
 
     fun stop() = interrupter()
 
@@ -140,8 +139,7 @@ class ATBMainController : Controller() {
         })
 
         val job = setupEvaluation(protocol, duration, metrics.keys)
-        interrupter = run(job, { Platform.runLater { state = it } })
-        state = Running
-        isRunning.value = true
+        interrupter = run(job, { Platform.runLater { state.value = it } })
+        state.value = Running
     }
 }
