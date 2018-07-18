@@ -122,7 +122,8 @@ class BatchRunController : Controller() {
                     results.any { it is Faulted } -> logger.value += "Some runs failed.\n"
                     results.all { it is Completed } -> {
                         logger.value += "Evaluation completed.\n"
-                        results.forEach { (it as Completed).data.toJSON(outputDirectory.value) }
+                        BatchEvaluationData(results.map { (it as Completed).data })
+                                .toJSON(outputDirectory.value)
                         logger.value += "Results saved to ${outputDirectory.value}.\n"
                     }
                     else -> throw IllegalStateException("All states have to be complete")

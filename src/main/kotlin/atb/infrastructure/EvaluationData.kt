@@ -22,7 +22,9 @@ data class Reading(val tick: Int, val metric: Metric, val service: Int, val valu
 
 /** Contains all results of an evaluation run */
 data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Metric>,
-                          val readings: MutableList<Reading>, val seed: Int) {
+                          val readings: MutableList<Reading>, val seed: Int)
+
+data class BatchEvaluationData(val data: List<EvaluationData>) {
     /**
      * Writes the contents of a run to a CSV-based file.
      *
@@ -32,14 +34,16 @@ data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Met
      * "run", "tick", "Metric", "Name", "TrustModel", "Scenario"
      * ```
      */
-    fun toCSV(fileName: String = autoName("csv")) {
-        val writer = CSVWriter(FileWriter(fileName))
+    fun toCSV(path: String = System.getProperty("user.dir"), fileName: String = autoName("csv")) {
+        val writer = CSVWriter(FileWriter(File(Paths.get(path, fileName).toUri())))
         writer.writeNext(arrayOf("run", "tick", "Metric", "Name", "TrustModel", "Scenario"))
-        readings.forEach {
-            writer.writeNext(arrayOf(
-                    seed.toString(), it.tick.toString(), it.value.toString(),
-                    it.metric.toString(), protocol.trustModel.toString(),
-                    protocol.scenario.toString()))
+        data.forEach { ed ->
+            ed.readings.forEach {
+                writer.writeNext(arrayOf(
+                        ed.seed.toString(), it.tick.toString(), it.value.toString(),
+                        it.metric.toString(), ed.protocol.trustModel.toString(),
+                        ed.protocol.scenario.toString()))
+            }
         }
         writer.flushQuietly()
         writer.close()
@@ -49,7 +53,8 @@ data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Met
      * Writes evaluation data as JSON to [fileName] in directory [path]. JSON object has the
      * following structure:
      * ```json
-     * {
+     * [
+     *  {
      *   "protocol": {
      *     "scenario": "Scenario name",
      *     "trustModel": "Trust model name"
@@ -63,7 +68,10 @@ data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Met
      *     }, ... remaining readings ...
      *   ],
      *   "seed": 1
-     * }
+     *  },
+     * ... remaining evaluation data items ...
+     * ]
+     *
      * ```
      */
     fun toJSON(path: String = System.getProperty("user.dir"), fileName: String = autoName("json")) =
@@ -104,9 +112,9 @@ data class EvaluationData(val protocol: EvaluationProtocol, val metrics: Set<Met
                 .joinToString("") { it.capitalize() }
                 .replace(Regex("\\W+"), "")
 
-        val model = protocol.trustModel.toString().toFileName()
-        val scenario = protocol.scenario.toString().toFileName()
+        val model = data.first().protocol.trustModel.toString().toFileName()
+        val scenario = data.first().protocol.scenario.toString().toFileName()
 
-        return "$scenario-$model-$seed-$date.$type"
+        return "batch-$scenario-$model-$date.$type"
     }
 }
