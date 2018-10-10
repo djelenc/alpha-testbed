@@ -16,7 +16,6 @@ import javafx.scene.layout.Priority
 import javafx.stage.StageStyle
 import javafx.util.StringConverter
 import javafx.util.converter.NumberStringConverter
-import sun.plugin.dom.exception.InvalidStateException
 import tornadofx.*
 import tornadofx.controlsfx.statusbar
 
@@ -70,7 +69,7 @@ class ATBMainView : View() {
     /** Converts between EvaluationState instances and their string representation */
     internal class EvaluationStateToString : StringConverter<EvaluationState>() {
         override fun fromString(value: String): EvaluationState =
-                throw InvalidStateException("This property cannot be created from String!")
+                throw Error("This property cannot be created from String!")
 
         override fun toString(value: EvaluationState): String = when (value) {
             is Interrupted -> "Interrupted at ${value.tick}"
@@ -128,7 +127,7 @@ class ATBMainController : Controller() {
 
         val rate = 1.0 / duration
 
-        protocol.subscribe({
+        protocol.subscribe {
             for ((key, data) in metric2series) {
                 val (metric, service) = key
                 Platform.runLater {
@@ -136,15 +135,15 @@ class ATBMainController : Controller() {
                     progress.value += rate
                 }
             }
-        })
+        }
 
         val job = setupEvaluation(protocol, duration, metrics.keys)
-        interrupter = run(job, {
+        interrupter = run(job) {
             Platform.runLater {
                 state.value = it
-                if (it is Faulted) it.thrown.printStackTrace()
+                (it as? Faulted)?.thrown?.printStackTrace()
             }
-        })
+        }
         state.value = Running
     }
 }

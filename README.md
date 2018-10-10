@@ -32,7 +32,7 @@ Then, add the actual dependency. For maven-based projects, use the following XML
 <dependency>
 	<groupId>com.github.djelenc</groupId>
 	<artifactId>alpha-testbed</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 </dependency>
 ```
 If you want to use the most recent version, replace the version number with `master-SNAPSHOT`.

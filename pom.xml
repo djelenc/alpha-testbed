@@ -4,7 +4,7 @@
 
     <groupId>atb</groupId>
     <artifactId>alpha-testbed</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>Alpha Testbed</name>
