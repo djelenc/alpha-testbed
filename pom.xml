@@ -4,7 +4,7 @@
 
     <groupId>atb</groupId>
     <artifactId>alpha-testbed</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>Alpha Testbed</name>
@@ -12,7 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.2.51</kotlin.version>
+        <kotlin.version>1.2.71</kotlin.version>
     </properties>
 
     <build>
@@ -78,7 +78,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>atb.app.AppKt</mainClass>
+                                    <mainClass>atb.app.gui.AppKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
