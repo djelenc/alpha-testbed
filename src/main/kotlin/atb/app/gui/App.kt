@@ -11,7 +11,6 @@ class JFXApp : tornadofx.App(ATBMainView::class) {
         stage.setOnHidden {
             ForkJoinPool.commonPool().shutdownNow()
             Platform.exit()
-            //System.exit(0)
         }
         super.start(stage)
     }

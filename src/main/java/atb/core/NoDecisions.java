@@ -168,8 +168,8 @@ public class NoDecisions extends EvaluationProtocol {
 
         if (null == metric) {
             try {
-                metric = (Accuracy) accuracyClass.newInstance();
-                metric.initialize(accuracyParameters);
+                metric = accuracyClass.newInstance();
+                metric.initialize(accuracyParameters, scenario, trustModel);
                 serviceAccuracy.put(service, metric);
             } catch (Exception e) {
                 throw new Error(String.format(CREATION_ERROR, accuracyClass,

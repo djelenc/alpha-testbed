@@ -43,9 +43,6 @@ public class TargetedAttack extends AbstractScenario {
     protected static final String INVALID_PARAMS = "Invalid parameters agents(%d), attackers(%d), "
             + "targets(%d), partners(%d)";
     private static final String TOO_MANY_IP = "Too many interaction partners. Should be at most %d, but was %d.";
-    protected static List<Integer> allTargets = null;
-    protected static List<Integer> allNeutrals = null;
-    protected static List<Integer> allAttackers = null;
 
     static {
         SERVICES.add(0);
@@ -106,34 +103,34 @@ public class TargetedAttack extends AbstractScenario {
     // strategy
     protected TargetedAttackStrategy strategy;
 
-    public static List<Integer> getTargets() {
-        if (allTargets == null) {
+    public List<Integer> getTargets() {
+        if (targets == null) {
             throw new IllegalArgumentException(
                     String.format("Scenario %s was not initialized!",
                             TargetedAttack.class.getCanonicalName()));
         }
 
-        return allTargets;
+        return targets;
     }
 
-    public static List<Integer> getNeutrals() {
-        if (allTargets == null) {
+    public List<Integer> getNeutrals() {
+        if (neutrals == null) {
             throw new IllegalArgumentException(
                     String.format("Scenario %s was not initialized!",
                             TargetedAttack.class.getCanonicalName()));
         }
 
-        return allNeutrals;
+        return neutrals;
     }
 
-    public static List<Integer> getAttackers() {
-        if (allTargets == null) {
+    public List<Integer> getAttackers() {
+        if (attackers == null) {
             throw new IllegalArgumentException(
                     String.format("Scenario %s was not initialized!",
                             TargetedAttack.class.getCanonicalName()));
         }
 
-        return allAttackers;
+        return attackers;
     }
 
     @Override
@@ -203,11 +200,6 @@ public class TargetedAttack extends AbstractScenario {
                         models);
                 break;
         }
-
-        // list addition
-        allTargets = targets;
-        allNeutrals = neutrals;
-        allAttackers = attackers;
 
         // determine interaction partners
         interactionPartners = determineInteractionPartners(numPartners,

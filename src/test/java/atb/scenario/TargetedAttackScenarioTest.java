@@ -63,12 +63,12 @@ public class TargetedAttackScenarioTest {
         final Set<Integer> attackers = new HashSet<Integer>();
         final Set<Integer> ip = new HashSet<Integer>();
 
-        targets.addAll(TargetedAttack.getTargets());
-        neutrals.addAll(TargetedAttack.getNeutrals());
-        attackers.addAll(TargetedAttack.getAttackers());
+        targets.addAll(scenario.getTargets());
+        neutrals.addAll(scenario.getNeutrals());
+        attackers.addAll(scenario.getAttackers());
 
         ip.addAll(scenario.determineInteractionPartners(numPartners,
-                TargetedAttack.getNeutrals(), TargetedAttack.getAttackers()));
+                scenario.getNeutrals(), scenario.getAttackers()));
 
         for (Integer agent : targets)
             assertFalse(ip.contains(agent));
@@ -97,12 +97,12 @@ public class TargetedAttackScenarioTest {
         final Set<Integer> attackers = new HashSet<Integer>();
         final Set<Integer> ip = new HashSet<Integer>();
 
-        targets.addAll(TargetedAttack.getTargets());
-        neutrals.addAll(TargetedAttack.getNeutrals());
-        attackers.addAll(TargetedAttack.getAttackers());
+        targets.addAll(scenario.getTargets());
+        neutrals.addAll(scenario.getNeutrals());
+        attackers.addAll(scenario.getAttackers());
 
         ip.addAll(scenario.determineInteractionPartners(numPartners,
-                TargetedAttack.getNeutrals(), TargetedAttack.getAttackers()));
+                scenario.getNeutrals(), scenario.getAttackers()));
 
         for (Integer agent : targets)
             assertFalse(ip.contains(agent));

@@ -11,6 +11,7 @@
 package atb.metric;
 
 import atb.interfaces.Accuracy;
+import atb.interfaces.Scenario;
 import atb.scenario.TargetedAttack;
 
 import java.util.List;
@@ -34,13 +35,24 @@ import java.util.Map.Entry;
  */
 public class KTAOfTargetedAgents extends AbstractMetric implements Accuracy {
 
+    private TargetedAttack scenario;
+
+    @Override
+    public void initialize(Object... params) {
+        try {
+            scenario = (TargetedAttack) params[1];
+        } catch (ClassCastException e) {
+            throw new Error("Invalid scenario!");
+        }
+    }
+
     @Override
     public <T extends Comparable<T>> double evaluate(Map<Integer, T> trust,
                                                      Map<Integer, Double> capabilities) {
         int concordant = 0, discordant = 0;
 
-        final List<Integer> attackers = TargetedAttack.getAttackers();
-        final List<Integer> neutrals = TargetedAttack.getNeutrals();
+        final List<Integer> attackers = scenario.getAttackers();
+        final List<Integer> neutrals = scenario.getNeutrals();
         double n = 0;
 
         for (Entry<Integer, Double> cap1 : capabilities.entrySet()) {
