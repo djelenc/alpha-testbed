@@ -10,13 +10,13 @@
  */
 package atb.trustmodel;
 
-import cern.jet.random.Beta;
-import cern.jet.random.engine.MersenneTwister;
 import atb.common.Utils;
 import atb.interfaces.Experience;
 import atb.interfaces.Opinion;
 import atb.interfaces.ParameterCondition;
 import atb.interfaces.ParametersPanel;
+import cern.jet.random.Beta;
+import cern.jet.random.engine.MersenneTwister;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,15 +35,15 @@ import java.util.Map;
  * 2-dimensional vector of natural numbers. This is implemented by:
  * <ul>
  * <li>Thresholding interaction outcomes against a threshold given as a
- * parameter SATISFACTORY_THRESHOLD. If the outcome reaches this threshold the
+ * parameter satisfactoryThreshold. If the outcome reaches this threshold the
  * interaction is considered to be positive, otherwise it is considered to be
  * negative.
  * <li>When TRAVOS obtains an opinion, it creates a (r, s) pair by sampling with
  * truncated normal distribution. The mean is set to the internalTrustDegree
  * from the obtained opinion, while the standard deviation is given as a
- * parameter: OPINION_SAMPLE_SD. The number of drawn samples is also given as a
- * parameter: OPINION_SAMPLE_NUM. Such sampling gives all opinions the same
- * weight (r + s = OPINION_SAMPLE_NUM). The parameter OPINION_SAMPLE_NUM also
+ * parameter: opinionSampleSd. The number of drawn samples is also given as a
+ * parameter: opinionSampleNum. Such sampling gives all opinions the same
+ * weight (r + s = opinionSampleNum). The parameter opinionSampleNum also
  * needs to be large enough so that an opinion has a chance of falling into
  * every possible bin.
  * </ul>
@@ -51,15 +51,15 @@ import java.util.Map;
  * @author David
  */
 public class Travos extends AbstractTrustModel<Double> {
-    protected static final ParameterCondition<Double> VAL_THRESHOLD;
-    protected static final ParameterCondition<Integer> VAL_SAMPLE_NUM;
+    private static final ParameterCondition<Double> VAL_THRESHOLD;
+    private static final ParameterCondition<Integer> VAL_SAMPLE_NUM;
     // parameters
-    public static double SATISFACTORY_THRESHOLD = 0.5;
-    public static double OPINION_SAMPLE_NUM = 10;
-    public static double OPINION_SAMPLE_SD = 0.1;
-    public static double CONFIDENCE_THRESHOLD = 0.95;
-    public static double ERROR = 0.2;
-    protected static Beta BETA = null;
+    private double satisfactoryThreshold = 0.5;
+    private double opinionSampleNum = 10;
+    private double opinionSampleSd = 0.1;
+    private double confidenceThreshold = 0.95;
+    private double error = 0.2;
+    private Beta beta = null;
 
     static {
         VAL_SAMPLE_NUM = new ParameterCondition<Integer>() {
@@ -84,11 +84,11 @@ public class Travos extends AbstractTrustModel<Double> {
     }
 
     // experiences
-    public Map<Integer, BRSPair> experiences = null;
+    Map<Integer, BRSPair> experiences = null;
     // opinions
-    public BRSPair[][] opinions = null;
+    BRSPair[][] opinions = null;
     // observations about opinions
-    public Map<Integer, BRSPair[]> observations = null;
+    Map<Integer, BRSPair[]> observations = null;
 
     @Override
     public void initialize(Object... params) {
@@ -96,14 +96,14 @@ public class Travos extends AbstractTrustModel<Double> {
         observations = new LinkedHashMap<Integer, BRSPair[]>();
         opinions = new BRSPair[0][0];
 
-        SATISFACTORY_THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 0,
+        satisfactoryThreshold = Utils.extractParameter(VAL_THRESHOLD, 0,
                 params);
-        OPINION_SAMPLE_NUM = Utils.extractParameter(VAL_SAMPLE_NUM, 1, params);
-        OPINION_SAMPLE_SD = Utils.extractParameter(VAL_THRESHOLD, 2, params);
-        CONFIDENCE_THRESHOLD = Utils.extractParameter(VAL_THRESHOLD, 3, params);
-        ERROR = Utils.extractParameter(VAL_THRESHOLD, 4, params);
+        opinionSampleNum = Utils.extractParameter(VAL_SAMPLE_NUM, 1, params);
+        opinionSampleSd = Utils.extractParameter(VAL_THRESHOLD, 2, params);
+        confidenceThreshold = Utils.extractParameter(VAL_THRESHOLD, 3, params);
+        error = Utils.extractParameter(VAL_THRESHOLD, 4, params);
 
-        BETA = new Beta(1, 1, new MersenneTwister(generator.getSeed()));
+        beta = new Beta(1, 1, new MersenneTwister(generator.getSeed()));
     }
 
     @Override
@@ -115,7 +115,7 @@ public class Travos extends AbstractTrustModel<Double> {
         for (Experience e : exps) {
             BRSPair p = experiences.get(e.agent);
 
-            final int r = (e.outcome >= SATISFACTORY_THRESHOLD ? 1 : 0);
+            final int r = (e.outcome >= satisfactoryThreshold ? 1 : 0);
             final int s = 1 - r;
 
             if (p == null) {
@@ -156,9 +156,9 @@ public class Travos extends AbstractTrustModel<Double> {
             // sample opinions to obtain (r, s) pair
             int op_r = 0, op_s = 0;
 
-            for (int i = 0; i < OPINION_SAMPLE_NUM; i++) {
+            for (int i = 0; i < opinionSampleNum; i++) {
                 if (generator.nextDoubleFromUnitTND(o.internalTrustDegree,
-                        OPINION_SAMPLE_SD) > SATISFACTORY_THRESHOLD) {
+                        opinionSampleSd) > satisfactoryThreshold) {
                     op_r += 1;
                 } else {
                     op_s += 1;
@@ -211,9 +211,9 @@ public class Travos extends AbstractTrustModel<Double> {
         final double low = Math.min(Math.max(0, _low), 1);
         final double high = Math.min(Math.max(0, _high), 1);
 
-        BETA.setState(m + 1, n + 1);
+        beta.setState(m + 1, n + 1);
 
-        return BETA.cdf(high) - BETA.cdf(low);
+        return beta.cdf(high) - beta.cdf(low);
     }
 
     @Override
@@ -226,11 +226,11 @@ public class Travos extends AbstractTrustModel<Double> {
             final int agent = e.getKey();
 
             final double mean = (p.R + 1) / (p.R + p.S + 2);
-            final double confidence = integrate(p.R, p.S, mean - ERROR,
-                    mean + ERROR);
+            final double confidence = integrate(p.R, p.S, mean - error,
+                    mean + error);
 
             // if confidence is high enough this is the final score
-            if (confidence > CONFIDENCE_THRESHOLD)
+            if (confidence > confidenceThreshold)
                 trust.put(agent, mean);
         }
 

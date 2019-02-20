@@ -11,7 +11,6 @@
 package atb.metric;
 
 import atb.interfaces.Accuracy;
-import atb.interfaces.Scenario;
 import atb.scenario.TargetedAttack;
 
 import java.util.List;
@@ -42,7 +41,10 @@ public class KTAOfTargetedAgents extends AbstractMetric implements Accuracy {
         try {
             scenario = (TargetedAttack) params[1];
         } catch (ClassCastException e) {
-            throw new Error("Invalid scenario!");
+            final String message = String.format("ERROR: Metric %s can only be used with scenario %s", this,
+                    TargetedAttack.class.getSimpleName());
+            System.err.println(message);
+            throw new Error(message);
         }
     }
 

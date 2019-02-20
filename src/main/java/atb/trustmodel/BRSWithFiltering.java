@@ -10,12 +10,12 @@
  */
 package atb.trustmodel;
 
-import org.apache.commons.math3.distribution.BetaDistribution;
 import atb.common.Utils;
 import atb.interfaces.Experience;
 import atb.interfaces.Opinion;
 import atb.interfaces.ParameterCondition;
 import atb.interfaces.ParametersPanel;
+import org.apache.commons.math3.distribution.BetaDistribution;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,14 +40,14 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
      * Factor to scale opinions with (it can be larger than with TRAVOS because
      * this model does not consider the shape of PDF or the area under it)
      */
-    public static double FACTOR = 10;
-    private static double Q = 0.01;
+    private double factor = 10;
+    private double q = 0.01;
     // aging factors for experiences and opinions
-    public double lambdaEx = 1;
-    public double lambdaOp = 0;
+    private double lambdaEx = 1;
+    private double lambdaOp = 0;
     // experiences
-    public Map<Integer, ArrayList<Experience>> experiences = null;
-    public Opinion[][] opinions = null;
+    private Map<Integer, ArrayList<Experience>> experiences = null;
+    private Opinion[][] opinions = null;
     private int time = 0;
     // temporary storage for experiences and opinions
     private List<Experience> exps;
@@ -91,8 +91,8 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 
         lambdaEx = Utils.extractParameter(valLambda, 0, params);
         lambdaOp = Utils.extractParameter(valLambda, 1, params);
-        Q = Utils.extractParameter(valQ, 2, params);
-        FACTOR = Utils.extractParameter(valFactor, 3, params);
+        q = Utils.extractParameter(valQ, 2, params);
+        factor = Utils.extractParameter(valFactor, 3, params);
 
         exps = null;
         ops = null;
@@ -192,8 +192,8 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
                 final Opinion o = opinions[rater][agent];
                 final double discount = Math.pow(lambdaOp, time - o.time);
                 final double rater_r = Math
-                        .round(FACTOR * o.internalTrustDegree);
-                final double rater_s = FACTOR - rater_r;
+                        .round(factor * o.internalTrustDegree);
+                final double rater_s = factor - rater_r;
 
                 r += rater_r * discount;
                 s += rater_s * discount;
@@ -207,14 +207,14 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
                 final Opinion o = opinions[rater][agent];
                 final double discount = Math.pow(lambdaOp, time - o.time);
                 final double rater_r = (Math
-                        .round(FACTOR * o.internalTrustDegree)) * discount;
-                final double rater_s = (FACTOR - rater_r) * discount;
+                        .round(factor * o.internalTrustDegree)) * discount;
+                final double rater_s = (factor - rater_r) * discount;
 
                 final BetaDistribution beta = new BetaDistribution(1 + rater_r,
                         1 + rater_s);
 
-                final double l = beta.inverseCumulativeProbability(Q);
-                final double u = beta.inverseCumulativeProbability(1 - Q);
+                final double l = beta.inverseCumulativeProbability(q);
+                final double u = beta.inverseCumulativeProbability(1 - q);
 
                 if (l > reputation || u < reputation)
                     liars.add(rater);
@@ -257,8 +257,8 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
             for (Experience e : exps) {
                 experienceExists = true;
                 final double discount = Math.pow(lambdaEx, time - e.time);
-                final double new_r = Math.round(FACTOR * e.outcome);
-                final double new_s = FACTOR - new_r;
+                final double new_r = Math.round(factor * e.outcome);
+                final double new_s = factor - new_r;
 
                 r += new_r * discount;
                 s += new_s * discount;
