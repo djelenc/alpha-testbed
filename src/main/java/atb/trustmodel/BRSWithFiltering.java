@@ -308,7 +308,7 @@ public class BRSWithFiltering extends AbstractTrustModel<Double> {
 
     @Override
     public String toString() {
-        return "BRS with filtering";
+        return "Beta with filtering";
     }
 
     @Override
